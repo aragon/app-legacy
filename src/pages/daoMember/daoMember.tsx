@@ -26,7 +26,6 @@ import {TokenVotingMember} from '@aragon/sdk-client';
 import {useCreatorProposals} from 'services/aragon-sdk/queries/use-creator-proposals';
 import {UserProposalList} from 'components/userProposalList';
 import {MembershipDAOList} from 'components/membershipDAOList/membershipDAOList';
-import {MemberDAOsType} from 'utils/types';
 
 export const DaoMember: React.FC = () => {
   const {t} = useTranslation();
@@ -235,8 +234,12 @@ export const DaoMember: React.FC = () => {
         }
       />
       <div className="flex flex-col gap-16 px-4 md:flex-row md:px-0">
-        <UserProposalList proposals={memberCreatedProposals} />
-        <MembershipDAOList daos={daoMemberList as MemberDAOsType} />
+        <div className="flex grow flex-col gap-10">
+          <UserProposalList proposals={memberCreatedProposals} />
+        </div>
+        <div className="flex w-full grow flex-col md:max-w-[400px]">
+          <MembershipDAOList daos={daoMemberList} />
+        </div>
       </div>
     </HeaderWrapper>
   );

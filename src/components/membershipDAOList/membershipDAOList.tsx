@@ -6,7 +6,7 @@ import {MemberDAOsType} from 'utils/types';
 import {ActionItemMembership} from 'components/membersList/actionItemMembership';
 
 export interface IMembershipDAOListProps {
-  daos: MemberDAOsType;
+  daos?: MemberDAOsType;
 }
 
 const initialDAOsPageSize = 3;
@@ -23,49 +23,46 @@ export const MembershipDAOList: React.FC<IMembershipDAOListProps> = ({
     0,
     page === 0 ? initialDAOsPageSize : page * daosPageSize + initialDAOsPageSize
   );
-  const hasMore = filteredDaos?.length < daos?.length;
+  const hasMore =
+    filteredDaos && daos ? filteredDaos?.length < daos?.length : false;
 
   if (daos?.length === 0) {
     return (
-      <div className="flex w-full grow flex-col md:max-w-[400px]">
-        <EmptyMemberSection
-          title={t('members.profile.emptyState.Memberships')}
-          illustration="users"
-        />
-      </div>
+      <EmptyMemberSection
+        title={t('members.profile.emptyState.Memberships')}
+        illustration="users"
+      />
     );
   }
 
   return (
-    <div className="flex w-full grow flex-col md:max-w-[400px]">
-      <MemberSection
-        title={t('members.profile.sectionMemberhsips', {
-          amount: daos?.length,
-        })}
-      >
-        <div className="flex flex-col items-start gap-3">
-          <div className="flex w-full flex-col gap-2">
-            {filteredDaos?.map((dao, index) => (
-              <ActionItemMembership
-                key={index}
-                address={dao.address}
-                subdomain={dao.subdomain}
-                metadata={dao.metadata}
-                network={dao.network}
-              />
-            ))}
-          </div>
-          {hasMore && (
-            <ButtonText
-              mode="secondary"
-              label={t('members.profile.labelViewMore')}
-              className="border-neutral-100"
-              iconRight={<IconChevronDown />}
-              onClick={() => setPage(current => current + 1)}
+    <MemberSection
+      title={t('members.profile.sectionMemberhsips', {
+        amount: daos?.length,
+      })}
+    >
+      <div className="flex flex-col items-start gap-3">
+        <div className="flex w-full flex-col gap-2">
+          {filteredDaos?.map((dao, index) => (
+            <ActionItemMembership
+              key={index}
+              address={dao.address}
+              subdomain={dao.subdomain}
+              metadata={dao.metadata}
+              network={dao.network}
             />
-          )}
+          ))}
         </div>
-      </MemberSection>
-    </div>
+        {hasMore && (
+          <ButtonText
+            mode="secondary"
+            label={t('members.profile.labelViewMore')}
+            className="border-neutral-100"
+            iconRight={<IconChevronDown />}
+            onClick={() => setPage(current => current + 1)}
+          />
+        )}
+      </div>
+    </MemberSection>
   );
 };

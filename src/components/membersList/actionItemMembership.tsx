@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {shortenAddress, Avatar, IconChevronRight} from '@aragon/ods-old';
+import {shortenAddress, IconChevronRight, AvatarDao} from '@aragon/ods-old';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {useClient} from 'hooks/useClient';
 import {Client, DaoListItem} from '@aragon/sdk-client';
 import {toDisplayEns} from 'utils/library';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {Dashboard} from 'utils/paths';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 /**
  * Type declarations for `ActionItemAddressProps`.
@@ -38,6 +39,7 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
       avatar: '',
     }
   );
+  const {avatar} = useResolveDaoAvatar(metadataObject.avatar);
 
   const handleDaoClicked = (dao: string, network: string) => {
     navigate(
@@ -62,6 +64,8 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
     getMetadata();
   }, [client, metadata]);
 
+  const DAOName = metadataObject ? metadataObject.name || '-' : 'No name found';
+
   return (
     <a
       className={
@@ -73,12 +77,10 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
     >
       <div className="flex space-x-3">
         <div className="mt-1">
-          <Avatar size="small" mode="circle" src={address} />
+          <AvatarDao size="small" src={avatar} daoName={DAOName} />
         </div>
         <div className="flex flex-col">
-          <Title>
-            {metadataObject ? metadataObject.name || '-' : 'No name found'}
-          </Title>
+          <Title>{DAOName}</Title>
           <Address>
             {toDisplayEns(subdomain) || shortenAddress(address)}
           </Address>
