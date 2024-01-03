@@ -91,6 +91,8 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                 {verified ? <IconSuccess /> : <IconWarning />}
                 <a
                   href={blockExplorerLink}
+                  target="_blank"
+                  rel="noreferrer"
                   className={`ml-2 font-semibold ${
                     verified ? 'text-primary-500' : 'text-warning-500'
                   }`}
