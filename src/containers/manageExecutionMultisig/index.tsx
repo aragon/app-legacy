@@ -2,7 +2,6 @@ import AddAddresses from '../actionBuilder/addAddresses';
 import RemoveAddresses from '../actionBuilder/removeAddresses';
 import React from 'react';
 import {MultisigDaoMember} from '../../hooks/useDaoMembers';
-import {ActionsProvider} from '../../context/actions';
 import UpdateMinimumApproval from '../actionBuilder/updateMinimumApproval';
 
 type ManageExecutionMultisigProps = {
@@ -13,10 +12,10 @@ type ManageExecutionMultisigProps = {
 
 export const ManageExecutionMultisig: React.FC<
   ManageExecutionMultisigProps
-> = ({members, minTallyApprovals, daoAddress}) => {
+> = ({members, minTallyApprovals}) => {
   if (!members) return null;
   return (
-    <ActionsProvider daoId={daoAddress}>
+    <>
       <AddAddresses
         actionIndex={0}
         useCustomHeader
@@ -32,8 +31,8 @@ export const ManageExecutionMultisig: React.FC<
         useCustomHeader
         currentDaoMembers={members}
         currentMinimumApproval={minTallyApprovals}
-        isGasless
+        isGasless={true}
       />
-    </ActionsProvider>
+    </>
   );
 };
