@@ -481,12 +481,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     return <Loading />;
   }
 
-  // Note: using isDirty here to allow time for form to fill up before
-  // rendering a value or else there will be noticeable render with blank form.
-  if (!isDirty) {
-    return <Loading />;
-  }
-
   return (
     <PageWrapper
       title={t('settings.editDaoSettings')}
