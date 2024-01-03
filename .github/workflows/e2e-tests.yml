@@ -47,7 +47,7 @@ jobs:
         run: |
           yarn dev &
           sleep 10 # Wait for the server to start; adjust the time as needed
-          yarn e2e
+          npx synpress run --configFile synpress.config.js
         env:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
