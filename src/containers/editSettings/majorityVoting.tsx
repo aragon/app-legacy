@@ -35,7 +35,6 @@ import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
-import DefineExecutionMultisig from '../defineExecutionMultisig';
 import {ManageExecutionMultisig} from '../manageExecutionMultisig';
 import {MultisigDaoMember} from '../../hooks/useDaoMembers';
 import {ActionsProvider} from '../../context/actions';
@@ -587,7 +586,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                           }
                           daoAddress={daoDetails.address}
                         />
-                        <DefineExecutionMultisig isSettingPage />
                       </AccordionContent>
                     </AccordionItem>
                   )}

@@ -3,6 +3,7 @@ import RemoveAddresses from '../actionBuilder/removeAddresses';
 import React from 'react';
 import {MultisigDaoMember} from '../../hooks/useDaoMembers';
 import UpdateMinimumApproval from '../actionBuilder/updateMinimumApproval';
+import ExecutionExpirationTime from '../../components/executionExpirationTime';
 
 type ManageExecutionMultisigProps = {
   members: MultisigDaoMember[] | undefined;
@@ -33,6 +34,7 @@ export const ManageExecutionMultisig: React.FC<
         currentMinimumApproval={minTallyApprovals}
         isGasless={true}
       />
+      <ExecutionExpirationTime />
     </>
   );
 };

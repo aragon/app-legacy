@@ -16,13 +16,7 @@ import {generateAlert} from '../../components/multisigMinimumApproval';
 
 const MIN_REQUIRED_APPROVALS = 1;
 
-export type ConfigureExecutionMultisigProps = {
-  isSettingPage?: boolean;
-};
-
-const DefineExecutionMultisig: React.FC<ConfigureExecutionMultisigProps> = ({
-  isSettingPage = false,
-}) => {
+const DefineExecutionMultisig: React.FC = () => {
   const {t} = useTranslation();
   const {control, setValue, trigger} = useFormContext();
 
@@ -115,13 +109,7 @@ const DefineExecutionMultisig: React.FC<ConfigureExecutionMultisigProps> = ({
       </FormItem>
 
       {/* Execution Expiration Time */}
-      <FormItem>
-        <Label
-          label={t('createDao.executionMultisig.executionTitle')}
-          helpText={t('createDao.executionMultisig.executionDesc')}
-        />
-        <ExecutionExpirationTime />
-      </FormItem>
+      <ExecutionExpirationTime />
     </>
   );
 };
