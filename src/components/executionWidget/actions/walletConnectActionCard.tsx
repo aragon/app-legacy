@@ -8,6 +8,8 @@ import {FormlessComponentForType} from 'containers/smartContractComposer/compone
 import {POTENTIALLY_TIME_SENSITIVE_FIELDS} from 'utils/constants/misc';
 import {capitalizeFirstLetter, shortenAddress} from 'utils/library';
 import {ActionWC, ExecutionStatus, Input} from 'utils/types';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
@@ -25,6 +27,7 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   type,
 }) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
 
   const showTimeSensitiveWarning = useMemo(() => {
     // Note: need to check whether the inputs exist because the decoding
@@ -55,6 +58,12 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
       methodName={action.functionName}
       dropdownItems={methodActions}
       smartContractName={shortenAddress(action.contractName)}
+      smartContractAddress={action.contractAddress}
+      blockExplorerLink={
+        action.contractAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${action.contractAddress}`
+          : undefined
+      }
       verified={!!action.verified}
       methodDescription={action.notice}
     >

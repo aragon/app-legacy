@@ -1,18 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {AccordionMethod} from 'components/accordionMethod';
 import {ComponentForTypeWithFormProvider} from 'containers/smartContractComposer/components/inputForm';
+import {useNetwork} from 'context/network';
 import React from 'react';
 import styled from 'styled-components';
+import {CHAIN_METADATA} from 'utils/constants';
 import {Input} from 'utils/types';
 
 export const SCCExecutionCard: React.FC<{
   action: any;
 }> = ({action}) => {
+  const {network} = useNetwork();
   return (
     <AccordionMethod
       type="execution-widget"
       methodName={action.functionName}
       smartContractName={action.contractName}
+      smartContractAddress={action.contractAddress}
+      blockExplorerLink={
+        action.contractAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${action.contractAddress}`
+          : undefined
+      }
       verified
     >
       <Container>

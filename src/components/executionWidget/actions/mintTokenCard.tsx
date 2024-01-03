@@ -12,6 +12,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address} from 'utils/library';
 import {ActionMintToken} from 'utils/types';
+import {useDaoToken} from 'hooks/useDaoToken';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
@@ -21,6 +22,9 @@ export const MintTokenCard: React.FC<{
   const {api: provider} = useProviders();
 
   const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress as string
+  );
 
   const {
     data: {members, memberCount},
@@ -91,7 +95,13 @@ export const MintTokenCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.mintTokens')}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName="GovernanceERC20"
+      smartContractAddress={daoToken?.address}
+      blockExplorerLink={
+        daoToken?.address
+          ? `${CHAIN_METADATA[network].explorer}token/${daoToken?.address}`
+          : undefined
+      }
       verified
       methodDescription={t('newProposal.mintTokens.methodDescription')}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
