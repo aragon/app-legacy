@@ -5,7 +5,12 @@ import {
 } from '@aragon/ods-old';
 import {Icon, IconType} from '@aragon/ods';
 import React, {useCallback} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {
+  Controller,
+  useFormContext,
+  useWatch,
+  ValidateResult,
+} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -16,6 +21,15 @@ import {DaoMember} from 'hooks/useDaoMembers';
 import {Web3Address} from 'utils/library';
 import {ActionAddAddress} from 'utils/types';
 import {validateWeb3Address} from 'utils/validators';
+
+/**
+ * Type for row validation on the add row action builder component
+ */
+export type CustomRowValidator = (
+  {address, ensName}: WalletInputValue,
+  memberWallets: DaoMember[] | undefined,
+  index: number
+) => Promise<ValidateResult>;
 
 type Props = {
   actionIndex: number;
@@ -30,6 +44,7 @@ type Props = {
   onBlur?: () => void;
   onClearRow?: () => void;
   currentDaoMembers?: DaoMember[];
+  customRowValidator?: CustomRowValidator;
 };
 
 export const AddressRow = ({
@@ -40,6 +55,7 @@ export const AddressRow = ({
   onBlur,
   onClearRow,
   currentDaoMembers,
+  customRowValidator,
 }: Props) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -105,7 +121,12 @@ export const AddressRow = ({
       name={`${memberWalletsKey}.${fieldIndex}`}
       defaultValue={{address: '', ensName: ''}}
       control={control}
-      rules={{validate: value => addressValidator(value, fieldIndex)}}
+      rules={{
+        validate: value =>
+          customRowValidator
+            ? customRowValidator(value, memberWallets, fieldIndex)
+            : addressValidator(value, fieldIndex),
+      }}
       render={({field: {onChange, ref, value}, fieldState: {error}}) => (
         <Container>
           <InputContainer>

@@ -15,7 +15,7 @@ import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
 import {ActionIndex} from 'utils/types';
 import AccordionSummary from './accordionSummary';
-import {AddressRow} from './addressRow';
+import {AddressRow, CustomRowValidator} from './addressRow';
 import {useAlertContext} from 'context/alert';
 import {DaoMember} from 'hooks/useDaoMembers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -32,13 +32,17 @@ export type CurrentDaoMembers = {
 
 type AddAddressesProps = ActionIndex &
   CustomHeaderProps &
-  CurrentDaoMembers & {allowRemove?: boolean};
+  CurrentDaoMembers & {
+    allowRemove?: boolean;
+    customRowValidator?: CustomRowValidator;
+  };
 
 const AddAddresses: React.FC<AddAddressesProps> = ({
   actionIndex,
   useCustomHeader = false,
   currentDaoMembers,
   allowRemove = true,
+  customRowValidator,
 }) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
@@ -213,6 +217,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
               onClearRow={handleRowClear}
               onBlur={validateFields}
               currentDaoMembers={currentDaoMembers}
+              customRowValidator={customRowValidator}
             />
           </FormItem>
         );

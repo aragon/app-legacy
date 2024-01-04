@@ -206,7 +206,7 @@ export const ManageMembers: React.FC = () => {
  * @param formActions add and remove address actions
  * @returns whether the actions are valid
  */
-function actionsAreValid(
+export function actionsAreValid(
   errors: FieldErrors,
   formActions: ManageMembersFormData['actions'],
   minApprovals: number
