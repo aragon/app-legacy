@@ -81,6 +81,11 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
           settingsChanged
         ) {
           return action;
+        } else if (
+          action.name === 'add_address' ||
+          action.name === 'remove_address'
+        ) {
+          return action;
         }
       });
       return filteredActions;
@@ -113,6 +118,7 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       executionExpirationDays,
       committee,
       committeeMinimumApproval,
+      actions,
     ] = getValues([
       'daoName',
       'daoSummary',
@@ -134,6 +140,7 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       'executionExpirationDays',
       'committee',
       'committeeMinimumApproval',
+      'actions',
     ]);
 
     let daoLogoFile = '';
@@ -231,7 +238,10 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       };
       settingsAction = multisigSettingsAction;
     }
-    setValue('actions', filterActions([metadataAction, settingsAction]));
+    setValue(
+      'actions',
+      filterActions([metadataAction, settingsAction, ...actions])
+    );
   }, [
     getValues,
     daoDetails,
