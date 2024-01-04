@@ -1,5 +1,5 @@
 import {Views} from '../index';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {EditSettings} from '../../../utils/paths';
@@ -12,6 +12,8 @@ import {
 } from '../../goLive/committee';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 import {getDHMFromSeconds} from '../../../utils/date';
+import {ActionAddAddress, ActionRemoveAddress} from '../../../utils/types';
+import {MultisigDaoMember} from '../../../hooks/useDaoMembers';
 
 type CompareGaslessProps = {
   daoSettings?: GaslessPluginVotingSettings;
@@ -34,17 +36,61 @@ export const CompareGasless: React.FC<CompareGaslessProps> = ({
     executionExpirationMinutes,
     executionExpirationHours,
     executionExpirationDays,
+    actions,
   } = getValues();
 
-  let displayedInfo: ReviewExecutionMultisigProps;
-  if (view === 'new') {
-    displayedInfo = {
+  const newDisplayedInfo = useMemo(() => {
+    const info: ReviewExecutionMultisigProps = {
       committee: daoSettings?.executionMultisigMembers || [],
       committeeMinimumApproval,
       executionExpirationMinutes,
       executionExpirationHours,
       executionExpirationDays,
     };
+    if (actions && actions.length > 0) {
+      const addActionIndex = actions
+        .map((action: ActionAddAddress) => action.name)
+        .indexOf('add_address');
+
+      const removeActionIndex = actions
+        .map((action: ActionRemoveAddress) => action.name)
+        .indexOf('remove_address');
+
+      const [newAddedWallet, newRemovedWallet] = getValues([
+        `actions.${addActionIndex}.inputs.memberWallets`,
+        `actions.${removeActionIndex}.inputs.memberWallets`,
+      ]);
+      const newCommitteeMembers: string[] = daoSettings!
+        // Delete the removed wallets from the current committee
+        .executionMultisigMembers!.filter(address => {
+          return !(newRemovedWallet as MultisigDaoMember[])
+            .map(wallet => wallet.address)
+            .includes(address);
+        })
+        // Add new wallets
+        .concat(
+          (newAddedWallet as MultisigDaoMember[])
+            .filter(wallet => wallet.address !== '')
+            .map(wallet => {
+              return wallet.address;
+            })
+        );
+      info.committee = newCommitteeMembers;
+    }
+    return info;
+  }, [
+    actions,
+    committeeMinimumApproval,
+    daoSettings,
+    executionExpirationDays,
+    executionExpirationHours,
+    executionExpirationMinutes,
+    getValues,
+  ]);
+
+  let displayedInfo: ReviewExecutionMultisigProps;
+  if (view === 'new') {
+    displayedInfo = newDisplayedInfo;
   } else {
     const {days, hours, minutes} = getDHMFromSeconds(
       daoSettings!.minTallyDuration

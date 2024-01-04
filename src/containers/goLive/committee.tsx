@@ -11,6 +11,7 @@ import {
 import {Link} from '@aragon/ods-old';
 import React from 'react';
 import CommitteeAddressesModal from '../committeeAddressesModal';
+import {MultisigWalletField} from '../../components/multisigWallets/row';
 
 const Committee = () => {
   const {control, getValues} = useFormContext();
@@ -127,7 +128,13 @@ export const ReviewExecutionMultisig: React.FC<
           </div>
         </Dd>
       </Dl>
-      <CommitteeAddressesModal />
+      <CommitteeAddressesModal
+        committee={committee.map(w => {
+          return {
+            address: w,
+          } as MultisigWalletField;
+        })}
+      />
     </>
   );
 };
