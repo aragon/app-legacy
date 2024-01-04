@@ -123,10 +123,10 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client@^1.21.0":
-  version "1.21.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.21.0.tgz#5a500991250598ed25ab91e5fcd6f4de7b8d8574"
-  integrity sha512-QA+OeT4XkFRZyvFGuX1dkWleQK0XUaqbg3yvW0sSzSDW3l+RJq7Qq2joCBUpUHIRNvwt252gLR60lVMu0bQB+g==
+"@aragon/sdk-client@^1.21.1":
+  version "1.21.1"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.21.1.tgz#c8d72bca42b95a8205173cf899e2d50ca92e19b8"
+  integrity sha512-frPpT07knwua2VCjzNYPo+dtQfYeG+k5i3HMpk4pK8N5pEweCaeJPLoc4+AZVPPw8LxNdnmkxsKqi7rtUdJN/A==
   dependencies:
     "@aragon/osx-ethers" "1.3.0"
     "@aragon/sdk-client-common" "^1.13.0"
