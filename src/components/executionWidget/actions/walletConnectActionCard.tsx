@@ -57,8 +57,8 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
       type={type}
       methodName={action.functionName}
       dropdownItems={methodActions}
-      smartContractName={shortenAddress(action.contractName)}
-      smartContractAddress={action.contractAddress}
+      smartContractName={action.contractName}
+      smartContractAddress={shortenAddress(action.contractAddress)}
       blockExplorerLink={
         action.contractAddress
           ? `${CHAIN_METADATA[network].explorer}address/${action.contractAddress}`

@@ -27,7 +27,7 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.updateMetadataAction')}
-      smartContractName={daoDetails?.metadata.name}
+      smartContractName={'DAO'}
       smartContractAddress={daoDetails?.address}
       blockExplorerLink={
         daoDetails?.address
