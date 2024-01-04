@@ -170,11 +170,7 @@ export const ManageMembers: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm
-                pluginSettings={
-                  isGasless ? pluginSettings : multisigVotingSettings
-                }
-              />
+              <SetupVotingForm pluginSettings={multisigVotingSettings} />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}

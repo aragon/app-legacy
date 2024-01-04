@@ -1,5 +1,4 @@
 import React from 'react';
-import {useFormContext} from 'react-hook-form';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
