@@ -14,6 +14,7 @@ import {useFormContext, useFormState} from 'react-hook-form';
 import {useDaoDetailsQuery} from '../../hooks/useDaoDetails';
 import {
   isGaslessVotingSettings,
+  isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from '../../services/aragon-sdk/queries/use-voting-settings';
@@ -34,6 +35,7 @@ import {VotingMode} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {useNetwork} from '../../context/network';
 import {Loading} from '../../components/temporary';
+import {getNonEmptyActions} from '../../utils/proposals';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -71,7 +73,7 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       ]);
 
       // ignore every action that is not modifying the metadata and voting settings
-      const filteredActions = (actions as Array<Action>).filter(action => {
+      let filteredActions = (actions as Array<Action>).filter(action => {
         if (action.name === 'modify_metadata' && metadataChanged) {
           return action;
         } else if (
@@ -88,9 +90,16 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
           return action;
         }
       });
+
+      filteredActions = getNonEmptyActions(
+        filteredActions,
+        isMultisigVotingSettings(pluginSettings) ? pluginSettings : undefined,
+        isGaslessVotingSettings(pluginSettings) ? pluginSettings : undefined
+      );
+
       return filteredActions;
     },
-    [getValues]
+    [getValues, pluginSettings]
   );
 
   // Not a fan, but this sets the actions on the form context so that the Action
