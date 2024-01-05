@@ -43,9 +43,6 @@ jobs:
           VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
 
-      - name: Clear Cypress Cache
-        run: npx cypress cache clear
-
       - name: Start development server and Run E2E Tests
         # run: |
         #   yarn dev &
@@ -53,6 +50,8 @@ jobs:
         #   npx synpress run --configFile synpress.config.js
         uses: cypress-io/github-action@v6
         with:
+          cache: false
+          cache-key: ''
           start: yarn dev
           command: npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
           record: true
