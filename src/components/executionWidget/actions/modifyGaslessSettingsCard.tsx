@@ -75,9 +75,9 @@ export const ModifyGaslessSettingsCard: React.FC<{
         <Dl>
           <Dt>{t('labels.minimumApproval')}</Dt>
           <Dd>
-            {inputs.minTallyApprovals}&nbsp;
             {t('labels.review.multisigMinimumApprovals', {
-              count: inputs.executionMultisigMembers?.length || 0,
+              count: inputs.minTallyApprovals,
+              total: inputs.executionMultisigMembers?.length,
             })}
           </Dd>
         </Dl>
