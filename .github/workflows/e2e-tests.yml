@@ -52,8 +52,8 @@ jobs:
         with:
           start: yarn dev
           command: npx synpress run --configFile synpress.config.js
-          # wait-on: 'http://localhost:3000'
-          # wait-on-timeout: 120
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
           # browser: chrome
           # spec: tests/e2e/specs/*
         env:
