@@ -50,7 +50,7 @@ jobs:
         #   npx synpress run --configFile synpress.config.js
         uses: cypress-io/github-action@v6
         with:
-          cache: false
+          # cache: false
           cache-key: ''
           start: yarn dev
           command: npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
