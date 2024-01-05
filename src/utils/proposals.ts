@@ -68,6 +68,7 @@ import {
 
 import {ethers} from 'ethers';
 import {SupportedNetworks} from './constants';
+import {FieldValues, UseFormGetValues} from 'react-hook-form';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -964,6 +965,52 @@ export function getNonEmptyActions(
       return action;
     }
   });
+}
+
+/**
+ * For a list of actions, it takes the add/remove wallet actions and calculates which are added or removed
+ * from a list of old wallets. The actions must to be stored on a react hook form
+ * @param actions list of actions that can include add/remove wallet actions
+ * @param oldMultisig the old wallet list which is going to be updated
+ * @param getValues react form getValues function, used to get the memberwallets from the actions
+ */
+export function getNewMultisigMembers(
+  actions: Array<Action>,
+  oldMultisig: string[],
+  getValues: UseFormGetValues<FieldValues>
+): string[] {
+  const addActionIndex = actions
+    .map(action => action.name)
+    .indexOf('add_address');
+
+  const removeActionIndex = actions
+    .map(action => action.name)
+    .indexOf('remove_address');
+
+  const [newAddedWallet, newRemovedWallet] = getValues([
+    `actions.${addActionIndex}.inputs.memberWallets`,
+    `actions.${removeActionIndex}.inputs.memberWallets`,
+  ]);
+  let newCommitteeMembers: string[] = oldMultisig;
+  // Delete the removed wallets from the current committee
+  if (newRemovedWallet !== undefined) {
+    newCommitteeMembers = newCommitteeMembers.filter(address => {
+      return !(newRemovedWallet as MultisigDaoMember[])
+        .map(wallet => wallet.address)
+        .includes(address);
+    });
+  }
+  if (newAddedWallet !== undefined) {
+    // Add new wallets
+    newCommitteeMembers.concat(
+      (newAddedWallet as MultisigDaoMember[])
+        .filter(wallet => wallet.address !== '')
+        .map(wallet => {
+          return wallet.address;
+        })
+    );
+  }
+  return newCommitteeMembers;
 }
 
 /**

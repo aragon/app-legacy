@@ -12,8 +12,7 @@ import {
 } from '../../goLive/committee';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 import {getDHMFromSeconds} from '../../../utils/date';
-import {ActionAddAddress, ActionRemoveAddress} from '../../../utils/types';
-import {MultisigDaoMember} from '../../../hooks/useDaoMembers';
+import {getNewMultisigMembers} from '../../../utils/proposals';
 
 type CompareGaslessProps = {
   daoSettings?: GaslessPluginVotingSettings;
@@ -48,39 +47,11 @@ export const CompareGasless: React.FC<CompareGaslessProps> = ({
       executionExpirationDays,
     };
     if (actions && actions.length > 0) {
-      const addActionIndex = actions
-        .map((action: ActionAddAddress) => action.name)
-        .indexOf('add_address');
-
-      const removeActionIndex = actions
-        .map((action: ActionRemoveAddress) => action.name)
-        .indexOf('remove_address');
-
-      const [newAddedWallet, newRemovedWallet] = getValues([
-        `actions.${addActionIndex}.inputs.memberWallets`,
-        `actions.${removeActionIndex}.inputs.memberWallets`,
-      ]);
-      let newCommitteeMembers: string[] =
-        daoSettings!.executionMultisigMembers!;
-      // Delete the removed wallets from the current committee
-      if (newRemovedWallet !== undefined) {
-        newCommitteeMembers = newCommitteeMembers.filter(address => {
-          return !(newRemovedWallet as MultisigDaoMember[])
-            .map(wallet => wallet.address)
-            .includes(address);
-        });
-      }
-      if (newAddedWallet !== undefined) {
-        // Add new wallets
-        newCommitteeMembers.concat(
-          (newAddedWallet as MultisigDaoMember[])
-            .filter(wallet => wallet.address !== '')
-            .map(wallet => {
-              return wallet.address;
-            })
-        );
-      }
-      info.committee = newCommitteeMembers;
+      info.committee = getNewMultisigMembers(
+        actions,
+        daoSettings!.executionMultisigMembers!,
+        getValues
+      );
     }
     return info;
   }, [

@@ -35,7 +35,7 @@ import {VotingMode} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {useNetwork} from '../../context/network';
 import {Loading} from '../../components/temporary';
-import {getNonEmptyActions} from '../../utils/proposals';
+import {getNewMultisigMembers, getNonEmptyActions} from '../../utils/proposals';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -179,8 +179,10 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
           token: daoToken,
           totalVotingWeight: tokenSupply?.raw || BigInt(0),
 
-          executionMultisigMembers: (committee as MultisigWalletField[]).map(
-            wallet => wallet.address
+          executionMultisigMembers: getNewMultisigMembers(
+            actions,
+            (committee as MultisigWalletField[]).map(wallet => wallet.address),
+            getValues
           ),
           minTallyApprovals: committeeMinimumApproval,
           minDuration: getSecondsFromDHM(
