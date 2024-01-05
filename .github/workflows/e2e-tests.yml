@@ -52,10 +52,10 @@ jobs:
         with:
           start: yarn dev
           command: npx synpress run --configFile synpress.config.js
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
-          browser: chrome
-          spec: tests/e2e/specs/*
+          # wait-on: 'http://localhost:3000'
+          # wait-on-timeout: 120
+          # browser: chrome
+          # spec: tests/e2e/specs/*
         env:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
