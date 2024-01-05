@@ -1002,7 +1002,7 @@ export function getNewMultisigMembers(
   }
   if (newAddedWallet !== undefined) {
     // Add new wallets
-    newCommitteeMembers.concat(
+    newCommitteeMembers = newCommitteeMembers.concat(
       (newAddedWallet as MultisigDaoMember[])
         .filter(wallet => wallet.address !== '')
         .map(wallet => {

@@ -236,13 +236,6 @@ function actionsAreValid(
     }
   }
 
-  console.log(
-    'Gasles actions validation',
-    !containsEmptyField,
-    minimumApprovalChanged,
-    containsEmptyField && removedWallets > 0
-  );
-
   return (
     !containsEmptyField ||
     minimumApprovalChanged ||
