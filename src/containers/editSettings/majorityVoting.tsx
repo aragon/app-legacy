@@ -390,6 +390,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     votingSettings,
   ]);
 
+  // Initialize actions when reset to avoid undefined data issues
   const resetGaslessActions = useCallback(() => {
     setValue('actions', [
       {
@@ -424,6 +425,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     setCurrentGovernance();
     if (isGasless) {
       setCurrentGasless();
+      // This is separated from the initial use effect to avoid a re-render bug related to the isDirty variable
       resetGaslessActions();
     }
   };
@@ -512,130 +514,135 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     },
   ];
 
-  if (isLoading) {
+  if (isLoading && !dataFetched) {
     return <Loading />;
   }
 
-  return (
-    <PageWrapper
-      title={t('settings.editDaoSettings')}
-      description={t('settings.editSubtitle')}
-      secondaryBtnProps={
-        isMobile
-          ? {
-              disabled: settingsUnchanged,
-              label: t('settings.resetChanges'),
-              onClick: () => handleResetChanges(),
-            }
-          : undefined
-      }
-      customBody={
-        <Layout>
-          <Container>
-            <AccordionMultiple defaultValue="metadata" className="space-y-6">
-              <AccordionItem
-                type="action-builder"
-                name="metadata"
-                methodName={t('labels.review.daoMetadata')}
-                alertLabel={
-                  isMetadataChanged ? t('settings.newSettings') : undefined
-                }
-                dropdownItems={metadataAction}
-              >
-                <AccordionContent>
-                  <DefineMetadata bgWhite arrayName="daoLinks" isSettingPage />
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                type="action-builder"
-                name="community"
-                methodName={t('navLinks.members')}
-                alertLabel={
-                  isCommunityChanged ? t('settings.newSettings') : undefined
-                }
-                dropdownItems={communityAction}
-              >
-                <AccordionContent>
-                  <EligibilityWrapper>
-                    <SelectEligibility />
-                  </EligibilityWrapper>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                type="action-builder"
-                name="governance"
-                methodName={t('labels.review.governance')}
-                alertLabel={
-                  isGovernanceChanged ? t('settings.newSettings') : undefined
-                }
-                dropdownItems={governanceAction}
-              >
-                <AccordionContent>
-                  <ConfigureCommunity isSettingPage />
-                </AccordionContent>
-              </AccordionItem>
-
-              {isGasless && (
+  if (dataFetched)
+    return (
+      <PageWrapper
+        title={t('settings.editDaoSettings')}
+        description={t('settings.editSubtitle')}
+        secondaryBtnProps={
+          isMobile
+            ? {
+                disabled: settingsUnchanged,
+                label: t('settings.resetChanges'),
+                onClick: () => handleResetChanges(),
+              }
+            : undefined
+        }
+        customBody={
+          <Layout>
+            <Container>
+              <AccordionMultiple defaultValue="metadata" className="space-y-6">
                 <AccordionItem
                   type="action-builder"
-                  name="executionMultisigSettings"
-                  methodName={t('label.executionMultisig')}
+                  name="metadata"
+                  methodName={t('labels.review.daoMetadata')}
                   alertLabel={
-                    isGaslessChanged ? t('settings.newSettings') : undefined
+                    isMetadataChanged ? t('settings.newSettings') : undefined
                   }
-                  dropdownItems={gaslessAction}
+                  dropdownItems={metadataAction}
                 >
                   <AccordionContent>
-                    <ManageExecutionMultisig
-                      members={executionMultisigMembers}
-                      minTallyApprovals={
-                        (votingSettings as GaslessPluginVotingSettings)
-                          .minTallyApprovals
-                      }
-                      daoAddress={daoDetails.address}
+                    <DefineMetadata
+                      bgWhite
+                      arrayName="daoLinks"
+                      isSettingPage
                     />
                   </AccordionContent>
                 </AccordionItem>
-              )}
-            </AccordionMultiple>
-          </Container>
-          {/* Footer */}
-          <Footer>
-            <HStack>
-              <ButtonText
-                className="w-full md:w-max"
-                label={t('settings.reviewProposal')}
-                iconLeft={<IconGovernance />}
-                size="large"
-                disabled={settingsUnchanged || !isValid}
-                onClick={() =>
-                  navigate(
-                    generatePath(ProposeNewSettings, {
-                      network,
-                      dao:
-                        toDisplayEns(daoDetails.ensDomain) ||
-                        daoDetails.address,
-                    })
-                  )
-                }
-              />
-              <ButtonText
-                className="w-full md:w-max"
-                label={t('settings.resetChanges')}
-                mode="secondary"
-                size="large"
-                disabled={settingsUnchanged}
-                onClick={handleResetChanges}
-              />
-            </HStack>
-            <AlertInline label={t('settings.proposeSettingsInfo')} />
-          </Footer>
-        </Layout>
-      }
-    />
-  );
+
+                <AccordionItem
+                  type="action-builder"
+                  name="community"
+                  methodName={t('navLinks.members')}
+                  alertLabel={
+                    isCommunityChanged ? t('settings.newSettings') : undefined
+                  }
+                  dropdownItems={communityAction}
+                >
+                  <AccordionContent>
+                    <EligibilityWrapper>
+                      <SelectEligibility />
+                    </EligibilityWrapper>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem
+                  type="action-builder"
+                  name="governance"
+                  methodName={t('labels.review.governance')}
+                  alertLabel={
+                    isGovernanceChanged ? t('settings.newSettings') : undefined
+                  }
+                  dropdownItems={governanceAction}
+                >
+                  <AccordionContent>
+                    <ConfigureCommunity isSettingPage />
+                  </AccordionContent>
+                </AccordionItem>
+
+                {isGasless && (
+                  <AccordionItem
+                    type="action-builder"
+                    name="executionMultisigSettings"
+                    methodName={t('label.executionMultisig')}
+                    alertLabel={
+                      isGaslessChanged ? t('settings.newSettings') : undefined
+                    }
+                    dropdownItems={gaslessAction}
+                  >
+                    <AccordionContent>
+                      <ManageExecutionMultisig
+                        members={executionMultisigMembers}
+                        minTallyApprovals={
+                          (votingSettings as GaslessPluginVotingSettings)
+                            .minTallyApprovals
+                        }
+                        daoAddress={daoDetails.address}
+                      />
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+              </AccordionMultiple>
+            </Container>
+            {/* Footer */}
+            <Footer>
+              <HStack>
+                <ButtonText
+                  className="w-full md:w-max"
+                  label={t('settings.reviewProposal')}
+                  iconLeft={<IconGovernance />}
+                  size="large"
+                  disabled={settingsUnchanged || !isValid}
+                  onClick={() =>
+                    navigate(
+                      generatePath(ProposeNewSettings, {
+                        network,
+                        dao:
+                          toDisplayEns(daoDetails.ensDomain) ||
+                          daoDetails.address,
+                      })
+                    )
+                  }
+                />
+                <ButtonText
+                  className="w-full md:w-max"
+                  label={t('settings.resetChanges')}
+                  mode="secondary"
+                  size="large"
+                  disabled={settingsUnchanged}
+                  onClick={handleResetChanges}
+                />
+              </HStack>
+              <AlertInline label={t('settings.proposeSettingsInfo')} />
+            </Footer>
+          </Layout>
+        }
+      />
+    );
 };
 
 /**
