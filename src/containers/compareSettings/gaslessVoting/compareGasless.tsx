@@ -60,21 +60,26 @@ export const CompareGasless: React.FC<CompareGaslessProps> = ({
         `actions.${addActionIndex}.inputs.memberWallets`,
         `actions.${removeActionIndex}.inputs.memberWallets`,
       ]);
-      const newCommitteeMembers: string[] = daoSettings!
-        // Delete the removed wallets from the current committee
-        .executionMultisigMembers!.filter(address => {
+      let newCommitteeMembers: string[] =
+        daoSettings!.executionMultisigMembers!;
+      // Delete the removed wallets from the current committee
+      if (newRemovedWallet !== undefined) {
+        newCommitteeMembers = newCommitteeMembers.filter(address => {
           return !(newRemovedWallet as MultisigDaoMember[])
             .map(wallet => wallet.address)
             .includes(address);
-        })
+        });
+      }
+      if (newAddedWallet !== undefined) {
         // Add new wallets
-        .concat(
+        newCommitteeMembers.concat(
           (newAddedWallet as MultisigDaoMember[])
             .filter(wallet => wallet.address !== '')
             .map(wallet => {
               return wallet.address;
             })
         );
+      }
       info.committee = newCommitteeMembers;
     }
     return info;
