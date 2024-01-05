@@ -202,7 +202,7 @@ export const ManageMembers: React.FC = () => {
  * @param formActions add and remove address actions
  * @returns whether the actions are valid
  */
-export function actionsAreValid(
+function actionsAreValid(
   errors: FieldErrors,
   formActions: ManageMembersFormData['actions'],
   minApprovals: number
@@ -235,6 +235,13 @@ export function actionsAreValid(
       minimumApprovalChanged = minApprovals !== newMinimumApproval;
     }
   }
+
+  console.log(
+    'Gasles actions validation',
+    !containsEmptyField,
+    minimumApprovalChanged,
+    containsEmptyField && removedWallets > 0
+  );
 
   return (
     !containsEmptyField ||
