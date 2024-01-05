@@ -53,7 +53,7 @@ jobs:
           # cache: false
           cache-key: ''
           start: yarn dev
-          command: npx cypress cache clear; npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+          command: (npx cypress cache clear); (npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33)
           record: true
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
