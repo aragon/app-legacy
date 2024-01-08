@@ -408,6 +408,8 @@ export const Proposal: React.FC = () => {
     proposalAndClientsExist,
     proposalErc20Token,
     totalVotingWeight,
+    daoAddress,
+    proposal?.actions,
     client,
     network,
     pluginClient,

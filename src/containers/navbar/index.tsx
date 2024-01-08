@@ -87,7 +87,6 @@ const Navbar: React.FC = () => {
   }
   return (
     <MobileNav
-      isProcess={processInfo?.isProcess}
       onDaoSelect={handleOnDaoSelect}
       onWalletClick={handleWalletButtonClick}
       onFeedbackClick={handleFeedbackButtonClick}

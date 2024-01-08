@@ -15,10 +15,8 @@ import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import MobileMenu from './mobileMenu';
-import NetworkIndicator from './networkIndicator';
 
 type MobileNavProps = {
-  isProcess?: boolean;
   onDaoSelect: () => void;
   onWalletClick: () => void;
   onFeedbackClick: () => void;
@@ -30,13 +28,6 @@ const MobileNav: React.FC<MobileNavProps> = props => {
   const {isMobile} = useScreen();
   const currentDao = useReactiveVar(selectedDaoVar);
   const {isConnected, address, ensName, ensAvatarUrl} = useWallet();
-
-  if (props.isProcess)
-    return (
-      <Container>
-        <NetworkIndicator />
-      </Container>
-    );
 
   return (
     <>
@@ -81,7 +72,6 @@ const MobileNav: React.FC<MobileNavProps> = props => {
             />
           </FlexOne>
         </Menu>
-        <NetworkIndicator />
       </Container>
       <MobileMenu onFeedbackClick={props.onFeedbackClick} />
     </>
@@ -95,7 +85,7 @@ const FlexOne = styled.div.attrs({
 })``;
 
 const Container = styled.div.attrs({
-  className: 'flex flex-col fixed left-0 bottom-0 w-full z-10',
+  className: 'fixed left-0 bottom-0 w-full z-10',
 })``;
 
 const Menu = styled.nav.attrs({

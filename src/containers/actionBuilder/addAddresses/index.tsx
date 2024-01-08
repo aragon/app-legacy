@@ -18,6 +18,9 @@ import AccordionSummary from './accordionSummary';
 import {AddressRow} from './addressRow';
 import {useAlertContext} from 'context/alert';
 import {DaoMember} from 'hooks/useDaoMembers';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 export type CustomHeaderProps = {
   useCustomHeader?: boolean;
@@ -40,6 +43,8 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
   const {alert} = useAlertContext();
+  const {network} = useNetwork();
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   // form context
   const {control, trigger, setValue} = useFormContext();
@@ -171,7 +176,13 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
       verified
       type="action-builder"
       methodName={t('labels.addWallets')}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+      smartContractAddress={daoDetails?.plugins[0].instanceAddress}
+      blockExplorerLink={
+        daoDetails?.plugins[0].instanceAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+          : undefined
+      }
       methodDescription={t('labels.addWalletsDescription')}
       dropdownItems={methodActions}
       customHeader={useCustomHeader && <CustomHeader />}

@@ -13,6 +13,7 @@ import type {
   IFetchProposalsParams,
   IFetchVotingPowerParams,
   IFetchVotingSettingsParams,
+  IFetchCreatorProposalsParams,
 } from './aragon-sdk-service.api';
 import {SupportedNetworks} from 'utils/constants';
 
@@ -30,7 +31,9 @@ export enum AragonSdkQueryItem {
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
   GET_MEMBER = 'GET_MEMBER',
+  GET_CREATOR_PROPOSALS = 'GET_CREATOR_PROPOSALS',
   RELEASE_NOTES = 'RELEASE_NOTES',
+  GET_DAOS = 'GET_DAOS',
 }
 
 // Add address and network parameters to all query keys to use the most updated DAO plugin client
@@ -89,8 +92,16 @@ export const aragonSdkQueryKeys = {
     params,
   ],
   getMember: (
-    baseParams: IAragonSdkBaseParams,
+    baseParams: Omit<IAragonSdkBaseParams, 'address'>,
     params: IFetchMemberParams
   ): QueryKey => [AragonSdkQueryItem.GET_MEMBER, baseParams, params],
+  getCreatorProposals: (
+    baseParams: Omit<IAragonSdkBaseParams, 'address'>,
+    params: IFetchCreatorProposalsParams
+  ): QueryKey => [AragonSdkQueryItem.GET_CREATOR_PROPOSALS, baseParams, params],
   releaseNotes: (): QueryKey => [AragonSdkQueryItem.RELEASE_NOTES],
+  getMemberDAOs: (params: IAragonSdkBaseParams): QueryKey => [
+    AragonSdkQueryItem.GET_DAOS,
+    params,
+  ],
 };

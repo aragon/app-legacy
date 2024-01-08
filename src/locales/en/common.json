@@ -172,7 +172,7 @@
       "tokenHoldersWithTkns": "Members with ≥ {{tokenAmount}} {{tokenSymbol}} voting power or balance",
       "earlyExecution": "Early execution",
       "voteReplacement": "Vote change",
-      "multisigMinimumApprovals": "of {{count}} authorized addresses",
+      "multisigMinimumApprovals": "{{count}} of {{total}} authorized addresses",
       "existingTokens": {
         "currentHolders": "Current Holders"
       },
@@ -1698,7 +1698,9 @@
   "createDao": {
     "stepCommunityVoting": {
       "title": "Community voting parameters",
-      "desc": "Establish the conditions that determine the passage of a proposal during the community voting phase. How much support does the proposal need? How much of the community needs to participate? How long is the proposal open for voting? Learn more in {{this guide}}."
+      "desc": "Establish the conditions that determine the passage of a proposal during the community voting phase. How much support does the proposal need? How much of the community needs to participate? How long is the proposal open for voting? Learn more in {{link}}.",
+      "descLinkLabel": "this guide",
+      "descLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds"
     },
     "executionMultisig": {
       "title": "Define your execution multisig",

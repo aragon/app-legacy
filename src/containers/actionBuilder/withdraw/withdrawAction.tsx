@@ -1,6 +1,6 @@
 import {ListItemAction} from '@aragon/ods-old';
 import React from 'react';
-import {useFormContext} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {AccordionMethod} from 'components/accordionMethod';
@@ -9,6 +9,8 @@ import {useActionsContext} from 'context/actions';
 import {ActionIndex} from 'utils/types';
 import {FormItem} from '../addAddresses';
 import {useAlertContext} from 'context/alert';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 type WithdrawActionProps = ActionIndex & {allowRemove?: boolean};
 
@@ -18,8 +20,16 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
 }) => {
   const {t} = useTranslation();
   const {removeAction, duplicateAction} = useActionsContext();
-  const {setValue, clearErrors, resetField} = useFormContext();
+  const {setValue, clearErrors, resetField, control} = useFormContext();
   const {alert} = useAlertContext();
+  const {network} = useNetwork();
+  const [tokenAddress, tokenSymbol] = useWatch({
+    name: [
+      `actions.${actionIndex}.tokenAddress`,
+      `actions.${actionIndex}.tokenSymbol`,
+    ],
+    control,
+  });
 
   const resetWithdrawFields = () => {
     clearErrors(`actions.${actionIndex}`);
@@ -75,7 +85,13 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
       type="action-builder"
       methodName={t('TransferModal.item2Title')}
       dropdownItems={methodActions}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName={tokenSymbol ? tokenSymbol : undefined}
+      smartContractAddress={tokenAddress}
+      blockExplorerLink={
+        tokenAddress
+          ? `${CHAIN_METADATA[network].explorer}token/${tokenAddress}`
+          : undefined
+      }
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
     >
       <FormItem className="space-y-6 rounded-b-xl py-6">
