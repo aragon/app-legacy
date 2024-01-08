@@ -207,8 +207,7 @@ const useCreateGaslessProposal = ({
       census3census.size,
       BigInt(census3census.weight)
     );
-    // return await census3.createTokenCensus(censusToken.id);
-  }, [census3, chainId, daoToken]);
+  }, [census3, chainId, createToken, daoToken]);
 
   const createProposal = useCallback(
     async (
