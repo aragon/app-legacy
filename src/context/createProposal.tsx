@@ -193,7 +193,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
     if (!pluginClient || !client || !daoDetails?.address)
       return Promise.resolve([] as DaoAction[]);
 
-    for await (const action of getNonEmptyActions(actionsFromForm)) {
+    for await (const action of getNonEmptyActions(
+      actionsFromForm,
+      isMultisigVotingSettings(votingSettings) ? votingSettings : undefined,
+      isGaslessVotingSettings(votingSettings) ? votingSettings : undefined
+    )) {
       switch (action.name) {
         case 'withdraw_assets': {
           actions.push(
