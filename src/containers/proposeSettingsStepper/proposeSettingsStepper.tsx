@@ -23,6 +23,7 @@ import {useDaoToken} from '../../hooks/useDaoToken';
 import {useTokenSupply} from '../../hooks/useTokenSupply';
 import {
   Action,
+  ActionsTypes,
   ActionUpdateGaslessSettings,
   ActionUpdateMetadata,
   ActionUpdateMultisigPluginSettings,
@@ -170,9 +171,24 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       },
     };
 
+    /**
+     * Used to delete duplicate actions if you go back and forth between steps, or when editing settings again
+     * @param actions
+     * @param name
+     */
+    const actionsReduce = (actions: Action[], name: ActionsTypes) => {
+      return actions.filter(action => action.name !== name) as Action[];
+    };
+
     let settingsAction: Action;
+    let existingActions: Action[] = [];
 
     if (isGaslessVotingSettings(pluginSettings)) {
+      // Prevent add actions again if you go back and forth between steps
+      existingActions = actionsReduce(
+        actions,
+        'modify_gasless_voting_settings'
+      );
       const gaslessSettingsAction: ActionUpdateGaslessSettings = {
         name: 'modify_gasless_voting_settings',
         inputs: {
@@ -211,6 +227,11 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       };
       settingsAction = gaslessSettingsAction;
     } else if (isTokenVotingSettings(pluginSettings)) {
+      // Prevent add actions again if you go back and forth between steps
+      existingActions = actionsReduce(
+        existingActions,
+        'modify_token_voting_settings'
+      );
       const voteSettingsAction: ActionUpdatePluginSettings = {
         name: 'modify_token_voting_settings',
         inputs: {
@@ -240,6 +261,11 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       };
       settingsAction = voteSettingsAction;
     } else {
+      // Prevent add actions again if you go back and forth between steps
+      existingActions = actionsReduce(
+        existingActions,
+        'modify_multisig_voting_settings'
+      );
       const multisigSettingsAction: ActionUpdateMultisigPluginSettings = {
         name: 'modify_multisig_voting_settings',
         inputs: {
@@ -251,7 +277,7 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
     }
     setValue(
       'actions',
-      filterActions([metadataAction, settingsAction, ...actions])
+      filterActions([metadataAction, settingsAction, ...existingActions])
     );
   }, [
     getValues,
