@@ -120,6 +120,7 @@ const useCreateGaslessProposal = ({
         startDate: electionData.startDate,
         census: electionData.census,
         maxCensusSize: electionData.census.size ?? undefined,
+        electionType: {interruptible: false},
       });
       election.addQuestion(
         electionData.question,
