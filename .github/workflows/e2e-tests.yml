@@ -81,7 +81,7 @@ jobs:
           VITE_ALCHEMY_KEY_GOERLI: ${{secrets.VITE_ALCHEMY_KEY_GOERLI}}
           VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
-          PRIVATE_KEY: '02d735f977cee4e18a3108121e5c05b360003c92ba285aba92b4b66f274ede5a'
+          PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
 
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
