@@ -275,9 +275,11 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       };
       settingsAction = multisigSettingsAction;
     }
+    // Ensure that the add/remove gasless actions are before edit settings actions because it can cause errors when
+    // setting de minTallyApproval
     setValue(
       'actions',
-      filterActions([metadataAction, settingsAction, ...existingActions])
+      filterActions([...existingActions, metadataAction, settingsAction])
     );
   }, [
     getValues,
