@@ -15,6 +15,7 @@ import {
   TokenCensus,
   UnpublishedElection,
   AccountData,
+  ErrAPI,
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
 import {useClient} from '@vocdoni/react-providers';
@@ -23,7 +24,7 @@ import {
   StepStatus,
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
-import {useCensus3Client} from '../hooks/useCensus3';
+import {useCensus3Client, useCensus3CreateToken} from '../hooks/useCensus3';
 
 export enum GaslessProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
@@ -98,6 +99,7 @@ const useCreateGaslessProposal = ({
 
   const {client: vocdoniClient} = useClient();
   const census3 = useCensus3Client();
+  const {createToken} = useCensus3CreateToken({chainId});
   const [account, setAccount] = useState<AccountData | undefined>(undefined);
 
   // todo(kon): check if this is needed somewhere else
@@ -165,9 +167,22 @@ const useCreateGaslessProposal = ({
       const maxAttempts = 6;
 
       while (attempts < maxAttempts) {
-        const censusToken = await census3.getToken(daoToken!.address, chainId);
-        if (censusToken.status.synced) {
-          return censusToken; // early exit if the object has sync set to true
+        try {
+          const censusToken = await census3.getToken(
+            daoToken!.address,
+            chainId
+          );
+          if (censusToken.status.synced) {
+            return censusToken; // early exit if the object has sync set to true
+          }
+        } catch (e) {
+          if (
+            e instanceof ErrAPI &&
+            e.message &&
+            e.message.includes('no rows in result set')
+          ) {
+            await createToken(daoToken!.address);
+          }
         }
         attempts++;
         if (attempts < maxAttempts) {
