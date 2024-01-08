@@ -56,6 +56,7 @@ jobs:
         run: |
           yarn dev &
           sleep 10 # Wait for the server to start; adjust the time as needed
+          xvfb-run --server-args="-screen 0, 1920x1080x24"
           npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
         # uses: cypress-io/github-action@v6
         # with:
