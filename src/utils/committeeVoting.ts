@@ -1,7 +1,11 @@
 import {TFunction} from 'i18next';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {
+  GaslessPluginVotingSettings,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 import {Locale, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
+import {ActionUpdateGaslessSettings} from './types';
 
 export function getCommitteVoteButtonLabel(
   notBegan: boolean,
@@ -63,4 +67,25 @@ export function getApproveStatusLabel(
     label = t('votingTerminal.status.defeated');
   }
   return label;
+}
+
+/**
+ * Check if the modify gasless settings action contains different values than default settings
+ * @param inputs the action inputs to be set
+ * @param settings the current gasless settings
+ */
+export function isGaslessActionChangingSettings(
+  inputs: ActionUpdateGaslessSettings['inputs'],
+  settings: GaslessPluginVotingSettings
+) {
+  const isGovernanceChanged =
+    inputs.minDuration !== settings.minDuration ||
+    inputs.minParticipation !== settings.minParticipation ||
+    inputs.minProposerVotingPower !== settings.minProposerVotingPower ||
+    inputs.supportThreshold !== settings.supportThreshold;
+  const isGaslessSpecificChanged =
+    inputs.minTallyApprovals !== settings.minTallyApprovals ||
+    inputs.minTallyDuration !== settings.minTallyDuration;
+
+  return isGaslessSpecificChanged || isGovernanceChanged;
 }

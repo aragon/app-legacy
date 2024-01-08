@@ -69,6 +69,7 @@ import {
 import {ethers} from 'ethers';
 import {SupportedNetworks} from './constants';
 import {FieldValues, UseFormGetValues} from 'react-hook-form';
+import {isGaslessActionChangingSettings} from './committeeVoting';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -921,7 +922,7 @@ export function getProposalExecutionStatus(
 }
 
 /**
- * Filter out all empty add/remove address and minimul approval actions
+ * Filter out all empty add/remove address and minimum approval actions
  * @param actions supported actions
  * @returns list of non empty address
  */
@@ -934,8 +935,10 @@ export function getNonEmptyActions(
     if (action == null) return [];
 
     if (action.name === 'modify_gasless_voting_settings') {
-      return action.inputs.minTallyApprovals !==
-        gaslessVoteSettings?.minTallyApprovals
+      return isGaslessActionChangingSettings(
+        action.inputs,
+        gaslessVoteSettings!
+      )
         ? action
         : [];
     } else if (action.name === 'modify_multisig_voting_settings') {
