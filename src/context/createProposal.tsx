@@ -178,6 +178,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     createProposal,
   } = useCreateGaslessProposal({
     daoToken,
+    pluginAddress,
     chainId: CHAIN_METADATA[network].id,
   });
 

@@ -15,7 +15,7 @@ import {
   TokenCensus,
   UnpublishedElection,
   AccountData,
-  ErrAPI,
+  ErrNotFoundToken,
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
 import {useClient} from '@vocdoni/react-providers';
@@ -37,6 +37,7 @@ export type GaslessProposalSteps = StepsMap<GaslessProposalStepId>;
 
 type ICreateGaslessProposal = {
   daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
+  pluginAddress: string;
   chainId: number;
 };
 
@@ -78,6 +79,7 @@ const proposalToElection = ({
 const useCreateGaslessProposal = ({
   daoToken,
   chainId,
+  pluginAddress,
 }: ICreateGaslessProposal) => {
   const {steps, updateStepStatus, doStep, globalState, resetStates} =
     useFunctionStepper({
@@ -176,12 +178,8 @@ const useCreateGaslessProposal = ({
             return censusToken; // early exit if the object has sync set to true
           }
         } catch (e) {
-          if (
-            e instanceof ErrAPI &&
-            e.message &&
-            e.message.includes('no rows in result set')
-          ) {
-            await createToken(daoToken!.address);
+          if (e instanceof ErrNotFoundToken) {
+            await createToken(pluginAddress);
           }
         }
         attempts++;
@@ -207,7 +205,7 @@ const useCreateGaslessProposal = ({
       census3census.size,
       BigInt(census3census.weight)
     );
-  }, [census3, chainId, createToken, daoToken]);
+  }, [census3, chainId, createToken, daoToken, pluginAddress]);
 
   const createProposal = useCallback(
     async (
