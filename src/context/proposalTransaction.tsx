@@ -62,7 +62,9 @@ type ProposalTransactionContextType = {
   handlePrepareApproval: (params: ApproveMultisigProposalParams) => void;
   handlePrepareExecution: () => void;
   handleGaslessVoting: (params: SubmitVoteParams) => void;
-  handleExecutionMultisigApprove: (params: SubmitVoteParams) => void;
+  handleExecutionMultisigApprove: (
+    params: ApproveMultisigProposalParams
+  ) => void;
   isLoading: boolean;
   voteOrApprovalSubmitted: boolean;
   executionSubmitted: boolean;
@@ -185,12 +187,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   );
 
   const handleExecutionMultisigApprove = useCallback(
-    (params: SubmitVoteParams) => {
-      setVoteParams({proposalId, vote: params.vote});
+    (params: ApproveMultisigProposalParams) => {
+      setApprovalParams(params);
       setShowCommitteeApprovalModal(true);
       setVoteOrApprovalProcessState(TransactionState.WAITING);
     },
-    [proposalId]
+    []
   );
 
   const handlePrepareExecution = useCallback(() => {
@@ -373,7 +375,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   );
 
   const onGaslessVoteOrApprovalSubmitted = useCallback(
-    async (proposalId: string, vote: VoteValues, isApproval?: boolean) => {
+    async (proposalId: string, vote?: VoteValues) => {
       setVoteParams(undefined);
       setVoteOrApprovalSubmitted(true);
       setVoteOrApprovalProcessState(TransactionState.SUCCESS);
@@ -382,12 +384,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       let voteToPersist;
       if (pluginType === GaselessPluginName) {
-        if (isApproval) {
-          voteToPersist = {
-            type: 'approval',
-            vote: address.toLowerCase(),
-          } as GaslessVoteOrApprovalVote;
-        } else if (voteTokenAddress != null) {
+        if (vote && voteTokenAddress != null) {
           const weight = await fetchVotingPower({
             tokenAddress: voteTokenAddress,
             address,
@@ -399,6 +396,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
               vote,
               weight: weight.toBigInt(),
             },
+          } as GaslessVoteOrApprovalVote;
+        } else {
+          voteToPersist = {
+            type: 'approval',
+            vote: address.toLowerCase(),
           } as GaslessVoteOrApprovalVote;
         }
       }
@@ -477,8 +479,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
     if (pluginType === 'multisig.plugin.dao.eth' && approvalParams) {
       handleMultisigApproval(approvalParams);
-    } else if (pluginType === GaselessPluginName && voteParams) {
-      handleExecutionMultisigApproval(voteParams);
+    } else if (pluginType === GaselessPluginName && approvalParams) {
+      handleExecutionMultisigApproval(approvalParams);
     } else if (pluginType === 'token-voting.plugin.dao.eth' && voteParams) {
       handleTokenVotingVote(voteParams);
     }
@@ -520,7 +522,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // For gasless voting
   const handleExecutionMultisigApproval = useCallback(
-    async (params: VoteProposalParams) => {
+    async (params: ApproveMultisigProposalParams) => {
       if (!isGaslessVotingPluginClient) return;
 
       const approveSteps = await pluginClient?.methods.approve(
@@ -533,21 +535,13 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       setVoteOrApprovalSubmitted(false);
 
-      // tx hash is necessary for caching when approving and executing
-      // at the same time
-      // let txHash = '';
       try {
         for await (const step of approveSteps) {
           switch (step.key) {
             case ApproveTallyStep.EXECUTING:
-              // txHash = step.txHash;
               break;
             case ApproveTallyStep.DONE:
-              onGaslessVoteOrApprovalSubmitted(
-                params.proposalId,
-                params.vote,
-                true
-              );
+              onGaslessVoteOrApprovalSubmitted(params.proposalId);
               break;
           }
         }

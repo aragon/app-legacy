@@ -8,13 +8,16 @@ export function getCommitteVoteButtonLabel(
   voted: boolean,
   approved: boolean,
   isApprovalPeriod: boolean,
+  executableWithNextApproval: boolean,
   t: TFunction
 ) {
   if (approved || voted) {
     return t('votingTerminal.status.approved');
   }
   if (notBegan || isApprovalPeriod) {
-    return t('votingTerminal.approve');
+    return executableWithNextApproval
+      ? t('votingTerminal.approveOnly')
+      : t('votingTerminal.approve');
   }
   return t('votingTerminal.concluded');
 }
