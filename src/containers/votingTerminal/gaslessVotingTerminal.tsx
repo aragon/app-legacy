@@ -72,7 +72,8 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   const executableWithNextApproval =
     proposal.status === ProposalStatus.ACTIVE &&
     proposal.actions.length > 0 &&
-    proposal.approvers.length + 1 >= proposal.settings.minTallyApprovals;
+    proposal.settings.minTallyApprovals > 1 &&
+    proposal.settings.minTallyApprovals - 1 === proposal.approvers.length;
 
   const mappedProps = useMemo(() => {
     if (!proposal) return;
