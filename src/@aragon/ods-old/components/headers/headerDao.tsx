@@ -212,13 +212,13 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           </NetworkDetails>
         </NetworkDetailsContainer>
         <ActionWrapper>
-          <LinksWrapper>
-            {links
-              ?.slice(0, DEFAULT_LINKS_SHOWN)
-              ?.map(({label, href}, index: number) => (
+          {links?.length <= DEFAULT_LINKS_SHOWN && (
+            <LinksWrapper>
+              {links?.map(({label, href}, index) => (
                 <Link {...{label, href}} external key={index} />
               ))}
-          </LinksWrapper>
+            </LinksWrapper>
+          )}
           <ActionContainer>
             {showDropdown && (
               <Dropdown
