@@ -204,8 +204,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *                  Estimations                  *
    *************************************************/
   const estimateVoteOrApprovalFees = useCallback(async () => {
-    if (isGaslessVotingPluginClient && voteParams) {
-      return pluginClient?.estimation.approve(voteParams.proposalId);
+    if (isGaslessVotingPluginClient && approvalParams) {
+      return pluginClient?.estimation.approveTally(
+        approvalParams.proposalId,
+        approvalParams.tryExecution
+      );
     }
 
     if (isTokenVotingPluginClient && voteParams && voteTokenAddress) {
@@ -525,8 +528,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     async (params: ApproveMultisigProposalParams) => {
       if (!isGaslessVotingPluginClient) return;
 
-      const approveSteps = await pluginClient?.methods.approve(
-        params.proposalId
+      const approveSteps = await pluginClient?.methods.approveTally(
+        params.proposalId,
+        params.tryExecution
       );
 
       if (!approveSteps) {
