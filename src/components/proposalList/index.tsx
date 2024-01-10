@@ -213,8 +213,8 @@ export function proposal2CardProps(
         proposal.startDate,
         proposal.tallyEndDate
       ),
-      title: proposal.vochain.metadata.title.default,
-      description: proposal.vochain.metadata.questions[0].title.default,
+      title: proposal.metadata.title,
+      description: proposal.metadata.description,
     };
     return {...props, ...specificProps};
   } else if (isErc20VotingProposal(proposal)) {

@@ -119,7 +119,7 @@ export function isGaslessProposal(
   proposal: SupportedProposals | undefined | null
 ): proposal is GaslessVotingProposal {
   if (!proposal) return false;
-  return 'vochainProposalId' in proposal;
+  return 'settings' in proposal && 'minTallyApprovals' in proposal.settings;
 }
 
 /**
