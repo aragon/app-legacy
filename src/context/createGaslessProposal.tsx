@@ -16,6 +16,7 @@ import {
   UnpublishedElection,
   AccountData,
   ErrNotFoundToken,
+  ErrAPI,
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
 import {useClient} from '@vocdoni/react-providers';
@@ -104,12 +105,31 @@ const useCreateGaslessProposal = ({
   const {createToken} = useCensus3CreateToken({chainId});
   const [account, setAccount] = useState<AccountData | undefined>(undefined);
 
-  // todo(kon): check if this is needed somewhere else
   const collectFaucet = useCallback(
     async (cost: number) => {
       let balance = (await vocdoniClient.fetchAccountInfo()).balance;
       while (cost > balance) {
-        balance = (await vocdoniClient.collectFaucetTokens()).balance;
+        try {
+          balance = (await vocdoniClient.collectFaucetTokens()).balance;
+        } catch (e) {
+          // Wallet already funded
+          if (
+            e instanceof ErrAPI &&
+            e.message &&
+            e.message.includes('Error: 402')
+          ) {
+            let dateStr = '';
+            const dates = findDatesInString(e.message);
+            if (dates !== null && dates.length > 0) {
+              dateStr = `(until ${dates[0].toLocaleDateString()})`;
+            }
+            throw Error(
+              `This wallet has reached the maximum allocation of Vocdoni tokens for this period ${dateStr}. ` +
+                'For additional tokens, please visit https://onvote.app/faucet and retry after acquiring more.'
+            );
+          }
+          throw e;
+        }
       }
     },
     [vocdoniClient]
@@ -273,5 +293,32 @@ const useCreateGaslessProposal = ({
 
   return {steps, globalState, createProposal};
 };
+
+/**
+ * Function used to find the date on a string.
+ * @param inputString
+ */
+function findDatesInString(inputString: string): Date[] | null {
+  const dateRegex = /\b(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [+-]\d{4} UTC)\b/g;
+  const matches = inputString.match(dateRegex);
+  const validDates: Date[] = [];
+
+  if (matches) {
+    matches.forEach(match => {
+      try {
+        const transformedDate = match.replace(' +0000 UTC', 'Z');
+        const date = new Date(transformedDate);
+        // Check if the date is valid
+        if (!isNaN(date.getTime())) {
+          validDates.push(date);
+        }
+      } catch (e) {
+        return null;
+      }
+    });
+    return validDates.length > 0 ? validDates : null;
+  }
+  return null;
+}
 
 export {useCreateGaslessProposal};
