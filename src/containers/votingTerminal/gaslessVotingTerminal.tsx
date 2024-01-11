@@ -16,10 +16,7 @@ import {
   ExecutionWidgetProps,
 } from '../../components/executionWidget';
 import {getProposalExecutionStatus} from '../../utils/proposals';
-import {
-  PENDING_PROPOSAL_STATUS_INTERVAL,
-  // PROPOSAL_STATUS_INTERVAL,
-} from '../../pages/proposal';
+import {PENDING_PROPOSAL_STATUS_INTERVAL} from '../../pages/proposal';
 import {
   getApproveStatusLabel,
   getCommitteVoteButtonLabel,
@@ -60,7 +57,6 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   const {t, i18n} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const [approvalStatus, setApprovalStatus] = useState('');
-  // const [intervalInMills, setIntervalInMills] = useState(0);
 
   const {address, isOnWrongNetwork} = useWallet();
 

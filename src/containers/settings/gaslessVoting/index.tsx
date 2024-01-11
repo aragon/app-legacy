@@ -94,7 +94,6 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   );
 };
 
-// todo(kon): committee view is not designed yet
 const CustomCommitteeAddressesModal = ({
   wallets,
 }: {

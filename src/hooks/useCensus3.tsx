@@ -43,7 +43,7 @@ export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
       // Check if the census is already sync
       try {
         const token = await client?.methods.getToken(pluginAddress);
-        if (!token) throw 'Cannot retrieve the token';
+        if (!token) throw Error('Cannot retrieve the token');
         await census3.createToken(token.address, 'erc20', chainId, undefined, [
           'aragon',
           'dao',

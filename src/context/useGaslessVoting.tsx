@@ -65,7 +65,7 @@ const useGaslessVoting = () => {
       const vocVote = new Vote([vote.vote - 1]); // See values on the enum, using vocdoni starts on 0
       await vocdoniClient.setElectionId(electionId);
       try {
-        return await vocdoniClient.submitVote(vocVote);
+        return vocdoniClient.submitVote(vocVote);
       } catch (e) {
         if (
           e instanceof ErrAPI &&
@@ -93,7 +93,7 @@ const useGaslessVoting = () => {
       const electionId = await doStep(
         GaslessVotingStepId.CREATE_VOTE_ID,
         async () => {
-          const electionId = getElectionId(vote.proposalId);
+          const electionId = await getElectionId(vote.proposalId);
           if (!electionId) {
             throw Error(
               'Proposal id has not any associated vocdoni electionId'
@@ -137,7 +137,6 @@ export const useGaslessHasAlreadyVote = ({
       }
       if (!signer) return;
       setHasAlreadyVote(
-        // !!(await client.hasAlreadyVoted(p!.vochainProposalId!))
         !!(await client.hasAlreadyVoted({
           wallet: signer,
           electionId: p!.vochainProposalId!,
