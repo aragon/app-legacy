@@ -340,12 +340,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
           if (
             translatedNetwork !== 'unsupported' &&
             SupportedNetworksArray.includes(translatedNetwork) &&
-            daoDetails?.address &&
+            daoDetails.address &&
             versions
           ) {
             actions.push(
               Promise.resolve(
-                client.encoding.daoUpdateAction(daoDetails?.address, {
+                client.encoding.daoUpdateAction(daoDetails.address, {
                   previousVersion: versions as [number, number, number],
                   daoFactoryAddress:
                     LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
@@ -361,7 +361,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         case 'plugin_update': {
           const pluginUpdateActions =
             client.encoding.applyUpdateAndPermissionsActionBlock(
-              daoDetails?.address as string,
+              daoDetails.address as string,
               {
                 ...action.inputs,
               }
@@ -384,10 +384,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
                 preparedAction.inputs.avatar as unknown as Blob
               );
 
-              const logoCID = await client?.ipfs.add(
+              const logoCID = await client.ipfs.add(
                 new Uint8Array(daoLogoBuffer)
               );
-              await client?.ipfs.pin(logoCID!);
+              await client.ipfs.pin(logoCID!);
               preparedAction.inputs.avatar = `ipfs://${logoCID}`;
             } catch (e) {
               preparedAction.inputs.avatar = undefined;
@@ -401,7 +401,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
             actions.push(
               client.encoding.updateDaoMetadataAction(
-                daoDetails!.address,
+                daoDetails.address,
                 ipfsUri
               )
             );

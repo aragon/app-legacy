@@ -330,7 +330,7 @@ export const Proposal: React.FC = () => {
           return decodePluginSettingsToAction(
             action.data,
             tokenVotingClient,
-            totalVotingWeight as bigint,
+            totalVotingWeight,
             proposalErc20Token
           );
         case 'updateMultisigSettings':
@@ -343,7 +343,7 @@ export const Proposal: React.FC = () => {
           return decodeGaslessSettingsToAction(
             action.data,
             gaslessVotingClient,
-            (proposal as GaslessVotingProposal).totalVotingWeight as bigint,
+            (proposal as GaslessVotingProposal).totalVotingWeight,
             proposalErc20Token
           );
         case 'grant':

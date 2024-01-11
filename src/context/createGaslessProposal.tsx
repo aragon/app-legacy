@@ -168,7 +168,6 @@ const useCreateGaslessProposal = ({
     [collectFaucet, vocdoniClient]
   );
 
-  // todo(kon): this is not a callback
   const checkAccountCreation = useCallback(async () => {
     // Check if the account is already created, if not, create it
     let info;
