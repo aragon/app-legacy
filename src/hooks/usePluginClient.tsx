@@ -3,7 +3,6 @@ import {
   GaslessVotingClient,
   GaslessVotingContext,
 } from '@vocdoni/gasless-voting';
-import {EnvOptions} from '@vocdoni/sdk';
 import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
