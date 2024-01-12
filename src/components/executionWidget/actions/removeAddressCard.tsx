@@ -10,12 +10,14 @@ import {useProviders} from 'context/providers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address} from 'utils/library';
 import {ActionRemoveAddress} from 'utils/types';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 export const RemoveAddressCard: React.FC<{
   action: ActionRemoveAddress;
 }> = ({action: {inputs}}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {api: provider} = useProviders();
 
   const [addresses, setAddresses] = useState<Web3Address[]>([]);
@@ -60,10 +62,16 @@ export const RemoveAddressCard: React.FC<{
    *************************************************/
   return (
     <AccordionMethod
+      verified
       type="execution-widget"
       methodName={t('labels.removeWallets')}
-      smartContractName={t('labels.aragonOSx')}
-      verified
+      smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+      smartContractAddress={daoDetails?.plugins[0].instanceAddress}
+      blockExplorerLink={
+        daoDetails?.plugins[0].instanceAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+          : undefined
+      }
       methodDescription={t('labels.removeWalletsDescription')}
     >
       <Container>

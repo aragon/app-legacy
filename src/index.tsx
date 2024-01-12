@@ -47,6 +47,7 @@ const chains = [
   arbitrumGoerli,
   sepolia,
 ];
+/*
 const ledgerChains = [
   goerli,
   mainnet,
@@ -56,6 +57,7 @@ const ledgerChains = [
   arbitrumGoerli,
   sepolia,
 ];
+*/
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),

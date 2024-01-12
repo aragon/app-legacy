@@ -64,9 +64,9 @@ const Committee = () => {
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
             <Dd>
-              {committeeMinimumApproval}&nbsp;
               {t('labels.review.multisigMinimumApprovals', {
-                count: committee.length,
+                count: committeeMinimumApproval,
+                total: committee.length,
               })}
             </Dd>
           </Dl>

@@ -6,11 +6,16 @@ import {AccordionMethod} from 'components/accordionMethod';
 import {ActionCardDlContainer, Dd, Dl, Dt} from 'components/descriptionList';
 import {ActionUpdateMetadata} from 'utils/types';
 import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 
 export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
   action: {inputs},
 }) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   const displayedLinks = inputs.links.filter(
     l => l.url !== '' && l.name !== ''
@@ -22,7 +27,13 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.updateMetadataAction')}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName={'DAO'}
+      smartContractAddress={daoDetails?.address}
+      blockExplorerLink={
+        daoDetails?.address
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.address}`
+          : undefined
+      }
       methodDescription={t('labels.updateMetadataActionDescription')}
       verified
     >

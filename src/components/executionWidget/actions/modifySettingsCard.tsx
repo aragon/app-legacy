@@ -8,11 +8,16 @@ import {getDHMFromSeconds} from 'utils/date';
 import {getErc20MinParticipation} from 'utils/proposals';
 import {ActionUpdatePluginSettings} from 'utils/types';
 import {formatUnits} from 'ethers/lib/utils';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 
 export const ModifyMvSettingsCard: React.FC<{
   action: ActionUpdatePluginSettings;
 }> = ({action: {inputs}}) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {days, hours, minutes} = getDHMFromSeconds(inputs.minDuration);
 
   const minParticipation = useMemo(
@@ -45,7 +50,13 @@ export const ModifyMvSettingsCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.updateGovernanceAction')}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName={`Token Voting v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+      smartContractAddress={daoDetails?.plugins[0].instanceAddress}
+      blockExplorerLink={
+        daoDetails?.plugins[0].instanceAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+          : undefined
+      }
       methodDescription={t('labels.updateGovernanceActionDescription')}
       verified
     >

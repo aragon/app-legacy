@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {generatePath, Link, useParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IconChevronRight} from '@aragon/ods-old';
+import {ButtonText, IconChevronDown, IconChevronRight} from '@aragon/ods-old';
 
 import {useNetwork} from 'context/network';
 import {AllTokens, AllTransfers} from 'utils/paths';
@@ -16,7 +16,7 @@ export type SectionWrapperProps = SectionHeader & {
   showButton?: boolean;
 };
 
-const SectionHeader = ({title}: SectionHeader) => (
+export const SectionHeader = ({title}: SectionHeader) => (
   <HeaderContainer>
     <Title>{title}</Title>
   </HeaderContainer>
@@ -46,6 +46,34 @@ export const TokenSectionWrapper = ({title, children}: SectionWrapperProps) => {
           iconRight={<IconChevronRight />}
         />
       </Link>
+    </>
+  );
+};
+
+/**
+ * Section wrapper for DAOs overview. Consists of a header with a title and a
+ * button, as well as a footer with a button loads 3 more DAOs
+ *
+ * NOTE: The wrapper imposes NO SPACING. It's entirely up to the children to
+ * define this.
+ */
+export const DaoListSectionWrapper = ({
+  title,
+  children,
+}: SectionWrapperProps) => {
+  const {t} = useTranslation();
+
+  return (
+    <>
+      <SectionHeader title={title} />
+      <div className="mt-4 space-y-3">
+        {children}
+        <ButtonText
+          mode="secondary"
+          label={t('members.profile.labelViewMore')}
+          iconRight={<IconChevronDown />}
+        />
+      </div>
     </>
   );
 };

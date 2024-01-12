@@ -48,7 +48,13 @@ export const WithdrawCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('TransferModal.item2Title')}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName={action.tokenSymbol ? action.tokenSymbol : undefined}
+      smartContractAddress={action.tokenAddress}
+      blockExplorerLink={
+        action.tokenAddress
+          ? `${CHAIN_METADATA[network].explorer}token/${action.tokenAddress}`
+          : undefined
+      }
       verified
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
     >

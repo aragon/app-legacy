@@ -10,6 +10,7 @@ import {useProviders} from 'context/providers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address} from 'utils/library';
 import {ActionAddAddress} from 'utils/types';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 export const AddAddressCard: React.FC<{
   action: ActionAddAddress;
@@ -17,6 +18,7 @@ export const AddAddressCard: React.FC<{
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {api: provider} = useProviders();
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   const [addresses, setAddresses] = useState<Web3Address[]>([]);
 
@@ -61,7 +63,13 @@ export const AddAddressCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.addWallets')}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+      smartContractAddress={daoDetails?.plugins[0].instanceAddress}
+      blockExplorerLink={
+        daoDetails?.plugins[0].instanceAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+          : undefined
+      }
       verified
       methodDescription={t('labels.addWalletsDescription')}
     >

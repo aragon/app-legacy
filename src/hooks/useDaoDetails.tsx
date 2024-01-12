@@ -59,6 +59,15 @@ async function fetchDaoDetails(
       daoDetails.metadata.avatar = avatar;
     }
 
+  daoDetails?.plugins.sort(a => {
+    if (
+      a.id === 'token-voting.plugin.dao.eth' ||
+      a.id === 'multisig.plugin.dao.eth'
+    )
+      return -1;
+    return 0;
+  });
+
   return daoDetails;
 }
 
