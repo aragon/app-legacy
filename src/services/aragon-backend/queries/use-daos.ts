@@ -1,5 +1,5 @@
 import request, {gql} from 'graphql-request';
-import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+import {UseInfiniteQueryOptions, useInfiniteQuery} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchDaosParams} from '../aragon-backend-service.api';
 import {IPaginatedResponse} from '../domain/paginated-response';
@@ -50,20 +50,35 @@ const daosQueryDocument = gql`
 const fetchDaos = async (
   params: IFetchDaosParams
 ): Promise<IPaginatedResponse<IDao>> => {
-  return request(
+  const {dao} = await request<{dao: IPaginatedResponse<IDao>}>(
     `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     daosQueryDocument,
     params
   );
+
+  return dao;
 };
 
 export const useDaos = (
   params: IFetchDaosParams,
-  options: UseQueryOptions<IPaginatedResponse<IDao>> = {}
+  options: UseInfiniteQueryOptions<IPaginatedResponse<IDao>> = {}
 ) => {
-  return useQuery(
+  return useInfiniteQuery(
     aragonBackendQueryKeys.daos(params),
     () => fetchDaos(params),
-    options
+    {
+      ...options,
+      getNextPageParam: (lastPage: IPaginatedResponse<IDao>) => {
+        const skip = params.skip ?? 0;
+        const take = params.take ?? 20;
+        const hasNextPage = skip < lastPage.total;
+
+        if (!hasNextPage) {
+          return undefined;
+        }
+
+        return {...params, skip: skip + take};
+      },
+    }
   );
 };
