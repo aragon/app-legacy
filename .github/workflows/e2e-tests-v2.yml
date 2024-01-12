@@ -22,7 +22,7 @@ jobs:
     #   setup-env-vars:
     #     runs-on: ubuntu-latest
     #     outputs:
-    # environment: ${{ steps.envtest.outputs.environment }}${{ steps.envdev.outputs.environment }}
+    #       environment: ${{ steps.envtest.outputs.environment }}${{ steps.envdev.outputs.environment }}
 
     steps:
       - name: Set environment to TEST
@@ -45,9 +45,9 @@ jobs:
 
   build-and-deploy:
     runs-on: ubuntu-latest
-    needs: [setup-env-vars]
-    if: needs.setup-env-vars.outputs.environment != '' && needs.setup-env-vars.outputs.environment != 'production'
-    environment: ${{ needs.setup-env-vars.outputs.environment }}
+    # needs: [setup-env-vars]
+    # if: needs.setup-env-vars.outputs.environment != '' && needs.setup-env-vars.outputs.environment != 'production'
+    # environment: ${{ needs.setup-env-vars.outputs.environment }}
     outputs:
       BRANCH_NAME: ${{ steps.myvars.outputs.BRANCH_NAME }}
       GIT_HASH_SHORT: ${{ steps.myvars.outputs.GIT_HASH_SHORT }}
