@@ -107,7 +107,7 @@ const useCreateGaslessProposal = ({
 
   const collectFaucet = useCallback(
     async (cost: number) => {
-      let balance = (await vocdoniClient.fetchAccountInfo()).balance;
+      let balance = (await vocdoniClient.fetchAccount()).balance;
       while (cost > balance) {
         try {
           balance = (await vocdoniClient.collectFaucetTokens()).balance;
