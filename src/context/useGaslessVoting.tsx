@@ -4,7 +4,7 @@ import {
 } from '@vocdoni/react-providers';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {VoteProposalParams} from '@aragon/sdk-client';
-import {ErrAPI, Vote} from '@vocdoni/sdk';
+import {ErrElectionFinished, Vote} from '@vocdoni/sdk';
 import {
   StepsMap,
   StepStatus,
@@ -67,13 +67,7 @@ const useGaslessVoting = () => {
       try {
         return vocdoniClient.submitVote(vocVote);
       } catch (e) {
-        if (
-          e instanceof ErrAPI &&
-          e.message &&
-          e.message.includes('SendTx failed') &&
-          e.message.includes('finished at height') &&
-          e.message.includes('current height is')
-        ) {
+        if (e instanceof ErrElectionFinished) {
           throw new Error('The election has finished');
         }
         throw e;
