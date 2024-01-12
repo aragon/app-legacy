@@ -2,14 +2,15 @@ import request, {gql} from 'graphql-request';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchDaosParams} from '../aragon-backend-service.api';
-import {TokenHoldersResponse} from '../domain/token-holders-response';
+import {IPaginatedResponse} from '../domain/paginated-response';
+import {IDao} from '../domain/dao';
 
 const daosQueryDocument = gql`
   query Dao(
     $direction: OrderDirection!
     $orderBy: DaoOrderField!
-    $skip: Float!
-    $take: Float!
+    $skip: Float
+    $take: Float
     $governanceId: String
     $networks: String
     $memberAddress: String
@@ -23,7 +24,6 @@ const daosQueryDocument = gql`
       networks: $networks
       memberAddress: $memberAddress
     ) {
-      skip
       data {
         address
         ens
@@ -40,13 +40,16 @@ const daosQueryDocument = gql`
           members
         }
       }
+      total
+      skip
+      take
     }
   }
 `;
 
 const fetchDaos = async (
   params: IFetchDaosParams
-): Promise<TokenHoldersResponse> => {
+): Promise<IPaginatedResponse<IDao>> => {
   return request(
     `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     daosQueryDocument,
@@ -56,7 +59,7 @@ const fetchDaos = async (
 
 export const useDaos = (
   params: IFetchDaosParams,
-  options: UseQueryOptions<TokenHoldersResponse> = {}
+  options: UseQueryOptions<IPaginatedResponse<IDao>> = {}
 ) => {
   return useQuery(
     aragonBackendQueryKeys.daos(params),
