@@ -8,6 +8,8 @@
   <a href="https://aragonproject.typeform.com/to/LngekEhU">Join our Developer Community</a>
   •
   <a href="https://aragonproject.typeform.com/dx-contribution">Contribute</a>
+  •
+  <a href="Readme_zh.md">中文文档</a>
 </p>
 
 <br/>

@@ -1,0 +1,1803 @@
+{
+  "testnetIndicator": "测试网络已激活",
+  "menu": "菜单",
+  "navLinks": {
+    "dashboard": "仪表盘",
+    "governance": "治理",
+    "finance": "财务",
+    "explore": "探索",
+    "learn": "学习",
+    "build": "开发",
+    "help": "帮助",
+    "terms": "服务条款",
+    "privacy": "隐私政策",
+    "settings": "设置",
+    "exploreLinkLabel": "探索",
+    "exploreLinkURL": "/",
+    "learnLinkLabel": "学习",
+    "learnLinkURL": "https://aragon.org/education-portal",
+    "buildLinkLabel": "开发",
+    "buildLinkURL": "https://devs.aragon.org/",
+    "helpLinkLabel": "帮助",
+    "helpLinkURL": "https://discord.gg/AhzsGmh7fK",
+    "termsLinkLabel": "服务条款",
+    "termsLinkURL": "https://aragon.org/terms-and-conditions",
+    "privacyLinkLabel": "隐私政策",
+    "privacyLinkURL": "https://aragon.org/privacy-policy",
+    "members": "成员"
+  },
+  "daoSwitcher": {
+    "title": "选择您的DAO",
+    "subtitle": "返回到探索页"
+  },
+  "navButtons": {
+    "connectWallet": "连接钱包",
+    "giveFeedback": "提供反馈"
+  },
+  "labels": {
+    "approvals": "批准",
+    "loading": "加载中...",
+    "members": "成员",
+    "tokenHolders": "代币持有者",
+    "addMember": "添加成员",
+    "manageMember": "管理成员",
+    "addedMembers": "已添加成员",
+    "wallets": "钱包",
+    "addWallets": "添加钱包",
+    "removeWallets": "移除钱包",
+    "removedMembers": "已移除成员",
+    "removeWalletsDescription": "撤销这些钱包的权限。",
+    "totalWallets": "总钱包数",
+    "mintTokens": "铸币",
+    "seeAllHolders": "查看所有持有者",
+    "seeCommunity": "查看社区",
+    "supportThreshold": "Support threshold",
+    "viewTransactions": "查看交易",
+    "seeAll": "查看全部",
+    "seeAllTokens": "查看所有代币",
+    "seeAllTransfers": "查看转账记录",
+    "to": "给",
+    "recipient": "收款方",
+    "from": "发送方",
+    "token": "代币",
+    "amount": "金额",
+    "tokenAmount": "代币数量",
+    "reference": "参考",
+    "address": "代币合约地址",
+    "clear": "清除",
+    "copy": "复制",
+    "paste": "粘贴",
+    "max": "最大",
+    "maxBalance": "最大余额",
+    "back": "返回",
+    "continue": "继续",
+    "next": "下一步",
+    "submitDeposit": "提交存款",
+    "resources": "资源",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "days": "天",
+    "date": "日期",
+    "time": "时间",
+    "now": "现在",
+    "timezone": "您的时区",
+    "dateTime": "指定日期和时间",
+    "resourcesHelptext": "在这里分享外部资源。",
+    "sortBy": "排序方式",
+    "mainNet": "主网",
+    "testNet": "测试网",
+    "cheapest": "最便宜的",
+    "safest": "最安全的",
+    "mostPopular": "最受欢迎的",
+    "networkCost": "网络成本",
+    "security": "安全性",
+    "popularity": "受欢迎程度",
+    "daoName": "名称",
+    "summary": "摘要",
+    "description": "描述",
+    "addLink": "添加外部链接",
+    "addWallet": "添加钱包",
+    "selectWallet": "选择钱包",
+    "removeLink": "移除链接",
+    "removeWallet": "删除此地址",
+    "resetDistribution": "重置代币分配",
+    "deleteAllAddresses": "删除所有地址",
+    "addResource": "添加资源",
+    "link": "链接",
+    "links": "链接",
+    "label": "名称/描述",
+    "logo": "标志",
+    "optional": "可选",
+    "minimumApprovalThreshold": "批准阈值",
+    "multisigMembers": "多重签名成员",
+    "minimumApproval": "最低批准阈值",
+    "minimumParticipation": "最低参与数量",
+    "minimumDuration": "最低投票时长",
+    "voteReplacement": "中途更改",
+    "support": "支持",
+    "duration": "持续时间",
+    "communityToken": "您的社区是否要发行代币？",
+    "authorisedWallets": "授权钱包地址",
+    "addExistingToken": "添加现有代币",
+    "tokenName": "名称",
+    "tokenSymbol": "符号",
+    "supply": "供应量",
+    "distributeTokens": "分发代币",
+    "proposalCreation": "创建提案",
+    "mintToken": "铸造更多代币",
+    "duplicateAction": "复制操作",
+    "resetAction": "重置操作",
+    "removeEntireAction": "移除所有操作",
+    "deposit": "存款",
+    "withdraw": "取款",
+    "externalContract": "外部智能合约",
+    "all": "全部",
+    "daoTreasury": "DAO资金库",
+    "treasuryValue": "资金库价值",
+    "searchPlaceholder": "输入以搜索...",
+    "result": "1个结果",
+    "nResults": "{{count}}个结果",
+    "noResults": "没有要显示的结果",
+    "noResultsSubtitle": "尝试修改关键词以找到相应的钱包。",
+    "notChangeable": "不可更改",
+    "changeableVote": "可通过投票更改",
+    "changeable": "可更改",
+    "etherscan": "Etherscan",
+    "whitelistWallets": {
+      "address": "钱包地址",
+      "addresses": "{{count}} 个地址",
+      "addAddress": "添加地址",
+      "uploadCSV": "上传CSV",
+      "duplicateEntry": "重复条目",
+      "resetEntry": "重置地址",
+      "deleteEntry": "移除地址",
+      "resetAllEntries": "重置所有地址",
+      "deleteAllEntries": "移除所有地址",
+      "noWallets": "选择您要移除的钱包",
+      "addWalletsSubtitle": "向您的DAO添加钱包",
+      "totalWallets": "总钱包数"
+    },
+    "review": {
+      "blockchain": "宿主区块链",
+      "daoMetadata": "纵览",
+      "voters": "投票者",
+      "votingParameters": "投票参数",
+      "governance": "治理",
+      "network": "网络",
+      "eligibleVoters": "符合要求的投票者",
+      "distribution": "分发",
+      "distributionLink": "查看所有{{walletCount}}个地址",
+      "minimumParticipation": "{{walletCount}}个钱包",
+      "proposalThreshold": "提案阈值",
+      "tokenHoldersWithTkns": "持有≥{{tokenAmount}} {{tokenSymbol}}的成员",
+      "earlyExecution": "提前执行",
+      "voteReplacement": "中途更改",
+      "multisigMinimumApprovals": "{{total}}个符合要求的钱包地址中的{{count}}个",
+      "existingTokens": {
+        "currentHolders": "当前持有者"
+      },
+      "distributionLinkLabel": "在区块浏览器上查看",
+      "no": "否",
+      "yes": "是",
+      "tokenWrapped": "封装",
+      "tokenSymbolGovernance": "治理",
+      "eligibleMembers": "符合要求的成员"
+    },
+    "author": "作者",
+    "sec": "秒",
+    "ago": "之前",
+    "step": "步骤",
+    "of": "的",
+    "edit": "编辑",
+    "daoSettings": "DAO设置",
+    "selectWallets": "选择钱包",
+    "cancel": "取消",
+    "addSingleWallet": "添加1个钱包",
+    "singleAddressSelected": "已选择1个地址",
+    "addNWallets": "添加{{walletCount}}个钱包",
+    "nAddressesSelected": "已选择{{walletCount}}个地址",
+    "noAddressSelected": "未选择地址",
+    "you": "您",
+    "noResources": "未添加资源",
+    "newTokens": "新代币",
+    "newHolders": "新持有者",
+    "totalTokens": "总的新代币供应量",
+    "totalHolders": "总的新持有者",
+    "mintable": "可铸造",
+    "new": "新",
+    "pendingTransaction": "待处理交易...",
+    "signVote": "签署投票",
+    "signExecuteProposal": "执行提案",
+    "yes": "是",
+    "no": "否",
+    "earlyExecution": "提前执行",
+    "earlyExecutionDescription": "如果支持阈值超过、达到最低参与度，并且结果不会因更多投票者参与而发生变化，则允许在投票期结束前执行提案。",
+    "voteReplacementDescription": "允许投票者在投票期间更改他们的投票。如果启用了提前执行，则无法启用此设置。",
+    "updateGovernanceAction": "更新治理设置",
+    "updateGovernanceActionDescription": "更改您的DAO治理设置",
+    "updateMetadataAction": "更新DAO元数据",
+    "updateMetadataActionDescription": "更改您的DAO元数据",
+    "name": "名称",
+    "minimumApprovalDescription": "可参与者数量是成员列表中符合投票要求的钱包地址数量。最少批准数量是使提案生效最少的批准数量。",
+    "minimumApprovalAdditionalInfo": "当新的钱包被添加或从多重签名DAO中删除时，您需要复核最小批准数量。",
+    "minimumApprovalProgressInfo": "共{{amount}}个地址",
+    "anyWallet": "任意钱包",
+    "aragonOSx": "Aragon OSx",
+    "disconnectWallet": "断开钱包连接",
+    "submitProposal": "发布提案",
+    "addWalletsDescriptionLinkLabel": "阅读我们的指南",
+    "addWalletsDescription": "钱包可以创建提案、提议将资金的转入转出，并在您的DAO中进行投票。",
+    "daoEnsName": "ENS子域名",
+    "ens": "ENS名称",
+    "currentTokenSupply": "当前代币供应量",
+    "helptext": {
+      "snapshot": "基于此提案快照"
+    },
+    "currentHolders": "当前持有者",
+    "supplyPotential": "潜在供应量",
+    "supplyPotentialHelptext": "基于{{tokenSymbol}}的总供应量",
+    "type": "类型",
+    "select": "选择",
+    "codeInput": {
+      "address0x": "0x..."
+    },
+    "totalMembers": "总成员数",
+    "mintableByDao": "可由DAO铸造",
+    "basescan": "BaseScan",
+    "Arbiscan": "Arbiscan",
+    "polygonscan": "Polygonscan"
+  },
+  "placeHolders": {
+    "selectToken": "选择一个代币...",
+    "walletOrEns": "输入钱包地址或ENS...",
+    "searchTokens": "输入进行搜索...",
+    "searchTransfers": "输入进行筛选...",
+    "daoName": "输入你的DAO名称...",
+    "ensName": "aragon",
+    "daoDescription": "输入你的摘要...",
+    "addResource": "Lens、Discord等",
+    "searchWalletAddress": "按ENS或钱包地址筛选..."
+  },
+  "finance": {
+    "tokenSection": "代币",
+    "transferSection": "最新转账",
+    "unknownUSDValue": "价值未知",
+    "tokens": "代币",
+    "allocation": "分配",
+    "emptyState": {
+      "title": "进行第一笔存款",
+      "description": "首先进行第一笔存入DAO资金库的存款。查看{{link}}了解更多有关管理DAO资金库的信息。",
+      "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
+      "descriptionLinkLabel": "本指南",
+      "buttonLabel": "存入资金"
+    },
+    "modalExport": {
+      "headerLabel": "导出到CSV",
+      "headerDesc": "选择要导出的日期范围",
+      "ctaLabelGenerateCSV": "生成CSV",
+      "ctaLabelGenerating": "生成CSV中...",
+      "ctaLabelRetry": "重试生成CSV",
+      "ctaLabelSave": "保存CSV",
+      "ctaLabelContinue": "回到财务",
+      "ctaLabelCancel": "取消",
+      "alertCritical": "导出失败，请重试！",
+      "statusSuccess": "导出成功生成",
+      "feedback": {
+        "title": "文件已保存！",
+        "desc": "CSV文件现在应该保存在您的设备上。"
+      }
+    },
+    "treasuryEmptyState": {
+      "desc": "要向您的DAO添加资金，请进行存款。{{link}}了解更多信息。",
+      "title": "未找到代币",
+      "descLinkLabel": "在本指南中",
+      "descLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury"
+    }
+  },
+  "governance": {
+    "title": "提案",
+    "subtitle": "{{activeProposalCount}} 个开放投票的提案",
+    "subtitleSingular": "1 个开放投票的提案",
+    "action": "创建提案",
+    "emptyState": {
+      "title": "创建您的第一个提案",
+      "subtitle": "您的社区需要决定的第一件事是什么？关于如何书写提案，请参考{{link}}。",
+      "subtitleLinkLabel": "本指南",
+      "subtitleLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes",
+      "description": "让您的社区参与决策过程。在我们的{{link}}中了解更多信息。",
+      "descriptionLinkLabel": "提案指南",
+      "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
+    },
+    "proposals": {
+      "publishedBy": "提案发布者：",
+      "Pending": "将于{{timeDiff}}开始",
+      "Active": "剩余{{timeDiff}}",
+      "voteTitle": "获胜选项",
+      "voteTitleMultisig": "批准进度",
+      "states": {
+        "draft": "草稿",
+        "pending": "待定",
+        "active": "投票中",
+        "executed": "已执行",
+        "succeeded": "成功",
+        "defeated": "失败"
+      },
+      "buttons": {
+        "read": "阅读提案",
+        "vote": "立即投票",
+        "execute": "立即执行",
+        "edit": "编辑提案",
+        "readFullProposal": "阅读完整提案",
+        "closeFullProposal": "关闭完整提案"
+      },
+      "alert": {
+        "voted": "您已经投票了。"
+      }
+    },
+    "settings": {
+      "preview": "{{days}} 天 {{hours}} 小时 {{minutes}} 分钟"
+    },
+    "noProposals": "未找到提案！",
+    "statusWidget": {
+      "published": "已发布",
+      "active": "进行中",
+      "failed": "执行失败",
+      "executed": "已执行",
+      "succeeded": "成功",
+      "defeated": "失败",
+      "expired": "已过期"
+    },
+    "executionCard": {
+      "title": "操作",
+      "description": "只有在投票通过后，才能执行这些操作。",
+      "addAction": "添加操作",
+      "seeTransaction": "查看交易",
+      "status": {
+        "succeeded": "提案已通过，准备执行",
+        "executed": "操作已执行",
+        "defeated": "提案被拒绝",
+        "failed": "执行失败",
+        "expired": "提案已过期"
+      },
+      "statusMultisig": {
+        "expiredTitle": "执行不再可用",
+        "expiredDesc": "由于已经过了过期时间，此提案无法再执行。如果您希望重新尝试执行此操作，您必须创建一个新的提案，并在过期时间内通过并执行它。"
+      }
+    },
+    "actionSecondary": "委托",
+    "vocdoni": {
+      "executionCard": {
+        "title": "操作",
+        "desc": "在提案通过社区投票后，这些操作可以通过多重签名执行。"
+      }
+    }
+  },
+  "infos": {
+    "voteDuration": "最短持续时间为{{days}}天，由DAO设置定义。要更改最短持续时间，需要进行投票。",
+    "voteDHDuration": "最短持续时间为{{days}}天{{hours}}小时，由DAO设置定义。要更改最短持续时间，需要进行投票。",
+    "voteDHMDuration": "最短持续时间为{{days}}天{{hours}}小时{{minutes}}分钟，由DAO设置定义。要更改最短持续时间，需要进行投票。",
+    "newVotingTypes": {
+      "description": "我们将在未来添加更多的投票类型。",
+      "title": "新的投票类型即将到来..."
+    },
+    "ensAvailable": "DAO名称可用",
+    "checkingEns": "正在检查DAO名称..."
+  },
+  "errors": {
+    "amountWithInvalidToken": "无法验证无效代币地址的金额",
+    "defaultAmountValidationError": "金额验证错误",
+    "durationTooShort": "持续时间太短",
+    "endPast": "结束时间早于当前时间",
+    "exceedsFractionalParts": "金额的小数位数不能超过代币的小数位数({{decimals}})",
+    "includeDecimals": "包括小数，例如 10.0",
+    "includeExactAmount": "代币没有小数位。请输入准确的金额",
+    "insufficientBalance": "余额不足",
+    "invalidURL": "无效的URL",
+    "invalidImage": "无效的图片",
+    "invalidImageType": "无效的文件类型。请提供 JPG、PNG 或 GIF 格式的图片",
+    "imageDimensions": "请提供一张边长在{{minDimension}}px到{{maxDimension}}px之间的正方形图片",
+    "imageTooLarge": "请提供不超过{{maxFileSize}}MB大小的图片",
+    "invalidAddress": "无效的地址",
+    "lteZero": "金额必须大于零",
+    "ltAmount": "金额必须小于{{amount}}",
+    "notERC20Token": "代币地址不符合 ERC20 标准",
+    "noTokenSelected": "必须选择一个代币",
+    "duplicateAddress": "地址不能重复使用",
+    "duplicateAddressOnCurrentMembersList": "该钱包已经是该多重签名钱包的成员。",
+    "distributionMinutes": "分钟应该在0到59之间",
+    "emptyDistributionMinutes": "分钟不能为空",
+    "distributionHours": "小时应该在0到23之间",
+    "emptyDistributionHours": "小时不能为空",
+    "distributionDays": "天数不能为负数",
+    "emptyDistributionDays": "天数不能为空",
+    "percentage": "百分比必须在0到100之间",
+    "totalSupplyZero": "总代币供应量不能为0",
+    "requiredTokenAddressZero": "必需的代币数量不能为0",
+    "onlyAlphaNumeric": "{{field}} 只能包含字母和数字",
+    "ensDuplication": "ENS子域名已被占用，请尝试其他名称。",
+    "ensNameInvalidFormat": "请只使用小写字母、数字和破折号“-”",
+    "ensNetworkIssue": "无法解析ENS",
+    "ensNameLength": "DAO名称长度必须小于128个字符",
+    "notValidContractAddress": "智能合约地址无效",
+    "duplicateContractAddress": "智能合约已经被添加",
+    "biggerThanTotalSupply": "最小代币数量必须小于总供应量"
+  },
+  "required": {
+    "tokenAddress": "需要填写代币地址",
+    "tokenName": "需要填写代币名称",
+    "tokenSymbol": "需要填写代币符号",
+    "walletAddress": "需要填写钱包地址",
+    "amount": "需要填写代币数量",
+    "date": "需要填写日期",
+    "duration": "需要填写持续时间",
+    "endDate": "需要填写结束日期",
+    "label": "标签为必填项",
+    "link": "链接为必填项",
+    "recipient": "需要填写收件人地址",
+    "token": "需要填写代币",
+    "time": "需要填写时间",
+    "timezone": "需要填写时区",
+    "name": "DAO名称为必填项",
+    "ensName": "DAO ENS子域名为必填项",
+    "title": "需要填写标题",
+    "summary": "需要填写摘要",
+    "minApproval": "至少需要一个符合要求的钱包地址才能批准提案。"
+  },
+  "startPast": "流程不能在过去开始",
+  "ensUnsupported": "网络不支持ENS",
+  "fields": {
+    "tokenName": "代币名称",
+    "tokenSymbol": "代币符号"
+  },
+  "minimumApproval": {
+    "required": "必须设置最小批准数。",
+    "lessThanOne": "最小批准数不能少于一个地址。",
+    "exceedMaxThreshold": "最小批准数不能超过总成员数。",
+    "membersRequired": "多重签名钱包需要最少一个成员。"
+  },
+  "alert": {
+    "tokenVoting": {
+      "proposalMinDuration": "{{days}}天{{hours}}小时{{minutes}}分钟是最短的投票时间。",
+      "proposalMaxDuration": "{{days}}天是最长的投票时间。考虑缩短持续时间，否则该提案可能永远无法通过。",
+      "acceptableProposalDuration": "最短持续时间为{{days}}天{{hours}}小时{{minutes}}分钟，由DAO治理设置定义",
+      "dateTimeMinDuration": "提案的结束日期不能早于{{days}}天{{hours}}小时{{minutes}}分钟。已更正为DAO设置的最短持续时间。"
+    },
+    "multisig": {
+      "proposalMinDuration": "最短到期时间为一小时。",
+      "proposalMaxDuration": "为保持DAO的安全性，不建议设置超过两周的到期时间。",
+      "accepTableProposalDuration": "建议将到期时间设置为五天，以保持清晰的提案列表。",
+      "dateTimeMinDuration": "持续时间不能少于一小时。"
+    },
+    "durationAlert": "将此设置为足够长的持续时间，以便成员有足够的时间进行投票。建议将其设置为至少1天。",
+    "maxDurationAlert": "最长持续时间为365天。",
+    "minDurationAlert": "最短持续时间为一小时。",
+    "startDateInPastAlert": "开始时间不能是过去的时间。",
+    "wrongWalletNetwork": "错误的钱包网络",
+    "wrongNetwork": {
+      "title": "错误的网络",
+      "description": "无法执行该操作，因为您处于错误的网络中。请在您的钱包上切换到<1>{{network}}</1>，然后重试。",
+      "buttonLabel": "切换到{{network}}"
+    },
+    "loginRequired": {
+      "headerTitle": "连接钱包以继续",
+      "title": "钱包连接",
+      "description": "连接您的钱包以继续。",
+      "buttonLabel": "立即连接钱包"
+    },
+    "gatingUsers": {
+      "tokenTitle": "您无法创建提案",
+      "tokenDescription": "您没有所需的投票权或代币余额。在{{daoName}}中创建提案需要至少{{amount}}个'{{tokenSymbol}}'的投票权或代币余额。",
+      "walletTitle": "您无法创建提案",
+      "walletDescription": "您不是成员。只有添加到成员列表的地址才能在{{daoName}}中创建提案。",
+      "buttonLabel": "好的，我明白了"
+    },
+    "tokenBasedMembers": "在这里列出的DAO成员至少与DAO进行过一次互动",
+    "chip": {
+      "removedLink": "已删除链接",
+      "removedAddress": "已删除地址",
+      "distributionReset": "已重置代币分配",
+      "removedAllAddresses": "已删除所有地址",
+      "duplicateAction": "已复制操作",
+      "resetAction": "已重置操作",
+      "resetAddress": "已重置地址",
+      "resetAllAddresses": "已重置所有地址",
+      "removedAction": "已删除操作",
+      "addressAdded": "已添加新地址",
+      "inputCleared": "已清除",
+      "inputCopied": "已复制",
+      "inputPasted": "已粘贴",
+      "walletConnected": "已连接钱包",
+      "walletDisconnected": "已断开钱包连接",
+      "max": "已应用最大余额",
+      "favorited": "现在关注此DAO",
+      "unfavorite": "不再关注此DAO"
+    }
+  },
+  "warnings": {
+    "amountGtDaoToken": "提取金额大于当前资金库余额"
+  },
+  "success": {
+    "contract": "智能合约已验证"
+  },
+  "allTransfer": {
+    "thisWeek": "本周",
+    "tokens": "代币",
+    "newTransfer": "新的转账",
+    "allTransfers": "所有转账",
+    "noTransfers": "没有可用的转账信息。",
+    "totalVolume": "总交易量"
+  },
+  "allTokens": {
+    "title": "所有代币",
+    "subtitle": "{{count}}个代币",
+    "subtitleSingular": "1个代币",
+    "callToAction": "新的转账",
+    "noTokens": "没有可用的代币信息。"
+  },
+  "TransferModal": {
+    "allTransfers": "所有转账",
+    "newTransfer": "新的转账",
+    "item2Title": "提取资产",
+    "item2Subtitle": "创建一个提案，将资产提取到钱包。"
+  },
+  "TokenModal": {
+    "noTokens": "没有可用的代币",
+    "tokenNotFoundTitle": "找不到代币",
+    "tokenNotAvailable": "找不到代币",
+    "tokenNotFoundSubtitle": "添加自定义代币进行存款",
+    "tokenNotFoundSubtitleDao": "添加自定义代币进行提取",
+    "tokenNotAvailableSubtitle": "检查您的钱包，更新代币或添加自定义代币进行转账",
+    "tokenNotAvailableSubtitleDao": "更新代币或添加自定义代币进行转账。"
+  },
+  "AddressModal": {
+    "noAddresses": "找不到地址"
+  },
+  "TransactionModal": {
+    "approveSubtitle": "要签署您的第一笔交易，您必须在钱包中批准 Aragon 应用。",
+    "approveToken": "批准代币",
+    "depositTitle": "签署存款",
+    "goToFinance": "转到财务",
+    "goToProposal": "打开您的提案",
+    "launchGovernancePage": "启动治理页面",
+    "launchDaoDashboard": "启动 DAO 仪表板",
+    "errorLabel": "确认交易时出错",
+    "gasEstimationErrorLabel": "无法估算燃料费。您仍然可以继续。 ",
+    "estimatedFees": "预估燃料费",
+    "maxFee": "最大费用",
+    "publishDaoSubtitle": "下面的费用是使用所选区块链的成本。",
+    "publishDaoButtonLabel": "批准交易",
+    "signDeposit": "签署存款",
+    "successLabel": "交易已执行",
+    "synced": "同步于 {{time}} 秒前",
+    "totalCost": "总费用",
+    "tryAgain": "重试",
+    "createProposal": "创建提案",
+    "createProposalNow": "立即创建提案",
+    "waiting": "等待确认",
+    "alertCritical": "交易失败"
+  },
+  "AddActionModal": {
+    "title": "添加操作",
+    "addAddresses": "授权钱包",
+    "addAddressesSubtitle": "创建一个提案，授权新钱包在您的DAO中投票。",
+    "removeAddresses": "移除钱包",
+    "removeAddressesSubtitle": "创建一个提案，取消授权钱包在您的DAO中投票。",
+    "mintTokens": "铸造代币",
+    "mintTokensSubtitle": "铸造更多的DAO代币并分发给钱包。",
+    "withdrawAssetsSubtitle": "创建一个提案，将资产提取到钱包。",
+    "withdrawAssetsActionSubtitle": "从DAO资金库中提取资产",
+    "externalContract": "智能合约合成器",
+    "externalContractSubtitle": "让您的DAO与部署在链上的外部合约交互。",
+    "changeMinimumApproval": "更改最小批准数",
+    "changeMinimumApprovalSubtitle": "修改该DAO的最小批准数。",
+    "connectdAppsTitle": "连接已验证的dApp",
+    "withdrawAddresses": {
+      "subtitle": "创建一个提案，将资产提取到钱包。"
+    },
+    "withdrawAssets": "提取资产",
+    "connectdAppsSubtitle": "通过WalletConnect与已验证的dApp交互。"
+  },
+  "newDeposit": {
+    "depositAssets": "存入资产",
+    "configureDepositSubtitle": "不需要提案即可将资产存入资金库",
+    "reviewDeposit": "查看存款",
+    "reviewTransferSubtitle": "确认后，无法编辑或撤销交易。",
+    "toSubtitle": "收款人自动设置为您的DAO地址。",
+    "tokenSubtitle": "要存入的代币",
+    "contractAddressSubtitle": "您选择了自定义代币。请输入该代币的合约地址以与之交互。",
+    "amountSubtitle": "金额以代币数量计算，而不是美元",
+    "referenceSubtitle": "添加一个描述，以便以后轻松识别该交易。"
+  },
+  "newWithdraw": {
+    "configureWithdraw": {
+      "title": "发起提款",
+      "subtitle": "要从资金库提取资产，您的提案将需要通过投票。",
+      "toSubtitle": "接收代币的钱包",
+      "tokenSubtitle": "要提取的代币",
+      "amountSubtitle": "金额以代币数量计算，而不是美元价值",
+      "utcMenu": {
+        "title": "选择一个UTC时区"
+      },
+      "ctaAddAnother": "添加另一个提取"
+    },
+    "setupVoting": {
+      "title": "发起投票",
+      "description": "为您的投票设置选项、开始日期和结束日期。",
+      "optionLabel": {
+        "title": "选项"
+      },
+      "yesNoLabel": {
+        "title": "是、否或弃权",
+        "helpText": "成员可以投赞成票、反对票或弃权票。"
+      },
+      "tokenVoting": {
+        "endDateDescription": "定义投票持续的天数，或者添加一个确切的日期和时间来结束投票。"
+      },
+      "multisig": {
+        "optionDescription": "用于投票的选项",
+        "votingOption": {
+          "label": "批准",
+          "description": "每个 多重签名成员都有批准提案和任何相关可选操作的能力。如果{{amountMembers}}中的{{totalAmountMembers}}成员批准，则提案将被执行。",
+          "alert": "对于 多重签名DAO，只有批准选项可用。"
+        },
+        "startLabel": "开始时间",
+        "startDescription": "定义提案何时开始接收批准。如果选择现在，提案在发布后立即生效。",
+        "expiration": "过期时间",
+        "expirationDescription": "定义提案何时过期。过期后，无法批准或执行提案。"
+      }
+    },
+    "defineProposal": {
+      "heading": "创建提案",
+      "description": "在此提供选民需要做出决策的信息。",
+      "title": "标题",
+      "titlePlaceholder": "给您的提案取个标题",
+      "summaryPlaceholder": "用2-3句话描述您的提案。这将显示在提案概览中。",
+      "proposal": "提案",
+      "body": "正文",
+      "proposalPlaceholder": "在这里编写提案的正文。"
+    },
+    "reviewProposal": {
+      "heading": "查看提案",
+      "description": "在投票之前，请检查一切是否正确。一旦发布提案，您将无法编辑它。"
+    },
+    "daoAddress": {
+      "alertCritical": "您不能将资金提取到您自己的DAO资金库。"
+    }
+  },
+  "createDAO": {
+    "title": "创建您的DAO",
+    "overview": {
+      "title": "创建构建您的DAO",
+      "description": "从现在开始，边学边做。您可以随时在将来改进您的DAO。",
+      "button": "立刻创建！"
+    },
+    "step1": {
+      "label": "步骤 1",
+      "title": "选择区块链",
+      "description": "您选择的区块链是存储您的代币和资产的地方。如果您已经拥有一种代币，请选择您的代币所在的区块链。此后将无法更改。如果需要帮助选择区块链，请阅读我们关于选择最佳{{link}}的指南。",
+      "descriptionLinkLabel": "区块链",
+      "descriptionLinkURL": "https://aragon.org/how-to/choose-the-right-blockchain-for-your-dao"
+    },
+    "step2": {
+      "label": "步骤 2",
+      "title": "描述您的DAO",
+      "description": "给您的DAO命名，以便新的贡献者知道他们来到了正确的地方。此信息将显示在探索页面上，并可以通过投票进行更改。关于DAO品牌形象的想法，{{link}}。",
+      "nameSubtitle": "最多128个字符",
+      "logoSubtitle": "JPG、PNG或GIF格式，大小不超过3MB。我们推荐1024x1024像素。",
+      "descriptionSubtitle": "用几句话描述您的DAO的目标。这将在探索页面上列出，以便新的贡献者可以找到您。",
+      "linksSubtitle": "链接到您的DAO的网站、社交媒体资料、Discord或其他社区聚集地。",
+      "metadataOverviewGuide": "阅读我们的指南",
+      "descriptionLinkLabel": "阅读我们的指南",
+      "descriptionLinkURL": "https://aragon.org/how-to/build-a-dao-brand-identity",
+      "ensNameSubtitle": "这将是您的DAO的唯一ENS子域名，将自动为您创建。小写字母、数字和破折号'-'都是可以接受的字符；理想情况下，字符数应在128以下。"
+    },
+    "step3": {
+      "label": "第三步",
+      "title": "定义成员资格",
+      "description": "决定您的DAO使用的投票类型。您可以通过投票更改这些设置。如果您需要帮助确定最适合您的治理类型，请{{link}}。",
+      "communityOverviewGuide": "阅读本指南",
+      "newToken": "否",
+      "authorisedWalletsSubtitle": "添加被授权参与治理的成员钱包",
+      "warningTitle": "更改列表",
+      "warningSubtitle": "如果您在创建DAO后想要添加地址，您需要创建一个提案供成员投票。",
+      "newTokenSubtitle": "否，我想创建一个代币。",
+      "existingToken": {
+        "title": "导入现有代币",
+        "description": "导入用于治理社区的现有ERC-20代币。我们建议阅读{{link}}以了解为什么这很重要。",
+        "descriptionLinkLabel": "我们的指南",
+        "questionLabel": "您的社区是否已有一个用于治理DAO的ERC-20代币？",
+        "answerNegative": "否",
+        "answerPositive": "是",
+        "inputLabel": "合约地址",
+        "inputDescription": "输入合约地址。我们建议直接从区块浏览器复制粘贴。",
+        "verificationLabelStandard": "标准",
+        "verificationLabelSupply": "总供应量",
+        "verificationLabelHolders": "当前持有者",
+        "verificationAlertSuccessTitle": "支持的代币",
+        "verificationAlertSuccessDescription": "此代币可以用于参与您的DAO的治理，因为它符合ERC20Votes扩展到ERC-20标准。",
+        "verificationLoading": "验证治理兼容性中...",
+        "verificationStandardUnknown": "未知",
+        "verificationGovernanceSupported": "支持",
+        "verificationAlertWarningTitle": "需要封装",
+        "verificationAlertCriticalTitle": "不支持的代币",
+        "verificationAlertWarningDescription": "持有者必须将此代币封装后才能参与您的DAO的治理。\n\n代币持有者随时可以在Aragon App内封装他们的代币，以获得等值的治理代币（1 {{tokenSymbol}} = 1 {{gTokenSymbol}}）。然后，他们可以使用这些代币对您的DAO的提案进行投票。他们随时可以解封以获取他们的原始代币。",
+        "verificationAlertCriticalDescription": "此代币在Aragon App中不受支持。请尝试其他代币或指定您尚未拥有治理代币。",
+        "descriptionLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+        "verificationLabelBlockchain": "代币区块链",
+        "verificationAlertCriticalBlockchainTitle": "区块链不正确",
+        "verificationAlertCriticalBlockchainDescription": "此代币部署在与您选择的DAO不同的区块链上。请使用在{{blockchainName}}上部署的代币。"
+      },
+      "existingTokenSubtitle": "是，我们已经有一种代币了",
+      "tokenMembership": "代币持有者",
+      "multisigMembership": "多重签名成员",
+      "multisigMembershipSubtitle": "只有 多重签名成员才能投票。1个钱包地址等于1个批准。",
+      "multisigMembers": "多重签名成员",
+      "multisigMembersHelptext": "您的多重签名地址数量没有限制。地址可以创建提案、创建和批准交易，并在创建后建议更改DAO设置。",
+      "multisigMembersWalletAlert": "您连接的钱包已自动添加到列表中。如果愿意，可以将其删除。",
+      "multisigEligibilityTitle": "提案创建",
+      "multisigEligibilitySubtitle": "指定谁有权限创建提案。",
+      "multisigEligibilityMobileTitle": "谁有资格？",
+      "multisigEligibilityAlert": "任何人都可以提出提案，这可能会产生提案垃圾邮件的风险。请考虑仅赋予可信地址。",
+      "tokenName": "代币名称",
+      "tokenMembershipSubtitle": "代币作为投票筹码。您持有的代币越多，您的投票权重就越大。1个代币等于1个投票。",
+      "walletMemberShip": "授权钱包",
+      "walletMemberShipSubtitle": "将受信任成员的钱包地址列入白名单，以便每个钱包都能进行投票。白名单中的钱包也可以创建提案。",
+      "nameSubtitle": "代币的全名。例如：Uniswap",
+      "symbolSubtitle": "代币的缩写。例如：UNI",
+      "addExistingTokenHelptext": "我们目前不支持在Aragon App中使用现有代币。",
+      "tokenHelptextLink": "代币分配指南",
+      "tokenContractSubtitlePart1": "直接从",
+      "tokenContractSubtitlePart2": "复制合约地址，这样可以确保地址是正确的。",
+      "distributeTokensHelpertext": "添加您希望分发代币的钱包。如果您需要关于分发代币的帮助，{{link}}。",
+      "proposalCreationHelpertext": "指定谁有权限创建提案以及最低要求是什么。",
+      "distributionWalletAlertText": "您连接的钱包已自动添加到分发列表中。如果愿意，可以将其删除。",
+      "whiteListWalletAlertText": "您连接的钱包已自动添加到列表中。如果愿意，可以将其删除。",
+      "createTokenHelptext": "定义代币详细信息，并将代币分发给核心团队和DAO财库。有关代币铸造最佳实践的更多信息，请{{link}}",
+      "createTokenHelptextLinkLabel": "阅读此指南",
+      "createTokenHelptextLinkURL": "https://aragon.org/how-to/mint-dao-governance-tokens",
+      "membership": "谁可以参与治理？",
+      "eligibility": {
+        "optionTitle": "谁有资格发起提案？",
+        "inputTitle": "最低要求",
+        "anyWallet": {
+          "title": "任何钱包",
+          "description": "任何连接的钱包都可以创建提案。"
+        },
+        "multisigMembers": {
+          "description": "只有上面添加的地址才能创建提案。",
+          "title": "多签成员"
+        },
+        "tokenHolders": {
+          "description": "只有持有至少最低要求余额的代币持有者或代表最低要求投票权的代币持有者才能创建提案。",
+          "title": "DAO成员"
+        },
+        "anyone": {
+          "warning": "任何人都可以提出提案，这可能会产生提案垃圾邮件的风险。请考虑设定最低代币阈值。"
+        }
+      },
+      "membershipSubtitle": "您始终可以从多重签名开始，稍后再铸造代币。",
+      "descriptionLinkLabel": "阅读此指南",
+      "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
+      "distributeTokensHelpertextLinkLabel": "阅读我们的铸币指南",
+      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
+      "blockChainVoting": {
+        "label": "社区投票将在哪个区块链上进行？",
+        "optionOnchainLabel": "{{blockchainName}}",
+        "optionOnchainDesc": "对提案的投票将需要您的社区成员签署交易并支付{{blockchainName}}燃料费。通过社区投票通过的提案可以由任何人执行。",
+        "optionGaslessLabel": "Vocdoni",
+        "optionGaslessDesc": "在不支付燃料费的情况下对提案进行投票。通过的提案必须经过DAO的执行多签批准后才能执行。"
+      },
+      "votingType": {
+        "gasless": {
+          "soon": "即将在{{blockchainName}}上推出"
+        }
+      }
+    },
+    "step4": {
+      "label": "第4步",
+      "title": "选择治理设置",
+      "description": "这些是定义您的DAO中如何做出决策的规则。有多少人需要参与？需要多少支持？提案开放投票的时间有多长？了解更多信息，请参阅{{link}}。",
+      "bestPractices": "治理最佳实践",
+      "supportThresholdSubtitle": "投票支持提案的代币相对百分比（投票“是”），必须大于此值才能通过提案。",
+      "minimumParticipationSubtitle": "参与提案投票的代币相对百分比（占总{{gTokenSymbol}}供应量），必须大于或等于此值才能通过提案。",
+      "supportSubtitle": "支持是指投票“是”以批准提案所需的相对百分比的代币或钱包。",
+      "durationSubtitle": "提案开放投票的最短时间。提案可以设置更长的持续时间，但不能更短。",
+      "days": "天",
+      "hours": "小时",
+      "minutes": "分钟",
+      "minimumApprovalSubtitle": "最低批准数是必须批准提案的授权列表中的地址数量。",
+      "minApprovalAddressCount": "{{count}}个地址中的",
+      "alerts": {
+        "minimumApprovalAlert": "{{amount}}个代币中的",
+        "minimumParticipationAlert": "向上取整到{{percentage}}%，相当于{{walletCount}}个钱包必须投票",
+        "minority": "提案可能由少数人而不是多数人批准。",
+        "majority": "提案将由多数人批准",
+        "absoluteMajority": "这个批准阈值可能太高，难以达到。考虑设置一个较低的值。",
+        "1AddressOnly": "批准阈值无法更改，因为只有1个地址。"
+      },
+      "descriptionLinkLabel": "此指南",
+      "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
+      "shortTitle": "选择治理设置",
+      "wrappedReferenceTitle": "参考值",
+      "wrappedReferenceDesc": "达到最低参与度所需的{{gTokenSymbol}}投票数量取决于包装的{{tokenSymbol}}数量。带有星号的屏幕上的值仅供参考。您可以通过调整以下值来评估不同的情景。{{link}}了解更多。",
+      "wrappedReferenceAlertInfo": "这些值仅供参考，不会影响您的“治理设置”！",
+      "wrappedReferenceLabel": "包装的{{tokenSymbol}}数量",
+      "wrappedReferenceSupply": "总供应量{{tokenSymbol}}",
+      "wrappedReferenceFullParticipation": "全面参与",
+      "wrappedReferenceParticipationDesc": "{{gTokenSymbol}}总供应量的100%",
+      "wrappedReferenceMinParticipation": "最低参与度",
+      "wrappedReferenceMinParticipationDesc": "{{gTokenSymbol}}总供应量的{{minParticipationValue}}",
+      "wrappedReferenceDescLinkLabel": "在我们的指南中",
+      "wrappedReferenceDescLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+      "wrappedReferenceValueLabel": "{{tokenSymbol}}",
+      "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
+    },
+    "review": {
+      "title": "部署您的DAO",
+      "description": "在部署您的DAO之前，请仔细检查一切是否正确。",
+      "network": "{{network}}网络",
+      "distributionLink": "查看{{count}}个地址",
+      "days": "{{days}}天",
+      "hours": "{{hours}}小时",
+      "minutes": "{{minutes}}分钟",
+      "daoUpdates": "大多数这些设置可以通过投票后更改。",
+      "acceptContent": "接受提议的内容。",
+      "valuesCorrect": "这些值是正确的",
+      "proposalCreation": "具有≥ {{token}} {{symbol}} 投票权或余额的成员"
+    },
+    "deployDAO": {
+      "title": "部署您的DAO",
+      "description": "部署您的DAO唯一的成本是{{networkName}}网络的燃料费。确认交易以部署您的DAO，我们将立即开始构建它。",
+      "label": {
+        "estimatedGasfees": "估计的燃料费",
+        "unknown": "未知",
+        "awaitingWallet": "等待钱包确认",
+        "confirmingTransaction": "确认您的交易",
+        "publishingData": "在链上发布DAO数据",
+        "DAOready": "您的DAO已准备就绪",
+        "details": "详细信息",
+        "confirmingTransactionFail": "交易失败..."
+      },
+      "alertCritical": {
+        "noConfirmationReceived": "未收到确认...",
+        "dontClosePage": "在进行中时，请勿关闭此页面。",
+        "confirmationFailed": "确认失败..."
+      },
+      "POAPtitle": "您现在是Aragon DAO构建者之一了！",
+      "POAPlink": "领取您的POAP勋章",
+      "ctaLabel": {
+        "openDAO": "打开您的DAO",
+        "deployYourDAO": "部署您的DAO",
+        "tryAgain": "重试"
+      }
+    }
+  },
+  "newProposal": {
+    "title": "新提案",
+    "configureActions": {
+      "heading": "设置操作",
+      "description": "这些操作只能在满足投票要求后执行。",
+      "yesOption": "如果选择“Yes”",
+      "addFirstAction": "添加操作",
+      "addFirstActionSubtitle": "如果投票通过，此操作将执行。常见的自动操作是在提案通过投票后将资金转移到组织或个人。",
+      "addAction": "添加操作",
+      "actionsInfo": "更多的参数选项即将推出。",
+      "actionAlertCritical": {
+        "title": "时间敏感操作",
+        "desc": "此操作必须在指定的时间内执行。即使提案通过，也可能因为已经太迟无法成功执行。"
+      },
+      "addFirstActionTitle": "添加第一个操作",
+      "addFirstActionDesc": "如果您希望进行链上执行，请添加您的第一个可选操作",
+      "alertInfo": "根据设置的投票选项，只能向“是”选项添加操作。",
+      "stepCounter": "第{{x}}步，共{{x}}步",
+      "actionAlertWarning": {
+        "title": "操作未解码",
+        "desc": "由于智能合约未经验证，无法解码此操作。"
+      },
+      "alertCritical": "所有字段都需要有效的输入"
+    },
+    "mintTokens": {
+      "methodDescription": "创建一个提案以铸造更多的治理代币。选择应该接收代币的钱包，并确定数量。",
+      "additionalInfo": "总代币供应量包括您已经铸造的所有代币。"
+    },
+    "manageWallets": {
+      "title": "添加或删除钱包",
+      "description": "授权的钱包可以创建提案，提议从金库中转移资金，并在您的DAO中进行投票"
+    },
+    "configureActionsEncoded": {
+      "inputDestLabel": "到",
+      "inputDestDesc": "代币接收者",
+      "inputValueLabel": "数量",
+      "inputValueDesc": "要转移的代币数量",
+      "inputDataLabel": "数据",
+      "inputDataDesc": "用于智能合约的编码EVM调用数据"
+    }
+  },
+  "votingTerminal": {
+    "title": "投票",
+    "breakdown": "拆分",
+    "voters": "投票人",
+    "info": "信息",
+    "yes": "是",
+    "abstain": "弃权",
+    "no": "否",
+    "approve": "批准",
+    "approvedBy": "批准者",
+    "ofMemberCount": "其中{{memberCount}}名成员",
+    "ofAddressCount": "{{total}}个地址中的{{value}}个",
+    "yesHelptext": "您的选择将计入\"是\"",
+    "abstainHelptext": "您的选择将计入\"弃权\"",
+    "noHelptext": "您的选择将计入\"否\"",
+    "token": "代币",
+    "inputPlaceholder": "钱包、ENS或电子邮件",
+    "options": "选项",
+    "yes+no": "是、否或弃权",
+    "strategy": "策略",
+    "tokenVoting": "1代币→1票",
+    "multisig": {
+      "endDescription": "提案在批准或过期前处于活动状态",
+      "title": "多重签名批准",
+      "description": "必须达到最低批准数量，才能执行操作。",
+      "strategy": "1钱包→1票"
+    },
+    "supportThreshold": "最低支持率",
+    "minParticipation": "最低参与率（法定人数）",
+    "currentParticipation": "当前参与率",
+    "currentApproval": "当前批准数",
+    "noVotesMissing": "无遗漏投票",
+    "noApprovalsMissing": "无遗漏批准",
+    "missingVotes": "{{votes}}个遗漏投票",
+    "missingApprovals": "{{approvals}}个遗漏批准",
+    "reached": "已达到",
+    "uniqueVoters": "唯一投票人",
+    "duration": "持续时间",
+    "decision": "决策规则",
+    "activity": "投票活动",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "participationErc20": "{{participation}} of {{totalWeight}} {{tokenSymbol}} ({{percentage}}%)",
+    "chooseOption": "选择您的选项",
+    "chooseOptionHelptext": "要进行投票，您必须选择以下选项之一，并在您的钱包中确认。一旦交易完成，您的投票将被计入并显示。",
+    "submit": "提交您的投票",
+    "cancel": "取消",
+    "concluded": "已结束",
+    "status": {
+      "draft": "发布提案以启用投票",
+      "pending": "投票将于{{timeUntilNow}}开始",
+      "succeeded": "提案通过",
+      "executed": "提案执行完毕",
+      "defeated": "提案被否决",
+      "active": "投票将于{{timeUntilEnd}}结束",
+      "ineligibleWhitelist": "您必须在提案创建前成为会员才能投票",
+      "ineligibleTokenBased": "您必须在提案创建时持有{{token}}才能投票",
+      "voteSubmitted": "投票已提交",
+      "revote": "重新投票",
+      "expired": "提案已过期",
+      "approved": "已批准"
+    },
+    "voteOver": "投票结束",
+    "voteNow": "立即投票",
+    "emptyState": {
+      "titleSearch": "未找到{{query}}的结果",
+      "title": "暂无投票人",
+      "subtitle": "搜索其他钱包地址或ENS"
+    },
+    "label": {
+      "in": "在"
+    },
+    "approveOnly": "仅批准",
+    "approveAndExecute": {
+      "infoAlert": "只需要再获得一次批准，就可以执行提案操作。",
+      "infoAlertApproved": "不再需要任何批准，即可执行提案操作。"
+    },
+    "approveExecute": "批准并执行",
+    "vocdoni": {
+      "title": "投票",
+      "desc": "提案必须先通过社区投票，然后获得执行多重签名的批准。",
+      "titleCommunityVoting": "社区投票",
+      "titleExecutionMultisig": "执行多重签名批准",
+      "titleActionsApproval": "操作批准",
+      "alertInfoActionsApproval": "在执行前，这些操作必须获得批准。",
+      "status": {
+        "proposalDefeated": "提案已被<b>否决</b>",
+        "noApproval": "不允许批准",
+        "passed": "提案<b>通过</b>",
+        "notApproved": "提案<b>未获批准</b>",
+        "remainingTime": "剩余时间",
+        "approved": "提案<b>已获批准</b>"
+      }
+    }
+  },
+  "explore": {
+    "hero": {
+      "title": "探索DAO世界",
+      "subtitle1": "在一个地方建立您的DAO，探索社区，并为您的项目寻找灵感。"
+    },
+    "explorer": {
+      "title": "探索DAO",
+      "myDaos": "我的DAO",
+      "popular": "热门",
+      "newest": "最新",
+      "walletBased": "基于钱包",
+      "showMore": "显示更多",
+      "tokenBased": "基于代币"
+    },
+    "activeProposals": "进行中的提案",
+    "showMore": "显示更多",
+    "emptyStateProposal": {
+      "title": "没有进行中的提案",
+      "description": "您仍然可以查看您的DAO中即将到来或已过去的提案。"
+    },
+    "statistics": {
+      "daosCreated": "已创建的DAO",
+      "aragonMembers": "Aragon App DAO中的成员",
+      "activeProposals": "进行中的提案",
+      "securedByAragon": "由Aragon OSx保护"
+    },
+    "learn": {
+      "linkLabel": "了解DAO",
+      "linkURL": "https://aragon.org/education-portal"
+    },
+    "toggleFilter": {
+      "Favourites": "关注",
+      "allDAOs": "所有DAO ",
+      "member": "成员"
+    },
+    "inputPlaceholder": {
+      "searchDAOs": "按名称或地址搜索"
+    },
+    "searchDropwdown": {
+      "labelAmountDAOs": "{{amount}}个DAO"
+    },
+    "emptyStateSearch": {
+      "ctaLabel": "清除筛选器并搜索",
+      "title": "没有结果",
+      "description": "没有符合您的筛选条件的DAO。"
+    },
+    "modal": {
+      "filterDAOs": {
+        "title": "筛选DAO",
+        "label": {
+          "blockchains": "宿主区块链",
+          "base": "Base",
+          "allChains": "所有链",
+          "polygon": "Polygon",
+          "tokenVoting": "基于代币",
+          "ethereum": "以太坊",
+          "ethereumGoerli": "以太坊 Goerli",
+          "baseGoerli": "Base Goerli",
+          "polygonMumbai": "Polygon Mumbai",
+          "member": "基于钱包",
+          "governanceType": "治理类型"
+        },
+        "ctaLabel": {
+          "see0": "查看0个DAO",
+          "see{{amount}}": "查看{{amount}}个DAO",
+          "seeAll": "查看所有DAO"
+        },
+        "buttonLabel": {
+          "clearFilters": "清除筛选器"
+        },
+        "ctaLoading": "正在筛选DAO..."
+      },
+      "filterDAOS": {
+        "label": {
+          "showTesnets": "显示测试网"
+        }
+      }
+    },
+    "pagination": {
+      "label": {
+        "amountOf DAOs": "{{amount}}个中的{{total}}"
+      }
+    },
+    "search": {
+      "labelAmount": "{{amount}}个DAO"
+    },
+    "sortBy": {
+      "largestTreasury": "按最大财政排序",
+      "mostProposals": "按最多提案排序",
+      "largestCommunity": "按最大社区排序",
+      "recentlyCreated": "按最近创建排序"
+    }
+  },
+  "privacyPolicy": {
+    "title": "隐私政策",
+    "analytics": "分析cookie",
+    "analyticsHelpText": "收集有关您使用应用程序的信息。",
+    "functional": "功能性cookie",
+    "functionalHelpText": "用于存储您在应用程序中的偏好设置。",
+    "cookieSettings": "Cookie设置",
+    "acceptAllCookies": "全部接受",
+    "rejectAllCookies": "全部拒绝",
+    "acceptSelectedCookies": "接受",
+    "content": "我们使用Cookie和类似的技术来改善您的体验，启用某些功能，并分析我们的应用程序使用情况。您可以在此处选择退出Cookie。在我们的{{link}}中了解更多信息。",
+    "contentLinkURL": "https://aragon.org/privacy-policy",
+    "contentLinkLabel": "隐私政策"
+  },
+  "transactionDetail": {
+    "title": "交易明细",
+    "viewTransaction": "在区块浏览器中查看"
+  },
+  "cookiePreferences": {
+    "title": "Cookie偏好设置",
+    "content": "为了访问此功能，我们需要存储您的偏好设置。启用Cookie以继续。",
+    "accept": "接受",
+    "cancel": "取消"
+  },
+  "cta": {
+    "create": {
+      "title": "创建您的DAO",
+      "description": "通过我们的无代码设置流程，几分钟内在链上铸造代币，设置治理参数并部署您的DAO。",
+      "actionLabel": "立刻创建一个DAO！"
+    },
+    "learn": {
+      "title": "了解DAO",
+      "description": "在我们为各个阶段的建筑师设计的教育门户中找到灵感并学习DAO相关的知识。",
+      "actionLabel": "查看帮助文档"
+    },
+    "build": {
+      "title": "更快地建造",
+      "description": "使用我们的治理插件在Aragon OSx协议上构建DAO、dApp或您能想象的任何东西。",
+      "actionLabel": "即将推出"
+    },
+    "404": {
+      "titleLine1": "哦不，",
+      "titleLine2": "您发现了DAO空间中的空洞！",
+      "backToExplore": "返回探索"
+    }
+  },
+  "settings": {
+    "proposeSettings": "提议设置",
+    "reviewProposal": "审查提案",
+    "proposeSettingsSubtitle": "确认将包含在您的提案中的新设置。",
+    "editDaoSettings": "编辑DAO设置",
+    "editSubtitle": "要编辑诸如标志和描述之类的设置，您需要创建一个提案并在DAO中进行投票。",
+    "resetChanges": "重置更改",
+    "edit": "编辑设置",
+    "newSettings": "新设置",
+    "oldSettings": "旧设置",
+    "proposeSettingsInfo": "要更改设置，请创建一个提案并在DAO中进行投票。",
+    "dao": {
+      "links": {
+        "allLinks": "所有链接"
+      },
+      "contractAddress": "合约地址",
+      "summaryToggleMore": "阅读更多",
+      "summaryToggleClose": "查看更少"
+    },
+    "community": {
+      "distributionValue": "{{value}}个代币持有者",
+      "distributionHelptext": "查看所有代币持有者",
+      "memberHelptext": "查看所有成员"
+    }
+  },
+  "dashboard": {
+    "proposalsTitle": "已创建的提案",
+    "emptyState": {
+      "title": "我们正在构建您的DAO！",
+      "subtitle": "正在部署和发布链上数据。这不会花费很长时间。",
+      "daoReady": "您的DAO已准备就绪",
+      "openDao": "打开您的DAO",
+      "buildingDAO": "正在构建您的DAO"
+    }
+  },
+  "app": {
+    "feedback": {
+      "linkLabel": "Give feedback",
+      "linkURL": "https://form.typeform.com/to/apg4gHYO"
+    }
+  },
+  "logo": {
+    "linkURL": "https://aragon.org/"
+  },
+  "modal": {
+    "deposit": {
+      "headerTitle": "存入资产",
+      "headerDescription": "将资产发送到DAO资金库",
+      "inputLabelEns": "DAO资金库",
+      "inputHelptextEns": "复制下面的ENS或合约地址，然后使用您的钱包的发送功能将资金发送到您的DAO资金库。",
+      "ctaLabel": "查看所有转账",
+      "cancelLabel": "取消",
+      "inputLabelBlockchain": "区块链",
+      "inputHelptextBlockchain": "使用正确的区块链网络。一旦资金发送将无法找回。",
+      "ctaBlockchain": "连接",
+      "statusBlockchain": "已连接"
+    },
+    "exitProcess": {
+      "description": "如果您离开该流程，您将丢失输入的所有信息。您是否要退出该流程？",
+      "ctaLabel": "是，立即退出",
+      "cancelLabel": "否，留下",
+      "titleProposalCreation": "退出提案创建",
+      "titleDaoCreation": "退出DAO创建"
+    },
+    "claimPoap": {
+      "ctaLabel": "立即领取POAP",
+      "ctaURL": "https://poap-claim-app.aragon.org/",
+      "title": "领取您的DAO Builder POAP"
+    },
+    "mintTokensToTreasury": {
+      "title": "将新代币铸造到DAO金库",
+      "description": "DAO无法投票。请注意，将过多的代币铸造到您的DAO金库中可能导致无法达到最低参与度，从而无法执行任何提案操作。",
+      "alertTitle": "您的DAO存在潜在风险",
+      "alertDescription": "与其将代币铸造到DAO财政中，不如将其铸造到成员的钱包地址中，以便可以用于投票。",
+      "step1CtaLabel": "返回代币铸造",
+      "step1CancelLabel": "继续使用DAO地址",
+      "inputLabel": "使用DAO地址确认",
+      "inputHelptext": "为了确认，请填写下面的DAO合约地址。",
+      "step2CtaLabel": "确认",
+      "step2CancelLabel": "取消",
+      "alertChipSuccess": "已移出DAO金库",
+      "alertChipCritical": "已加入DAO金库"
+    },
+    "wrapToken": {
+      "desc": "将{{tokenSymbol}}包装成{{gTokenSymbol}}，用于参与治理。您随时可以解包{{gTokenSymbol}}（1 {{tokenSymbol}} = 1 {{gTokenSymbol}}）。",
+      "inputModeLabel": "您想对代币进行哪种操作？",
+      "inputSelectWrap": "包装",
+      "inputSelectUnwrap": "解包",
+      "inputAmountLabel": "数量",
+      "inputAmountDesc": "定义要包装的数量，以获取与治理兼容的{{tokenSymbol}}。",
+      "inputAmountBalance": "您的余额：{{amount}} {{tokenSymbol}}",
+      "footerTitle": "批准代币",
+      "footerSteps": "第{{step}}步，共{{steps}}步",
+      "footerDesc": "要包装此{{tokenSymbol}}，您首先必须批准该金额可供Aragon应用程序使用。",
+      "footerCtaFirst": "批准代币",
+      "footerCtaSecond": "包装代币",
+      "footerCtaError": "重试",
+      "footerAlertCriticalApprove": "批准您的代币时出错。请重试。",
+      "footerAlertCriticalWrap": "包装您的代币时出错。请重试。",
+      "successTitle": "代币包装成功",
+      "successDesc": "您已在您的钱包中收到{{amount}} {{gTokenSymbol}}。您现在是DAO的成员，并可以使用这些代币参与治理。",
+      "successCtaLabel": "查看社区",
+      "successBtnSecondaryLabel": "添加代币符号",
+      "inputAmountBalanceWrapped": "您的余额：{{amount}} g{{tokenSymbol}}",
+      "footerWrappedCancelLabel": "取消",
+      "footerWrappedCtaLabel": "解包代币",
+      "successBtnGhostLabel": "委托投票权",
+      "label": "加入DAO"
+    },
+    "unwrapToken": {
+      "successTitle": "代币解包成功",
+      "successDesc": "您已在您的钱包中收到{{amount}} {{tokenSymbol}}。",
+      "successCtaLabel": "查看社区"
+    },
+    "delegationActive": {
+      "CtaLabel": "领取投票权",
+      "BtnSecondaryLabel": "不，谢谢",
+      "label": "委托",
+      "title": "您没有投票权",
+      "desc": "您正在将您的{{balance}} {{tokenSymbol}}投票权委托给{{walletAddressDelegation}}。如果您想参与未来的提案，您必须领取您的投票权。"
+    },
+    "delegation": {
+      "label": "委托",
+      "optionsLabel": "您想如何处理您的委托？",
+      "checkbox": {
+        "delegateTo": "委托给其他人",
+        "claim": "领取您的投票权"
+      },
+      "codeInputLabel": "您的委托",
+      "codeInputDesc": "输入一个钱包地址以委托您的投票权。",
+      "codeInputPlaceholder": "ENS或0x...",
+      "alertCard": {
+        "title": "委托如何工作？",
+        "desc": "委托将增加该地址的投票权，以当前或未来的{{tokenSymbol}}余额为准。如果您委托给其他人，您将无法投票，直到您领取您的投票权。"
+      },
+      "ctaLabelDelegating": "委托中...",
+      "ctaLabelReclaiming": "领取中...",
+      "ctaLabelReclaim": "立即领取",
+      "ctaLabelDelegateNow": "委托投票权",
+      "successCtaLabel": "查看社区",
+      "successBtnSecondaryLabel": "查看交易",
+      "successDelegateTitle": "投票权委托成功",
+      "successDelegateDesc": "您已将您的所有投票权（{{balance}} {{tokenSymbol}}）委托给{{delegateEns}}。您可以随时撤销委托。",
+      "successReclaimDesc": "您已领取您的投票权（{{balance}} {{tokenSymbol}}）。您的投票权将在未来的提案中可用，但对于已经激活的提案不可用。",
+      "alertCriticalDelegate": "委托出错。请重试。",
+      "alertCriticalReclaim": "领取出错。请重试。",
+      "ctaLabelRetry": "重试",
+      "successReclaimTitle": "成功领取您的投票权",
+      "NoVotingPower": {
+        "desc": "在创建此提案时，您正在委托您的投票权（{{balance}} {{tokenSymbol}}）。",
+        "title": "您没有投票权",
+        "ctaLabel": "好的，明白",
+        "Link": "了解更多",
+        "LinkURL": "https://aragon.org/how-to/delegate-your-voting-power"
+      },
+      "CantVote": {
+        "title": "您无法投票",
+        "description": "{{sentence1}} {{sentence2}}",
+        "sentence1a": "您在创建此提案时既没有持有{{tokenSymbol}}也没有投票权。",
+        "sentence1b": "您在创建此提案时持有{{balance}} {{tokenSymbol}}，但没有投票权。",
+        "sentence2a": "",
+        "sentence2b": "如果您想参与未来的提案，您必须领取您的投票权。",
+        "sentence2c": "如果您想参与未来的提案，您必须获取{{tokenSymbol}}。"
+      }
+    },
+    "delegationInactive": {
+      "title": "您没有投票权",
+      "desc": "您尚未将您的投票权（{{balance}} {{tokenSymbol}}）委托给任何地址。如果您想参与未来的提案，您必须自己领取投票权或将其委托给其他地址。"
+    },
+    "transaction": {
+      "multisig": {
+        "label": {
+          "gasFee": "估计的燃料费",
+          "awaitingWallet": "等待钱包确认",
+          "confirmingTransaction": "确认您的交易",
+          "details": "详情",
+          "executingActions": "执行提案操作"
+        },
+        "voteDescript": "您正在批准此提案",
+        "voteTitle": "批准",
+        "ctaLabel": {
+          "continueProposal": "继续提案",
+          "approve": "批准",
+          "tryAgain": "重试",
+          "approveExecute": "批准并执行"
+        },
+        "alert": {
+          "transactionFailed": "交易失败...",
+          "noConfirmationReceived": "未收到确认..."
+        },
+        "ApproveExecuteTitle": "批准并执行提案",
+        "ApproveExecuteDescription": "批准提案和执行操作的成本将是单笔交易的燃料费。",
+        "ApproveTitle": "批准",
+        "approveDescription": "在提交之前仔细审查您的投票，并检查相应的燃料费。",
+        "ApproveProposalDescription": "批准提案的唯一成本将是燃料费。",
+        "ApproveProposalTitle": "批准提案"
+      }
+    },
+    "dappConnect": {
+      "title": "选择 dApp",
+      "desc": "您可以与以下 dApp 交互，向您的提案添加操作。了解更多信息，请参阅{{link}}。",
+      "descLinkLabel": "在我们的指南中",
+      "descLinkURL": "https://",
+      "validation": {
+        "codeInputHelp": "要连接，请打开{{dappName}}，将 WalletConnect QR 代码复制到剪贴板，然后在此处粘贴。",
+        "modalTitle": "{{dappName}}",
+        "codeInputLabel": "WalletConnect QR 代码",
+        "ctaLabelDefault": "创建连接",
+        "ctaLabelVerifying": "连接 dApp...",
+        "ctaLabelCritical": "重试",
+        "ctaLabelSuccess": "开始添加操作",
+        "alertCriticalGeneral": "连接到{{dappName}}失败",
+        "alertCriticalDapp": "提供的 QR 代码不是{{dappName}}的。",
+        "alertSuccess": "{{dappName}} 连接成功",
+        "codeInputPlaceholder": "wc: …",
+        "alertCriticalQRcode": "提供的 QR 代码不是{{dappName}}的。",
+        "alertInvalid": "无效的代码"
+      },
+      "detaildApp": {
+        "spinnerLabel": "监听操作...",
+        "desc": "您可以与{{dappName}}进行交互。您执行的操作将被添加到此提案中。",
+        "noActionsTag": "尚未收到操作",
+        "amountActionsTag": "已收到{{amountActions}}个操作",
+        "ctaLabel": "添加{{amountActions}}个操作"
+      },
+      "ctaOpenDapp": "打开{{dappName}}",
+      "dAppConnectedLabel": "已连接",
+      "headerTitle": "选择 dApp",
+      "headerDesc": "您可以与以下 dApp 交互，向您的提案添加操作。了解更多信息，请参阅{{link}}。",
+      "alertInfo": "更多 dApp 即将推出！",
+      "ctaDisconnectDapp": "断开连接{{dappName}}"
+    }
+  },
+  "scc": {
+    "labels": {
+      "connect": "连接智能合约",
+      "singleContractConnected": "已连接一个智能合约",
+      "nContractsConnected": "已连接{{numConnected}}个智能合约",
+      "searchPlaceholder": "输入以查找任何操作...",
+      "singleActionAvailable": "一个可写操作",
+      "nActionsAvailable": "{{numConnected}}个可写操作"
+    },
+    "addressValidation": {
+      "modalTitle": "连接智能合约",
+      "title": "智能合约地址",
+      "description": "输入智能合约地址。最好直接从中复制该地址",
+      "actionLabelWaiting": "验证智能合约",
+      "actionLabelLoading": "正在验证智能合约...",
+      "actionLabelSuccess": "组成操作",
+      "successLabel": "智能合约已验证 -> {{contractName}}"
+    },
+    "selectionEmptyState": {
+      "title": "选择智能合约",
+      "description": "通过选择{{networkName}}上的任何智能合约，创建您自己的操作并附加到您的提案中。"
+    },
+    "validation": {
+      "sourcifyStatusPending": "正在 Sourcify 上验证...",
+      "etherscanStatusPending": "正在{{blockExplorerName}}上验证...",
+      "sourcifyStatusSuccess": "在 Sourcify 上验证通过",
+      "etherscanStatusSuccess": "在{{blockExplorerName}}上验证通过",
+      "sourcifyStatusWarning": "在 Sourcify 上部分验证通过",
+      "sourcifyStatusCritical": "在 Sourcify 上未验证通过",
+      "etherscanStatusCritical": "在{{blockExplorerName}}上未验证通过",
+      "addressInputHelp": "输入合约地址。我们建议直接从区块浏览器中粘贴。",
+      "cancelLabel": "取消验证",
+      "explorerLinkLabel": "查看详细信息",
+      "ctaLabelWaiting": "验证合约地址",
+      "ctaLabelSuccess": "创建操作",
+      "ctaLabelWarning": "添加 ABI 函数",
+      "modalTitle": "连接智能合约",
+      "addressInputLabel": "合约地址",
+      "addressInput": {
+        "alertCritical": "地址无效。"
+      },
+      "explorerLinkEtherscanURL": "https://etherscan.io/address/{contractAddress}#code",
+      "explorerLinkSourcifyURL": "https://sourcify.dev/#/lookup/{contractAddress}",
+      "explorerLinkPolyscanURL": "https://polygonscan.com/address/{contractAddress}#code"
+    },
+    "emptyState": {
+      "ctaLabel": "连接智能合约",
+      "title": "未添加智能合约",
+      "description": "添加智能合约以与之交互。了解更多信息，请阅读{{link}}。",
+      "modalTitle": "智能合约组合器",
+      "descriptionLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao",
+      "descriptionLinkLabel": "我们的指南"
+    },
+    "abi": {
+      "abiInputLabel": "ABI 函数",
+      "abiInputHelp": "要为未经验证的智能合约生成操作，请添加 ABI 函数。了解如何添加 ABI 函数，请阅读{{link}}。",
+      "ctaLabelWaiting": "验证 ABI 函数",
+      "ctaLabelLoading": "正在验证 ABI 函数...",
+      "abiInputHelpLinkURL": "https://",
+      "abiInputHelpLinkLabel": "我们的指南",
+      "ctaLabelCritical": "重试 ABI 验证",
+      "abiInput": {
+        "alertWarning": "函数已验证",
+        "alertCritical": "输入失败。请重试。"
+      }
+    },
+    "listContracts": {
+      "searchInputPlaceholder": "输入以查找操作",
+      "pretitle": "{{amount}}个已连接的智能合约",
+      "contractAmountActions": "{{amount}}个操作",
+      "ctaLabel": "连接智能合约",
+      "learnLinkLabel": "了解更多",
+      "learnLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao",
+      "proxyContractAddressLabel": "{{contractAddress}}作为代理",
+      "noActionsFound": "未找到可写操作"
+    },
+    "detailContract": {
+      "dropdownExplorerLinkLabel": "在区块浏览器上查看",
+      "dropdownCopyLabel": "复制合约地址",
+      "dropdownRemoveLabel": "移除智能合约",
+      "ctaLabel": "添加操作",
+      "checkboxMultipleLabel": "添加另一个操作"
+    },
+    "inputPayableAmount": {
+      "description": "输入需要支付的{{tokenSymbol}}金额。",
+      "label": "可支付金额"
+    },
+    "writeContractEmptyState": {
+      "title": "编写合约",
+      "desc": "未找到公共写操作。",
+      "ctaLabel": "以代理方式编写"
+    },
+    "writeProxy": {
+      "dropdownDontWriteLabel": "不以代理方式编写",
+      "dropdownWriteAsProxyLabel": "以代理方式编写"
+    }
+  },
+  "inputWallet": {
+    "placeholder": "ENS或0x...",
+    "ensAlertSuccess": "ENS解析成功",
+    "addressAlertSuccess": "地址解析成功",
+    "ensAlertWarning": "该网络不支持ENS域名",
+    "ensAlertCirtical": "无效的ENS",
+    "addressAlertCritical": "无效的地址"
+  },
+  "modalWarning": {
+    "mintToken": {
+      "title": "另一个提案正在进行中",
+      "description": "请注意另一个提案正在铸造额外的代币。这意味着代币供应可能不是最终的，并且可能会影响未来的投票。",
+      "ctaLabel": "好的，明白了"
+    }
+  },
+  "community": {
+    "emptyState": {
+      "title": "成为第一个成员",
+      "desc": "将您的{{tokenSymbol}}转化为DAO社区的治理代币。了解更多信息，请阅读{{link}}。",
+      "ctaLabel": "加入DAO",
+      "descLinkLabel": "我们的指南",
+      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
+    },
+    "ctaMain": {
+      "wrappedLabel": "加入DAO"
+    },
+    "actionItemDropdown": {
+      "optionCopyAddress": "复制地址",
+      "optionBlockExplorer": "在区块浏览器上查看",
+      "optionDelegate": "委托给",
+      "optionChangeDelegation": "更改委托"
+    },
+    "actionItemVoter": {
+      "labelVoteWasChanged": "投票已更改"
+    },
+    "votersTable": {
+      "loadMore": "加载更多"
+    },
+    "sortByVotingPower": {
+      "default": "按投票权排序",
+      "selected": "按投票权排序"
+    },
+    "sortByDelegations": {
+      "default": "按委托排序",
+      "selected": "按委托排序"
+    },
+    "sortByCommunitySize": {
+      "default": "按社区规模排序",
+      "selected": "按社区规模排序"
+    },
+    "listHeader": {
+      "member": "成员",
+      "votingPower": "投票权",
+      "delegations": "委托"
+    }
+  },
+  "modalAlert": {
+    "wrapToken": {
+      "title": "未找到治理代币",
+      "desc": "将您的{{tokenSymbol}}转化为DAO社区的治理代笔。了解更多信息，请阅读{{link}}。",
+      "ctaLabel": "转化代币",
+      "cancleLabel": "取消",
+      "descLinkLabel": "我们的指南",
+      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
+    },
+    "noTokensFound": {
+      "title": "未找到代币",
+      "ctaLabel": "好的，明白了"
+    }
+  },
+  "label": {
+    "exportCSV": "导出为CSV",
+    "executionMultisig": "执行多签"
+  },
+  "tokenAmount": {
+    "InputLabel": "代币",
+    "inputDesc": "选择您想要提取的代币和金额"
+  },
+  "tagWallet": {
+    "labelYourDelegate": "您的委托人",
+    "labelYou": "您"
+  },
+  "og": {
+    "title": {
+      "aragonApp": "// Aragon App"
+    },
+    "explore": {
+      "desc": "在一个地方构建您的DAO，探索社区，找到灵感。",
+      "title": "Aragon App"
+    },
+    "governance": {
+      "title": "治理{daoName}",
+      "desc": "通过创建和投票提案参与{{daoName}}。"
+    },
+    "finance": {
+      "title": "{daoName}的财务",
+      "desc": "查看所有{{daoName}}的财务交易和资金。"
+    },
+    "community": {
+      "title": "{daoName}的社区",
+      "desc": "查看所有{{daoName}}的社区成员。"
+    },
+    "settings": {
+      "title": "{daoName}的设置",
+      "desc": "查看所有{{daoName}}的设置。"
+    }
+  },
+  "transactionModal": {
+    "multisig": {
+      "ctaApprove": "批准",
+      "ctaWaitingConfirmation": "等待确认",
+      "title": {
+        "approveProposal": "批准提案",
+        "approveExecute": "批准并执行"
+      },
+      "ctaConfirmingTransactiob": "正在确认交易...",
+      "ctaContinueProposal": "继续提案",
+      "ctaApproveExecute": "批准并执行"
+    }
+  },
+  "dao": {
+    "follow": {
+      "true": "已关注",
+      "false": "关注"
+    }
+  },
+  "update": {
+    "banner": {
+      "title": "Aragon OSx 有可用的更新。",
+      "ctaLabel": "查看更新"
+    },
+    "alert": {
+      "title": "Aragon OSx 有可用的更新。",
+      "desc": "Aragon智能合约的新版本可用。更新您的DAO需要创建并通过提案。",
+      "ctaLabel": "查看更新"
+    },
+    "reviewUpdates": {
+      "headerDesc": "Aragon团队定期发布新功能和安全改进。虽然更新不会自动应用，但任何社区成员都可以在下面查看发布说明并提出更新。",
+      "headerTitle": "Aragon OSx 更新"
+    },
+    "item": {
+      "releaseNotesLabel": "查看发布说明",
+      "versionCtaLabel": "选择其他版本",
+      "prepareCtaLabel": "准备插件",
+      "tagLatest": "最新",
+      "tagPrepared": "已准备"
+    },
+    "itemList": {
+      "alertInfo": "要提出所选的更新，请先准备上述插件。"
+    },
+    "modalVersion": {
+      "title": "选择版本",
+      "desc": "有多个版本的更新可用。在做出选择之前，请查看每个版本的发布说明",
+      "ctaLabel": "选择版本"
+    },
+    "modalPreparePlugin": {
+      "title": "准备插件",
+      "desc": "在向社区提出升级请求之前，插件必须作为单独的交易准备。",
+      "ctaLabel": "准备插件"
+    },
+    "proposal": {
+      "bannerTitle": "OSx 更新",
+      "title": "Aragon OSx 更新",
+      "summary": "该提案是{{daoName}}的Aragon OSx 更新。标题、摘要和说明文本由Aragon App自动生成。",
+      "descriptionFooter": "</ul><p>在投票之前，考虑升级的影响至关重要。阅读上述发布说明，并确认此OSx 更新通过了Aragon的安全验证。</p>",
+      "descriptionHeader": "<p>该提案包含以下链上交易，将升级特定的智能合约组件：<br /></p><ul>",
+      "descriptionProtocolUpgrade": "<li><strong>{{updatedVersion}}</strong><ol><li><strong>当前版本</strong>：{{currentVersion}}</li><li><strong>升级说明</strong>：{{description}}</li><ol><li><a href={{releaseNotesLink}} target=”_blank” rel=”noopener noreferrer”>查看发布说明</a></li></ol><li><strong>注意</strong>：DAO的地址永远不会改变<br /></li></ol></li>",
+      "descriptionPluginUpgrade": "<li><strong>{{updatedVersion}}</strong><ol><li><strong>当前版本</strong>：{{currentVersion}}</li><li><strong>升级说明</strong>：{{description}}</li><ol><li><a href={{releaseNotesLink}} target=”_blank” rel=”noopener noreferrer”>查看发布说明<br /></a></li></ol></ol></li>"
+    },
+    "modalCritical": {
+      "title": "您确定要继续吗？",
+      "desc": "该提案可能会对您的DAO造成风险。了解有关Aragon OSx 更新的更多信息{{link}}。",
+      "alertTitle": "对您的DAO存在潜在风险",
+      "alertDesc": "一个或多个提案操作不在Aragon Update Registry中，表明此更新可能具有潜在的危险性。",
+      "ctaMainLabel": "返回提案",
+      "ctaSecondaryLabel": "继续投票",
+      "inputLabel": "使用DAO地址进行确认",
+      "inputDesc": "要确认，请在下方填写DAO合约地址。",
+      "ctaConfirm": "确认",
+      "ctaCancel": "取消",
+      "descLinkUrl": "https://",
+      "descLinkLabel": "在我们的指南中"
+    },
+    "verification": {
+      "title": "更新验证",
+      "desc": "在进行投票或执行之前，应始终对Aragon OSx 更新进行验证。以下检查是最基本的检查，并由Aragon App自动为您执行。了解有关Aragon OSx 更新的更多信息，{{link}}。",
+      "itemPending": "正在检查{{updateName}} 更新...",
+      "itemSuccess": "{{updateName}} 更新已验证",
+      "itemCriticalDecoding": {
+        "desc": "至少有一个操作无法解码，表明此更新可能具有危险性。"
+      },
+      "itemCritical": {
+        "linkLabel": "查看详细信息",
+        "linkURL": "https://devs.aragon.org/docs/sdk/update-security-check/"
+      },
+      "itemCriticalFailed": {
+        "desc": "我们的一项或多项检查发现这些操作的构造不正确，表明此更新具有危险性。"
+      },
+      "descLinkLabel": "阅读我们的指南",
+      "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
+    }
+  },
+  "setting": {
+    "versionInfo": {
+      "title": "版本信息",
+      "labelApp": "App版本",
+      "labelOs": "操作系统版本",
+      "labelGovernance": "治理插件版本"
+    }
+  },
+  "addAction": {
+    "configureActions": {
+      "AlertCritical": {
+        "title": "操作可能失败",
+        "desc": "即使提案通过，如果在{{date time}}之后执行此操作，它可能会失败。"
+      }
+    }
+  },
+  "createDao": {
+    "stepCommunityVoting": {
+      "title": "社区投票参数",
+      "desc": "在社区投票阶段确定决议通过的条件。提案需要多少支持？多少社区成员需要参与？提案的投票期限是多长时间？在{{link}}中了解更多信息。",
+      "descLinkLabel": "本指南",
+      "descLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds"
+    },
+    "executionMultisig": {
+      "title": "定义执行多签名",
+      "desc": "为了将链下结果转移上链，需要执行多重签名来验证结果并执行提案的可选操作。在{{link}}中了解有关执行多重签名任务的更多信息。",
+      "membersLabel": "多重签名指南",
+      "membersDesc": "这些地址构成了批准和执行社区通过的提案的治理机构。添加将成为执行多签名成员的地址。",
+      "executionTitle": "执行过期时间",
+      "executionDesc": "执行过期时间是多重签名执行在社区支持的提案失去执行资格之前可执行通过的时间窗口。\n"
+    }
+  },
+  "modalTransaction": {
+    "vocdoni": {
+      "deploy": {
+        "createOffchain": "创建链下投票ID",
+        "registerProposalOff": "链下注册提案",
+        "registerProposalOn": "链上注册提案",
+        "proposalRready": "您的提案已准备就绪",
+        "signMessage": "签署消息",
+        "signTransaction": "签署交易",
+        "details": "详情"
+      },
+      "submitVote": {
+        "title": "提交您的投票",
+        "desc": "发布您的提案唯一费用是{{votingBlockchain}} 网络的燃料费。",
+        "ctaLabel": "确认您的投票",
+        "createOffchain": "创建链下投票ID",
+        "signMessage": "签署消息",
+        "publishVote": "发布您的投票",
+        "details": "详情",
+        "alertDontClose": "在进行中请勿关闭此页面。",
+        "ctaWaitingWalllet": "等待钱包确认",
+        "ctaSeeVote": "查看您的投票",
+        "PublishFailed": "发布您的投票失败"
+      }
+    }
+  },
+  "AA_TESTKEY": "测试密钥 - 更新＃1",
+  "members": {
+    "profile": {
+      "labelVotingPower": "投票权",
+      "labelDelegationsReceived": "接受的委托",
+      "labelLatestActivity": "最新活动",
+      "labelTokenBalance": "代币余额",
+      "dropdown": {
+        "etherscan": "Etherscan",
+        "profileLink": "个人资料链接"
+      },
+      "tagSeeking": "寻求委托",
+      "tagNotSeeking": "不寻求委托",
+      "votingTitle": "参与度",
+      "votingFirstVote": "首次投票",
+      "votingYes": "是",
+      "votingAbstain": "弃权",
+      "votingNo": "否",
+      "delegation": {
+        "viewAmountDelegations": "查看{{amount}}委托",
+        "0Delegations": "0 委托",
+        "statementTitle": "声明",
+        "statementViewLess": "查看更少",
+        "statementEdit": "编辑",
+        "statementViewMore": "查看更多",
+        "Title": "委托",
+        "userDelegatedVotingPower": "{{user}} 正在委托给",
+        "Desc": {
+          "MemberNotSeeking": "该成员在 {{daoName}} 中未宣布自己寻求委托。",
+          "OwnerNotSeeking": "您在 {{daoName}} 中未宣布自己寻求委托。",
+          "MemberOwnsVPower": "[PROV] 该成员拥有他在 {{DAOname}} 的投票权，投票权为 {{votingPowerValue}}{{tokenLabel}}。"
+        },
+        "labelEnableDelegation": "启用委托"
+      },
+      "labelTimestamp": "{{time}} 之前",
+      "delegationModal": {
+        "label": "接受了 {{amount}} 个委托"
+      },
+      "delegationItem": {
+        "sinceDate": "自"
+      },
+      "labelDelegatingSince": "自",
+      "labelProposalCreated": "创建的提案",
+      "headerCTAdelegateTo": "委托给",
+      "headerCTAchangeDelegation": "更改委托",
+      "emptyState": {
+        "ProposalsCreated": "没有创建的提案",
+        "Memberships": "没有其他成员资格",
+        "Participations": "没有投票参与",
+        "CTAExploreDAOs": "探索 DAO",
+        "CTACreateProposal": "创建提案",
+        "CTANoVoteParticipations": "查看治理"
+      },
+      "section": {
+        "title": "投票活动"
+      },
+      "sectionMemberhsips": "其他成员资格",
+      "sectionProposalsCreated": "创建了 {{amount}} 个提案",
+      "labelViewMore": "查看更多",
+      "votingApprove": "批准",
+      "labelDaysAgo": "天前"
+    }
+  }
+}
