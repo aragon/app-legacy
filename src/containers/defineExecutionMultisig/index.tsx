@@ -1,11 +1,5 @@
 import {Label} from '@aragon/ods-old';
-import React, {useCallback, useEffect} from 'react';
-import {
-  Controller,
-  useFormContext,
-  useWatch,
-  ValidateResult,
-} from 'react-hook-form';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -63,15 +57,13 @@ const DefineExecutionMultisig: React.FC = () => {
   return (
     <>
       {/*Executive committee members*/}
-      {!isSettingPage && (
-        <FormItem>
-          <Label
-            label={t('createDao.executionMultisig.membersLabel')}
-            helpText={t('createDao.executionMultisig.membersDesc')}
-          />
-          <AddCommittee />
-        </FormItem>
-      )}
+      <FormItem>
+        <Label
+          label={t('createDao.executionMultisig.membersLabel')}
+          helpText={t('createDao.executionMultisig.membersDesc')}
+        />
+        <AddCommittee />
+      </FormItem>
 
       {/*Minimum Approval*/}
       <FormItem>
