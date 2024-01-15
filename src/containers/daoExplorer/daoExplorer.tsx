@@ -58,7 +58,8 @@ export const DaoExplorer = () => {
     [followedDaos]
   );
 
-  const filteredDaoList = filter === 'favorite' ? followedDaoList : daoList;
+  const filteredDaoList =
+    filter === 'favorite' && isConnected ? followedDaoList : daoList;
 
   const displayFilters = isConnected && followedDaoList.length > 0;
 
