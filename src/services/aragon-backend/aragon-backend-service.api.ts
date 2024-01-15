@@ -12,6 +12,6 @@ export interface IFetchDaosParams
   extends IOrderedRequest<'CREATED_AT' | 'TVL' | 'MEMBERS' | 'PROPOSALS'>,
     IPaginatedRequest {
   governanceId?: string;
-  networks?: SupportedNetworks;
+  networks?: SupportedNetworks[];
   memberAddress?: string;
 }
