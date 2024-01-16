@@ -1,24 +1,23 @@
-import {
-  ButtonGroup,
-  ButtonText,
-  IconChevronDown,
-  Spinner,
-  Option,
-} from '@aragon/ods-old';
-import React, {useEffect, useMemo, useState} from 'react';
+import {ButtonText, IconChevronDown, Spinner} from '@aragon/ods-old';
+import React, {useMemo, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {DaoCard} from 'components/daoCard';
-import {useDaos} from 'services/aragon-backend/queries/use-daos';
-import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
-import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
-import {getSupportedNetworkByChainId} from 'utils/constants';
 import {Address} from 'viem';
-import {useWallet} from 'hooks/useWallet';
-import {NavigationDao} from 'context/apolloClient';
-import {IDao} from 'services/aragon-backend/domain/dao';
 
-type DaoFilter = 'favorite' | 'all';
+import {DaoCard} from 'components/daoCard';
+import DaoFilterModal from 'containers/daoFilterModal';
+import {QuickFilterValue} from 'containers/daoFilterModal/data';
+import {
+  FilterActionTypes,
+  daoFiltersReducer,
+} from 'containers/daoFilterModal/reducer';
+import {NavigationDao} from 'context/apolloClient';
+import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
+import {useWallet} from 'hooks/useWallet';
+import {IDao} from 'services/aragon-backend/domain/dao';
+import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
+import {useDaos} from 'services/aragon-backend/queries/use-daos';
+import {SupportedNetworks, getSupportedNetworkByChainId} from 'utils/constants';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   address: dao.address as Address,
@@ -31,17 +30,25 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
   governanceId: dao.plugins[0].id,
 });
 
+const defaultFilters = {quickFilter: 'allDaos' as QuickFilterValue};
+
 export const DaoExplorer = () => {
   const {t} = useTranslation();
-  const {isConnected} = useWallet();
+  const {isConnected, address} = useWallet();
 
-  const [filter, setFilter] = useState<DaoFilter>('favorite');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [filters, dispatch] = useReducer(daoFiltersReducer, defaultFilters);
 
   const followedDaosResult = useFollowedDaosInfiniteQuery();
 
   const newDaosResult = useDaos({
     direction: OrderDirection.DESC,
     orderBy: 'CREATED_AT' as const,
+    governanceIds: filters.governanceIds,
+    networks: filters.networks,
+    ...(filters.quickFilter === 'memberOf' && address
+      ? {memberAddress: address.toLowerCase()}
+      : {}),
   });
 
   const newDaoList = newDaosResult.data?.pages.flatMap(page => page.data);
@@ -51,65 +58,69 @@ export const DaoExplorer = () => {
     [followedDaosResult.data]
   );
 
-  const useFollowList = filter === 'favorite' && isConnected;
+  const useFollowList = filters.quickFilter === 'following' && isConnected;
   const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
 
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 
-  const displayFilters = isConnected && followedDaoList.length > 0;
-
-  useEffect(() => {
-    if (
-      followedDaosResult.status === 'success' &&
-      followedDaoList.length === 0
-    ) {
-      setFilter('all');
-    }
-  }, [followedDaosResult.status, followedDaoList]);
-
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
   return (
-    <Container>
-      <MainContainer>
-        <HeaderWrapper>
-          <Title>{t('explore.explorer.title')}</Title>
-          {displayFilters && (
-            <ButtonGroupContainer>
-              <ButtonGroup
-                defaultValue={filter}
-                onChange={(value: string) => setFilter(value as DaoFilter)}
-                bgWhite={false}
-              >
-                <Option label={t('explore.explorer.myDaos')} value="favorite" />
-                <Option label={t('explore.explorer.newest')} value="all" />
-              </ButtonGroup>
-            </ButtonGroupContainer>
-          )}
-        </HeaderWrapper>
-        <CardsWrapper>
-          {filteredDaoList?.map(dao => <DaoCard key={dao.address} dao={dao} />)}
-          {isLoading && <Spinner size="default" />}
-        </CardsWrapper>
-      </MainContainer>
-      {hasNextPage && (
-        <ButtonText
-          label={t('explore.explorer.showMore')}
-          className="self-start"
-          iconRight={
-            isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
-          }
-          bgWhite={true}
-          mode="ghost"
-          onClick={() => fetchNextPage()}
-        />
-      )}
-    </Container>
+    <>
+      <Container>
+        <MainContainer>
+          <HeaderWrapper>
+            <Title>{t('explore.explorer.title')}</Title>
+
+            {/* PLEASE REMOVE ME: @Sepehr */}
+            <button
+              onClick={() => {
+                setShowAdvancedFilters(true);
+              }}
+            >
+              SHOW ADVANCE FILTERS
+            </button>
+          </HeaderWrapper>
+          <CardsWrapper>
+            {filteredDaoList?.map(dao => (
+              <DaoCard key={dao.address} dao={dao} />
+            ))}
+            {isLoading && <Spinner size="default" />}
+          </CardsWrapper>
+        </MainContainer>
+        {hasNextPage && (
+          <ButtonText
+            label={t('explore.explorer.showMore')}
+            className="self-start"
+            iconRight={
+              isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
+            }
+            bgWhite={true}
+            mode="ghost"
+            onClick={() => fetchNextPage()}
+          />
+        )}
+      </Container>
+      <DaoFilterModal
+        count={newDaos?.pages[0].total ?? 0}
+        isOpen={showAdvancedFilters}
+        networks={filters.networks}
+        isLoading={isLoading}
+        quickFilter={filters.quickFilter}
+        governanceIds={filters.governanceIds}
+        onClearFilters={resetFilters}
+        onQuickFilterChanged={setQuickFilter}
+        onNetworkFiltersChanged={setNetworkFilters}
+        onGovernanceFiltersChanged={setGovernanceIdFilters}
+        onClose={() => {
+          setShowAdvancedFilters(false);
+        }}
+      />
+    </>
   );
 };
-
-const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex',
-})``;
 
 const MainContainer = styled.div.attrs({
   className: 'flex flex-col space-y-4 xl:space-y-6',
