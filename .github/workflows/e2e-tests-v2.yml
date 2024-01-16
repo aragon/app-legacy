@@ -152,8 +152,6 @@ jobs:
 
       - name: Start development server and Run E2E Tests
         run: |
-          yarn dev &
-          sleep 10 # Wait for the server to start; adjust the time as needed
           npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
         env:
           NODE_OPTIONS: '--max-old-space-size=6656'
