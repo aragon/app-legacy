@@ -11,7 +11,7 @@ export interface IFetchTokenHoldersParams {
 export interface IFetchDaosParams
   extends IOrderedRequest<'CREATED_AT' | 'TVL' | 'MEMBERS' | 'PROPOSALS'>,
     IPaginatedRequest {
-  governanceId?: string;
+  governanceIds?: string;
   networks?: SupportedNetworks[];
   memberAddress?: string;
 }

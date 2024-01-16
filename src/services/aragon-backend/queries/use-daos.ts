@@ -9,21 +9,24 @@ const daosQueryDocument = gql`
   query Dao(
     $direction: OrderDirection!
     $orderBy: DaoOrderField!
-    $networks: [Network!]
     $take: Float
     $skip: Float
-    $governanceId: String
+    $governanceIds: [String!]
+    $networks: [Network!]
     $memberAddress: String
   ) {
     dao(
       direction: $direction
       orderBy: $orderBy
-      networks: $networks
       take: $take
       skip: $skip
-      governanceId: $governanceId
+      governanceIds: $governanceIds
+      networks: $networks
       memberAddress: $memberAddress
     ) {
+      total
+      skip
+      take
       data {
         address
         ens
@@ -40,9 +43,6 @@ const daosQueryDocument = gql`
           members
         }
       }
-      total
-      skip
-      take
     }
   }
 `;
