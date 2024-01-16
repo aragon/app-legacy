@@ -93,7 +93,7 @@ jobs:
         run: yarn install --pure-lockfile
 
       - name: Build web-app
-        run: yarn build --mode ${{ needs.setup-env-vars.outputs.environment }}
+        run: yarn build
         env:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
