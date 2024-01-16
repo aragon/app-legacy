@@ -6,7 +6,7 @@ import {
   IconReload,
   Modal,
 } from '@aragon/ods-old';
-import React, {useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -29,6 +29,7 @@ export const DEFAULT_FILTERS: DaoFilterState = {
   quickFilter: 'allDaos',
   governanceIds: [],
   networks: [],
+  showTestnets: false,
 };
 
 type DaoFilterModalProps = {
@@ -129,13 +130,11 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
 type ContentProps = Pick<DaoFilterModalProps, 'filters' | 'onFilterChange'>;
 
 const ModalContent: React.FC<ContentProps> = ({
-  filters: {networks, quickFilter, governanceIds},
+  filters: {networks, quickFilter, governanceIds, showTestnets},
   onFilterChange,
 }) => {
   const {t} = useTranslation();
   const {isConnected} = useWallet();
-
-  const [showTestnets, setShowTestnets] = useState(false);
 
   const testnetsFilters = networkFilters.flatMap(f =>
     f.testnet ? f.value : []
@@ -176,7 +175,7 @@ const ModalContent: React.FC<ContentProps> = ({
       });
     }
 
-    setShowTestnets(value);
+    onFilterChange({type: FilterActionTypes.TOGGLE_TESTNETS, payload: value});
   };
 
   const toggleGovernanceIds = (value?: string[]) => {
@@ -333,7 +332,7 @@ const Main = styled.div.attrs({
 
 const Footer = styled.div.attrs({
   className:
-    'gap-y-3 border-t border-neutral-100 p-4 flex flex-col lg:flex-row lg:gap-x-4 lg:border-none',
+    'gap-y-3 border-t border-neutral-100 p-4 lg:px-6 flex flex-col lg:flex-row lg:gap-x-4 lg:border-none',
 })``;
 
 const TitleWrapper = styled.div.attrs({
@@ -351,14 +350,9 @@ const TitleLabel = styled.span.attrs({
 const LineDiv = styled.div.attrs({className: 'h-0.25 flex-1 bg-neutral-100'})``;
 
 const ModalHeader = styled.div.attrs({
-  className:
-    'flex items-center space-x-3 lg:space-x-4 rounded-2xl bg-neutral-0 p-4',
-})`
-  box-shadow:
-    0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06),
-    0px 0px 1px rgba(31, 41, 51, 0.04);
-`;
+  className: `flex items-center space-x-3 lg:space-x-4 rounded-2xl bg-neutral-0 p-4 lg:px-6 lg:rounded-[0px] lg:shadow-none
+    shadow-[0px_4px_8px_rgba(31,41,51,0.04),_0px_0px_2px_rgba(31,41,51,0.06),_0px_0px_1px_rgba(31,41,51,0.04)]`,
+})``;
 
 const StyledModal = styled(Modal).attrs({
   style: {
