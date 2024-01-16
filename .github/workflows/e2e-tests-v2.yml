@@ -126,11 +126,7 @@ jobs:
         uses: pierotofy/set-swap-space@master
         with:
           swap-size-gb: 12
-
-      ## Use this step instead of `docker/build-push-action@v4` to avoid JavaScript heap out memory error
-      ## Using 'docker buildx build ...' allows controlling memory and memory-swap
-      ## https://developer.ibm.com/articles/nodejs-memory-management-in-container-environments/
-      ## https://docs.docker.com/engine/reference/commandline/buildx_build/#build-arg
+          
       - name: Build container, Start it and Run E2E Tests
         run: |
           docker buildx build . --file ./Dockerfile.webapp.dev \
