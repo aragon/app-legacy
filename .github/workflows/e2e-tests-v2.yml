@@ -129,7 +129,7 @@ jobs:
 
       - name: Build container, Start it and Run E2E Tests
         run: |
-          docker buildx build . --file ./Dockerfile.webapp.dev \
+          docker buildx build . --file ./Dockerfile.webapp.dev --load \
           --build-arg VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }} \
           --build-arg VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }} \
           --build-arg VITE_REACT_APP_ANALYTICS_KEY=${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }} \
