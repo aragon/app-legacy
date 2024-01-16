@@ -245,7 +245,9 @@
     "mintableByDao": "Mintable by DAO",
     "basescan": "BaseScan",
     "Arbiscan": "Arbiscan",
-    "polygonscan": "Polygonscan"
+    "polygonscan": "Polygonscan",
+    "updateExecutionMultisigAction": "Update Execution Multisig",
+    "updateExecutionMultisigActionDescription": "Change addresses that can participate in the multisig"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -1064,11 +1066,13 @@
           "polygon": "Polygon",
           "tokenVoting": "Token-based",
           "ethereum": "Ethereum",
-          "ethereumGoerli": "Ethereum Goerli",
           "baseGoerli": "Base Goerli",
           "polygonMumbai": "Polygon Mumbai",
           "member": "Wallet-based",
-          "governanceType": "Governance type"
+          "governanceType": "Governance type",
+          "arbitrumGoerli": "Arbitrum Goerli",
+          "arbitrum": "Arbitrum",
+          "ethereumSepolia": "Ethereum Sepolia"
         },
         "ctaLabel": {
           "see0": "See 0 DAOs",
@@ -1097,7 +1101,7 @@
     "sortBy": {
       "largestTreasury": "Sort by largest treasury",
       "mostProposals": "Sort by most proposals",
-      "largestCommunity": "Sort by largest community",
+      "largestCommunity": "Sort by most members",
       "recentlyCreated": "Sort by recently created"
     }
   },

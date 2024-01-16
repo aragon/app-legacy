@@ -1,5 +1,5 @@
 import {PluginTypes, GaselessPluginType} from 'hooks/usePluginClient';
-import {SupportedNetworks} from 'utils/constants';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 
 type NetworkFilter = {
   label: string;
@@ -7,44 +7,15 @@ type NetworkFilter = {
   testnet?: boolean;
 };
 
-export const networkFilters: Array<NetworkFilter> = [
-  {
-    label: 'explore.modal.filterDAOs.label.ethereum',
-    value: 'ethereum',
-  },
-  {
-    label: 'explore.modal.filterDAOs.label.polygon',
-    value: 'polygon',
-  },
-  {
-    label: 'ARBITRUM',
-    value: 'arbitrum',
-  },
-  {
-    label: 'explore.modal.filterDAOs.label.base',
-    value: 'base',
-  },
-  {
-    label: 'SEPOLIA',
-    value: 'sepolia',
-    testnet: true,
-  },
-  {
-    label: 'explore.modal.filterDAOs.label.polygonMumbai',
-    value: 'mumbai',
-    testnet: true,
-  },
-  {
-    label: 'ARBITRUM-GOERLI',
-    value: 'arbitrum-goerli',
-    testnet: true,
-  },
-  {
-    label: 'explore.modal.filterDAOs.label.baseGoerli',
-    value: 'base-goerli',
-    testnet: true,
-  },
-];
+export const networkFilters: Array<NetworkFilter> = Object.entries(
+  CHAIN_METADATA
+).flatMap(([key, {name, isTestnet}]) => {
+  const value: SupportedNetworks = key as SupportedNetworks;
+
+  return value !== 'goerli' && value !== 'unsupported'
+    ? ({label: name, value, testnet: isTestnet} as NetworkFilter)
+    : [];
+});
 
 type GovernanceFilter = {
   label: string;
