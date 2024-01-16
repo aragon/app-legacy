@@ -1,39 +1,78 @@
-import {SupportedNetwork} from '@aragon/sdk-client-common';
+import {PluginTypes, GaselessPluginType} from 'hooks/usePluginClient';
+import {SupportedNetworks} from 'utils/constants';
 
-const blockchainFilters = [
+type NetworkFilter = {
+  label: string;
+  value: SupportedNetworks;
+  testnet?: boolean;
+};
+
+export const networkFilters: Array<NetworkFilter> = [
   {
     label: 'explore.modal.filterDAOs.label.ethereum',
-    value: SupportedNetwork.MAINNET,
+    value: 'ethereum',
   },
   {
     label: 'explore.modal.filterDAOs.label.polygon',
-    value: SupportedNetwork.POLYGON,
+    value: 'polygon',
+  },
+  {
+    label: 'ARBITRUM',
+    value: 'arbitrum',
   },
   {
     label: 'explore.modal.filterDAOs.label.base',
-    value: SupportedNetwork.BASE,
+    value: 'base',
+  },
+  {
+    label: 'SEPOLIA',
+    value: 'sepolia',
+    testnet: true,
   },
   {
     label: 'explore.modal.filterDAOs.label.polygonMumbai',
-    value: SupportedNetwork.MUMBAI,
+    value: 'mumbai',
+    testnet: true,
+  },
+  {
+    label: 'ARBITRUM-GOERLI',
+    value: 'arbitrum-goerli',
     testnet: true,
   },
   {
     label: 'explore.modal.filterDAOs.label.baseGoerli',
-    value: SupportedNetwork.BASE_GOERLI,
+    value: 'base-goerli',
     testnet: true,
   },
 ];
 
-const governanceFilters = [
-  {label: 'explore.modal.filterDAOs.label.tokenVoting', value: 'token-based'},
-  {label: 'explore.modal.filterDAOs.label.member', value: 'wallet-based'},
+type GovernanceFilter = {
+  label: string;
+  value: Exclude<PluginTypes, GaselessPluginType>;
+};
+export const governanceFilters: GovernanceFilter[] = [
+  {
+    label: 'explore.modal.filterDAOs.label.tokenVoting',
+    value: 'token-voting.plugin.dao.eth',
+  },
+  {
+    label: 'explore.modal.filterDAOs.label.member',
+    value: 'multisig.plugin.dao.eth',
+  },
 ];
 
-const quickFilters = [
+export type QuickFilterValue = 'allDaos' | 'memberOf' | 'following';
+type QuickFilter = {
+  label: string;
+  value: QuickFilterValue;
+  disabled?: boolean;
+};
+
+export const quickFilters: QuickFilter[] = [
   {label: 'explore.toggleFilter.allDAOs', value: 'allDaos'},
   {label: 'explore.toggleFilter.member', value: 'memberOf'},
-  {label: 'explore.toggleFilter.Favourites', value: 'favourites'},
+  {
+    label: 'explore.toggleFilter.Favourites',
+    value: 'following',
+  },
 ];
-
-export {blockchainFilters, governanceFilters, quickFilters};
