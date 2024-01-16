@@ -11,64 +11,72 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
+import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
+import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
+import {useDaos} from 'services/aragon-backend/queries/use-daos';
 import {SupportedNetworks} from 'utils/constants';
 import {
   QuickFilterValue,
-  networkFilters,
   governanceFilters,
+  networkFilters,
   quickFilters,
 } from './data';
-import {DaoFilterState} from './reducer';
+import {DaoFilterAction, DaoFilterState, FilterActionTypes} from './reducer';
 
-type DaoFilterModalProps = DaoFilterState & {
-  count: number;
+export const DEFAULT_FILTERS = {quickFilter: 'allDaos' as QuickFilterValue};
+
+type DaoFilterModalProps = {
   isOpen: boolean;
-  isLoading: boolean;
+  filters: DaoFilterState;
   onClose: () => void;
-  onClearFilters: () => void;
-  onQuickFilterChanged: (value: QuickFilterValue) => void;
-  onNetworkFiltersChanged: (value: SupportedNetworks[] | undefined) => void;
-  onGovernanceFiltersChanged: (value: string[] | undefined) => void;
+  onFilterChange: React.Dispatch<DaoFilterAction>;
 };
 
 const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
-  count,
   isOpen,
-  networks,
-  isLoading,
-  quickFilter,
-  governanceIds,
+  filters,
   onClose,
-  onClearFilters,
-  onQuickFilterChanged,
-  onNetworkFiltersChanged,
-  onGovernanceFiltersChanged,
+  onFilterChange,
 }) => {
   const {isDesktop} = useScreen();
-  const Component = isDesktop ? StyledModal : BottomSheet;
+  const {address, isConnected} = useWallet();
+
+  const showFollowedDaos = filters.quickFilter === 'following' && isConnected;
+
+  const followedApi = useFollowedDaosInfiniteQuery(showFollowedDaos);
+  const newDaosApi = useDaos(
+    {
+      direction: OrderDirection.DESC,
+      orderBy: 'CREATED_AT' as const,
+      governanceIds: filters.governanceIds,
+      networks: filters.networks,
+      ...(filters.quickFilter === 'memberOf' && address
+        ? {memberAddress: address.toLowerCase()}
+        : {}),
+    },
+    {enabled: showFollowedDaos === false}
+  );
+
+  const daosApi = showFollowedDaos ? followedApi : newDaosApi;
 
   const showAllResults =
-    quickFilter === 'allDaos' && !networks?.length && !governanceIds?.length;
+    filters.quickFilter === 'allDaos' &&
+    !filters.networks?.length &&
+    !filters.governanceIds?.length;
 
+  const Component = isDesktop ? StyledModal : BottomSheet;
   return (
     <Component isOpen={isOpen} onClose={onClose}>
       <Header onClose={onClose} />
-      <ModalContent
-        networks={networks}
-        quickFilter={quickFilter}
-        governanceIds={governanceIds}
-        onQuickFilterChanged={onQuickFilterChanged}
-        onNetworkFiltersChanged={onNetworkFiltersChanged}
-        onGovernanceFiltersChanged={onGovernanceFiltersChanged}
-      />
+      <ModalContent filters={filters} onFilterChange={onFilterChange} />
       <ModalFooter
-        count={count}
+        count={daosApi.data?.pages[0].total ?? 0}
         onClose={onClose}
         showAll={showAllResults}
-        isLoading={isLoading}
-        onClearFilters={onClearFilters}
+        isLoading={daosApi.isLoading}
+        onFilterChange={onFilterChange}
       />
     </Component>
   );
@@ -107,17 +115,12 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
   );
 };
 
-type ContentProps = Pick<
-  DaoFilterModalProps,
-  | 'networks'
-  | 'quickFilter'
-  | 'governanceIds'
-  | 'onQuickFilterChanged'
-  | 'onNetworkFiltersChanged'
-  | 'onGovernanceFiltersChanged'
->;
+type ContentProps = Pick<DaoFilterModalProps, 'filters' | 'onFilterChange'>;
 
-const ModalContent: React.FC<ContentProps> = props => {
+const ModalContent: React.FC<ContentProps> = ({
+  filters: {networks, quickFilter, governanceIds},
+  onFilterChange,
+}) => {
   const {t} = useTranslation();
   const {isConnected} = useWallet();
 
@@ -131,30 +134,58 @@ const ModalContent: React.FC<ContentProps> = props => {
     ? networkFilters
     : networkFilters.filter(f => !f.testnet);
 
+  /*************************************************
+   *             Callbacks and Handlers            *
+   *************************************************/
+  const toggleQuickFilters = (value?: string | string[]) => {
+    if (value && !Array.isArray(value)) {
+      onFilterChange({
+        type: FilterActionTypes.SET_QUICK_FILTER,
+        payload: value as QuickFilterValue,
+      });
+    }
+  };
+
+  const toggleNetworks = (value?: string[]) => {
+    onFilterChange({
+      type: FilterActionTypes.SET_NETWORKS,
+      payload: value as SupportedNetworks[] | undefined,
+    });
+  };
+
   const toggleTestnets = (value: boolean) => {
     if (value === false) {
-      const newValue = props.networks?.filter(
+      const newValue = networks?.filter(
         network => !testnetsFilters.includes(network)
       );
 
-      props.onNetworkFiltersChanged(newValue);
+      onFilterChange({
+        type: FilterActionTypes.SET_NETWORKS,
+        payload: newValue,
+      });
     }
 
     setShowTestnets(value);
   };
 
+  const toggleGovernanceIds = (value?: string[]) => {
+    onFilterChange({
+      type: FilterActionTypes.SET_GOVERNANCE_IDS,
+      payload: value,
+    });
+  };
+
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
   return (
     <Main>
       {/* Quick Filters */}
       <FilterSection>
         <ToggleGroup
           isMultiSelect={false}
-          value={props.quickFilter}
-          onChange={v => {
-            if (v) {
-              props.onQuickFilterChanged(v as QuickFilterValue);
-            }
-          }}
+          value={quickFilter}
+          onChange={toggleQuickFilters}
         >
           {quickFilters.map(f => {
             return (
@@ -183,13 +214,7 @@ const ModalContent: React.FC<ContentProps> = props => {
           </Title>
           <LineDiv />
         </TitleWrapper>
-        <ToggleGroup
-          isMultiSelect
-          value={props.networks}
-          onChange={v =>
-            props.onNetworkFiltersChanged(v as SupportedNetworks[] | undefined)
-          }
-        >
+        <ToggleGroup isMultiSelect value={networks} onChange={toggleNetworks}>
           {displayedChains.flatMap(f => (
             <Toggle key={f.value} label={t(f.label)} value={f.value} />
           ))}
@@ -214,8 +239,8 @@ const ModalContent: React.FC<ContentProps> = props => {
         </TitleWrapper>
         <ToggleGroup
           isMultiSelect
-          onChange={props.onGovernanceFiltersChanged}
-          value={props.governanceIds}
+          onChange={toggleGovernanceIds}
+          value={governanceIds}
         >
           {governanceFilters.map(f => (
             <Toggle key={f.value} label={t(f.label)} value={f.value} />
@@ -226,11 +251,10 @@ const ModalContent: React.FC<ContentProps> = props => {
   );
 };
 
-type FooterProps = Pick<
-  DaoFilterModalProps,
-  'isLoading' | 'count' | 'onClearFilters' | 'onClose'
-> & {
+type FooterProps = Pick<DaoFilterModalProps, 'onClose' | 'onFilterChange'> & {
+  count: number;
   showAll: boolean;
+  isLoading: boolean;
 };
 const ModalFooter: React.FC<FooterProps> = props => {
   const {t} = useTranslation();
@@ -257,6 +281,13 @@ const ModalFooter: React.FC<FooterProps> = props => {
     }
   };
 
+  const handleClearFilters = () => {
+    props.onFilterChange({
+      type: FilterActionTypes.RESET,
+      payload: DEFAULT_FILTERS,
+    });
+  };
+
   return (
     <Footer>
       <Button
@@ -273,7 +304,7 @@ const ModalFooter: React.FC<FooterProps> = props => {
         mode="ghost"
         label={t('explore.modal.filterDAOs.buttonLabel.clearFilters')}
         bgWhite
-        onClick={props.onClearFilters}
+        onClick={handleClearFilters}
         iconLeft={<IconReload />}
         className="w-full lg:w-auto"
       />

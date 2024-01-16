@@ -35,20 +35,11 @@ export const daoFiltersReducer = (
 ): DaoFilterState => {
   switch (action.type) {
     case FilterActionTypes.SET_GOVERNANCE_IDS:
-      return {
-        ...state,
-        governanceIds:
-          action.payload?.length === 0 ? undefined : action.payload,
-      };
-
+      return {...state, governanceIds: action.payload};
     case FilterActionTypes.SET_QUICK_FILTER:
       return {...state, quickFilter: action.payload};
-
     case FilterActionTypes.SET_NETWORKS:
-      return {
-        ...state,
-        networks: action.payload?.length === 0 ? undefined : action.payload,
-      };
+      return {...state, networks: action.payload};
     case FilterActionTypes.RESET:
       return {...action.payload};
 

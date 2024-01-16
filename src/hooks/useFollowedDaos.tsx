@@ -67,14 +67,18 @@ export const useFollowedDaosInfiniteQuery = (
         getFollowedDaosFromCache({
           skip: limit * pageParam,
           limit,
+          includeTotal: true,
         }),
       [limit]
     ),
 
     getNextPageParam: (
-      lastPage: NavigationDao[],
-      allPages: NavigationDao[][]
-    ) => (lastPage.length === limit ? allPages.length : undefined),
+      lastPage: {daos: NavigationDao[]; total: number},
+      allPages: {daos: NavigationDao[]; total: number}[]
+    ) => {
+      const current = allPages.length + 1;
+      return current * limit <= lastPage.total ? current : undefined;
+    },
 
     select: augmentCachedDaos,
     enabled,
@@ -228,10 +232,15 @@ export const useRemoveFollowedDaoMutation = (
  * @param data raw fetched data for the cached DAOs.
  * @returns list of DAOs augmented with the resolved IPFS CID avatars
  */
-function augmentCachedDaos(data: InfiniteData<NavigationDao[]>) {
+function augmentCachedDaos(
+  data: InfiniteData<{daos: NavigationDao[]; total: number}>
+) {
   return {
     pageParams: data.pageParams,
-    pages: data.pages.flatMap(page => addAvatarToDaos(page)),
+    pages: data.pages.map(page => ({
+      data: addAvatarToDaos(page.daos),
+      total: page.total,
+    })),
   };
 }
 

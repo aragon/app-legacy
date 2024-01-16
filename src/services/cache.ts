@@ -21,25 +21,46 @@ import {SmartContract, VerifiedContracts} from 'utils/types';
 export const FOLLOWED_DAOS_KEY = 'favoriteDaos';
 export const PENDING_DAOS_KEY = 'pendingDaos';
 
+type FollowedDaosResultWithCount = {
+  daos: NavigationDao[];
+  total: number;
+};
+
+type GetFollowedDaosFromCacheOptions = {
+  skip: number;
+  limit?: number;
+  includeTotal?: boolean;
+};
+
 /**
  * Fetch a list of followed DAOs
  * @param cache followed DAOs cache (to be replaced when migrating to server)
  * @param options query options
  * @returns list of followed DAOs based on given options
  */
-export async function getFollowedDaosFromCache(options: {
-  skip: number;
-  limit?: number;
-}): Promise<NavigationDao[]> {
-  const {skip, limit} = options;
+// Overload signatures
+export function getFollowedDaosFromCache(
+  options: GetFollowedDaosFromCacheOptions & {includeTotal: true}
+): Promise<FollowedDaosResultWithCount>;
+
+export function getFollowedDaosFromCache(
+  options: GetFollowedDaosFromCacheOptions & {includeTotal?: false}
+): Promise<NavigationDao[]>;
+
+export async function getFollowedDaosFromCache(
+  options: GetFollowedDaosFromCacheOptions
+): Promise<FollowedDaosResultWithCount | NavigationDao[]> {
+  const {skip, limit, includeTotal = false} = options;
 
   const favoriteDaos = JSON.parse(
-    localStorage.getItem(FOLLOWED_DAOS_KEY) || '[]'
+    localStorage.getItem(FOLLOWED_DAOS_KEY) ?? '[]'
   ) as NavigationDao[];
 
   // sleeping for 600 ms because the immediate apparition of DAOS creates a flickering issue
   await sleepFor(600);
-  return favoriteDaos.slice(skip, limit ? skip + limit : undefined);
+
+  const sliced = favoriteDaos.slice(skip, limit ? skip + limit : undefined);
+  return includeTotal ? {daos: sliced, total: favoriteDaos.length} : sliced;
 }
 
 /**
