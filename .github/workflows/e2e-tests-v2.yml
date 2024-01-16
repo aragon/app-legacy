@@ -150,7 +150,14 @@ jobs:
 
           docker run -d --name my-webapp-instance -p 8080:8080 -e PRIVATE_KEY='81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1' my-webapp
 
+      - name: Start development server and Run E2E Tests
+        run: |
           npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+        env:
+          NODE_OPTIONS: '--max-old-space-size=6656'
+          PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
 
+      - name: Cleanup
+        run: |
           docker stop my-webapp-instance
           docker rm my-webapp-instance
