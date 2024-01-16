@@ -158,7 +158,6 @@ jobs:
           --tag ghcr.io/${{ github.repository }}:${{ steps.myvars.outputs.BRANCH_NAME }} \
           --tag ghcr.io/${{ github.repository }}:commit-${{ steps.myvars.outputs.GIT_HASH_SHORT }} \
           --tag ghcr.io/${{ github.repository }}:webapp-${{ steps.myvars.outputs.BRANCH_NAME }}-${{ steps.myvars.outputs.DATE_IN_SECS }}
-          done
 
       # - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
       #   env:
