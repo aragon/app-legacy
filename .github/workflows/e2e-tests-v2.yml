@@ -136,7 +136,7 @@ jobs:
           # Step 1: Build the Docker Image
           # mkdir -p /tmp/docker-build-push-${{ steps.myvars.outputs.DATE_IN_SECS }}/
           # docker buildx build . --file ./Dockerfile.webapp.dev --push \
-          docker buildx build . --file ./Dockerfile.webapp.dev
+          docker buildx build . --file ./Dockerfile.webapp.dev \
           --build-arg VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }} \
           --build-arg VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }} \
           --build-arg VITE_REACT_APP_ANALYTICS_KEY=${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }} \
