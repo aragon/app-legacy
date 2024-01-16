@@ -14,6 +14,7 @@ import {
   SupportedChainID,
   SupportedNetworks,
   VERIFIED_CONTRACTS_KEY,
+  getSupportedNetworkByChainId,
 } from 'utils/constants';
 import {sleepFor} from 'utils/library';
 import {SmartContract, VerifiedContracts} from 'utils/types';
@@ -21,14 +22,16 @@ import {SmartContract, VerifiedContracts} from 'utils/types';
 export const FOLLOWED_DAOS_KEY = 'favoriteDaos';
 export const PENDING_DAOS_KEY = 'pendingDaos';
 
-type FollowedDaosResultWithCount = {
-  daos: NavigationDao[];
+export type FollowedDaosResultWithTotal = {
+  data: NavigationDao[];
   total: number;
 };
 
 type GetFollowedDaosFromCacheOptions = {
   skip: number;
   limit?: number;
+  networks?: SupportedNetworks[];
+  governanceIds?: string[];
   includeTotal?: boolean;
 };
 
@@ -41,7 +44,7 @@ type GetFollowedDaosFromCacheOptions = {
 // Overload signatures
 export function getFollowedDaosFromCache(
   options: GetFollowedDaosFromCacheOptions & {includeTotal: true}
-): Promise<FollowedDaosResultWithCount>;
+): Promise<FollowedDaosResultWithTotal>;
 
 export function getFollowedDaosFromCache(
   options: GetFollowedDaosFromCacheOptions & {includeTotal?: false}
@@ -49,8 +52,10 @@ export function getFollowedDaosFromCache(
 
 export async function getFollowedDaosFromCache(
   options: GetFollowedDaosFromCacheOptions
-): Promise<FollowedDaosResultWithCount | NavigationDao[]> {
-  const {skip, limit, includeTotal = false} = options;
+): Promise<FollowedDaosResultWithTotal | NavigationDao[]> {
+  const {skip, limit, includeTotal, governanceIds, networks} = options;
+
+  console.log(options, 'options');
 
   const favoriteDaos = JSON.parse(
     localStorage.getItem(FOLLOWED_DAOS_KEY) ?? '[]'
@@ -58,9 +63,20 @@ export async function getFollowedDaosFromCache(
 
   // sleeping for 600 ms because the immediate apparition of DAOS creates a flickering issue
   await sleepFor(600);
+  const filtered = favoriteDaos.filter(dao => {
+    const pluginId = dao.plugins[0].id;
+    const daoNetwork = getSupportedNetworkByChainId(
+      dao.chain
+    ) as SupportedNetworks;
 
-  const sliced = favoriteDaos.slice(skip, limit ? skip + limit : undefined);
-  return includeTotal ? {daos: sliced, total: favoriteDaos.length} : sliced;
+    return (
+      (!governanceIds?.length || governanceIds?.includes(pluginId)) &&
+      (!networks?.length || networks.includes(daoNetwork))
+    );
+  });
+
+  const sliced = filtered.slice(skip, limit ? skip + limit : undefined);
+  return includeTotal ? {data: sliced, total: filtered.length} : sliced;
 }
 
 /**

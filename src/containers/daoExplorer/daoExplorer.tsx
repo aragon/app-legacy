@@ -34,7 +34,13 @@ export const DaoExplorer = () => {
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
   const useFollowList = filters.quickFilter === 'following' && isConnected;
-  const followedDaosResult = useFollowedDaosInfiniteQuery();
+  const followedDaosResult = useFollowedDaosInfiniteQuery(
+    {
+      governanceIds: filters.governanceIds,
+      networks: filters.networks,
+    },
+    {enabled: useFollowList}
+  );
 
   const newDaosResult = useDaos(
     {
@@ -46,11 +52,10 @@ export const DaoExplorer = () => {
         ? {memberAddress: address.toLowerCase()}
         : {}),
     },
-    {enabled: useFollowList === false}
+    {enabled: !useFollowList}
   );
 
   const newDaoList = newDaosResult.data?.pages.flatMap(page => page.data);
-
   const followedDaoList = useMemo(
     () =>
       followedDaosResult.data?.pages.flatMap(page =>
@@ -60,7 +65,6 @@ export const DaoExplorer = () => {
   );
 
   const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
-
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 

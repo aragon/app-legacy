@@ -1,6 +1,7 @@
-import {DaoQueryParams} from '@aragon/sdk-client';
 import {
   InfiniteData,
+  QueryKey,
+  UseInfiniteQueryOptions,
   UseQueryResult,
   useInfiniteQuery,
   useMutation,
@@ -11,6 +12,7 @@ import {
 import {NavigationDao} from 'context/apolloClient';
 import {useCallback} from 'react';
 import {
+  FollowedDaosResultWithTotal,
   addFollowedDaoToCache,
   getFollowedDaoFromCache,
   getFollowedDaosFromCache,
@@ -46,44 +48,49 @@ export const useFollowedDaosQuery = (
   });
 };
 
-/**
- * This hook manages the pagination of cached DAOs.
- * @param enabled boolean value that indicates whether the query should be enabled or not
- * @param options.limit maximum number of DAOs to be fetched per page.
- * @returns an infinite query object that can be used to fetch and
- * display the cached DAOs.
- */
+type IFetchFollowedDaosParams = {
+  governanceIds?: string[];
+  networks?: SupportedNetworks[];
+  limit?: number;
+  skip?: number;
+};
+
+type IFetchInfiniteFollowedDaosResult = FollowedDaosResultWithTotal;
+
+const useFollowedDaosInfiniteQueryKey = (
+  params: IFetchFollowedDaosParams
+): QueryKey => {
+  return ['infiniteFollowedDaos', params];
+};
+
 export const useFollowedDaosInfiniteQuery = (
-  enabled = true,
-  {
-    limit = DEFAULT_QUERY_PARAMS.limit,
-  }: Partial<Pick<DaoQueryParams, 'limit'>> = {}
+  params: IFetchFollowedDaosParams,
+  options: UseInfiniteQueryOptions<IFetchInfiniteFollowedDaosResult> = {}
 ) => {
-  return useInfiniteQuery({
-    queryKey: ['infiniteFollowedDaos'],
-
-    queryFn: useCallback(
-      ({pageParam = 0}) =>
-        getFollowedDaosFromCache({
-          skip: limit * pageParam,
-          limit,
-          includeTotal: true,
-        }),
-      [limit]
-    ),
-
-    getNextPageParam: (
-      lastPage: {daos: NavigationDao[]; total: number},
-      allPages: {daos: NavigationDao[]; total: number}[]
-    ) => {
-      const current = allPages.length + 1;
-      return current * limit <= lastPage.total ? current : undefined;
-    },
-
-    select: augmentCachedDaos,
-    enabled,
-    refetchOnWindowFocus: false,
-  });
+  const {limit = DEFAULT_QUERY_PARAMS.limit, governanceIds, networks} = params;
+  return useInfiniteQuery(
+    useFollowedDaosInfiniteQueryKey(params),
+    ({pageParam = 0}) =>
+      getFollowedDaosFromCache({
+        skip: limit * pageParam,
+        limit,
+        includeTotal: true,
+        governanceIds,
+        networks,
+      }),
+    {
+      ...options,
+      getNextPageParam: (
+        lastPage: IFetchInfiniteFollowedDaosResult,
+        allPages: IFetchInfiniteFollowedDaosResult[]
+      ) => {
+        const current = allPages.length + 1;
+        return current * limit <= lastPage.total ? current : undefined;
+      },
+      select: augmentCachedDaos,
+      refetchOnWindowFocus: false,
+    }
+  );
 };
 
 /**
@@ -233,12 +240,12 @@ export const useRemoveFollowedDaoMutation = (
  * @returns list of DAOs augmented with the resolved IPFS CID avatars
  */
 function augmentCachedDaos(
-  data: InfiniteData<{daos: NavigationDao[]; total: number}>
-) {
+  data: InfiniteData<IFetchInfiniteFollowedDaosResult>
+): InfiniteData<IFetchInfiniteFollowedDaosResult> {
   return {
     pageParams: data.pageParams,
     pages: data.pages.map(page => ({
-      data: addAvatarToDaos(page.daos),
+      data: addAvatarToDaos(page.data),
       total: page.total,
     })),
   };

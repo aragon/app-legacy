@@ -25,7 +25,11 @@ import {
 } from './data';
 import {DaoFilterAction, DaoFilterState, FilterActionTypes} from './reducer';
 
-export const DEFAULT_FILTERS = {quickFilter: 'allDaos' as QuickFilterValue};
+export const DEFAULT_FILTERS: DaoFilterState = {
+  quickFilter: 'allDaos',
+  governanceIds: [],
+  networks: [],
+};
 
 type DaoFilterModalProps = {
   isOpen: boolean;
@@ -45,7 +49,14 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
 
   const showFollowedDaos = filters.quickFilter === 'following' && isConnected;
 
-  const followedApi = useFollowedDaosInfiniteQuery(showFollowedDaos);
+  const followedApi = useFollowedDaosInfiniteQuery(
+    {
+      governanceIds: filters.governanceIds,
+      networks: filters.networks,
+    },
+    {enabled: showFollowedDaos}
+  );
+
   const newDaosApi = useDaos(
     {
       direction: OrderDirection.DESC,
