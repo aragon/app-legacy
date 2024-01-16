@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import {Button, Icon, IconType, Switch, Toggle, ToggleGroup} from '@aragon/ods';
 import {
   ButtonIcon,
   ButtonText,
@@ -7,36 +6,79 @@ import {
   IconReload,
   Modal,
 } from '@aragon/ods-old';
-import {Icon, IconType, Switch, Toggle, ToggleGroup} from '@aragon/ods';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {quickFilters, blockchainFilters, governanceFilters} from './data';
-import useScreen from 'hooks/useScreen';
 import BottomSheet from 'components/bottomSheet';
+import useScreen from 'hooks/useScreen';
+import {useWallet} from 'hooks/useWallet';
+import {SupportedNetworks} from 'utils/constants';
+import {
+  QuickFilterValue,
+  networkFilters,
+  governanceFilters,
+  quickFilters,
+} from './data';
+import {DaoFilterState} from './reducer';
 
-type DaoFilterModalProps = {
+type DaoFilterModalProps = DaoFilterState & {
+  count: number;
   isOpen: boolean;
+  isLoading: boolean;
   onClose: () => void;
+  onClearFilters: () => void;
+  onQuickFilterChanged: (value: QuickFilterValue) => void;
+  onNetworkFiltersChanged: (value: SupportedNetworks[] | undefined) => void;
+  onGovernanceFiltersChanged: (value: string[] | undefined) => void;
 };
 
-const DaoFilterModal: React.FC<DaoFilterModalProps> = props => {
+const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
+  count,
+  isOpen,
+  networks,
+  isLoading,
+  quickFilter,
+  governanceIds,
+  onClose,
+  onClearFilters,
+  onQuickFilterChanged,
+  onNetworkFiltersChanged,
+  onGovernanceFiltersChanged,
+}) => {
   const {isDesktop} = useScreen();
-  const {isOpen, onClose} = props;
+  const Component = isDesktop ? StyledModal : BottomSheet;
 
-  return isDesktop ? (
-    <StyledModal isOpen={isOpen} onClose={onClose}>
+  const showAllResults =
+    quickFilter === 'allDaos' && !networks?.length && !governanceIds?.length;
+
+  return (
+    <Component isOpen={isOpen} onClose={onClose}>
       <Header onClose={onClose} />
-      <ModalContent />
-    </StyledModal>
-  ) : (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
-      <Header onClose={onClose} />
-      <ModalContent />
-    </BottomSheet>
+      <ModalContent
+        networks={networks}
+        quickFilter={quickFilter}
+        governanceIds={governanceIds}
+        onQuickFilterChanged={onQuickFilterChanged}
+        onNetworkFiltersChanged={onNetworkFiltersChanged}
+        onGovernanceFiltersChanged={onGovernanceFiltersChanged}
+      />
+      <ModalFooter
+        count={count}
+        onClose={onClose}
+        showAll={showAllResults}
+        isLoading={isLoading}
+        onClearFilters={onClearFilters}
+      />
+    </Component>
   );
 };
 
-type HeaderProps = {onClose: DaoFilterModalProps['onClose']};
+export default DaoFilterModal;
+
+type HeaderProps = {
+  onClose: () => void;
+};
 const Header: React.FC<HeaderProps> = ({onClose}) => {
   const {t} = useTranslation();
 
@@ -65,92 +107,179 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
   );
 };
 
-const ModalContent: React.FC = () => {
+type ContentProps = Pick<
+  DaoFilterModalProps,
+  | 'networks'
+  | 'quickFilter'
+  | 'governanceIds'
+  | 'onQuickFilterChanged'
+  | 'onNetworkFiltersChanged'
+  | 'onGovernanceFiltersChanged'
+>;
+
+const ModalContent: React.FC<ContentProps> = props => {
   const {t} = useTranslation();
+  const {isConnected} = useWallet();
 
   const [showTestnets, setShowTestnets] = useState(false);
 
+  const testnetsFilters = networkFilters.flatMap(f =>
+    f.testnet ? f.value : []
+  );
+
   const displayedChains = showTestnets
-    ? blockchainFilters
-    : blockchainFilters.filter(f => !f.testnet);
+    ? networkFilters
+    : networkFilters.filter(f => !f.testnet);
+
+  const toggleTestnets = (value: boolean) => {
+    if (value === false) {
+      const newValue = props.networks?.filter(
+        network => !testnetsFilters.includes(network)
+      );
+
+      props.onNetworkFiltersChanged(newValue);
+    }
+
+    setShowTestnets(value);
+  };
 
   return (
-    <>
-      <Main>
-        {/* Quick Filters */}
-        <FilterSection>
-          <ToggleGroup isMultiSelect>
-            {quickFilters.map(f => (
-              <Toggle key={f.value} label={t(f.label)} value={f.value} />
-            ))}
-          </ToggleGroup>
-        </FilterSection>
-
-        {/* Blockchain Filters */}
-        <FilterSection>
-          <TitleWrapper>
-            <Title>
-              <Icon icon={IconType.BLOCKCHAIN} />
-              <TitleLabel>
-                {t('explore.modal.filterDAOs.label.blockchains')}
-              </TitleLabel>
-            </Title>
-            <LineDiv />
-          </TitleWrapper>
-          <ToggleGroup isMultiSelect>
-            {displayedChains.flatMap(f => (
-              <Toggle key={f.value} label={t(f.label)} value={f.value} />
-            ))}
-          </ToggleGroup>
-          <Switch
-            checked={showTestnets}
-            onCheckedChanged={setShowTestnets}
-            label={t('explore.modal.filterDAOS.label.showTesnets')}
-          />
-        </FilterSection>
-
-        {/* Governance Filters */}
-        <FilterSection>
-          <TitleWrapper>
-            <Title>
-              <Icon icon={IconType.APP_GOVERNANCE} />
-              <TitleLabel>
-                {t('explore.modal.filterDAOs.label.governanceType')}
-              </TitleLabel>
-            </Title>
-            <LineDiv />
-          </TitleWrapper>
-          <ToggleGroup isMultiSelect>
-            {governanceFilters.map(f => (
-              <Toggle key={f.value} label={t(f.label)} value={f.value} />
-            ))}
-          </ToggleGroup>
-        </FilterSection>
-      </Main>
-
-      {/* Footer */}
-      <Footer>
-        <ButtonText
-          className="w-full lg:w-auto"
-          size="large"
-          label={t('explore.modal.filterDAOs.ctaLabel.see{{amount}}', {
-            amount: 'amount',
+    <Main>
+      {/* Quick Filters */}
+      <FilterSection>
+        <ToggleGroup
+          isMultiSelect={false}
+          value={props.quickFilter}
+          onChange={v => {
+            if (v) {
+              props.onQuickFilterChanged(v as QuickFilterValue);
+            }
+          }}
+        >
+          {quickFilters.map(f => {
+            return (
+              <Toggle
+                key={f.value}
+                label={t(f.label)}
+                value={f.value}
+                disabled={
+                  (f.value === 'memberOf' || f.value === 'following') &&
+                  !isConnected
+                }
+              />
+            );
           })}
+        </ToggleGroup>
+      </FilterSection>
+
+      {/* Blockchain Filters */}
+      <FilterSection>
+        <TitleWrapper>
+          <Title>
+            <Icon icon={IconType.BLOCKCHAIN} />
+            <TitleLabel>
+              {t('explore.modal.filterDAOs.label.blockchains')}
+            </TitleLabel>
+          </Title>
+          <LineDiv />
+        </TitleWrapper>
+        <ToggleGroup
+          isMultiSelect
+          value={props.networks}
+          onChange={v =>
+            props.onNetworkFiltersChanged(v as SupportedNetworks[] | undefined)
+          }
+        >
+          {displayedChains.flatMap(f => (
+            <Toggle key={f.value} label={t(f.label)} value={f.value} />
+          ))}
+        </ToggleGroup>
+        <Switch
+          checked={showTestnets}
+          onCheckedChanged={toggleTestnets}
+          label={t('explore.modal.filterDAOS.label.showTesnets')}
         />
-        <ButtonText
-          className="w-full lg:w-auto"
-          size="large"
-          mode="ghost"
-          label={t('explore.modal.filterDAOs.buttonLabel.clearFilters')}
-          bgWhite
-          iconLeft={<IconReload />}
-        />
-      </Footer>
-    </>
+      </FilterSection>
+
+      {/* Governance Filters */}
+      <FilterSection>
+        <TitleWrapper>
+          <Title>
+            <Icon icon={IconType.APP_GOVERNANCE} />
+            <TitleLabel>
+              {t('explore.modal.filterDAOs.label.governanceType')}
+            </TitleLabel>
+          </Title>
+          <LineDiv />
+        </TitleWrapper>
+        <ToggleGroup
+          isMultiSelect
+          onChange={props.onGovernanceFiltersChanged}
+          value={props.governanceIds}
+        >
+          {governanceFilters.map(f => (
+            <Toggle key={f.value} label={t(f.label)} value={f.value} />
+          ))}
+        </ToggleGroup>
+      </FilterSection>
+    </Main>
   );
 };
 
-export default DaoFilterModal;
+type FooterProps = Pick<
+  DaoFilterModalProps,
+  'isLoading' | 'count' | 'onClearFilters' | 'onClose'
+> & {
+  showAll: boolean;
+};
+const ModalFooter: React.FC<FooterProps> = props => {
+  const {t} = useTranslation();
+
+  let label;
+  let noDaosFound = false;
+
+  if (props.isLoading) {
+    label = t('explore.modal.filterDAOs.ctaLoading');
+  } else if (props.showAll) {
+    label = t('explore.modal.filterDAOs.ctaLabel.seeAll');
+  } else if (props.count === 0) {
+    label = t('explore.modal.filterDAOs.ctaLabel.see0');
+    noDaosFound = true;
+  } else {
+    label = t('explore.modal.filterDAOs.ctaLabel.see{{amount}}', {
+      amount: props.count,
+    });
+  }
+
+  const handleSeeResultsClick = () => {
+    if (!props.isLoading && !noDaosFound) {
+      props.onClose();
+    }
+  };
+
+  return (
+    <Footer>
+      <Button
+        size="lg"
+        variant="primary"
+        {...(props.isLoading ? {state: 'loading'} : {})}
+        {...(noDaosFound ? {state: 'disabled'} : {})}
+        onClick={handleSeeResultsClick}
+      >
+        {label}
+      </Button>
+      <ButtonText
+        size="large"
+        mode="ghost"
+        label={t('explore.modal.filterDAOs.buttonLabel.clearFilters')}
+        bgWhite
+        onClick={props.onClearFilters}
+        iconLeft={<IconReload />}
+        className="w-full lg:w-auto"
+      />
+    </Footer>
+  );
+};
 
 const FilterSection = styled.div.attrs({
   className: 'space-y-3 lg:space-y-4',
@@ -194,7 +323,7 @@ const StyledModal = styled(Modal).attrs({
     position: 'fixed',
     display: 'flex',
     flexDirection: 'column',
-    top: '50%',
+    top: '40%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     borderRadius: 12,
