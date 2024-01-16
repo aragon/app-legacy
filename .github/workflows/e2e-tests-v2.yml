@@ -133,9 +133,6 @@ jobs:
       ## https://docs.docker.com/engine/reference/commandline/buildx_build/#build-arg
       - name: Build container and Push to GHCR.IO ( ${{ steps.myvars.outputs.SHORT_ENV_OUT }} )
         run: |
-          # Step 1: Build the Docker Image
-          # mkdir -p /tmp/docker-build-push-${{ steps.myvars.outputs.DATE_IN_SECS }}/
-          # docker buildx build . --file ./Dockerfile.webapp.dev --push \
           docker buildx build . --file ./Dockerfile.webapp.dev \
           --build-arg VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }} \
           --build-arg VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }} \
