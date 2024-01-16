@@ -148,7 +148,7 @@ jobs:
           --build-arg NODE_OPTIONS='--max-old-space-size=6656' \
           --build-arg PRIVATE_KEY='81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1' \
 
-          docker run -d --name my-webapp-instance -p 8080:8080 my-webapp
+          docker run -d --name my-webapp-instance -p 8080:8080 -e PRIVATE_KEY='81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1' my-webapp
 
           npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
 
