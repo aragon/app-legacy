@@ -159,6 +159,53 @@ jobs:
           --tag ghcr.io/${{ github.repository }}:commit-${{ steps.myvars.outputs.GIT_HASH_SHORT }} \
           --tag ghcr.io/${{ github.repository }}:webapp-${{ steps.myvars.outputs.BRANCH_NAME }}-${{ steps.myvars.outputs.DATE_IN_SECS }}
 
+      - name: Start development server and Run E2E Tests
+        run: |
+          yarn dev &
+          sleep 10 # Wait for the server to start; adjust the time as needed
+          xvfb-run --server-args="-screen 0 1920x1080x24" npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+        #   npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+        # run: xvfb-run --server-args="-screen 0 1920x1080x24" npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+        # uses: cypress-io/github-action@v6
+        # with:
+        #   # cache: false
+        #   cache-key: ''
+        #   start: yarn dev
+        #   command: |
+        #     npx cypress cache clear
+        #     npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+        #   record: true
+        #   wait-on: 'http://localhost:3000'
+        #   wait-on-timeout: 120
+        #   # browser: chrome
+        #   # spec: tests/e2e/specs/*
+        env:
+          VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
+          VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
+          VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+          VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
+          VITE_ETHERSCAN_API_KEY: ${{secrets.VITE_ETHERSCAN_API_KEY}}
+          VITE_POLYGONSCAN_API_KEY: ${{secrets.VITE_POLYGONSCAN_API_KEY}}
+          VITE_INFURA_GOERLI_PROJECT_ID: ${{secrets.VITE_INFURA_GOERLI_PROJECT_ID}}
+          VITE_INFURA_MAINNET_PROJECT_ID: ${{secrets.VITE_INFURA_MAINNET_PROJECT_ID}}
+          VITE_WALLET_CONNECT_PROJECT_ID: ${{secrets.VITE_WALLET_CONNECT_PROJECT_ID}}
+          VITE_INFURA_API_KEY: ${{secrets.VITE_INFURA_API_KEY}}
+          VITE_ALCHEMY_KEY_POLYGON_MUMBAI: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
+          VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
+          VITE_ALCHEMY_KEY_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_MAINNET}}
+          VITE_ALCHEMY_KEY_GOERLI: ${{secrets.VITE_ALCHEMY_KEY_GOERLI}}
+          VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
+          NODE_OPTIONS: '--max-old-space-size=6656'
+          PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
+
+          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
+          # in GitHub repo → Settings → Secrets → Actions
+          # CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: '0c4de406-82ab-48c2-94b1-6267578d2f33' # key of testing project
+          CYPRESS_PRIVATE_KEY: ${{secrets.CYPRESS_PRIVATE_KEY}}
+          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
       #   env:
       #     COMMIT_SHA: ${{ github.sha }}
