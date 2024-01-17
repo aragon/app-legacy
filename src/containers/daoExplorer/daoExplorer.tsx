@@ -241,7 +241,9 @@ export const DaoExplorer = () => {
           </ButtonGroupContainer>
         </FilterGroupContainer>
         <CardsWrapper>
-          {filteredDaoList?.map(dao => <DaoCard key={dao.address} dao={dao} />)}
+          {filteredDaoList?.map((dao, index) => (
+            <DaoCard key={index} dao={dao} />
+          ))}
           {isLoading && <Spinner size="default" />}
         </CardsWrapper>
       </MainContainer>

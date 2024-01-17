@@ -6,13 +6,13 @@ import {IPaginatedResponse} from '../domain/paginated-response';
 import {IDao} from '../domain/dao';
 
 const daosQueryDocument = gql`
-  query Dao(
+  query Daos(
     $pluginNames: [String!]
-    $direction: String!
-    $orderBy: String!
+    $orderBy: String
+    $skip: Float
+    $direction: OrderDirection
     $networks: [Network!]
     $take: Float
-    $skip: Float
   ) {
     daos(
       pluginNames: $pluginNames
