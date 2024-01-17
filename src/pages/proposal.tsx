@@ -855,7 +855,6 @@ export const Proposal: React.FC = () => {
               onExecuteClicked={handleExecuteNowClicked}
               actions={decodedActions}
               pluginType={pluginType}
-              votingPower={pastVotingPower}
             >
               <VTerminal />
             </GaslessVotingTerminal>

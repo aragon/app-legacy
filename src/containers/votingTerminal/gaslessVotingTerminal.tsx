@@ -10,7 +10,6 @@ import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessCommiteVotes} from '../../context/useGaslessVoting';
 import {useWallet} from '../../hooks/useWallet';
 import {useProposalTransactionContext} from '../../context/proposalTransaction';
-import {VoteValues} from '@aragon/sdk-client';
 import {
   ExecutionWidget,
   ExecutionWidgetProps,
@@ -22,8 +21,8 @@ import {
   getCommitteVoteButtonLabel,
 } from '../../utils/committeeVoting';
 import {PluginTypes} from '../../hooks/usePluginClient';
-import {BigNumber} from 'ethers';
 import {VotingTerminalAccordionItem} from './accordionItem';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 
 type GaslessExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
@@ -39,13 +38,11 @@ type GaslessVotingTerminalProps = {
     wasOnWrongNetwork: boolean;
   }>;
   pluginType: PluginTypes;
-  votingPower: BigNumber;
 } & GaslessExecutionWidgetProps &
   PropsWithChildren;
 
 export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   votingStatusLabel,
-  votingPower,
   proposal,
   pluginAddress,
   statusRef,
@@ -71,6 +68,12 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
 
   const {handleExecutionMultisigApprove, executionFailed, executionTxHash} =
     useProposalTransactionContext();
+
+  const executableWithNextApproval =
+    proposal.status === ProposalStatus.ACTIVE &&
+    proposal.actions.length > 0 &&
+    proposal.settings.minTallyApprovals > 1 &&
+    proposal.settings.minTallyApprovals - 1 === proposal.approvers.length;
 
   const mappedProps = useMemo(() => {
     if (!proposal) return;
@@ -116,12 +119,22 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
         approved,
         isApproved,
         isApprovalPeriod,
+        executableWithNextApproval,
         t
       );
     }
-  }, [proposal, notBegan, approved, isApproved, isApprovalPeriod, t]);
+  }, [
+    proposal,
+    notBegan,
+    approved,
+    isApproved,
+    isApprovalPeriod,
+    executableWithNextApproval,
+    t,
+  ]);
 
   // vote button state and handler
+  // todo(kon): Should be refactored to use the same logic as the proposal page (using stateRef)
   const {voteNowDisabled, onClick} = useMemo(() => {
     // disable voting on non-active proposals or when wallet has voted or can't vote
     if (!isApprovalPeriod || !canApprove || approved) {
@@ -154,10 +167,10 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     else if (canApprove) {
       return {
         voteNowDisabled: false,
-        onClick: () => {
+        onClick: (tryExecution: boolean) => {
           handleExecutionMultisigApprove({
-            vote: VoteValues.YES,
-            votingPower,
+            proposalId: proposal.id,
+            tryExecution,
           });
         },
       };
@@ -170,7 +183,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     isOnWrongNetwork,
     statusRef,
     handleExecutionMultisigApprove,
-    votingPower,
+    proposal.id,
   ]);
 
   /**
@@ -233,6 +246,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
         onApprovalClicked={onClick}
         voteButtonLabel={buttonLabel}
         voteNowDisabled={voteNowDisabled}
+        executableWithNextApproval={executableWithNextApproval}
         className={
           'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
         }
