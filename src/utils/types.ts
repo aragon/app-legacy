@@ -16,6 +16,7 @@ import {
   VersionTag,
 } from '@aragon/sdk-client-common';
 import {
+  CreateGasslessProposalParams,
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
   GaslessVotingProposalListItem,
@@ -193,6 +194,14 @@ export type DetailedProposal =
   | MultisigProposal
   | TokenVotingProposal
   | GaslessVotingProposal;
+
+// This omitted Gasless params are added after Vocdoni election created
+// This type is used to store information needed before creating the proposal in the vochain
+export type PartialGaslessParams = Omit<
+  CreateGasslessProposalParams,
+  'vochainProposalId' | 'censusURI' | 'censusRoot' | 'totalVotingPower'
+>;
+
 export type ProposalListItem =
   | TokenVotingProposalListItem
   | MultisigProposalListItem
