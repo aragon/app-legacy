@@ -13,7 +13,7 @@ import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams, Link} from 'react-router-dom';
+import {generatePath, Link, useNavigate, useParams} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
 import styled from 'styled-components';
 
@@ -686,6 +686,16 @@ export const Proposal: React.FC = () => {
     ? t('votingTerminal.status.ineligibleWhitelist')
     : undefined;
 
+  let proposalStateEndate = proposal?.endDate;
+  // If is gasless proposal and is defeated because is not approved, but the offchain election passed, use the tally end date
+  if (
+    proposal &&
+    isGaslessProposal(proposal) &&
+    proposal.status === ProposalStatus.DEFEATED &&
+    proposal.canBeApproved // Offchain election passed
+  ) {
+    proposalStateEndate = proposal.tallyEndDate;
+  }
   // status steps for proposal
   const proposalSteps = proposal
     ? getProposalStatusSteps(
@@ -694,7 +704,7 @@ export const Proposal: React.FC = () => {
         pluginType,
         proposal.startDate,
         // If is gasless the proposal ends after the expiration period
-        isGaslessProposal(proposal) ? proposal.tallyEndDate : proposal.endDate,
+        proposalStateEndate!,
         proposal.creationDate,
         proposal.creationBlockNumber
           ? NumberFormatter.format(proposal.creationBlockNumber)
