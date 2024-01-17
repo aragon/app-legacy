@@ -11,11 +11,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
-import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
-import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
-import {useDaos} from 'services/aragon-backend/queries/use-daos';
 import {SupportedNetworks} from 'utils/constants';
 import {
   QuickFilterValue,
@@ -51,17 +48,6 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
   daoListLoading,
 }) => {
   const {isDesktop} = useScreen();
-  const {address, isConnected} = useWallet();
-
-  const showFollowedDaos = filters.quickFilter === 'following' && isConnected;
-
-  const followedApi = useFollowedDaosInfiniteQuery(
-    {
-      pluginNames: filters.pluginNames,
-      networks: filters.networks,
-    },
-    {enabled: showFollowedDaos}
-  );
 
   const showAllResults =
     filters.quickFilter === 'allDaos' &&

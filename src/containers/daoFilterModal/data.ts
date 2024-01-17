@@ -1,4 +1,3 @@
-import {PluginTypes, GaselessPluginType} from 'hooks/usePluginClient';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 
 type NetworkFilter = {

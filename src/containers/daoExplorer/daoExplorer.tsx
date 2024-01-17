@@ -7,7 +7,7 @@ import {
   IconFilter,
   IconSort,
   ListItemAction,
-  SearchInput,
+  // SearchInput,
   Spinner,
 } from '@aragon/ods-old';
 import React, {useReducer, useState} from 'react';
@@ -48,7 +48,7 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
 
 export const DaoExplorer = () => {
   const {t} = useTranslation();
-  const {isConnected, address} = useWallet();
+  const {isConnected} = useWallet();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
@@ -96,7 +96,10 @@ export const DaoExplorer = () => {
 
   const filteredDaoList = showFollowedDaos ? followedDaoList : daoList;
   const isLoading = showFollowedDaos ? followedDaosLoading : daoListLoading;
-  const totalCount = newDaos?.pages[0].total;
+  const totalCount =
+    filters.quickFilter === 'following'
+      ? followedDaos?.pages[0].total
+      : newDaos?.pages[0].total;
 
   const toggleQuickFilters = (value?: string | string[]) => {
     if (value && !Array.isArray(value)) {
@@ -240,7 +243,7 @@ export const DaoExplorer = () => {
       <DaoFilterModal
         isOpen={showAdvancedFilters}
         filters={filters}
-        daoListLoading={daoListLoading}
+        daoListLoading={isLoading}
         totalCount={totalCount}
         onFilterChange={dispatch}
         onClose={() => {
