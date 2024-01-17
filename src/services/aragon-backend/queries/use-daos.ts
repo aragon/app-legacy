@@ -65,13 +65,12 @@ export const useDaos = (
 ) => {
   return useInfiniteQuery(
     aragonBackendQueryKeys.daos(params),
-    () => fetchDaos(params),
+    ({pageParam}) => fetchDaos({...params, ...pageParam}),
     {
       ...options,
       getNextPageParam: (lastPage: IPaginatedResponse<IDao>) => {
-        const skip = params.skip ?? 0;
-        const take = params.take ?? 20;
-        const hasNextPage = skip < lastPage.total;
+        const {skip, total, take} = lastPage;
+        const hasNextPage = skip < total;
 
         if (!hasNextPage) {
           return undefined;
