@@ -19,5 +19,6 @@ export interface IDao {
   logo: string;
   createdAt: string;
   governanceId: string;
+  pluginName: string;
   stats?: IDaoStats;
 }

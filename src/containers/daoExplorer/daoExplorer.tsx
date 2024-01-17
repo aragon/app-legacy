@@ -10,7 +10,7 @@ import {
   // SearchInput,
   Spinner,
 } from '@aragon/ods-old';
-import React, {useReducer, useState} from 'react';
+import React, {useMemo, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
@@ -90,6 +90,22 @@ export const DaoExplorer = () => {
   // Intermediate values
   const daoList = newDaos?.pages.flatMap(page => page.data);
 
+  const filtersCount = useMemo(() => {
+    let count = 0;
+
+    if (!filters) return '';
+
+    if (filters.quickFilter !== 'allDaos') count++;
+
+    // plugin Name filter
+    if (filters.pluginNames?.length !== 0) count++;
+
+    // network filter
+    if (filters.networks?.length !== 0) count++;
+
+    return count !== 0 ? count.toString() : '';
+  }, [filters]);
+
   const followedDaoList = followedDaos?.pages.flatMap(page =>
     page.data.map(followedDaoToDao)
   );
@@ -151,10 +167,11 @@ export const DaoExplorer = () => {
               value={searchTerm}
               onChange={handleQueryChange}
             /> */}
-            <ButtonIcon
+            <ButtonText
+              label={filtersCount}
               mode="secondary"
               size="large"
-              icon={<IconFilter />}
+              iconLeft={<IconFilter />}
               onClick={() => {
                 setShowAdvancedFilters(true);
               }}

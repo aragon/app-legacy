@@ -26,6 +26,7 @@ export const DaoCard = (props: IDaoCardProps) => {
     description,
     network,
     governanceId,
+    pluginName,
   } = dao;
 
   const {t} = useTranslation();
@@ -39,11 +40,11 @@ export const DaoCard = (props: IDaoCardProps) => {
   });
   const daoUrl = useHref(daoPage);
 
-  const daoType = t(
-    governanceId === 'token-voting.plugin.dao.eth'
-      ? 'explore.explorer.tokenBased'
-      : 'explore.explorer.walletBased'
-  );
+  const daoType =
+    governanceId === 'token-voting.plugin.dao.eth' ||
+    pluginName === 'token-voting-repo'
+      ? t('explore.explorer.tokenBased')
+      : t('explore.explorer.walletBased');
 
   return (
     <Container href={daoUrl}>
