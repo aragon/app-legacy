@@ -1,17 +1,19 @@
 import {SupportedNetworks} from 'utils/constants';
-import {QuickFilterValue} from './data';
+import {QuickFilterValue, SortByValue} from './data';
 
 export type DaoFilterState = {
-  governanceIds?: Array<string>;
+  pluginNames?: Array<string>;
   networks?: Array<SupportedNetworks>;
   quickFilter: QuickFilterValue;
   showTestnets: boolean;
+  order: SortByValue;
 };
 
 export enum FilterActionTypes {
   SET_GOVERNANCE_IDS = 'SET_GOVERNANCE_IDS',
   SET_QUICK_FILTER = 'SET_QUICK_FILTER',
   SET_NETWORKS = 'SET_NETWORKS',
+  SET_ORDER = 'SET_ORDER',
   TOGGLE_TESTNETS = 'TOGGLE_TESTNETS',
   RESET = 'RESET',
 }
@@ -19,7 +21,7 @@ export enum FilterActionTypes {
 export type DaoFilterAction =
   | {
       type: FilterActionTypes.SET_GOVERNANCE_IDS;
-      payload: DaoFilterState['governanceIds'];
+      payload: DaoFilterState['pluginNames'];
     }
   | {
       type: FilterActionTypes.SET_QUICK_FILTER;
@@ -28,6 +30,10 @@ export type DaoFilterAction =
   | {
       type: FilterActionTypes.SET_NETWORKS;
       payload: DaoFilterState['networks'];
+    }
+  | {
+      type: FilterActionTypes.SET_ORDER;
+      payload: DaoFilterState['order'];
     }
   | {type: FilterActionTypes.RESET; payload: DaoFilterState}
   | {type: FilterActionTypes.TOGGLE_TESTNETS; payload: boolean};
@@ -38,7 +44,7 @@ export const daoFiltersReducer = (
 ): DaoFilterState => {
   switch (action.type) {
     case FilterActionTypes.SET_GOVERNANCE_IDS:
-      return {...state, governanceIds: action.payload};
+      return {...state, pluginNames: action.payload};
     case FilterActionTypes.SET_QUICK_FILTER:
       return {...state, quickFilter: action.payload};
     case FilterActionTypes.SET_NETWORKS:
@@ -47,6 +53,8 @@ export const daoFiltersReducer = (
       return {...action.payload};
     case FilterActionTypes.TOGGLE_TESTNETS:
       return {...state, showTestnets: action.payload};
+    case FilterActionTypes.SET_ORDER:
+      return {...state, order: action.payload};
     default:
       return state;
   }

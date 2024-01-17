@@ -27,8 +27,9 @@ import {DaoFilterAction, DaoFilterState, FilterActionTypes} from './reducer';
 
 export const DEFAULT_FILTERS: DaoFilterState = {
   quickFilter: 'allDaos',
-  governanceIds: [],
-  networks: [],
+  pluginNames: ['token-voting-repo', 'multisig-repo'],
+  networks: ['ethereum'],
+  order: 'tvl',
   showTestnets: false,
 };
 
@@ -52,7 +53,7 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
 
   const followedApi = useFollowedDaosInfiniteQuery(
     {
-      governanceIds: filters.governanceIds,
+      pluginNames: filters.pluginNames,
       networks: filters.networks,
     },
     {enabled: showFollowedDaos}
@@ -60,13 +61,13 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
 
   const newDaosApi = useDaos(
     {
-      direction: OrderDirection.DESC,
+      direction: OrderDirection.ASC,
       orderBy: 'CREATED_AT' as const,
-      governanceIds: filters.governanceIds,
+      pluginNames: filters.pluginNames,
       networks: filters.networks,
-      ...(filters.quickFilter === 'memberOf' && address
-        ? {memberAddress: address.toLowerCase()}
-        : {}),
+      // ...(filters.quickFilter === 'memberOf' && address
+      //   ? {memberAddress: address.toLowerCase()}
+      //   : {}),
     },
     {enabled: showFollowedDaos === false}
   );
@@ -76,7 +77,7 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
   const showAllResults =
     filters.quickFilter === 'allDaos' &&
     !filters.networks?.length &&
-    !filters.governanceIds?.length;
+    !filters.pluginNames?.length;
 
   const Component = isDesktop ? StyledModal : BottomSheet;
   return (

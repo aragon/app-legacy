@@ -49,7 +49,7 @@ export const useFollowedDaosQuery = (
 };
 
 type IFetchFollowedDaosParams = {
-  governanceIds?: string[];
+  pluginNames?: string[];
   networks?: SupportedNetworks[];
   limit?: number;
   skip?: number;
@@ -67,7 +67,20 @@ export const useFollowedDaosInfiniteQuery = (
   params: IFetchFollowedDaosParams,
   options: UseInfiniteQueryOptions<IFetchInfiniteFollowedDaosResult> = {}
 ) => {
-  const {limit = DEFAULT_QUERY_PARAMS.limit, governanceIds, networks} = params;
+  const {limit = DEFAULT_QUERY_PARAMS.limit, pluginNames, networks} = params;
+
+  // Cast plugin names to governanceIds
+  const governanceIds = pluginNames?.map((pluginName: string) => {
+    switch (pluginName) {
+      case 'token-voting-repo':
+        return 'token-voting.plugin.dao.eth';
+      case 'multisig-repo':
+        return 'multisig.plugin.dao.eth';
+      default:
+        return 'multisig.plugin.dao.eth';
+    }
+  });
+
   return useInfiniteQuery(
     useFollowedDaosInfiniteQueryKey(params),
     ({pageParam = 0}) =>

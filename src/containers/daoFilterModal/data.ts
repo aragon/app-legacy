@@ -39,6 +39,8 @@ type QuickFilter = {
   disabled?: boolean;
 };
 
+export type SortByValue = 'createdAt' | 'tvl' | 'members' | 'proposals';
+
 export const quickFilters: QuickFilter[] = [
   {label: 'explore.toggleFilter.allDAOs', value: 'allDaos'},
   {label: 'explore.toggleFilter.member', value: 'memberOf'},

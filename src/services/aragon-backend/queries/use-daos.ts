@@ -4,45 +4,45 @@ import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchDaosParams} from '../aragon-backend-service.api';
 import {IPaginatedResponse} from '../domain/paginated-response';
 import {IDao} from '../domain/dao';
+import {useState} from 'react';
 
 const daosQueryDocument = gql`
   query Dao(
-    $direction: OrderDirection!
-    $orderBy: DaoOrderField!
+    $direction: String!
+    $orderBy: String!
+    $networks: [Network!]
     $take: Float
     $skip: Float
-    $governanceIds: [String!]
-    $networks: [Network!]
-    $memberAddress: String
   ) {
-    dao(
+    daos(
       direction: $direction
       orderBy: $orderBy
+      networks: $networks
       take: $take
       skip: $skip
-      governanceIds: $governanceIds
-      networks: $networks
-      memberAddress: $memberAddress
     ) {
-      total
-      skip
-      take
       data {
-        address
-        ens
-        network
-        name
-        description
-        logo
         createdAt
-        governanceId
+        creatorAddress
+        daoAddress
+        description
+        ens
+        logo
+        name
+        network
+        pluginName
         stats {
-          tvl
+          members
           proposalsCreated
           proposalsExecuted
-          members
+          tvl
+          votes
+          uniqueVoters
         }
       }
+      skip
+      total
+      take
     }
   }
 `;
@@ -50,13 +50,13 @@ const daosQueryDocument = gql`
 const fetchDaos = async (
   params: IFetchDaosParams
 ): Promise<IPaginatedResponse<IDao>> => {
-  const {dao} = await request<{dao: IPaginatedResponse<IDao>}>(
+  const {daos} = await request<{daos: IPaginatedResponse<IDao>}>(
     `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     daosQueryDocument,
     params
   );
 
-  return dao;
+  return daos;
 };
 
 export const useDaos = (
