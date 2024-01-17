@@ -13,5 +13,4 @@ export interface IFetchDaosParams
     IPaginatedRequest {
   governanceIds?: string[];
   networks?: SupportedNetworks[];
-  memberAddress?: string;
 }

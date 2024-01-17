@@ -9,13 +9,14 @@ export interface IDaoStats {
 }
 
 export interface IDao {
-  address: Address;
+  creatorAddress: Address;
+  daoAddress: Address;
   ens?: string;
   network: SupportedNetworks;
   name: string;
   description: string;
   logo: string;
   createdAt: string;
-  governanceId: string;
+  pluginName: string;
   stats?: IDaoStats;
 }

@@ -17,7 +17,7 @@ export interface IDaoCardProps {
 
 export const DaoCard = (props: IDaoCardProps) => {
   const {dao} = props;
-  const {name, address, logo, ens, description, network, governanceId} = dao;
+  const {name, daoAddress, logo, ens, description, network, pluginName} = dao;
 
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
@@ -26,12 +26,12 @@ export const DaoCard = (props: IDaoCardProps) => {
 
   const daoPage = generatePath(Dashboard, {
     network,
-    dao: toDisplayEns(ens) || address,
+    dao: toDisplayEns(ens) || daoAddress,
   });
   const daoUrl = useHref(daoPage);
 
   const daoType = t(
-    governanceId === 'token-voting.plugin.dao.eth'
+    pluginName === 'token-voting-repo'
       ? 'explore.explorer.tokenBased'
       : 'explore.explorer.walletBased'
   );

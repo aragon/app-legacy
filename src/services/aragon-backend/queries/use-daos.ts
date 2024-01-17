@@ -6,43 +6,44 @@ import {IPaginatedResponse} from '../domain/paginated-response';
 import {IDao} from '../domain/dao';
 
 const daosQueryDocument = gql`
-  query Dao(
-    $direction: OrderDirection!
-    $orderBy: DaoOrderField!
+  query Query(
     $take: Float
     $skip: Float
-    $governanceIds: [String!]
+    $direction: OrderDirection
+    $orderBy: String
+    $pluginNames: [String!]
     $networks: [Network!]
-    $memberAddress: String
   ) {
-    dao(
-      direction: $direction
-      orderBy: $orderBy
+    daos(
       take: $take
       skip: $skip
-      governanceIds: $governanceIds
+      direction: $direction
+      orderBy: $orderBy
+      pluginNames: $pluginNames
       networks: $networks
-      memberAddress: $memberAddress
     ) {
-      total
-      skip
-      take
       data {
-        address
+        creatorAddress
+        daoAddress
         ens
         network
+        pluginName
         name
         description
         logo
         createdAt
-        governanceId
         stats {
           tvl
           proposalsCreated
           proposalsExecuted
           members
+          uniqueVoters
+          votes
         }
       }
+      total
+      skip
+      take
     }
   }
 `;
@@ -50,13 +51,13 @@ const daosQueryDocument = gql`
 const fetchDaos = async (
   params: IFetchDaosParams
 ): Promise<IPaginatedResponse<IDao>> => {
-  const {dao} = await request<{dao: IPaginatedResponse<IDao>}>(
+  const {daos} = await request<{daos: IPaginatedResponse<IDao>}>(
     `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     daosQueryDocument,
     params
   );
 
-  return dao;
+  return daos;
 };
 
 export const useDaos = (
@@ -65,13 +66,12 @@ export const useDaos = (
 ) => {
   return useInfiniteQuery(
     aragonBackendQueryKeys.daos(params),
-    () => fetchDaos(params),
+    ({pageParam}) => fetchDaos({...params, ...pageParam}),
     {
       ...options,
       getNextPageParam: (lastPage: IPaginatedResponse<IDao>) => {
-        const skip = params.skip ?? 0;
-        const take = params.take ?? 20;
-        const hasNextPage = skip < lastPage.total;
+        const {skip, total, take} = lastPage;
+        const hasNextPage = skip < total;
 
         if (!hasNextPage) {
           return undefined;

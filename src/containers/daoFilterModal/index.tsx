@@ -62,8 +62,6 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
     {
       direction: OrderDirection.DESC,
       orderBy: 'CREATED_AT' as const,
-      governanceIds: filters.governanceIds,
-      networks: filters.networks,
       ...(filters.quickFilter === 'memberOf' && address
         ? {memberAddress: address.toLowerCase()}
         : {}),

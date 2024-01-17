@@ -28,14 +28,15 @@ import {StateEmpty} from 'components/stateEmpty';
 import {EXPLORE_FILTER, ExploreFilter} from 'hooks/useDaos';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
-  address: dao.address as Address,
+  creatorAddress: '' as Address,
+  daoAddress: dao.address as Address,
   ens: dao.ensDomain,
   network: getSupportedNetworkByChainId(dao.chain)!,
   name: dao.metadata.name,
   description: dao.metadata.description ?? '',
   logo: dao.metadata.avatar ?? '',
   createdAt: '',
-  governanceId: dao.plugins[0].id,
+  pluginName: dao.plugins[0].id,
 });
 
 function isExploreFilter(filterValue: string): filterValue is ExploreFilter {
@@ -44,7 +45,7 @@ function isExploreFilter(filterValue: string): filterValue is ExploreFilter {
 
 export const DaoExplorer = () => {
   const {t} = useTranslation();
-  const {isConnected, address} = useWallet();
+  const {isConnected} = useWallet();
 
   const [filterValue, setFilterValue] = useState<ExploreFilter>('favorite');
 
@@ -52,8 +53,6 @@ export const DaoExplorer = () => {
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
   const useFollowList = isConnected && filterValue === 'favorite';
-  const memberAddress =
-    filters.quickFilter === 'memberOf' && address ? address : undefined;
 
   const followedDaosResult = useFollowedDaosInfiniteQuery(
     {
@@ -67,9 +66,6 @@ export const DaoExplorer = () => {
     {
       direction: OrderDirection.DESC,
       orderBy: 'CREATED_AT' as const,
-      governanceIds: filters.governanceIds,
-      networks: filters.networks,
-      memberAddress,
     },
     {enabled: !useFollowList}
   );
@@ -145,7 +141,7 @@ export const DaoExplorer = () => {
         ) : (
           <CardsWrapper>
             {filteredDaoList?.map(dao => (
-              <DaoCard key={dao.address} dao={dao} />
+              <DaoCard key={dao.daoAddress} dao={dao} />
             ))}
             {isLoading && <Spinner size="default" />}
           </CardsWrapper>
