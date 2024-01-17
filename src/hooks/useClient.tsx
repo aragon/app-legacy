@@ -21,6 +21,7 @@ import {
 } from 'utils/constants';
 import {translateToAppNetwork, translateToNetworkishName} from 'utils/library';
 import {useWallet} from './useWallet';
+import {aragonGateway} from 'utils/aragonGateway';
 
 interface ClientContext {
   client?: Client;
@@ -77,7 +78,7 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
           .daoFactoryAddress,
       network: translatedNetwork,
       signer: signer ?? undefined,
-      web3Providers: CHAIN_METADATA[network].rpc[0],
+      web3Providers: aragonGateway.buildRpcUrl(network),
       ipfsNodes,
       graphqlNodes: [{url: SUBGRAPH_API_URL[network]!}],
     };

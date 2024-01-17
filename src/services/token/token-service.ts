@@ -3,7 +3,6 @@ import {TokenType} from '@aragon/sdk-client-common';
 import {BigNumber} from '@ethersproject/bignumber';
 import {AddressZero} from '@ethersproject/constants';
 
-import {getAlchemyProvider} from 'context/providers';
 import {
   CHAIN_METADATA,
   COVALENT_API_KEY,
@@ -27,6 +26,7 @@ import {
 } from './token-service.api';
 import request, {gql} from 'graphql-request';
 import {constants} from 'ethers';
+import {aragonGateway} from 'utils/aragonGateway';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
@@ -359,7 +359,7 @@ class TokenService {
     address: string
   ): Promise<Deposit> => {
     const {rawContract, metadata, from, hash} = transfer;
-    const provider = getAlchemyProvider(network)!;
+    const provider = aragonGateway.getRpcClient(network)!;
 
     // fetch token info
     const {decimals, name, symbol} = await getTokenInfo(
