@@ -27,8 +27,8 @@ import {DaoFilterAction, DaoFilterState, FilterActionTypes} from './reducer';
 
 export const DEFAULT_FILTERS: DaoFilterState = {
   quickFilter: 'allDaos',
-  pluginNames: ['token-voting-repo', 'multisig-repo'],
-  networks: ['ethereum'],
+  pluginNames: [],
+  networks: [],
   order: 'tvl',
   showTestnets: false,
 };
@@ -38,6 +38,8 @@ type DaoFilterModalProps = {
   filters: DaoFilterState;
   onClose: () => void;
   onFilterChange: React.Dispatch<DaoFilterAction>;
+  totalCount?: number;
+  daoListLoading: boolean;
 };
 
 const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
@@ -45,6 +47,8 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
   filters,
   onClose,
   onFilterChange,
+  totalCount,
+  daoListLoading,
 }) => {
   const {isDesktop} = useScreen();
   const {address, isConnected} = useWallet();
@@ -59,21 +63,6 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
     {enabled: showFollowedDaos}
   );
 
-  const newDaosApi = useDaos(
-    {
-      direction: OrderDirection.ASC,
-      orderBy: 'CREATED_AT' as const,
-      pluginNames: filters.pluginNames,
-      networks: filters.networks,
-      // ...(filters.quickFilter === 'memberOf' && address
-      //   ? {memberAddress: address.toLowerCase()}
-      //   : {}),
-    },
-    {enabled: showFollowedDaos === false}
-  );
-
-  const daosApi = showFollowedDaos ? followedApi : newDaosApi;
-
   const showAllResults =
     filters.quickFilter === 'allDaos' &&
     !filters.networks?.length &&
@@ -85,10 +74,10 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
       <Header onClose={onClose} />
       <ModalContent filters={filters} onFilterChange={onFilterChange} />
       <ModalFooter
-        count={daosApi.data?.pages[0].total ?? 0}
+        count={totalCount ?? 0}
         onClose={onClose}
         showAll={showAllResults}
-        isLoading={daosApi.isLoading}
+        isLoading={daoListLoading}
         onFilterChange={onFilterChange}
       />
     </Component>
@@ -131,7 +120,7 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
 type ContentProps = Pick<DaoFilterModalProps, 'filters' | 'onFilterChange'>;
 
 const ModalContent: React.FC<ContentProps> = ({
-  filters: {networks, quickFilter, governanceIds, showTestnets},
+  filters: {networks, quickFilter, pluginNames, showTestnets},
   onFilterChange,
 }) => {
   const {t} = useTranslation();
@@ -179,9 +168,9 @@ const ModalContent: React.FC<ContentProps> = ({
     onFilterChange({type: FilterActionTypes.TOGGLE_TESTNETS, payload: value});
   };
 
-  const toggleGovernanceIds = (value?: string[]) => {
+  const togglePluginNames = (value?: string[]) => {
     onFilterChange({
-      type: FilterActionTypes.SET_GOVERNANCE_IDS,
+      type: FilterActionTypes.SET_PLUGIN_NAMES,
       payload: value,
     });
   };
@@ -250,8 +239,8 @@ const ModalContent: React.FC<ContentProps> = ({
         </TitleWrapper>
         <ToggleGroup
           isMultiSelect
-          onChange={toggleGovernanceIds}
-          value={governanceIds}
+          onChange={togglePluginNames}
+          value={pluginNames}
         >
           {governanceFilters.map(f => (
             <Toggle key={f.value} label={t(f.label)} value={f.value} />

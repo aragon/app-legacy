@@ -19,16 +19,16 @@ export const networkFilters: Array<NetworkFilter> = Object.entries(
 
 type GovernanceFilter = {
   label: string;
-  value: Exclude<PluginTypes, GaselessPluginType>;
+  value: string;
 };
 export const governanceFilters: GovernanceFilter[] = [
   {
     label: 'explore.modal.filterDAOs.label.tokenVoting',
-    value: 'token-voting.plugin.dao.eth',
+    value: 'token-voting-repo',
   },
   {
     label: 'explore.modal.filterDAOs.label.member',
-    value: 'multisig.plugin.dao.eth',
+    value: 'multisig-repo',
   },
 ];
 

@@ -4,10 +4,10 @@ import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchDaosParams} from '../aragon-backend-service.api';
 import {IPaginatedResponse} from '../domain/paginated-response';
 import {IDao} from '../domain/dao';
-import {useState} from 'react';
 
 const daosQueryDocument = gql`
   query Dao(
+    $pluginNames: [String!]
     $direction: String!
     $orderBy: String!
     $networks: [Network!]
@@ -15,6 +15,7 @@ const daosQueryDocument = gql`
     $skip: Float
   ) {
     daos(
+      pluginNames: $pluginNames
       direction: $direction
       orderBy: $orderBy
       networks: $networks

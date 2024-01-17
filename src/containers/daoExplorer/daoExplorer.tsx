@@ -74,8 +74,12 @@ export const DaoExplorer = () => {
     {
       direction: OrderDirection.DESC,
       orderBy: filters.order,
-      pluginNames: ['token-voting-repo'],
-      networks: filters.networks,
+      ...(filters.pluginNames?.length !== 0 && {
+        pluginNames: filters.pluginNames,
+      }),
+      ...(filters.networks?.length !== 0 && {
+        networks: filters.networks,
+      }),
       // ...(filters.quickFilter === 'memberOf' && address
       //   ? {memberAddress: address.toLowerCase()}
       //   : {}),
@@ -92,8 +96,7 @@ export const DaoExplorer = () => {
 
   const filteredDaoList = showFollowedDaos ? followedDaoList : daoList;
   const isLoading = showFollowedDaos ? followedDaosLoading : daoListLoading;
-
-  console.log(filteredDaoList);
+  const totalCount = newDaos?.pages[0].total;
 
   const toggleQuickFilters = (value?: string | string[]) => {
     if (value && !Array.isArray(value)) {
@@ -237,6 +240,8 @@ export const DaoExplorer = () => {
       <DaoFilterModal
         isOpen={showAdvancedFilters}
         filters={filters}
+        daoListLoading={daoListLoading}
+        totalCount={totalCount}
         onFilterChange={dispatch}
         onClose={() => {
           setShowAdvancedFilters(false);

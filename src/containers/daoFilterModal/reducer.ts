@@ -10,7 +10,7 @@ export type DaoFilterState = {
 };
 
 export enum FilterActionTypes {
-  SET_GOVERNANCE_IDS = 'SET_GOVERNANCE_IDS',
+  SET_PLUGIN_NAMES = 'SET_GOVERNANCE_IDS',
   SET_QUICK_FILTER = 'SET_QUICK_FILTER',
   SET_NETWORKS = 'SET_NETWORKS',
   SET_ORDER = 'SET_ORDER',
@@ -20,7 +20,7 @@ export enum FilterActionTypes {
 
 export type DaoFilterAction =
   | {
-      type: FilterActionTypes.SET_GOVERNANCE_IDS;
+      type: FilterActionTypes.SET_PLUGIN_NAMES;
       payload: DaoFilterState['pluginNames'];
     }
   | {
@@ -43,7 +43,7 @@ export const daoFiltersReducer = (
   action: DaoFilterAction
 ): DaoFilterState => {
   switch (action.type) {
-    case FilterActionTypes.SET_GOVERNANCE_IDS:
+    case FilterActionTypes.SET_PLUGIN_NAMES:
       return {...state, pluginNames: action.payload};
     case FilterActionTypes.SET_QUICK_FILTER:
       return {...state, quickFilter: action.payload};

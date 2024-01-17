@@ -9,7 +9,9 @@ export interface IDaoStats {
 }
 
 export interface IDao {
-  address: Address;
+  address?: Address;
+  // for backend compatibility
+  daoAddress?: Address;
   ens?: string;
   network: SupportedNetworks;
   name: string;
