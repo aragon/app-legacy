@@ -27,7 +27,7 @@ import {
 
 const DEFAULT_QUERY_PARAMS = {
   skip: 0,
-  limit: 4,
+  limit: 20,
 };
 
 /**
@@ -72,7 +72,7 @@ export const useFollowedDaosInfiniteQuery = (
     useFollowedDaosInfiniteQueryKey(params),
     ({pageParam = 0}) =>
       getFollowedDaosFromCache({
-        skip: limit * pageParam,
+        skip: pageParam,
         limit,
         includeTotal: true,
         governanceIds,
@@ -84,8 +84,11 @@ export const useFollowedDaosInfiniteQuery = (
         lastPage: IFetchInfiniteFollowedDaosResult,
         allPages: IFetchInfiniteFollowedDaosResult[]
       ) => {
-        const current = allPages.length + 1;
-        return current * limit <= lastPage.total ? current : undefined;
+        const totalFetched = allPages.reduce(
+          (total, page) => total + page.data.length,
+          0
+        );
+        return totalFetched < lastPage.total ? totalFetched : undefined;
       },
       select: augmentCachedDaos,
       refetchOnWindowFocus: false,

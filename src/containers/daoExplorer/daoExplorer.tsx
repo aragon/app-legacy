@@ -34,6 +34,9 @@ export const DaoExplorer = () => {
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
   const useFollowList = filters.quickFilter === 'following' && isConnected;
+  const memberAddress =
+    filters.quickFilter === 'memberOf' && address ? address : undefined;
+
   const followedDaosResult = useFollowedDaosInfiniteQuery(
     {
       governanceIds: filters.governanceIds,
@@ -48,9 +51,7 @@ export const DaoExplorer = () => {
       orderBy: 'CREATED_AT' as const,
       governanceIds: filters.governanceIds,
       networks: filters.networks,
-      ...(filters.quickFilter === 'memberOf' && address
-        ? {memberAddress: address.toLowerCase()}
-        : {}),
+      memberAddress,
     },
     {enabled: !useFollowList}
   );
@@ -67,6 +68,12 @@ export const DaoExplorer = () => {
   const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
+
+  const totalDaosShown = filteredDaoList?.length ?? 0;
+  const totalDaos =
+    (useFollowList
+      ? followedDaosResult.data?.pages[0].total
+      : newDaosResult.data?.pages[0].total) ?? 0;
 
   /*************************************************
    *                    Render                     *
@@ -91,17 +98,27 @@ export const DaoExplorer = () => {
           {isLoading && <Spinner size="default" />}
         </CardsWrapper>
       </MainContainer>
-      {hasNextPage && (
-        <ButtonText
-          label={t('explore.explorer.showMore')}
-          className="self-start"
-          iconRight={
-            isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
-          }
-          bgWhite={true}
-          mode="ghost"
-          onClick={() => fetchNextPage()}
-        />
+      {totalDaos > 0 && totalDaosShown > 0 && (
+        <div className="flex items-center lg:gap-x-6">
+          {hasNextPage && (
+            <ButtonText
+              label={t('explore.explorer.showMore')}
+              className="self-start"
+              iconRight={
+                isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
+              }
+              bgWhite={true}
+              mode="ghost"
+              onClick={() => fetchNextPage()}
+            />
+          )}
+          <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
+            {t('explore.pagination.label.amountOf DAOs', {
+              amount: totalDaosShown,
+              total: totalDaos,
+            })}
+          </span>
+        </div>
       )}
       <DaoFilterModal
         isOpen={showAdvancedFilters}
