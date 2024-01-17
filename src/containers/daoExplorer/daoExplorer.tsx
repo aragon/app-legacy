@@ -37,37 +37,36 @@ export const DaoExplorer = () => {
 
   const [filter, setFilter] = useState<DaoFilter>('favorite');
 
-  const {data: followedDaos, status: followedStatus} =
-    useFollowedDaosInfiniteQuery();
+  const followedDaosResult = useFollowedDaosInfiniteQuery();
 
-  const {
-    data: newDaos,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = useDaos({
+  const newDaosResult = useDaos({
     direction: OrderDirection.DESC,
     orderBy: 'CREATED_AT' as const,
   });
 
-  const daoList = newDaos?.pages.flatMap(page => page.data);
+  const newDaoList = newDaosResult.data?.pages.flatMap(page => page.data);
 
   const followedDaoList = useMemo(
-    () => followedDaos?.pages.flatMap(followedDaoToDao) ?? [],
-    [followedDaos]
+    () => followedDaosResult.data?.pages.flatMap(followedDaoToDao) ?? [],
+    [followedDaosResult.data]
   );
 
-  const filteredDaoList =
-    filter === 'favorite' && isConnected ? followedDaoList : daoList;
+  const useFollowList = filter === 'favorite' && isConnected;
+  const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
+
+  const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
+    useFollowList ? followedDaosResult : newDaosResult;
 
   const displayFilters = isConnected && followedDaoList.length > 0;
 
   useEffect(() => {
-    if (followedStatus === 'success' && followedDaoList.length === 0) {
+    if (
+      followedDaosResult.status === 'success' &&
+      followedDaoList.length === 0
+    ) {
       setFilter('all');
     }
-  }, [followedStatus, followedDaoList]);
+  }, [followedDaosResult.status, followedDaoList]);
 
   return (
     <Container>
