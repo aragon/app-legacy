@@ -1,4 +1,11 @@
-import {ButtonText, IconChevronDown, Spinner} from '@aragon/ods-old';
+import {
+  ButtonGroup,
+  ButtonText,
+  IconChevronDown,
+  IconReload,
+  Option,
+  Spinner,
+} from '@aragon/ods-old';
 import React, {useMemo, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -6,7 +13,10 @@ import {Address} from 'viem';
 
 import {DaoCard} from 'components/daoCard';
 import DaoFilterModal, {DEFAULT_FILTERS} from 'containers/daoFilterModal';
-import {daoFiltersReducer} from 'containers/daoFilterModal/reducer';
+import {
+  FilterActionTypes,
+  daoFiltersReducer,
+} from 'containers/daoFilterModal/reducer';
 import {NavigationDao} from 'context/apolloClient';
 import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
 import {useWallet} from 'hooks/useWallet';
@@ -14,6 +24,8 @@ import {IDao} from 'services/aragon-backend/domain/dao';
 import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
 import {useDaos} from 'services/aragon-backend/queries/use-daos';
 import {getSupportedNetworkByChainId} from 'utils/constants';
+import {StateEmpty} from 'components/stateEmpty';
+import {EXPLORE_FILTER, ExploreFilter} from 'hooks/useDaos';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   address: dao.address as Address,
@@ -26,14 +38,23 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
   governanceId: dao.plugins[0].id,
 });
 
+function isExploreFilter(filterValue: string): filterValue is ExploreFilter {
+  return EXPLORE_FILTER.some(ef => ef === filterValue);
+}
+
 export const DaoExplorer = () => {
   const {t} = useTranslation();
   const {isConnected, address} = useWallet();
 
+  const [filterValue, setFilterValue] = useState<ExploreFilter>('favorite');
+
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
-  const useFollowList = filters.quickFilter === 'following' && isConnected;
+  const useFollowList = isConnected && filterValue === 'favorite';
+  const memberAddress =
+    filters.quickFilter === 'memberOf' && address ? address : undefined;
+
   const followedDaosResult = useFollowedDaosInfiniteQuery(
     {
       governanceIds: filters.governanceIds,
@@ -48,9 +69,7 @@ export const DaoExplorer = () => {
       orderBy: 'CREATED_AT' as const,
       governanceIds: filters.governanceIds,
       networks: filters.networks,
-      ...(filters.quickFilter === 'memberOf' && address
-        ? {memberAddress: address.toLowerCase()}
-        : {}),
+      memberAddress,
     },
     {enabled: !useFollowList}
   );
@@ -68,6 +87,27 @@ export const DaoExplorer = () => {
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 
+  const totalDaosShown = filteredDaoList?.length ?? 0;
+  const totalDaos =
+    (useFollowList
+      ? followedDaosResult.data?.pages[0].total
+      : newDaosResult.data?.pages[0].total) ?? 0;
+
+  const noDaosFound = isLoading === false && totalDaos === 0;
+
+  const handleClearFilters = () => {
+    dispatch({type: FilterActionTypes.RESET, payload: DEFAULT_FILTERS});
+  };
+
+  const handleFilterChange = (filterValue: string) => {
+    if (isExploreFilter(filterValue)) {
+      setFilterValue(filterValue);
+    } else throw Error(`${filterValue} is not an acceptable filter value`);
+  };
+
+  // whether the connected wallet has followed DAOS
+  const loggedInAndHasFollowedDaos = isConnected && followedDaoList.length > 0;
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -76,32 +116,62 @@ export const DaoExplorer = () => {
       <MainContainer>
         <HeaderWrapper>
           <Title>{t('explore.explorer.title')}</Title>
-
-          {/* PLEASE REMOVE ME: @Sepehr */}
-          <button
-            onClick={() => {
-              setShowAdvancedFilters(true);
-            }}
-          >
-            SHOW ADVANCE FILTERS
-          </button>
+          {loggedInAndHasFollowedDaos && (
+            <ButtonGroup
+              defaultValue={filterValue}
+              onChange={handleFilterChange}
+              bgWhite={false}
+            >
+              <Option label={t('explore.explorer.myDaos')} value="favorite" />
+              <Option label={t('explore.explorer.newest')} value="newest" />
+            </ButtonGroup>
+          )}
         </HeaderWrapper>
-        <CardsWrapper>
-          {filteredDaoList?.map(dao => <DaoCard key={dao.address} dao={dao} />)}
-          {isLoading && <Spinner size="default" />}
-        </CardsWrapper>
+        {noDaosFound ? (
+          <StateEmpty
+            type="Object"
+            mode="card"
+            object="magnifying_glass"
+            title={t('explore.emptyStateSearch.title')}
+            description={t('explore.emptyStateSearch.description')}
+            contentWrapperClassName="lg:w-[560px]"
+            secondaryButton={{
+              label: t('explore.emptyStateSearch.ctaLabel'),
+              iconLeft: <IconReload />,
+              onClick: handleClearFilters,
+              className: 'w-full',
+            }}
+          />
+        ) : (
+          <CardsWrapper>
+            {filteredDaoList?.map(dao => (
+              <DaoCard key={dao.address} dao={dao} />
+            ))}
+            {isLoading && <Spinner size="default" />}
+          </CardsWrapper>
+        )}
       </MainContainer>
-      {hasNextPage && (
-        <ButtonText
-          label={t('explore.explorer.showMore')}
-          className="self-start"
-          iconRight={
-            isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
-          }
-          bgWhite={true}
-          mode="ghost"
-          onClick={() => fetchNextPage()}
-        />
+      {totalDaos > 0 && totalDaosShown > 0 && (
+        <div className="flex items-center lg:gap-x-6">
+          {hasNextPage && (
+            <ButtonText
+              label={t('explore.explorer.showMore')}
+              className="self-start"
+              iconRight={
+                isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
+              }
+              bgWhite={true}
+              mode="ghost"
+              onClick={() => fetchNextPage()}
+            />
+          )}
+          <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
+            {t('explore.pagination.label.amountOf DAOs', {
+              amount: totalDaosShown,
+              total: totalDaos,
+            })}
+          </span>
+        </div>
       )}
       <DaoFilterModal
         isOpen={showAdvancedFilters}
