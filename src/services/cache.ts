@@ -55,8 +55,6 @@ export async function getFollowedDaosFromCache(
 ): Promise<FollowedDaosResultWithTotal | NavigationDao[]> {
   const {skip, limit, includeTotal, governanceIds, networks} = options;
 
-  console.log(options, 'options');
-
   const favoriteDaos = JSON.parse(
     localStorage.getItem(FOLLOWED_DAOS_KEY) ?? '[]'
   ) as NavigationDao[];
