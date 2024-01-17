@@ -3,6 +3,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import useScreen from 'hooks/useScreen';
+import {useHref} from 'react-router-dom';
 import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 import {CHAIN_METADATA} from 'utils/constants';
 import {generatePath} from 'react-router-dom';
@@ -25,8 +26,9 @@ export const DaoCard = (props: IDaoCardProps) => {
 
   const daoPage = generatePath(Dashboard, {
     network,
-    dao: toDisplayEns(ens) ?? address,
+    dao: toDisplayEns(ens) || address,
   });
+  const daoUrl = useHref(daoPage);
 
   const daoType = t(
     governanceId === 'token-voting.plugin.dao.eth'
@@ -35,7 +37,7 @@ export const DaoCard = (props: IDaoCardProps) => {
   );
 
   return (
-    <Container href={daoPage}>
+    <Container href={daoUrl}>
       <DaoDataWrapper>
         <HeaderContainer>
           <AvatarDao daoName={name} src={avatar} />
