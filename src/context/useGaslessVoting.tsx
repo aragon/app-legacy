@@ -19,6 +19,7 @@ import {isGaslessProposal} from '../utils/proposals';
 import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
 import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 
 export enum GaslessVotingStepId {
   CREATE_VOTE_ID = 'CREATE_VOTE_ID',
@@ -159,7 +160,7 @@ export const useGaslessCommiteVotes = (
   const {address} = useWallet();
 
   const isApprovalPeriod = (proposal => {
-    if (!proposal) return false;
+    if (!proposal || proposal.status !== 'Active') return false;
     return (
       proposal.endDate.valueOf() < new Date().valueOf() &&
       proposal.tallyEndDate.valueOf() > new Date().valueOf()
@@ -179,16 +180,19 @@ export const useGaslessCommiteVotes = (
   })(proposal);
 
   const canBeExecuted = (proposal => {
-    if (!client || !proposal) return false;
+    if (!client || !proposal || proposal.status !== 'Active') return false;
     return isApproved && proposalCanBeApproved;
   })(proposal);
-
-  const nextVoteWillApprove =
-    proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
 
   const executed = proposal.executed;
 
   const notBegan = proposal.endDate.valueOf() > new Date().valueOf();
+
+  const executableWithNextApproval =
+    proposal.status === ProposalStatus.ACTIVE &&
+    proposal.actions.length > 0 &&
+    proposal.settings.minTallyApprovals > 1 &&
+    proposal.settings.minTallyApprovals - 1 === proposal.approvers.length;
 
   useEffect(() => {
     const checkCanVote = async () => {
@@ -222,8 +226,8 @@ export const useGaslessCommiteVotes = (
     approved,
     isApproved,
     canBeExecuted,
-    nextVoteWillApprove,
     proposalCanBeApproved,
+    executableWithNextApproval,
     executed,
     notBegan,
   };

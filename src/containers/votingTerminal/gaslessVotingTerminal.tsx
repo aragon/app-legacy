@@ -22,7 +22,6 @@ import {
 } from '../../utils/committeeVoting';
 import {PluginTypes} from '../../hooks/usePluginClient';
 import {VotingTerminalAccordionItem} from './accordionItem';
-import {ProposalStatus} from '@aragon/sdk-client-common';
 
 type GaslessExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
@@ -62,18 +61,13 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     approved,
     isApproved,
     canBeExecuted,
+    executableWithNextApproval,
     isApprovalPeriod,
     notBegan,
   } = useGaslessCommiteVotes(pluginAddress, proposal);
 
   const {handleExecutionMultisigApprove, executionFailed, executionTxHash} =
     useProposalTransactionContext();
-
-  const executableWithNextApproval =
-    proposal.status === ProposalStatus.ACTIVE &&
-    proposal.actions.length > 0 &&
-    proposal.settings.minTallyApprovals > 1 &&
-    proposal.settings.minTallyApprovals - 1 === proposal.approvers.length;
 
   const mappedProps = useMemo(() => {
     if (!proposal) return;
