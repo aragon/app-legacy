@@ -5,6 +5,7 @@ import {
   IconCheckmark,
   IconChevronDown,
   IconFilter,
+  IconReload,
   IconSort,
   ListItemAction,
   // SearchInput,
@@ -34,16 +35,18 @@ import {
   quickFilters,
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
+import {StateEmpty} from 'components/stateEmpty';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
-  address: dao.address as Address,
+  creatorAddress: '' as Address,
+  daoAddress: dao.address as Address,
   ens: dao.ensDomain,
   network: getSupportedNetworkByChainId(dao.chain)!,
   name: dao.metadata.name,
   description: dao.metadata.description ?? '',
   logo: dao.metadata.avatar ?? '',
   createdAt: '',
-  governanceId: dao.plugins[0].id,
+  pluginName: dao.plugins[0].id,
 });
 
 export const DaoExplorer = () => {
@@ -53,24 +56,17 @@ export const DaoExplorer = () => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
-  const showFollowedDaos = filters.quickFilter === 'following' && isConnected;
+  const useFollowList = filters.quickFilter === 'following' && isConnected;
 
-  const {data: followedDaos, isLoading: followedDaosLoading} =
-    useFollowedDaosInfiniteQuery(
-      {
-        pluginNames: filters.pluginNames,
-        networks: filters.networks,
-      },
-      {enabled: showFollowedDaos}
-    );
+  const followedDaosResult = useFollowedDaosInfiniteQuery(
+    {
+      pluginNames: filters.pluginNames,
+      networks: filters.networks,
+    },
+    {enabled: useFollowList}
+  );
 
-  const {
-    data: newDaos,
-    isLoading: daoListLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = useDaos(
+  const newDaosResult = useDaos(
     {
       direction: OrderDirection.DESC,
       orderBy: filters.order,
@@ -84,11 +80,10 @@ export const DaoExplorer = () => {
       //   ? {memberAddress: address.toLowerCase()}
       //   : {}),
     },
-    {enabled: showFollowedDaos === false}
+    {enabled: useFollowList === false}
   );
 
-  // Intermediate values
-  const daoList = newDaos?.pages.flatMap(page => page.data);
+  const newDaoList = newDaosResult.data?.pages.flatMap(page => page.data);
 
   const filtersCount = useMemo(() => {
     let count = 0;
@@ -106,16 +101,23 @@ export const DaoExplorer = () => {
     return count !== 0 ? count.toString() : '';
   }, [filters]);
 
-  const followedDaoList = followedDaos?.pages.flatMap(page =>
-    page.data.map(followedDaoToDao)
+  const followedDaoList = useMemo(
+    () =>
+      followedDaosResult.data?.pages.flatMap(page =>
+        page.data.map(followedDaoToDao)
+      ) ?? [],
+    [followedDaosResult.data]
   );
 
-  const filteredDaoList = showFollowedDaos ? followedDaoList : daoList;
-  const isLoading = showFollowedDaos ? followedDaosLoading : daoListLoading;
-  const totalCount =
-    filters.quickFilter === 'following'
-      ? followedDaos?.pages[0].total
-      : newDaos?.pages[0].total;
+  const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
+
+  const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
+    useFollowList ? followedDaosResult : newDaosResult;
+
+  const totalDaos =
+    (useFollowList
+      ? followedDaosResult.data?.pages[0].total
+      : newDaosResult.data?.pages[0].total) ?? 0;
 
   const toggleQuickFilters = (value?: string | string[]) => {
     if (value && !Array.isArray(value)) {
@@ -132,6 +134,14 @@ export const DaoExplorer = () => {
         type: FilterActionTypes.SET_ORDER,
         payload: value as SortByValue,
       });
+  };
+
+  const totalDaosShown = filteredDaoList?.length ?? 0;
+
+  const noDaosFound = isLoading === false && totalDaos === 0;
+
+  const handleClearFilters = () => {
+    dispatch({type: FilterActionTypes.RESET, payload: DEFAULT_FILTERS});
   };
 
   /*************************************************
@@ -240,30 +250,57 @@ export const DaoExplorer = () => {
             />
           </ButtonGroupContainer>
         </FilterGroupContainer>
-        <CardsWrapper>
-          {filteredDaoList?.map((dao, index) => (
-            <DaoCard key={index} dao={dao} />
-          ))}
-          {isLoading && <Spinner size="default" />}
-        </CardsWrapper>
+        {noDaosFound ? (
+          <StateEmpty
+            type="Object"
+            mode="card"
+            object="magnifying_glass"
+            title={t('explore.emptyStateSearch.title')}
+            description={t('explore.emptyStateSearch.description')}
+            contentWrapperClassName="lg:w-[560px]"
+            secondaryButton={{
+              label: t('explore.emptyStateSearch.ctaLabel'),
+              iconLeft: <IconReload />,
+              onClick: handleClearFilters,
+              className: 'w-full',
+            }}
+          />
+        ) : (
+          <CardsWrapper>
+            {filteredDaoList?.map(dao => (
+              <DaoCard key={dao.daoAddress} dao={dao} />
+            ))}
+            {isLoading && <Spinner size="default" />}
+          </CardsWrapper>
+        )}
       </MainContainer>
-      {hasNextPage && (
-        <ButtonText
-          label={t('explore.explorer.showMore')}
-          className="self-start"
-          iconRight={
-            isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
-          }
-          bgWhite={true}
-          mode="ghost"
-          onClick={() => fetchNextPage()}
-        />
+      {totalDaos > 0 && totalDaosShown > 0 && (
+        <div className="flex items-center lg:gap-x-6">
+          {hasNextPage && (
+            <ButtonText
+              label={t('explore.explorer.showMore')}
+              className="self-start"
+              iconRight={
+                isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
+              }
+              bgWhite={true}
+              mode="ghost"
+              onClick={() => fetchNextPage()}
+            />
+          )}
+          <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
+            {t('explore.pagination.label.amountOf DAOs', {
+              amount: totalDaosShown,
+              total: totalDaos,
+            })}
+          </span>
+        </div>
       )}
       <DaoFilterModal
         isOpen={showAdvancedFilters}
         filters={filters}
         daoListLoading={isLoading}
-        totalCount={totalCount}
+        totalCount={totalDaos}
         onFilterChange={dispatch}
         onClose={() => {
           setShowAdvancedFilters(false);

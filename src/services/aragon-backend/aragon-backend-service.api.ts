@@ -14,5 +14,4 @@ export interface IFetchDaosParams
     IPaginatedRequest {
   pluginNames?: string[];
   networks?: SupportedNetworks[];
-  memberAddress?: string;
 }
