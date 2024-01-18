@@ -197,10 +197,13 @@ export type DetailedProposal =
 
 // This omitted Gasless params are added after Vocdoni election created
 // This type is used to store information needed before creating the proposal in the vochain
-export type PartialGaslessParams = Omit<
+export type GaslessProposalCreationParams = Omit<
   CreateGasslessProposalParams,
   'vochainProposalId' | 'censusURI' | 'censusRoot' | 'totalVotingPower'
->;
+> & {
+  gaslessStartDate: Date | undefined;
+  gaslessEndDate: Date;
+};
 
 export type ProposalListItem =
   | TokenVotingProposalListItem

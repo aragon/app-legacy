@@ -92,7 +92,7 @@ import {Proposal} from 'utils/paths';
 import {getNonEmptyActions} from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
 import {
-  PartialGaslessParams,
+  GaslessProposalCreationParams,
   ProposalFormData,
   ProposalId,
   ProposalResource,
@@ -155,7 +155,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   const [proposalId, setProposalId] = useState<string>();
   const [proposalCreationData, setProposalCreationData] = useState<
-    CreateMajorityVotingProposalParams | PartialGaslessParams
+    CreateMajorityVotingProposalParams | GaslessProposalCreationParams
   >();
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
@@ -620,7 +620,13 @@ const CreateProposalWrapper: React.FC<Props> = ({
   ]);
 
   const getOffChainProposalParams = useCallback(
-    (params: CreateMajorityVotingProposalParams): PartialGaslessParams => {
+    (
+      params: CreateMajorityVotingProposalParams
+    ): GaslessProposalCreationParams => {
+      let gaslessStartDate;
+      if (params.startDate) {
+        gaslessStartDate = new Date(params.startDate.setMinutes(-1));
+      }
       return {
         ...params,
         // If the value is undefined will take the expiration time defined at DAO creation level.
@@ -628,8 +634,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
         // We could define a different expiration date for this proposal but is not designed
         // to do this at ux level. (kon)
         tallyEndDate: undefined,
-        // We ensure that the endate is not undefined, during the calculation of the CreateMajorityVotingProposalParams
+        // We ensure that the onchain endate is not undefined, during the calculation of the CreateMajorityVotingProposalParams
         endDate: params.endDate!,
+        // Add offset to the end date to avoid onchain proposal finish before the offchain proposal
+        gaslessEndDate: new Date(params.endDate!.setMinutes(1)),
+        // Add offset to ensure offchain is started when proposal starts
+        gaslessStartDate,
       };
     },
     []
@@ -972,8 +982,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
     const {params, metadata} = await getProposalCreationParams();
 
-    console.log('AAAaa', params);
-    // return;
     await createProposal(
       metadata,
       getOffChainProposalParams(params),

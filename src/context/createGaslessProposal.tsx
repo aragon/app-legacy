@@ -25,7 +25,7 @@ import {
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
 import {useCensus3Client, useCensus3CreateToken} from '../hooks/useCensus3';
-import {PartialGaslessParams} from '../utils/types';
+import {GaslessProposalCreationParams} from '../utils/types';
 
 export enum GaslessProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
@@ -57,7 +57,7 @@ export type UseCreateElectionProps = Omit<
 
 interface IProposalToElectionProps {
   metadata: ProposalMetadata;
-  data: PartialGaslessParams;
+  data: GaslessProposalCreationParams;
   census: Census;
 }
 
@@ -70,8 +70,8 @@ const proposalToElection = ({
     title: metadata.title,
     description: metadata.description,
     question: metadata.summary,
-    startDate: data.startDate,
-    endDate: data.endDate,
+    startDate: data.gaslessStartDate,
+    endDate: data.gaslessEndDate,
     meta: data, // Store all DAO metadata to retrieve it easily
     census: census,
   };
@@ -221,11 +221,11 @@ const useCreateGaslessProposal = ({
   const createProposal = useCallback(
     async (
       metadata: ProposalMetadata,
-      data: PartialGaslessParams,
+      data: GaslessProposalCreationParams,
       handleOnchainProposal: (
         electionId?: string,
         vochainCensus?: TokenCensus,
-        gaslessParams?: PartialGaslessParams
+        gaslessParams?: GaslessProposalCreationParams
       ) => Promise<Error | undefined>
     ) => {
       if (globalState === StepStatus.ERROR) {
