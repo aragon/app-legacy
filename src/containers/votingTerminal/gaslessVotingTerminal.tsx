@@ -58,8 +58,8 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
 
   const {
     canApprove,
-    approved,
-    isApproved,
+    isUserApproved,
+    isProposalApproved,
     canBeExecuted,
     executableWithNextApproval,
     isApprovalPeriod,
@@ -110,8 +110,8 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     if (proposal) {
       return getCommitteVoteButtonLabel(
         notBegan,
-        approved,
-        isApproved,
+        isUserApproved,
+        isProposalApproved,
         isApprovalPeriod,
         executableWithNextApproval,
         t
@@ -120,8 +120,8 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   }, [
     proposal,
     notBegan,
-    approved,
-    isApproved,
+    isUserApproved,
+    isProposalApproved,
     isApprovalPeriod,
     executableWithNextApproval,
     t,
@@ -131,7 +131,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   // todo(kon): Should be refactored to use the same logic as the proposal page (using stateRef)
   const {voteNowDisabled, onClick} = useMemo(() => {
     // disable voting on non-active proposals or when wallet has voted or can't vote
-    if (!isApprovalPeriod || !canApprove || approved) {
+    if (!isApprovalPeriod || !canApprove || isUserApproved) {
       return {voteNowDisabled: true};
     }
 
@@ -172,7 +172,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   }, [
     isApprovalPeriod,
     canApprove,
-    approved,
+    isUserApproved,
     address,
     isOnWrongNetwork,
     statusRef,
@@ -214,20 +214,11 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
       isApprovalPeriod && // active proposal
       address && // logged in
       !isOnWrongNetwork && // on proper network
-      !canApprove && // cannot vote
-      !approved // Already voted
+      !canApprove // cannot vote
     ) {
       return t('votingTerminal.status.ineligibleWhitelist');
     }
-  }, [
-    isApprovalPeriod,
-    proposal,
-    address,
-    isOnWrongNetwork,
-    canApprove,
-    approved,
-    t,
-  ]);
+  }, [isApprovalPeriod, proposal, address, isOnWrongNetwork, canApprove, t]);
 
   const ApprovalVotingTerminal = () => {
     return (

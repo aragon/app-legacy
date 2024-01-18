@@ -162,26 +162,27 @@ export const useGaslessCommiteVotes = (
   const isApprovalPeriod = (proposal => {
     if (!proposal || proposal.status !== 'Active') return false;
     return (
-      proposal.endDate.valueOf() < new Date().valueOf() &&
-      proposal.tallyEndDate.valueOf() > new Date().valueOf()
+      (proposal.endDate.valueOf() < new Date().valueOf() &&
+        proposal.tallyEndDate.valueOf() > new Date().valueOf() &&
+        proposal?.canBeApproved) ??
+      false
     );
   })(proposal);
 
-  const proposalCanBeApproved = isApprovalPeriod && proposal.canBeApproved;
-  const approved = useMemo(() => {
+  const isUserApproved = useMemo(() => {
     return proposal.approvers?.some(
       approver => approver.toLowerCase() === address?.toLowerCase()
     );
   }, [address, proposal.approvers]);
 
-  const isApproved = (proposal => {
+  const isProposalApproved = (proposal => {
     if (!proposal) return false;
     return proposal.settings.minTallyApprovals <= proposal.approvers.length;
   })(proposal);
 
   const canBeExecuted = (proposal => {
     if (!client || !proposal || proposal.status !== 'Active') return false;
-    return isApproved && proposalCanBeApproved;
+    return isProposalApproved && isApprovalPeriod;
   })(proposal);
 
   const executed = proposal.executed;
@@ -206,27 +207,19 @@ export const useGaslessCommiteVotes = (
       return;
     }
 
-    if (approved || !isApprovalPeriod || !proposalCanBeApproved) {
+    if (isUserApproved || !isApprovalPeriod) {
       setCanApprove(false);
       return;
     }
-    checkCanVote();
-  }, [
-    address,
-    client,
-    isApprovalPeriod,
-    pluginAddress,
-    proposalCanBeApproved,
-    approved,
-  ]);
+    void checkCanVote();
+  }, [address, client, isApprovalPeriod, pluginAddress, isUserApproved]);
 
   return {
     isApprovalPeriod,
     canApprove,
-    approved,
-    isApproved,
+    isUserApproved,
+    isProposalApproved,
     canBeExecuted,
-    proposalCanBeApproved,
     executableWithNextApproval,
     executed,
     notBegan,
