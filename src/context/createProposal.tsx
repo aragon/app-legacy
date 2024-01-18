@@ -621,9 +621,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
     (
       params: CreateMajorityVotingProposalParams
     ): GaslessProposalCreationParams => {
+      const gaslessEndDate = new Date(params.endDate!);
+      gaslessEndDate.setMinutes(params.endDate!.getMinutes() + 1);
       let gaslessStartDate;
       if (params.startDate) {
-        gaslessStartDate = new Date(params.startDate.setMinutes(-1));
+        gaslessStartDate = new Date(params.startDate);
+        gaslessStartDate.setMinutes(params.startDate.getMinutes() - 1);
       }
       return {
         ...params,
@@ -635,7 +638,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         // We ensure that the onchain endate is not undefined, during the calculation of the CreateMajorityVotingProposalParams
         endDate: params.endDate!,
         // Add offset to the end date to avoid onchain proposal finish before the offchain proposal
-        gaslessEndDate: new Date(params.endDate!.setMinutes(1)),
+        gaslessEndDate,
         // Add offset to ensure offchain is started when proposal starts
         gaslessStartDate,
       };
@@ -651,15 +654,16 @@ const CreateProposalWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    return gasless
-      ? (pluginClient as GaslessVotingClient).estimation.createProposal(
-          proposalCreationData as CreateGasslessProposalParams
-        )
-      : (
-          pluginClient as TokenVotingClient | MultisigClient
-        ).estimation.createProposal(
-          proposalCreationData as CreateMajorityVotingProposalParams
-        );
+    if (gasless) {
+      return (pluginClient as GaslessVotingClient).estimation.createProposal(
+        proposalCreationData as CreateGasslessProposalParams
+      );
+    }
+    return (
+      pluginClient as TokenVotingClient | MultisigClient
+    ).estimation.createProposal(
+      proposalCreationData as CreateMajorityVotingProposalParams
+    );
   }, [gasless, pluginClient, proposalCreationData]);
 
   const {
@@ -864,7 +868,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
         // example), the end date will be updated from now to 6 minutes more.
 
         const params: CreateGasslessProposalParams = {
-          // ...(gaslessParams as PartialGaslessParams),
           ...getOffChainProposalParams(gaslessParams),
           censusRoot: vochainCensus.censusId!,
           censusURI: vochainCensus.censusURI!,
@@ -1001,8 +1004,18 @@ const CreateProposalWrapper: React.FC<Props> = ({
     async function setProposalData() {
       if (showTxModal && creationProcessState === TransactionState.WAITING) {
         if (gasless) {
-          const {params: gaslessParams} = await getProposalCreationParams();
-          setProposalCreationData(getOffChainProposalParams(gaslessParams));
+          // const {params} = await getProposalCreationParams();
+          //           // console.log(
+          //           //   'XXXXXXXXXXXXXXXXX',
+          //           //   (await getProposalCreationParams()).params.endDate,
+          //           //   gaslessParamsxx.endDate,
+          //           //   getOffChainProposalParams(gaslessParamsxx).endDate
+          //           // );
+          setProposalCreationData(
+            getOffChainProposalParams(
+              (await getProposalCreationParams()).params
+            )
+          );
         } else {
           const {params} = await getProposalCreationParams();
           setProposalCreationData(params);
