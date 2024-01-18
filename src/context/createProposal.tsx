@@ -519,8 +519,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
       );
     }
 
-    console.log('xxsaodhsad', startDateTime);
-
     // Minimum allowed end date (if endDate is lower than that SC call fails)
     const minEndDateTimeMills =
       startDateTime.valueOf() +
@@ -964,7 +962,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
       gasless,
       isOnWrongNetwork,
       getOffChainProposalParams,
-      getProposalCreationParams,
       handleCloseModal,
       open,
       network,
