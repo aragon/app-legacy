@@ -51,7 +51,7 @@ class AragonGateway {
   buildRpcUrl = (network: SupportedNetworks) => {
     const {gatewayNetwork} = CHAIN_METADATA[network];
     const baseUrl = import.meta.env.VITE_GATEWAY_URL;
-    const rpcUrl = `${baseUrl}/v1.0/rpc/${gatewayNetwork}/${infuraApiKey}`;
+    const rpcUrl = `${baseUrl}/v${this.rpcVersion}/rpc/${gatewayNetwork}/${infuraApiKey}`;
 
     return rpcUrl;
   };
