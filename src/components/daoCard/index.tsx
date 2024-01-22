@@ -19,7 +19,6 @@ export const DaoCard = (props: IDaoCardProps) => {
   const {dao} = props;
   const {
     name,
-    address,
     daoAddress,
     logo,
     ens,
@@ -36,10 +35,11 @@ export const DaoCard = (props: IDaoCardProps) => {
 
   const daoPage = generatePath(Dashboard, {
     network,
-    dao: toDisplayEns(ens) || address || daoAddress,
+    dao: toDisplayEns(ens) || daoAddress,
   });
   const daoUrl = useHref(daoPage);
 
+  // TODO: This should be changed for new plugin types
   const daoType =
     governanceId === 'token-voting.plugin.dao.eth' ||
     pluginName === 'token-voting-repo'

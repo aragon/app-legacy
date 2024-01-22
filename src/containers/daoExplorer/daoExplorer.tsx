@@ -8,7 +8,6 @@ import {
   IconReload,
   IconSort,
   ListItemAction,
-  // SearchInput,
   Spinner,
 } from '@aragon/ods-old';
 import React, {useMemo, useReducer, useState} from 'react';
@@ -31,7 +30,7 @@ import {useDaos} from 'services/aragon-backend/queries/use-daos';
 import {getSupportedNetworkByChainId} from 'utils/constants';
 import {
   QuickFilterValue,
-  SortByValue,
+  OrderByValue,
   quickFilters,
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
@@ -90,7 +89,7 @@ export const DaoExplorer = () => {
 
     if (!filters) return '';
 
-    if (filters.quickFilter !== 'allDaos') count++;
+    if (filters.quickFilter !== DEFAULT_FILTERS.quickFilter) count++;
 
     // plugin Name filter
     if (filters.pluginNames?.length !== 0) count++;
@@ -132,7 +131,7 @@ export const DaoExplorer = () => {
     if (value)
       dispatch({
         type: FilterActionTypes.SET_ORDER,
-        payload: value as SortByValue,
+        payload: value as OrderByValue,
       });
   };
 
@@ -172,11 +171,6 @@ export const DaoExplorer = () => {
             })}
           </ToggleGroup>
           <ButtonGroupContainer>
-            {/* <SearchInput
-              placeholder={t('explore.inputPlaceholder.searchDAOs')}
-              value={searchTerm}
-              onChange={handleQueryChange}
-            /> */}
             <ButtonText
               label={filtersCount}
               mode="secondary"
@@ -196,53 +190,49 @@ export const DaoExplorer = () => {
               listItems={[
                 {
                   component: (
-                    <ListItemAction
-                      title={t('explore.sortBy.largestTreasury')}
-                      bgWhite
-                      {...(filters.order === 'tvl' && {
-                        iconRight: <IconCheckmark />,
-                        mode: 'selected',
-                      })}
-                    />
+                    <CredentialsDropdownItem isActive={filters.order === 'tvl'}>
+                      {t('explore.sortBy.largestTreasury')}
+                      {filters.order === 'tvl' && <IconCheckmark />}
+                    </CredentialsDropdownItem>
                   ),
                   callback: () => toggleOrderby('tvl'),
                 },
                 {
                   component: (
-                    <ListItemAction
-                      title={t('explore.sortBy.mostProposals')}
-                      bgWhite
-                      {...(filters.order === 'proposals' && {
-                        iconRight: <IconCheckmark />,
-                        mode: 'selected',
-                      })}
-                    />
+                    <>
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'proposals'}
+                      >
+                        {t('explore.sortBy.mostProposals')}
+                        {filters.order === 'proposals' && <IconCheckmark />}
+                      </CredentialsDropdownItem>
+                    </>
                   ),
                   callback: () => toggleOrderby('proposals'),
                 },
                 {
                   component: (
-                    <ListItemAction
-                      title={t('explore.sortBy.largestCommunity')}
-                      bgWhite
-                      {...(filters.order === 'members' && {
-                        iconRight: <IconCheckmark />,
-                        mode: 'selected',
-                      })}
-                    />
+                    <>
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'members'}
+                      >
+                        {t('explore.sortBy.largestCommunity')}
+                        {filters.order === 'members' && <IconCheckmark />}
+                      </CredentialsDropdownItem>
+                    </>
                   ),
                   callback: () => toggleOrderby('members'),
                 },
                 {
                   component: (
-                    <ListItemAction
-                      title={t('explore.sortBy.recentlyCreated')}
-                      bgWhite
-                      {...(filters.order === 'createdAt' && {
-                        iconRight: <IconCheckmark />,
-                        mode: 'selected',
-                      })}
-                    />
+                    <>
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'createdAt'}
+                      >
+                        {t('explore.sortBy.recentlyCreated')}
+                        {filters.order === 'createdAt' && <IconCheckmark />}
+                      </CredentialsDropdownItem>
+                    </>
                   ),
                   callback: () => toggleOrderby('createdAt'),
                 },
@@ -310,6 +300,10 @@ export const DaoExplorer = () => {
   );
 };
 
+type CredentialsDropdownItemPropType = {
+  isActive: boolean;
+};
+
 const MainContainer = styled.div.attrs({
   className: 'flex flex-col space-y-4 xl:space-y-6',
 })``;
@@ -332,3 +326,11 @@ const FilterGroupContainer = styled.div.attrs({
 const ButtonGroupContainer = styled.div.attrs({
   className: 'flex space-x-3',
 })``;
+
+const CredentialsDropdownItem = styled.div.attrs<CredentialsDropdownItemPropType>(
+  ({isActive}) => ({
+    className: `flex text-neutral-600 items-center justify-between gap-3 py-3 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400 ${
+      isActive ? 'text-primary-400 bg-primary-50 cursor-auto' : 'cursor-pointer'
+    }`,
+  })
+)``;

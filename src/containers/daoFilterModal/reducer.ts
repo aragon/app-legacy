@@ -1,12 +1,12 @@
 import {SupportedNetworks} from 'utils/constants';
-import {QuickFilterValue, SortByValue} from './data';
+import {QuickFilterValue, OrderByValue} from './data';
 
 export type DaoFilterState = {
   pluginNames?: Array<string>;
   networks?: Array<SupportedNetworks>;
   quickFilter: QuickFilterValue;
   showTestnets: boolean;
-  order: SortByValue;
+  order: OrderByValue;
 };
 
 export enum FilterActionTypes {

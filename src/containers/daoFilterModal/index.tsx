@@ -50,7 +50,7 @@ const DaoFilterModal: React.FC<DaoFilterModalProps> = ({
   const {isDesktop} = useScreen();
 
   const showAllResults =
-    filters.quickFilter === 'allDaos' &&
+    filters.quickFilter === DEFAULT_FILTERS.quickFilter &&
     !filters.networks?.length &&
     !filters.pluginNames?.length;
 
