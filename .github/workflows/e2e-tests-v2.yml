@@ -151,8 +151,7 @@ jobs:
       - name: Start and access container
         run: |
           docker run -d --name my-webapp-instance -p 3000:3000 -e PRIVATE_KEY='81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1' my-webapp
-          docker exec -it my-webapp-instance /bin/bash
-          ping -c 4 8.8.8.8
+          docker exec my-webapp-instance ping -c 4 8.8.8.8
 
       - name: Run E2E Tests
         run: |
