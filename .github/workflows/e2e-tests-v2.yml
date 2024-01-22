@@ -154,8 +154,7 @@ jobs:
 
       - name: Run E2E Tests
         run: |
-          docker exec my-webapp-instance
-          npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+          docker exec my-webapp-instance npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
         env:
           NODE_OPTIONS: '--max-old-space-size=6656'
           PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
