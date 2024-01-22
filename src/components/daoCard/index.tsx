@@ -17,16 +17,7 @@ export interface IDaoCardProps {
 
 export const DaoCard = (props: IDaoCardProps) => {
   const {dao} = props;
-  const {
-    name,
-    daoAddress,
-    logo,
-    ens,
-    description,
-    network,
-    governanceId,
-    pluginName,
-  } = dao;
+  const {name, daoAddress, logo, ens, description, network, pluginName} = dao;
 
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
@@ -41,7 +32,7 @@ export const DaoCard = (props: IDaoCardProps) => {
 
   // TODO: This should be changed for new plugin types
   const daoType =
-    governanceId === 'token-voting.plugin.dao.eth' ||
+    pluginName === 'token-voting.plugin.dao.eth' ||
     pluginName === 'token-voting-repo'
       ? t('explore.explorer.tokenBased')
       : t('explore.explorer.walletBased');

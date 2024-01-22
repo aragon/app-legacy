@@ -69,8 +69,8 @@ export const useFollowedDaosInfiniteQuery = (
 ) => {
   const {limit = DEFAULT_QUERY_PARAMS.limit, pluginNames, networks} = params;
 
-  // Cast plugin names to governanceIds
-  const governanceIds = pluginNames?.map((pluginName: string) => {
+  // Cast plugin repo names to plugin ids
+  const pluginIds = pluginNames?.map((pluginName: string) => {
     switch (pluginName) {
       case 'token-voting-repo':
         return 'token-voting.plugin.dao.eth';
@@ -88,7 +88,7 @@ export const useFollowedDaosInfiniteQuery = (
         skip: pageParam,
         limit,
         includeTotal: true,
-        governanceIds,
+        pluginNames: pluginIds,
         networks,
       }),
     {
