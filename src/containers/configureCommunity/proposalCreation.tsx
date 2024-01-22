@@ -1,5 +1,5 @@
 import {useWatch} from 'react-hook-form';
-import {MultisigEligibility} from '../../components/multisigEligibility';
+// import {MultisigEligibility} from '../../components/multisigEligibility';
 import React from 'react';
 import {SelectEligibility} from '../../components/selectEligibility';
 
@@ -13,7 +13,7 @@ export const ProposalCreation = () => {
 
   return (
     <div>
-      {membership === 'multisig' && <MultisigEligibility />}
+      {/* {membership === 'multisig' && <MultisigEligibility />} */}
       {membership === 'token' && isAllowedToConfigureVotingEligibility && (
         <SelectEligibility />
       )}
