@@ -7,7 +7,6 @@ import {
   IconFilter,
   IconReload,
   IconSort,
-  ListItemAction,
   Spinner,
 } from '@aragon/ods-old';
 import React, {useMemo, useReducer, useState} from 'react';
