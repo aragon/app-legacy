@@ -298,6 +298,7 @@ export const Proposal: React.FC = () => {
         client?.decoding.findInterface(action.data) ||
         pluginClient?.decoding.findInterface(action.data);
 
+      // Check if "mint" proposal action was made through SCC or MintToken Action
       if (
         functionParams?.functionName === 'mint' &&
         action.to !== proposalErc20Token?.address

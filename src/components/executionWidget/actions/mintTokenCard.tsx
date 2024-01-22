@@ -168,7 +168,7 @@ export const MintTokenCard: React.FC<{
           )}
           {/* TODO add total amount of token holders here. */}
           <Link
-            label={t('labels.seeCommunity')}
+            label={t('labels.seeAllHolders')}
             href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${action.summary.daoTokenAddress}`}
             iconRight={<IconLinkExternal />}
           />

@@ -78,7 +78,10 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
           <FlexContainer>
             <MethodName>{methodName}</MethodName>
             {smartContractName && (
-              <div
+              <a
+                href={blockExplorerLink}
+                target="_blank"
+                rel="noreferrer"
                 className={`flex items-center ${
                   verified ? 'text-primary-600' : 'text-warning-600'
                 }`}
@@ -89,17 +92,14 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                   </p>
                 )}
                 {verified ? <IconSuccess /> : <IconWarning />}
-                <a
-                  href={blockExplorerLink}
-                  target="_blank"
-                  rel="noreferrer"
+                <p
                   className={`ml-2 font-semibold ${
                     verified ? 'text-primary-500' : 'text-warning-500'
                   }`}
                 >
                   {smartContractName}
-                </a>
-              </div>
+                </p>
+              </a>
             )}
             {alertLabel && <AlertInline label={alertLabel} />}
           </FlexContainer>
