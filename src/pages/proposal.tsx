@@ -454,11 +454,12 @@ export const Proposal: React.FC = () => {
       statusRef.current.wasOnWrongNetwork = false;
 
       // show voting in process
-      if (canVote) setVotingInProcess(true);
+      if (canVote && !isMultisigPlugin) setVotingInProcess(true);
     }
   }, [
     canVote,
     isConnected,
+    isMultisigPlugin,
     isOnWrongNetwork,
     statusRef.current.wasOnWrongNetwork,
   ]);
