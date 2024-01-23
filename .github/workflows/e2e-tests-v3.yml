@@ -41,14 +41,14 @@ jobs:
           VITE_ALCHEMY_KEY_MAINNET: ${{ secrets.VITE_ALCHEMY_KEY_MAINNET }}
           VITE_ALCHEMY_KEY_GOERLI: ${{ secrets.VITE_ALCHEMY_KEY_GOERLI }}
           VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
-          NODE_OPTIONS: '--max-old-space-size=6656'
+          # NODE_OPTIONS: '--max-old-space-size=6656'
           PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
 
       - name: Execute E2E Tests
         run: |
           docker exec aragonapp npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
         env:
-          NODE_OPTIONS: '--max-old-space-size=6656'
+          # NODE_OPTIONS: '--max-old-space-size=6656'
           PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
 
       - name: Cleanup
