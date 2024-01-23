@@ -16,6 +16,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Set swap space on Runner
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 12
+
       - name: Build and Run Docker Container
         run: |
           docker build -t aragonapp-e2e -f Dockerfile.e2e.tests .
