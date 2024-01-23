@@ -26,12 +26,12 @@ jobs:
 
       - name: Build and Run Docker Container
         run: |
-          docker build -t aragonapp-e2e -f Dockerfile .
-          docker run -d -p 3000:3000 --name aragonapp myapp-e2e
+          docker build -t aragonapp-e2e -f Dockerfile.e2e.tests .
+          docker run -d -p 3000:3000 --name aragonapp aragonapp-e2e
         env:
-          VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
-          VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
-          VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+          # VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
+          # VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
+          # VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
           VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
           VITE_POLYGONSCAN_API_KEY: ${{secrets.VITE_POLYGONSCAN_API_KEY}}
