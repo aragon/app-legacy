@@ -49,7 +49,7 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
 
 export const DaoExplorer = () => {
   const {t} = useTranslation();
-  const {isConnected} = useWallet();
+  const {isConnected, address} = useWallet();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
@@ -74,9 +74,9 @@ export const DaoExplorer = () => {
       ...(filters.networks?.length !== 0 && {
         networks: filters.networks,
       }),
-      // ...(filters.quickFilter === 'memberOf' && address
-      //   ? {memberAddress: address.toLowerCase()}
-      //   : {}),
+      ...(filters.quickFilter === 'memberOf' && address
+        ? {memberAddress: address}
+        : {}),
     },
     {enabled: useFollowList === false}
   );

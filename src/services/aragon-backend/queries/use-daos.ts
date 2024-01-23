@@ -13,6 +13,7 @@ const daosQueryDocument = gql`
     $direction: OrderDirection
     $networks: [Network!]
     $take: Float
+    $memberAddress: String
   ) {
     daos(
       pluginNames: $pluginNames
@@ -21,6 +22,7 @@ const daosQueryDocument = gql`
       networks: $networks
       take: $take
       skip: $skip
+      memberAddress: $memberAddress
     ) {
       data {
         createdAt
