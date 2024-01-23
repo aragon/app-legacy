@@ -1,0 +1,33 @@
+# Use an official Node runtime as the base image
+FROM node:18
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json (or yarn.lock)
+# COPY package*.json ./
+# Alternatively, for Yarn, use:
+COPY package.json yarn.lock ./
+
+# Install app dependencies
+# RUN npm install
+# For Yarn, use:
+RUN yarn install
+
+# Bundle app source inside the Docker image
+COPY . .
+
+# Build the app (if necessary)
+# RUN npm run build
+# For Yarn, use:
+RUN yarn build
+
+# Your app binds to port 3000 so you'll use the EXPOSE instruction to have it mapped by the docker daemon
+EXPOSE 3000
+
+# Define the command to run your app using CMD which defines your runtime
+# CMD ["npm", "start"]
+# For Yarn, use:
+CMD ["yarn", "start"]
+
+# The E2E tests can be run by overriding the CMD when starting the container

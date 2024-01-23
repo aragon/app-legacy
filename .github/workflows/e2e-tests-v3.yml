@@ -1,0 +1,61 @@
+name: E2E Tests Workflow
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  e2e-tests:
+    if: ${{ github.event.label.name == 'e2e-tests-3' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # - name: Login to Docker Registry
+      #   uses: docker/login-action@v2
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Run Docker Container
+        run: |
+          docker build -t aragonapp-e2e -f Dockerfile .
+          docker run -d -p 3000:3000 --name aragonapp myapp-e2e
+        env:
+          VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
+          VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
+          VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+          VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
+          VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
+          VITE_POLYGONSCAN_API_KEY: ${{secrets.VITE_POLYGONSCAN_API_KEY}}
+          VITE_INFURA_GOERLI_PROJECT_ID: ${{ secrets.VITE_INFURA_GOERLI_PROJECT_ID }}
+          VITE_INFURA_MAINNET_PROJECT_ID: ${{ secrets.VITE_INFURA_MAINNET_PROJECT_ID }}
+          VITE_INFURA_API_KEY: ${{ secrets.VITE_INFURA_API_KEY }}
+          VITE_WALLET_CONNECT_PROJECT_ID: ${{ secrets.VITE_WALLET_CONNECT_PROJECT_ID }}
+          VITE_ALCHEMY_KEY_POLYGON_MUMBAI: ${{ secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI }}
+          VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{ secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI }}
+          VITE_ALCHEMY_KEY_MAINNET: ${{ secrets.VITE_ALCHEMY_KEY_MAINNET }}
+          VITE_ALCHEMY_KEY_GOERLI: ${{ secrets.VITE_ALCHEMY_KEY_GOERLI }}
+          VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
+          NODE_OPTIONS: '--max-old-space-size=6656'
+          PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
+
+      - name: Execute E2E Tests
+        run: |
+          docker exec aragonapp npx synpress run --configFile synpress.config.js --record --key 0c4de406-82ab-48c2-94b1-6267578d2f33
+        env:
+          NODE_OPTIONS: '--max-old-space-size=6656'
+          PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop aragonapp
+          docker rm aragonapp
