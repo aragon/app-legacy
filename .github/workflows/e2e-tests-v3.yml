@@ -2,8 +2,7 @@ name: E2E Tests Workflow
 
 on:
   pull_request:
-    types:
-      - labeled
+    types: [labeled]
 
 jobs:
   e2e-tests:
@@ -17,21 +16,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # - name: Login to Docker Registry
-      #   uses: docker/login-action@v2
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and Run Docker Container
         run: |
           docker build -t aragonapp-e2e -f Dockerfile.e2e.tests .
           docker run -d -p 3000:3000 --name aragonapp aragonapp-e2e
         env:
-          # VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
-          # VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
-          # VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
           VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
           VITE_POLYGONSCAN_API_KEY: ${{secrets.VITE_POLYGONSCAN_API_KEY}}
