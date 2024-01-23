@@ -20,7 +20,7 @@ COPY . .
 # Build the app (if necessary)
 # RUN npm run build
 # For Yarn, use:
-RUN yarn build
+# RUN yarn build
 
 # Your app binds to port 3000 so you'll use the EXPOSE instruction to have it mapped by the docker daemon
 EXPOSE 3000
