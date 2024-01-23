@@ -15,7 +15,7 @@ import {translateToNetworkishName} from './library';
 class AragonGateway {
   private rpcVersion = '1.0';
 
-  getRpcClient = (
+  getRpcProvider = (
     chainIdOrNetwork: number | SupportedNetworks
   ): JsonRpcProvider | null => {
     const network = this.parseNetwork(chainIdOrNetwork);

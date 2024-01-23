@@ -359,7 +359,7 @@ class TokenService {
     address: string
   ): Promise<Deposit> => {
     const {rawContract, metadata, from, hash} = transfer;
-    const provider = aragonGateway.getRpcClient(network)!;
+    const provider = aragonGateway.getRpcProvider(network)!;
 
     // fetch token info
     const {decimals, name, symbol} = await getTokenInfo(
