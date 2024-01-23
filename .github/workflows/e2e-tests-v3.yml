@@ -52,6 +52,11 @@ jobs:
           # NODE_OPTIONS: '--max-old-space-size=6656'
           PRIVATE_KEY: '81ce9e0a6df4f2dbf667830614bfa162d5aa4ef4992362911dc8d14ea53a31e1'
 
+      - name: Monitor Container Stats
+        run: |
+          CONTAINER_ID=$(docker ps -q --filter "name=aragonapp")
+          docker stats $CONTAINER_ID
+
       - name: Cleanup
         if: always()
         run: |
