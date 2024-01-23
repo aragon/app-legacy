@@ -24,7 +24,7 @@ jobs:
       - name: Build and Run Docker Container
         run: |
           docker build -t aragonapp-e2e -f Dockerfile.e2e.tests .
-          docker run -d -m 4g -p 3000:3000 --name aragonapp aragonapp-e2e
+          docker run -d -m 12g -p 3000:3000 --name aragonapp aragonapp-e2e
         env:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: 'development'
