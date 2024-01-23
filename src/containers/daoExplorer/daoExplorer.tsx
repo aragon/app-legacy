@@ -208,40 +208,34 @@ export const DaoExplorer = () => {
                 },
                 {
                   component: (
-                    <>
-                      <CredentialsDropdownItem
-                        isActive={filters.order === 'proposals'}
-                      >
-                        {t('explore.sortBy.mostProposals')}
-                        {filters.order === 'proposals' && <IconCheckmark />}
-                      </CredentialsDropdownItem>
-                    </>
+                    <CredentialsDropdownItem
+                      isActive={filters.order === 'proposals'}
+                    >
+                      {t('explore.sortBy.mostProposals')}
+                      {filters.order === 'proposals' && <IconCheckmark />}
+                    </CredentialsDropdownItem>
                   ),
                   callback: () => toggleOrderby('proposals'),
                 },
                 {
                   component: (
-                    <>
-                      <CredentialsDropdownItem
-                        isActive={filters.order === 'members'}
-                      >
-                        {t('explore.sortBy.largestCommunity')}
-                        {filters.order === 'members' && <IconCheckmark />}
-                      </CredentialsDropdownItem>
-                    </>
+                    <CredentialsDropdownItem
+                      isActive={filters.order === 'members'}
+                    >
+                      {t('explore.sortBy.largestCommunity')}
+                      {filters.order === 'members' && <IconCheckmark />}
+                    </CredentialsDropdownItem>
                   ),
                   callback: () => toggleOrderby('members'),
                 },
                 {
                   component: (
-                    <>
-                      <CredentialsDropdownItem
-                        isActive={filters.order === 'createdAt'}
-                      >
-                        {t('explore.sortBy.recentlyCreated')}
-                        {filters.order === 'createdAt' && <IconCheckmark />}
-                      </CredentialsDropdownItem>
-                    </>
+                    <CredentialsDropdownItem
+                      isActive={filters.order === 'createdAt'}
+                    >
+                      {t('explore.sortBy.recentlyCreated')}
+                      {filters.order === 'createdAt' && <IconCheckmark />}
+                    </CredentialsDropdownItem>
                   ),
                   callback: () => toggleOrderby('createdAt'),
                 },

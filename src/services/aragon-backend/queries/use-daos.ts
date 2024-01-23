@@ -73,7 +73,7 @@ export const useDaos = (
       ...options,
       getNextPageParam: (lastPage: IPaginatedResponse<IDao>) => {
         const {skip, total, take} = lastPage;
-        const hasNextPage = skip < total;
+        const hasNextPage = skip + take < total;
 
         if (!hasNextPage) {
           return undefined;
