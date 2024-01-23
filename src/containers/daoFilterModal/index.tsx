@@ -204,12 +204,12 @@ const ModalContent: React.FC<ContentProps> = ({
           {displayedChains.flatMap(f => (
             <Toggle key={f.value} label={t(f.label)} value={f.value} />
           ))}
+          <Switch
+            checked={showTestnets}
+            onCheckedChanged={toggleTestnets}
+            label={t('explore.modal.filterDAOS.label.showTesnets')}
+          />
         </ToggleGroup>
-        <Switch
-          checked={showTestnets}
-          onCheckedChanged={toggleTestnets}
-          label={t('explore.modal.filterDAOS.label.showTesnets')}
-        />
       </FilterSection>
 
       {/* Governance Filters */}

@@ -18,7 +18,7 @@ export const networkFilters: Array<NetworkFilter> = Object.entries(
 
 type GovernanceFilter = {
   label: string;
-  value: string;
+  value: 'token-voting-repo' | 'multisig-repo';
 };
 export const governanceFilters: GovernanceFilter[] = [
   {

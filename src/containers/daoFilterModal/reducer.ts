@@ -10,7 +10,7 @@ export type DaoFilterState = {
 };
 
 export enum FilterActionTypes {
-  SET_PLUGIN_NAMES = 'SET_GOVERNANCE_IDS',
+  SET_PLUGIN_NAMES = 'SET_PLUGIN_NAMES',
   SET_QUICK_FILTER = 'SET_QUICK_FILTER',
   SET_NETWORKS = 'SET_NETWORKS',
   SET_ORDER = 'SET_ORDER',
