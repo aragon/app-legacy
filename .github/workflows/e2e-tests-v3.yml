@@ -7,7 +7,7 @@ on:
 
 jobs:
   e2e-tests:
-    if: ${{ github.event.label.name == 'e2e-tests-3' }}
+    if: github.event.label.name == 'e2e-tests-3'
     runs-on: ubuntu-latest
 
     steps:
