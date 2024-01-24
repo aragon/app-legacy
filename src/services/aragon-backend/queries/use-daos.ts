@@ -4,6 +4,7 @@ import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchDaosParams} from '../aragon-backend-service.api';
 import {IPaginatedResponse} from '../domain/paginated-response';
 import {IDao} from '../domain/dao';
+import {aragonGateway} from 'utils/aragonGateway';
 
 const daosQueryDocument = gql`
   query Daos(
@@ -54,7 +55,7 @@ const fetchDaos = async (
   params: IFetchDaosParams
 ): Promise<IPaginatedResponse<IDao>> => {
   const {daos} = await request<{daos: IPaginatedResponse<IDao>}>(
-    `${import.meta.env.VITE_BACKEND_URL}/graphql`,
+    aragonGateway.backendUrl,
     daosQueryDocument,
     params
   );

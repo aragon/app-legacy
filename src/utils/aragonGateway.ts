@@ -14,6 +14,9 @@ import {translateToNetworkishName} from './library';
 
 class AragonGateway {
   private rpcVersion = '1.0';
+  private baseUrl = import.meta.env.VITE_GATEWAY_URL;
+
+  public backendUrl = `${this.baseUrl}/graphql`;
 
   getRpcProvider = (
     chainIdOrNetwork: number | SupportedNetworks
@@ -53,9 +56,8 @@ class AragonGateway {
     }
 
     const {gatewayNetwork} = CHAIN_METADATA[network];
-    const baseUrl = import.meta.env.VITE_GATEWAY_URL;
     const gatewayKey = import.meta.env.VITE_GATEWAY_RPC_API_KEY;
-    const rpcUrl = `${baseUrl}/v${this.rpcVersion}/rpc/${gatewayNetwork}/${gatewayKey}`;
+    const rpcUrl = `${this.baseUrl}/v${this.rpcVersion}/rpc/${gatewayNetwork}/${gatewayKey}`;
 
     return rpcUrl;
   };

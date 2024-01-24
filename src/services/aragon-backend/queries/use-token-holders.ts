@@ -3,6 +3,7 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchTokenHoldersParams} from '../aragon-backend-service.api';
 import {TokenHoldersResponse} from '../domain/token-holders-response';
+import {aragonGateway} from 'utils/aragonGateway';
 
 const tokenHoldersQueryDocument = gql`
   query Holders($network: Network!, $tokenAddress: String!, $page: Int!) {
@@ -31,14 +32,10 @@ const tokenHoldersQueryDocument = gql`
 const fetchTokenHolders = async (
   params: IFetchTokenHoldersParams
 ): Promise<TokenHoldersResponse> => {
-  return request(
-    `${import.meta.env.VITE_BACKEND_URL}/graphql`,
-    tokenHoldersQueryDocument,
-    {
-      ...params,
-      page: params.page ?? 0,
-    }
-  );
+  return request(aragonGateway.backendUrl, tokenHoldersQueryDocument, {
+    ...params,
+    page: params.page ?? 0,
+  });
 };
 
 export const useTokenHolders = (

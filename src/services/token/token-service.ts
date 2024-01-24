@@ -105,7 +105,7 @@ class TokenService {
     let token: Token | null = null;
     try {
       const {token: resp} = await request(
-        `${import.meta.env.VITE_BACKEND_URL}/graphql`,
+        aragonGateway.backendUrl,
         this.tokenQueryDocument,
         {network, tokenAddress}
       );
