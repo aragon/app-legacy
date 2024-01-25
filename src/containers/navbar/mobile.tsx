@@ -1,14 +1,9 @@
-import {useReactiveVar} from '@apollo/client';
-import {
-  AvatarDao,
-  ButtonIcon,
-  ButtonText,
-  ButtonWallet,
-  IconMenu,
-} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {useReactiveVar} from '@apollo/client';
+import {AvatarDao, ButtonIcon, ButtonText, ButtonWallet} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -38,7 +33,7 @@ const MobileNav: React.FC<MobileNavProps> = props => {
               <ButtonIcon
                 mode="secondary"
                 size="large"
-                icon={<IconMenu />}
+                icon={<Icon icon={IconType.MENU_DEFAULT} />}
                 onClick={() => open('mobileMenu')}
               />
             ) : (
@@ -46,7 +41,7 @@ const MobileNav: React.FC<MobileNavProps> = props => {
                 size="large"
                 mode="secondary"
                 label={t('menu')}
-                iconLeft={<IconMenu />}
+                iconLeft={<Icon icon={IconType.MENU_DEFAULT} />}
                 onClick={() => open('mobileMenu')}
               />
             )}

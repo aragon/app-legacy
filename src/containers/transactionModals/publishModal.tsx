@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
-import {AlertInline, ButtonText, IconReload, Spinner} from '@aragon/ods-old';
+import {AlertInline, ButtonText, Spinner} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 
@@ -33,7 +34,7 @@ const icons = {
   [TransactionState.LOADING]: <Spinner size="xs" color="white" />,
   [TransactionState.SUCCESS]: undefined,
   [TransactionState.INCORRECT_URI]: undefined,
-  [TransactionState.ERROR]: <IconReload />,
+  [TransactionState.ERROR]: <Icon icon={IconType.RELOAD} />,
 };
 
 const PublishModal: React.FC<PublishModalProps> = ({

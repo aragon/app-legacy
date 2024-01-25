@@ -1,12 +1,12 @@
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   AlertInline,
   ButtonText,
-  IconReload,
   Label,
   Spinner,
   WalletInputLegacy,
 } from '@aragon/ods-old';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {Icon, IconType} from '@aragon/ods';
 import {
   Controller,
   useFormContext,
@@ -254,7 +254,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           })}
           {...((connectionStatus === ConnectionState.ERROR ||
             connectionStatus === ConnectionState.INCORRECT_URI) && {
-            iconLeft: <IconReload />,
+            iconLeft: <Icon icon={IconType.RELOAD} />,
           })}
           onClick={ctaHandler}
         />

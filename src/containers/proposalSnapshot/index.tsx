@@ -1,13 +1,12 @@
+import React from 'react';
 import {
   ButtonText,
   CardProposal,
   CardProposalProps,
-  IconChevronRight,
-  IconGovernance,
   ListItemHeader,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {DaoAction} from '@aragon/sdk-client-common';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -143,7 +142,7 @@ const ProposalSnapshot: React.FC<Props> = ({
   return (
     <Container>
       <ListItemHeader
-        icon={<IconGovernance />}
+        icon={<Icon icon={IconType.APP_GOVERNANCE} />}
         value={displayedCount?.toString() ?? '0'}
         label={t('dashboard.proposalsTitle')}
         buttonText={t('newProposal.title')}
@@ -166,7 +165,7 @@ const ProposalSnapshot: React.FC<Props> = ({
       <ButtonText
         mode="secondary"
         size="large"
-        iconRight={<IconChevronRight />}
+        iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
         label={t('labels.seeAll')}
         onClick={() =>
           navigate(generatePath(Governance, {network, dao: daoAddressOrEns}))

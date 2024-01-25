@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {ButtonText, IconChevronDown} from '@aragon/ods-old';
+import {ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {EmptyMemberSection, MemberSection} from 'pages/daoMember';
 import {MemberDAOsType} from 'utils/types';
@@ -61,7 +62,7 @@ export const MembershipDAOList: React.FC<IMembershipDAOListProps> = ({
             mode="secondary"
             label={t('members.profile.labelViewMore')}
             className="border-neutral-100"
-            iconRight={<IconChevronDown />}
+            iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
             onClick={() => setPage(current => current + 1)}
           />
         )}

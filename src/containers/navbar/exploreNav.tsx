@@ -1,12 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  ButtonIcon,
-  ButtonText,
-  ButtonWallet,
-  IconFeedback,
-  useScreen,
-} from '@aragon/ods-old';
+import {ButtonIcon, ButtonText, ButtonWallet, useScreen} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useWallet} from 'hooks/useWallet';
@@ -57,14 +52,14 @@ const ExploreNav: React.FC = () => {
                   size="large"
                   label={t('navButtons.giveFeedback')}
                   mode="secondary"
-                  iconRight={<IconFeedback />}
+                  iconRight={<Icon icon={IconType.FEEDBACK} />}
                   onClick={handleFeedbackButtonClick}
                 />
               ) : (
                 <ButtonIcon
                   size="large"
                   mode="secondary"
-                  icon={<IconFeedback />}
+                  icon={<Icon icon={IconType.FEEDBACK} />}
                   onClick={handleFeedbackButtonClick}
                 />
               )}

@@ -1,4 +1,4 @@
-import {ButtonText, IconClose, IconUpdate} from '@aragon/ods-old';
+import {ButtonText} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -8,6 +8,7 @@ import {
   useParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
 
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -61,7 +62,7 @@ const UpdateBanner: React.FC = () => {
       <DummyElement />
       <MessageWrapper>
         <TextWrapper>
-          <IconUpdate className="text-neutral-0" />
+          <Icon icon={IconType.UPDATE} className="text-neutral-0" />
           <span className="font-semibold text-neutral-0 ft-text-base">
             {t('update.banner.title')}
           </span>
@@ -82,7 +83,8 @@ const UpdateBanner: React.FC = () => {
           }
         />
       </MessageWrapper>
-      <IconClose
+      <Icon
+        icon={IconType.CLOSE}
         className="cursor-pointer justify-self-end text-neutral-0"
         onClick={() => {
           setBannerHidden(true);

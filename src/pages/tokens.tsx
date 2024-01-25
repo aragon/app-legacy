@@ -1,6 +1,8 @@
-import {IconAdd, SearchInput} from '@aragon/ods-old';
 import React, {useState} from 'react';
+import {SearchInput} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
+
 import TokenList from 'components/tokenList';
 import {PageWrapper} from 'components/wrappers';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -32,7 +34,7 @@ export const Tokens: React.FC = () => {
       }
       primaryBtnProps={{
         label: t('TransferModal.newTransfer'),
-        iconLeft: <IconAdd />,
+        iconLeft: <Icon icon={IconType.ADD} />,
         onClick: () => open('transfer'),
       }}
     >

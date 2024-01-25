@@ -2,7 +2,6 @@ import {
   AlertInline,
   ButtonIcon,
   Dropdown,
-  IconMenuVertical,
   Label,
   ListItemAction,
   TextInput,
@@ -19,6 +18,7 @@ import {
 } from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {BgWhite} from './header';
+import {Icon, IconType} from '@aragon/ods';
 
 type LinkRowProps = {
   index: number;
@@ -183,7 +183,7 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
               mode="ghost"
               size="large"
               bgWhite
-              icon={<IconMenuVertical />}
+              icon={<Icon icon={IconType.MENU_VERTICAL} />}
               data-testid="trigger"
             />
           }

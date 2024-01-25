@@ -1,17 +1,13 @@
+import React, {useCallback, useState} from 'react';
 import {
-  IconAdd,
-  IconLinkExternal,
   Pagination,
   SearchInput,
   IllustrationHuman,
   Dropdown,
   ButtonText,
   ListItemAction,
-  IconCheckmark,
-  IconSort,
-  IconFailure,
 } from '@aragon/ods-old';
-import React, {useCallback, useState} from 'react';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -191,7 +187,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <IconFailure />,
+              iconLeft: <Icon icon={IconType.TX_FAILURE} />,
               onClick: () => open('delegateVoting'),
             },
             secondaryBtnProps: {
@@ -200,7 +196,7 @@ export const Community: React.FC = () => {
             },
             tertiaryBtnProps: {
               label: t('labels.seeAllHolders'),
-              iconLeft: <IconLinkExternal />,
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
               onClick: handleSecondaryButtonClick,
             },
           }
@@ -209,17 +205,17 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <IconFailure />,
+              iconLeft: <Icon icon={IconType.TX_FAILURE} />,
               onClick: handlePrimaryClick,
             },
             secondaryBtnProps: {
               label: t('labels.mintTokens'),
-              iconLeft: <IconAdd />,
+              iconLeft: <Icon icon={IconType.ADD} />,
               onClick: handleSecondaryButtonClick,
             },
             tertiaryBtnProps: {
               label: t('labels.seeAllHolders'),
-              iconLeft: <IconLinkExternal />,
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
               onClick: navigateToTokenHoldersChart,
             },
           }
@@ -227,12 +223,12 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <IconFailure />,
+              iconLeft: <Icon icon={IconType.TX_FAILURE} />,
               onClick: () => open('delegateVoting'),
             },
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
-              iconLeft: <IconLinkExternal />,
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
               onClick: handleSecondaryButtonClick,
             },
           })}
@@ -263,7 +259,9 @@ export const Community: React.FC = () => {
                         bgWhite={true}
                         mode={sort === 'votingPower' ? 'selected' : 'default'}
                         iconRight={
-                          sort === 'votingPower' ? <IconCheckmark /> : undefined
+                          sort === 'votingPower' ? (
+                            <Icon icon={IconType.CHECKMARK} />
+                          ) : undefined
                         }
                       />
                     ),
@@ -276,7 +274,9 @@ export const Community: React.FC = () => {
                         bgWhite={true}
                         mode={sort === 'delegations' ? 'selected' : 'default'}
                         iconRight={
-                          sort === 'delegations' ? <IconCheckmark /> : undefined
+                          sort === 'delegations' ? (
+                            <Icon icon={IconType.CHECKMARK} />
+                          ) : undefined
                         }
                       />
                     ),
@@ -286,7 +286,7 @@ export const Community: React.FC = () => {
                 trigger={
                   <ButtonText
                     mode="secondary"
-                    iconLeft={<IconSort />}
+                    iconLeft={<Icon icon={IconType.SORT} />}
                     size="large"
                     label={sortLabel}
                   />

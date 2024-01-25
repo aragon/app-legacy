@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import {generatePath, Link, useParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IconChevronDown, IconChevronRight} from '@aragon/ods-old';
+import {ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 import {useNetwork} from 'context/network';
 import {AllTokens, AllTransfers} from 'utils/paths';
@@ -43,7 +44,7 @@ export const TokenSectionWrapper = ({title, children}: SectionWrapperProps) => {
         <ButtonText
           mode="secondary"
           label={t('labels.seeAllTokens')}
-          iconRight={<IconChevronRight />}
+          iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
         />
       </Link>
     </>
@@ -71,7 +72,7 @@ export const DaoListSectionWrapper = ({
         <ButtonText
           mode="secondary"
           label={t('members.profile.labelViewMore')}
-          iconRight={<IconChevronDown />}
+          iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
         />
       </div>
     </>
@@ -105,7 +106,7 @@ export const TransferSectionWrapper = ({
             <ButtonText
               mode="secondary"
               label={t('labels.seeAllTransfers')}
-              iconRight={<IconChevronRight />}
+              iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
             />
           </Link>
         </div>

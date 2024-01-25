@@ -1,15 +1,14 @@
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   ButtonGroup,
   ButtonIcon,
   Dropdown,
-  IconAdd,
-  IconMenuVertical,
   ListItemAction,
   Option,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
-import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -110,7 +109,7 @@ export const Transfers: React.FC = () => {
         description={`${totalTransfers} Total Volume`}
         primaryBtnProps={{
           label: t('TransferModal.newTransfer'),
-          iconLeft: <IconAdd />,
+          iconLeft: <Icon icon={IconType.ADD} />,
           onClick: () => open('transfer'),
         }}
       >
@@ -147,7 +146,7 @@ export const Transfers: React.FC = () => {
                     <ButtonIcon
                       mode="secondary"
                       size="medium"
-                      icon={<IconMenuVertical />}
+                      icon={<Icon icon={IconType.MENU_VERTICAL} />}
                     />
                   }
                 />

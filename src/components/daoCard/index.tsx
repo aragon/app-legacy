@@ -1,4 +1,5 @@
-import {AvatarDao, IconBlock, IconCommunity} from '@aragon/ods-old';
+import {AvatarDao} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -52,11 +53,11 @@ export const DaoCard = (props: IDaoCardProps) => {
       </DaoDataWrapper>
       <DaoMetadataWrapper>
         <IconWrapper>
-          <StyledIconBlock />
+          <Icon icon={IconType.BLOCKCHAIN} className="text-neutral-600" />
           <IconLabel>{CHAIN_METADATA[network].name}</IconLabel>
         </IconWrapper>
         <IconWrapper>
-          <StyledIconCommunity />
+          <Icon icon={IconType.APP_COMMUNITY} className="text-neutral-600" />
           <IconLabel>{daoType}</IconLabel>
         </IconWrapper>
       </DaoMetadataWrapper>
@@ -117,12 +118,4 @@ const IconWrapper = styled.div.attrs({
 
 const DaoDataWrapper = styled.div.attrs({
   className: 'flex flex-col grow space-y-3 flex-1',
-})``;
-
-const StyledIconBlock = styled(IconBlock).attrs({
-  className: 'text-neutral-600',
-})``;
-
-const StyledIconCommunity = styled(IconCommunity).attrs({
-  className: 'text-neutral-600',
 })``;

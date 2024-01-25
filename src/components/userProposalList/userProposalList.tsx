@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {ProposalBase} from '@aragon/sdk-client-common';
-import {ButtonText, IconChevronDown, IconChevronRight} from '@aragon/ods-old';
+import {ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {Link, generatePath, useParams} from 'react-router-dom';
 import {NewProposal, Proposal} from 'utils/paths';
 import {useTranslation} from 'react-i18next';
@@ -94,7 +95,10 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
                   })}
                 </p>
               </div>
-              <IconChevronRight className="shrink-0 text-neutral-300" />
+              <Icon
+                icon={IconType.CHEVRON_RIGHT}
+                className="shrink-0 text-neutral-300"
+              />
             </Link>
           ))}
         </div>
@@ -103,7 +107,7 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
             mode="secondary"
             label={t('members.profile.labelViewMore')}
             className="border-neutral-100"
-            iconRight={<IconChevronDown />}
+            iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
             onClick={() => setPage(current => current + 1)}
           />
         )}

@@ -2,13 +2,13 @@ import {
   AlertInline,
   ButtonIcon,
   Dropdown,
-  IconMenuVertical,
   InputValue,
   Label,
   ListItemAction,
   NumberInput,
   TextInput,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import Big from 'big.js';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -216,7 +216,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({
         <ButtonIcon
           mode="secondary"
           size="large"
-          icon={<IconMenuVertical />}
+          icon={<Icon icon={IconType.MENU_VERTICAL} />}
           bgWhite
         />
       }

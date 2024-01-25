@@ -1,14 +1,13 @@
+import React, {useState} from 'react';
 import {
   ButtonGroup,
   ButtonText,
-  IconAdd,
-  IconChevronDown,
   IllustrationHuman,
   Option,
   Spinner,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
-import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -138,7 +137,7 @@ export const Governance: React.FC = () => {
         title={'Proposals'}
         primaryBtnProps={{
           label: t('governance.action'),
-          iconLeft: <IconAdd />,
+          iconLeft: <Icon icon={IconType.ADD} />,
           onClick: handleNewProposalClick,
         }}
         secondaryBtnProps={
@@ -184,7 +183,11 @@ export const Governance: React.FC = () => {
             <ButtonText
               label={t('explore.explorer.showMore')}
               iconRight={
-                isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
+                isFetchingNextPage ? (
+                  <Spinner size="xs" />
+                ) : (
+                  <Icon icon={IconType.CHEVRON_DOWN} />
+                )
               }
               bgWhite
               mode="ghost"

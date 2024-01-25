@@ -1,10 +1,9 @@
-import {
-  Avatar,
-  ButtonIcon,
-  ButtonText,
-  IconClose,
-  IconCopy,
-} from '@aragon/ods-old';
+import React from 'react';
+import {Trans, useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
+import {Avatar, ButtonIcon, ButtonText} from '@aragon/ods-old';
+
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -13,9 +12,6 @@ import useScreen from 'hooks/useScreen';
 import {useSwitchNetwork} from 'hooks/useSwitchNetwork';
 import {useWallet} from 'hooks/useWallet';
 import WalletIcon from 'public/wallet.svg';
-import React from 'react';
-import {Trans, useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {CHAIN_METADATA} from 'utils/constants';
 import {handleClipboardActions, shortenAddress} from 'utils/library';
 
@@ -59,7 +55,7 @@ export const NetworkErrorMenu = () => {
         </AvatarAddressContainer>
         <ButtonIcon
           mode="secondary"
-          icon={<IconCopy />}
+          icon={<Icon icon={IconType.COPY} />}
           size="small"
           onClick={() =>
             address ? handleClipboardActions(address, () => null, alert) : null
@@ -68,7 +64,7 @@ export const NetworkErrorMenu = () => {
         {isDesktop && (
           <ButtonIcon
             mode="ghost"
-            icon={<IconClose />}
+            icon={<Icon icon={IconType.CLOSE} />}
             size="small"
             onClick={handleCloseMenu}
           />

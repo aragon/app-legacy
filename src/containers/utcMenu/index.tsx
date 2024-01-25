@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {IconChevronRight, ListItemAction, SearchInput} from '@aragon/ods-old';
+import {ListItemAction, SearchInput} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 import {useGlobalModalContext} from 'context/globalModals';
 import {timezones} from './utcData';
@@ -51,7 +52,7 @@ const UtcMenu: React.FC<UtcMenuProps> = ({onTimezoneSelect}) => {
                   mode="default"
                   key={tz}
                   title={tz}
-                  iconRight={<IconChevronRight />}
+                  iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
                   onClick={() => handleUtcClick(tz)}
                 />
               );

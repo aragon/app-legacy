@@ -1,5 +1,6 @@
-import {IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import React from 'react';
+import {ListItemAction} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -38,7 +39,7 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({
           key={a.name}
           title={a.name}
           subtitle={a.name}
-          iconRight={<IconChevronRight />}
+          iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
           onClick={() => {
             setValue('selectedAction', a);
             onActionSelected?.();

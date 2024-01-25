@@ -1,24 +1,22 @@
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   AlertCard,
   AlertInline,
   ButtonGroup,
   ButtonText,
   CheckboxListItem,
-  IconClock,
-  IconInfo,
-  IconRadioCancel,
   Option,
   SearchInput,
   VoterType,
   VotersTable,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
   VoteValues,
 } from '@aragon/sdk-client';
 import {ProposalStatus} from '@aragon/sdk-client-common';
-import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -445,11 +443,11 @@ type StatusProp = {
 
 const StatusIcon: React.FC<StatusProp> = ({status}) => {
   if (status === 'Pending' || status === 'Active') {
-    return <IconClock className="text-info-500" />;
+    return <Icon icon={IconType.CLOCK} className="text-info-500" />;
   } else if (status === 'Defeated') {
-    return <IconRadioCancel className="text-critical-500" />;
+    return <Icon icon={IconType.RADIO_CANCEL} className="text-critical-500" />;
   } else {
-    return <IconInfo className="text-info-500" />;
+    return <Icon icon={IconType.INFO} className="text-info-500" />;
   }
 };
 

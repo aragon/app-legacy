@@ -1,20 +1,18 @@
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   AlertInline,
   ButtonText,
-  IconChevronRight,
-  IconRadioCancel,
   IconRadioMulti,
-  IconSuccess,
   Link,
   Spinner,
   TextareaSimple,
   shortenAddress,
   WalletInputLegacy,
-  IconLinkExternal,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+
 import {
   Controller,
   useController,
@@ -68,7 +66,7 @@ type Props = {
 const icons = {
   [TransactionState.WAITING]: undefined,
   [TransactionState.LOADING]: undefined,
-  [TransactionState.SUCCESS]: <IconChevronRight />,
+  [TransactionState.SUCCESS]: <Icon icon={IconType.CHEVRON_RIGHT} />,
   [TransactionState.ERROR]: undefined,
   [TransactionState.INCORRECT_URI]: undefined,
 };
@@ -396,7 +394,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       if (sourcifyFullData) {
         return (
           <div className="flex space-x-2">
-            <IconSuccess className="text-success-500" />
+            <Icon icon={IconType.RADIO_CHECK} className="text-success-500" />
             <VerificationStatus colorClassName="text-success-800">
               {t('scc.validation.sourcifyStatusSuccess')}
             </VerificationStatus>
@@ -414,7 +412,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       } else {
         return (
           <div className="flex space-x-2">
-            <IconRadioCancel className="text-critical-500" />
+            <Icon icon={IconType.RADIO_CANCEL} className="text-critical-500" />
             <VerificationStatus colorClassName="text-critical-800">
               {t('scc.validation.sourcifyStatusCritical')}
             </VerificationStatus>
@@ -449,7 +447,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       ) {
         return (
           <div className="flex space-x-2">
-            <IconSuccess className="text-success-500" />
+            <Icon icon={IconType.RADIO_CHECK} className="text-success-500" />
             <VerificationStatus colorClassName="text-success-800">
               {t('scc.validation.etherscanStatusSuccess', {
                 blockExplorerName: CHAIN_METADATA[network].explorerName,
@@ -460,7 +458,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       } else {
         return (
           <div className="flex space-x-2">
-            <IconRadioCancel className="text-critical-500" />
+            <Icon icon={IconType.RADIO_CANCEL} className="text-critical-500" />
             <VerificationStatus colorClassName="text-critical-800">
               {t('scc.validation.etherscanStatusCritical', {
                 blockExplorerName: CHAIN_METADATA[network].explorerName,
@@ -565,7 +563,13 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<IconLinkExternal height={13} width={13} />}
+                    iconRight={
+                      <Icon
+                        icon={IconType.LINK_EXTERNAL}
+                        height={13}
+                        width={13}
+                      />
+                    }
                     href={`https://sourcify.dev/#/lookup/${addressField}`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"
@@ -578,7 +582,13 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<IconLinkExternal height={13} width={13} />}
+                    iconRight={
+                      <Icon
+                        icon={IconType.LINK_EXTERNAL}
+                        height={13}
+                        width={13}
+                      />
+                    }
                     href={`${CHAIN_METADATA[network].explorer}address/${addressField}#code`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"

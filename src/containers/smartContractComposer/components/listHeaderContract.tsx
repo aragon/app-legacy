@@ -1,24 +1,21 @@
+import React from 'react';
 import {
   Dropdown,
-  IconClose,
-  IconCopy,
-  IconLinkExternal,
-  IconMenuVertical,
-  IconSwitch,
   Link,
   ListItemAction,
   ListItemActionProps,
   shortenAddress,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+import {useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
-import React from 'react';
-import {useFormContext} from 'react-hook-form';
 import {chainExplorerAddressLink} from 'utils/constants/chains';
 import {handleClipboardActions} from 'utils/library';
 import {SmartContract} from 'utils/types';
 import {SccFormData} from '..';
-import {useTranslation} from 'react-i18next';
 
 type Props = Partial<ListItemActionProps> & {
   sc: SmartContract;
@@ -46,7 +43,12 @@ export const ListHeaderContract: React.FC<Props> = ({
           external
           type="neutral"
           iconRight={
-            <IconLinkExternal height={16} width={16} className="ml-8" />
+            <Icon
+              icon={IconType.LINK_EXTERNAL}
+              height={16}
+              width={16}
+              className="ml-8"
+            />
           }
           href={chainExplorerAddressLink(network, sc.address) + '#code'}
           label={t('scc.detailContract.dropdownExplorerLinkLabel', {
@@ -62,7 +64,14 @@ export const ListHeaderContract: React.FC<Props> = ({
         <Link
           external
           type="neutral"
-          iconRight={<IconCopy height={16} width={16} className="ml-8" />}
+          iconRight={
+            <Icon
+              icon={IconType.COPY}
+              height={16}
+              width={16}
+              className="ml-8"
+            />
+          }
           label={t('scc.detailContract.dropdownCopyLabel')}
           className="my-2 w-full justify-between px-4"
         />
@@ -76,7 +85,14 @@ export const ListHeaderContract: React.FC<Props> = ({
         <Link
           external
           type="neutral"
-          iconRight={<IconClose height={16} width={16} className="ml-8" />}
+          iconRight={
+            <Icon
+              icon={IconType.CLOSE}
+              height={16}
+              width={16}
+              className="ml-8"
+            />
+          }
           label={t('scc.detailContract.dropdownRemoveLabel')}
           className="my-2 w-full justify-between px-4"
         />
@@ -102,7 +118,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
               : t('scc.writeProxy.dropdownDontWriteLabel')
           }
-          iconRight={<IconSwitch />}
+          iconRight={<Icon icon={IconType.SWITCH} />}
           className="my-2 w-full justify-between px-4"
         />
       ),
@@ -142,7 +158,7 @@ export const ListHeaderContract: React.FC<Props> = ({
       align="start"
       trigger={
         <button>
-          <IconMenuVertical />
+          <Icon icon={IconType.MENU_VERTICAL} />
         </button>
       }
       sideOffset={8}

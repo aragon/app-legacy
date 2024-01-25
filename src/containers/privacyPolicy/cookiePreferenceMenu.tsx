@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods-old';
+import {ButtonIcon, ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 
@@ -25,7 +26,7 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
         <ButtonIcon
           mode="secondary"
           size="small"
-          icon={<IconClose />}
+          icon={<Icon icon={IconType.CLOSE} />}
           onClick={onClose}
           bgWhite
         />

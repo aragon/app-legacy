@@ -1,12 +1,6 @@
-import {
-  ButtonGroup,
-  ButtonText,
-  IconChevronDown,
-  IconReload,
-  Option,
-  Spinner,
-} from '@aragon/ods-old';
 import React, {useMemo, useReducer, useState} from 'react';
+import {ButtonGroup, ButtonText, Option, Spinner} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
@@ -133,7 +127,7 @@ export const DaoExplorer = () => {
             contentWrapperClassName="lg:w-[560px]"
             secondaryButton={{
               label: t('explore.emptyStateSearch.ctaLabel'),
-              iconLeft: <IconReload />,
+              iconLeft: <Icon icon={IconType.RELOAD} />,
               onClick: handleClearFilters,
               className: 'w-full',
             }}
@@ -154,7 +148,11 @@ export const DaoExplorer = () => {
               label={t('explore.explorer.showMore')}
               className="self-start"
               iconRight={
-                isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
+                isFetchingNextPage ? (
+                  <Spinner size="xs" />
+                ) : (
+                  <Icon icon={IconType.CHEVRON_DOWN} />
+                )
               }
               bgWhite={true}
               mode="ghost"

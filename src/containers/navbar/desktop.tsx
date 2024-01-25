@@ -1,12 +1,8 @@
-import {useReactiveVar} from '@apollo/client';
-import {
-  Breadcrumb,
-  ButtonText,
-  ButtonWallet,
-  IconFeedback,
-} from '@aragon/ods-old';
 import React, {useCallback, useState} from 'react';
+import {Breadcrumb, ButtonText, ButtonWallet} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
+import {useReactiveVar} from '@apollo/client';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -125,7 +121,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
             size="large"
             label={t('navButtons.giveFeedback')}
             mode="secondary"
-            iconRight={<IconFeedback />}
+            iconRight={<Icon icon={IconType.FEEDBACK} />}
             onClick={props.onFeedbackClick}
           />
 

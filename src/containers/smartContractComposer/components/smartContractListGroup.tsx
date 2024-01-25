@@ -1,8 +1,8 @@
-import {IconChevronRight} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
 
 import {ListItemContract} from './listItemContract';
 import {SccFormData} from 'containers/smartContractComposer';
@@ -40,7 +40,7 @@ const SmartContractListGroup: React.FC = () => {
           })}
           logo={c.logo}
           bgWhite
-          iconRight={<IconChevronRight />}
+          iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
           onClick={() => {
             setValue('selectedSC', c);
             setValue(

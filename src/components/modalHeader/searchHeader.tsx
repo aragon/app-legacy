@@ -1,12 +1,7 @@
-import {
-  ButtonIcon,
-  IconChevronRight,
-  IconClose,
-  IconHome,
-  IconType,
-} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
+import {ButtonIcon, IconChevronRight} from '@aragon/ods-old';
 
 type SearchHeader = {
   onClose?: () => void;
@@ -22,7 +17,7 @@ const SearchHeader: React.FC<SearchHeader> = props => {
     <Container>
       <LeftContent>
         <ButtonIcon
-          icon={props.buttonIcon || <IconHome />}
+          icon={props.buttonIcon || <Icon icon={IconType.HOME} />}
           mode="secondary"
           bgWhite
           onClick={props.onHomeButtonClick}
@@ -31,7 +26,7 @@ const SearchHeader: React.FC<SearchHeader> = props => {
         {props.selectedValue && (
           <>
             <SelectedValue>{props.selectedValue}</SelectedValue>
-            <IconChevronRight />
+            <Icon icon={IconType.CHEVRON_RIGHT} />
           </>
         )}
 
@@ -43,7 +38,7 @@ const SearchHeader: React.FC<SearchHeader> = props => {
       </LeftContent>
       <ButtonIcon
         mode="secondary"
-        icon={<IconClose />}
+        icon={<Icon icon={IconType.CLOSE} />}
         onClick={props.onClose}
         bgWhite
       />

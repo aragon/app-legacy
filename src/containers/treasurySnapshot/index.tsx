@@ -1,11 +1,7 @@
-import {
-  ButtonText,
-  IconChevronRight,
-  IconFinance,
-  ListItemHeader,
-  TransferListItem,
-} from '@aragon/ods-old';
 import React from 'react';
+import {ButtonText, ListItemHeader, TransferListItem} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -59,7 +55,7 @@ const TreasurySnapshot: React.FC<Props> = ({
   return (
     <Container>
       <ListItemHeader
-        icon={<IconFinance />}
+        icon={<Icon icon={IconType.APP_FINANCE} />}
         value={new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: 'USD',
@@ -83,7 +79,7 @@ const TreasurySnapshot: React.FC<Props> = ({
       <ButtonText
         mode="secondary"
         size="large"
-        iconRight={<IconChevronRight />}
+        iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
         label={t('labels.seeAll')}
         onClick={() =>
           navigate(generatePath(AllTransfers, {network, dao: daoAddressOrEns}))

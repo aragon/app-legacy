@@ -1,11 +1,4 @@
-import {
-  IconCommunity,
-  IconDashboard,
-  IconFinance,
-  IconGovernance,
-  IconType,
-  IconSettings,
-} from '@aragon/ods-old';
+import {IconType} from '@aragon/ods';
 
 import {i18n} from '../../../i18n.config';
 import {Dashboard, Community, Finance, Governance, Settings} from '../paths';
@@ -45,23 +38,27 @@ export const NAV_LINKS_DATA: NavLinkData[] = [
   {
     label: i18n.t('navLinks.dashboard'),
     path: Dashboard,
-    icon: IconDashboard,
+    icon: IconType.APP_DASHBOARD,
   },
   {
     label: i18n.t('navLinks.governance'),
     path: Governance,
-    icon: IconGovernance,
+    icon: IconType.APP_GOVERNANCE,
   },
-  {label: i18n.t('navLinks.finance'), path: Finance, icon: IconFinance},
+  {
+    label: i18n.t('navLinks.finance'),
+    path: Finance,
+    icon: IconType.APP_FINANCE,
+  },
   {
     label: i18n.t('navLinks.members'),
     path: Community,
-    icon: IconCommunity,
+    icon: IconType.APP_COMMUNITY,
   },
   {
     label: i18n.t('navLinks.settings'),
     path: Settings,
-    icon: IconSettings,
+    icon: IconType.SETTINGS,
   },
 ];
 

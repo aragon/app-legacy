@@ -1,11 +1,6 @@
-import {
-  Breadcrumb,
-  ButtonText,
-  IconChevronDown,
-  IconChevronUp,
-  IconGovernance,
-  WidgetStatus,
-} from '@aragon/ods-old';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Breadcrumb, ButtonText, WidgetStatus} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {
   MultisigClient,
   MultisigProposal,
@@ -17,7 +12,6 @@ import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams, Link} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
@@ -781,7 +775,7 @@ export const Proposal: React.FC = () => {
               )
             }
             crumbs={breadcrumbs}
-            icon={<IconGovernance />}
+            icon={<Icon icon={IconType.APP_GOVERNANCE} />}
             tag={tag}
           />
         )}
@@ -810,7 +804,7 @@ export const Proposal: React.FC = () => {
             size="large"
             label={t('governance.proposals.buttons.readFullProposal')}
             mode="secondary"
-            iconRight={<IconChevronDown />}
+            iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
             onClick={() => setExpandedProposal(true)}
           />
         )}
@@ -825,7 +819,7 @@ export const Proposal: React.FC = () => {
                 className="mt-6 w-full md:w-max"
                 label={t('governance.proposals.buttons.closeFullProposal')}
                 mode="secondary"
-                iconRight={<IconChevronUp />}
+                iconRight={<Icon icon={IconType.CHEVRON_UP} />}
                 onClick={() => setExpandedProposal(false)}
               />
             </>

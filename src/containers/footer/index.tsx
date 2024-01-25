@@ -1,6 +1,7 @@
-import {IconInfo, Link} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
+import {Link} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 import {GridLayout} from 'components/layout';
 import useScreen from 'hooks/useScreen';
@@ -60,7 +61,7 @@ const Footer: React.FC = () => {
           isOnWrongNetwork ? 'mb-[88px] md:mb-[120px]' : 'mb-16 md:mb-24'
         }`}
       >
-        <IconInfo />
+        <Icon icon={IconType.INFO} />
         <span>Aragon App Public Beta</span>
       </div>
     </Section>

@@ -1,10 +1,11 @@
-import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {useGlobalModalContext} from 'context/globalModals';
-import styled from 'styled-components';
 import React from 'react';
+import styled from 'styled-components';
+
 import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IlluObject, Link, IconLinkExternal} from '@aragon/ods-old';
+import {ButtonText, IlluObject, Link} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {Address, useBalance} from 'wagmi';
@@ -14,6 +15,8 @@ import {abbreviateTokenAmount} from 'utils/tokens';
 import {useWallet} from 'hooks/useWallet';
 import {TokenVotingProposal} from '@aragon/sdk-client';
 import {useMember} from 'services/aragon-sdk/queries/use-member';
+import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
+import {useGlobalModalContext} from 'context/globalModals';
 
 export interface IDelegationGatingMenuState {
   proposal?: TokenVotingProposal;
@@ -143,7 +146,7 @@ export const DelegationGatingMenu: React.FC = () => {
             href={t('modal.delegation.NoVotingPower.LinkURL')}
             target="_blank"
             className="my-3 self-center"
-            iconRight={<IconLinkExternal />}
+            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
           />
         </ContentGroup>
       </div>

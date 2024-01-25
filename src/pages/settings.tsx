@@ -1,17 +1,14 @@
+import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import {
   AlertInline,
   AvatarDao,
   ButtonText,
   Dropdown,
-  IconChevronDown,
-  IconChevronUp,
-  IconGovernance,
-  IconLinkExternal,
   Link,
   Tag,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
-import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -117,7 +114,9 @@ export const Settings: React.FC = () => {
             label={t('settings.edit')}
             className="w-full md:w-max"
             size="large"
-            iconLeft={!isDesktop ? <IconGovernance /> : undefined}
+            iconLeft={
+              !isDesktop ? <Icon icon={IconType.APP_GOVERNANCE} /> : undefined
+            }
             onClick={() => navigate('edit')}
           />
           <AlertInline label={t('settings.proposeSettingsInfo')} />
@@ -219,7 +218,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
               type="primary"
               className="shrink-0"
               href={explorerLink}
-              iconRight={<IconLinkExternal />}
+              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
             />
             <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
           </div>
@@ -237,11 +236,11 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
               {...(showAll
                 ? {
                     label: t('settings.dao.summaryToggleClose'),
-                    iconRight: <IconChevronUp />,
+                    iconRight: <Icon icon={IconType.CHEVRON_DOWN} />,
                   }
                 : {
                     label: t('settings.dao.summaryToggleMore'),
-                    iconRight: <IconChevronDown />,
+                    iconRight: <Icon icon={IconType.CHEVRON_DOWN} />,
                   })}
               className="ft-text-base"
               onClick={() => setShowAll(prevState => !prevState)}
@@ -262,7 +261,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                   description={url}
                   type="primary"
                   href={url}
-                  iconRight={<IconLinkExternal />}
+                  iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
                 />
               ))}
               {daoDetails.metadata.links.length > 3 && (
@@ -271,7 +270,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                     <Link
                       label={t('settings.dao.links.allLinks')}
                       type="primary"
-                      iconRight={<IconChevronDown />}
+                      iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
                     />
                   }
                   listItems={daoDetails.metadata.links.map(({name, url}) => ({
@@ -282,7 +281,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                           description={url}
                           type="primary"
                           href={url}
-                          iconRight={<IconLinkExternal />}
+                          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
                         />
                       </div>
                     ),
@@ -339,7 +338,9 @@ const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
       title={t('labels.daoSettings')}
       primaryBtnProps={{
         label: t('settings.edit'),
-        iconLeft: isMobile ? <IconGovernance /> : undefined,
+        iconLeft: isMobile ? (
+          <Icon icon={IconType.APP_GOVERNANCE} />
+        ) : undefined,
         onClick: () => navigate(generatePath(EditSettings, {network, dao})),
       }}
       customBody={<>{children}</>}

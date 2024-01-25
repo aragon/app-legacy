@@ -1,11 +1,7 @@
-import {
-  ButtonText,
-  IconLinkExternal,
-  IconSwitch,
-  Link,
-  Modal,
-} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
+import {ButtonText, Link, Modal} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -114,7 +110,13 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                 <Link
                   external
                   type="primary"
-                  iconRight={<IconLinkExternal height={13} width={13} />}
+                  iconRight={
+                    <Icon
+                      icon={IconType.LINK_EXTERNAL}
+                      height={13}
+                      width={13}
+                    />
+                  }
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
                   className="mt-4 w-full justify-center"
@@ -164,7 +166,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
         {selectedSC.implementationData && (
           <ButtonText
             className="mx-auto mt-6"
-            iconLeft={<IconSwitch />}
+            iconLeft={<Icon icon={IconType.SWITCH} />}
             label={t('scc.writeContractEmptyState.ctaLabel')}
             onClick={() => {
               setValue(
