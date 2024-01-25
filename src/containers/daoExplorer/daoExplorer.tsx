@@ -1,5 +1,5 @@
 import React, {useMemo, useReducer, useState} from 'react';
-import {ButtonGroup, ButtonText, Option, Spinner} from '@aragon/ods-old';
+import {ButtonText, Spinner, Dropdown, ButtonIcon} from '@aragon/ods-old';
 import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -18,8 +18,13 @@ import {IDao} from 'services/aragon-backend/domain/dao';
 import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
 import {useDaos} from 'services/aragon-backend/queries/use-daos';
 import {getSupportedNetworkByChainId} from 'utils/constants';
+import {
+  QuickFilterValue,
+  OrderByValue,
+  quickFilters,
+} from '../daoFilterModal/data';
+import {Toggle, ToggleGroup} from '@aragon/ods';
 import {StateEmpty} from 'components/stateEmpty';
-import {EXPLORE_FILTER, ExploreFilter} from 'hooks/useDaos';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   creatorAddress: '' as Address,
@@ -33,24 +38,19 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
   pluginName: dao.plugins[0].id,
 });
 
-function isExploreFilter(filterValue: string): filterValue is ExploreFilter {
-  return EXPLORE_FILTER.some(ef => ef === filterValue);
-}
-
 export const DaoExplorer = () => {
   const {t} = useTranslation();
-  const {isConnected} = useWallet();
-
-  const [filterValue, setFilterValue] = useState<ExploreFilter>('favorite');
+  const {isConnected, address} = useWallet();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(false);
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
-  const useFollowList = isConnected && filterValue === 'favorite';
+  const useFollowList = filters.quickFilter === 'following' && isConnected;
 
   const followedDaosResult = useFollowedDaosInfiniteQuery(
     {
-      governanceIds: filters.governanceIds,
+      pluginNames: filters.pluginNames,
       networks: filters.networks,
     },
     {enabled: useFollowList}
@@ -59,12 +59,38 @@ export const DaoExplorer = () => {
   const newDaosResult = useDaos(
     {
       direction: OrderDirection.DESC,
-      orderBy: 'CREATED_AT' as const,
+      orderBy: filters.order,
+      ...(filters.pluginNames?.length !== 0 && {
+        pluginNames: filters.pluginNames,
+      }),
+      ...(filters.networks?.length !== 0 && {
+        networks: filters.networks,
+      }),
+      ...(filters.quickFilter === 'memberOf' && address
+        ? {memberAddress: address}
+        : {}),
     },
-    {enabled: !useFollowList}
+    {enabled: useFollowList === false}
   );
 
   const newDaoList = newDaosResult.data?.pages.flatMap(page => page.data);
+
+  const filtersCount = useMemo(() => {
+    let count = 0;
+
+    if (!filters) return '';
+
+    if (filters.quickFilter !== DEFAULT_FILTERS.quickFilter) count++;
+
+    // plugin Name filter
+    if (filters.pluginNames?.length !== 0) count++;
+
+    // network filter
+    if (filters.networks?.length !== 0) count++;
+
+    return count !== 0 ? count.toString() : '';
+  }, [filters]);
+
   const followedDaoList = useMemo(
     () =>
       followedDaosResult.data?.pages.flatMap(page =>
@@ -74,14 +100,33 @@ export const DaoExplorer = () => {
   );
 
   const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
+
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 
-  const totalDaosShown = filteredDaoList?.length ?? 0;
   const totalDaos =
     (useFollowList
       ? followedDaosResult.data?.pages[0].total
       : newDaosResult.data?.pages[0].total) ?? 0;
+
+  const toggleQuickFilters = (value?: string | string[]) => {
+    if (value && !Array.isArray(value)) {
+      dispatch({
+        type: FilterActionTypes.SET_QUICK_FILTER,
+        payload: value as QuickFilterValue,
+      });
+    }
+  };
+
+  const toggleOrderby = (value?: string) => {
+    if (value)
+      dispatch({
+        type: FilterActionTypes.SET_ORDER,
+        payload: value as OrderByValue,
+      });
+  };
+
+  const totalDaosShown = filteredDaoList?.length ?? 0;
 
   const noDaosFound = isLoading === false && totalDaos === 0;
 
@@ -89,34 +134,114 @@ export const DaoExplorer = () => {
     dispatch({type: FilterActionTypes.RESET, payload: DEFAULT_FILTERS});
   };
 
-  const handleFilterChange = (filterValue: string) => {
-    if (isExploreFilter(filterValue)) {
-      setFilterValue(filterValue);
-    } else throw Error(`${filterValue} is not an acceptable filter value`);
-  };
-
-  // whether the connected wallet has followed DAOS
-  const loggedInAndHasFollowedDaos = isConnected && followedDaoList.length > 0;
-
   /*************************************************
    *                    Render                     *
    *************************************************/
   return (
     <Container>
       <MainContainer>
-        <HeaderWrapper>
-          <Title>{t('explore.explorer.title')}</Title>
-          {loggedInAndHasFollowedDaos && (
-            <ButtonGroup
-              defaultValue={filterValue}
-              onChange={handleFilterChange}
-              bgWhite={false}
-            >
-              <Option label={t('explore.explorer.myDaos')} value="favorite" />
-              <Option label={t('explore.explorer.newest')} value="newest" />
-            </ButtonGroup>
-          )}
-        </HeaderWrapper>
+        <Title>{t('explore.explorer.title')}</Title>
+        <FilterGroupContainer>
+          <ToggleGroup
+            isMultiSelect={false}
+            value={filters.quickFilter}
+            onChange={toggleQuickFilters}
+          >
+            {quickFilters.map(f => {
+              return (
+                <Toggle
+                  key={f.value}
+                  label={t(f.label)}
+                  value={f.value}
+                  disabled={
+                    (f.value === 'memberOf' || f.value === 'following') &&
+                    !isConnected
+                  }
+                />
+              );
+            })}
+          </ToggleGroup>
+          <ButtonGroupContainer>
+            <ButtonText
+              label={filtersCount}
+              isActive={filtersCount !== ''}
+              mode="secondary"
+              size="large"
+              iconLeft={<Icon icon={IconType.FILTER} />}
+              onClick={() => {
+                setShowAdvancedFilters(true);
+              }}
+            />
+            <Dropdown
+              side="bottom"
+              align="end"
+              sideOffset={4}
+              trigger={
+                <ButtonIcon
+                  isActive={activeDropdown}
+                  mode="secondary"
+                  size="large"
+                  icon={<Icon icon={IconType.SORT} />}
+                />
+              }
+              onOpenChange={e => {
+                setActiveDropdown(e);
+              }}
+              listItems={[
+                {
+                  component: (
+                    <CredentialsDropdownItem isActive={filters.order === 'tvl'}>
+                      {t('explore.sortBy.largestTreasury')}
+                      {filters.order === 'tvl' && (
+                        <Icon icon={IconType.CHECKMARK} />
+                      )}
+                    </CredentialsDropdownItem>
+                  ),
+                  callback: () => toggleOrderby('tvl'),
+                },
+                {
+                  component: (
+                    <CredentialsDropdownItem
+                      isActive={filters.order === 'proposals'}
+                    >
+                      {t('explore.sortBy.mostProposals')}
+                      {filters.order === 'proposals' && (
+                        <Icon icon={IconType.CHECKMARK} />
+                      )}
+                    </CredentialsDropdownItem>
+                  ),
+                  callback: () => toggleOrderby('proposals'),
+                },
+                {
+                  component: (
+                    <CredentialsDropdownItem
+                      isActive={filters.order === 'members'}
+                    >
+                      {t('explore.sortBy.largestCommunity')}
+                      {filters.order === 'members' && (
+                        <Icon icon={IconType.CHECKMARK} />
+                      )}
+                    </CredentialsDropdownItem>
+                  ),
+                  callback: () => toggleOrderby('members'),
+                },
+                {
+                  component: (
+                    <CredentialsDropdownItem
+                      isActive={filters.order === 'createdAt'}
+                    >
+                      {t('explore.sortBy.recentlyCreated')}
+                      {filters.order === 'createdAt' && (
+                        <Icon icon={IconType.CHECKMARK} />
+                      )}
+                    </CredentialsDropdownItem>
+                  ),
+                  callback: () => toggleOrderby('createdAt'),
+                },
+              ]}
+            />
+          </ButtonGroupContainer>
+        </FilterGroupContainer>
         {noDaosFound ? (
           <StateEmpty
             type="Object"
@@ -170,6 +295,8 @@ export const DaoExplorer = () => {
       <DaoFilterModal
         isOpen={showAdvancedFilters}
         filters={filters}
+        daoListLoading={isLoading}
+        totalCount={totalDaos}
         onFilterChange={dispatch}
         onClose={() => {
           setShowAdvancedFilters(false);
@@ -179,19 +306,37 @@ export const DaoExplorer = () => {
   );
 };
 
+type CredentialsDropdownItemPropType = {
+  isActive: boolean;
+};
+
 const MainContainer = styled.div.attrs({
   className: 'flex flex-col space-y-4 xl:space-y-6',
 })``;
 const Container = styled.div.attrs({
   className: 'flex flex-col space-y-3',
 })``;
-const HeaderWrapper = styled.div.attrs({
-  className:
-    'flex flex-col space-y-4 xl:flex-row xl:space-y-0 xl:justify-between',
-})``;
+
 const CardsWrapper = styled.div.attrs({
   className: 'grid grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-6',
 })``;
+
 const Title = styled.p.attrs({
   className: 'font-semibold ft-text-xl text-neutral-800',
 })``;
+
+const FilterGroupContainer = styled.div.attrs({
+  className: 'flex justify-between space-x-3',
+})``;
+
+const ButtonGroupContainer = styled.div.attrs({
+  className: 'flex space-x-3',
+})``;
+
+const CredentialsDropdownItem = styled.div.attrs<CredentialsDropdownItemPropType>(
+  ({isActive}) => ({
+    className: `flex text-neutral-600 items-center justify-between gap-3 py-3 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400 ${
+      isActive ? 'text-primary-400 bg-primary-50 cursor-auto' : 'cursor-pointer'
+    }`,
+  })
+)``;

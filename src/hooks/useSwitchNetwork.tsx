@@ -27,7 +27,7 @@ export const useSwitchNetwork = () => {
                 {
                   chainName: CHAIN_METADATA[network].name,
                   chainId: toHex(CHAIN_METADATA[network].id),
-                  rpcUrls: CHAIN_METADATA[network].rpc,
+                  rpcUrls: CHAIN_METADATA[network].publicRpc,
                   nativeCurrency: CHAIN_METADATA[network].nativeCurrency,
                 },
               ],

@@ -6,43 +6,45 @@ import {IPaginatedResponse} from '../domain/paginated-response';
 import {IDao} from '../domain/dao';
 
 const daosQueryDocument = gql`
-  query Query(
-    $take: Float
+  query Daos(
+    $pluginNames: [String!]
+    $orderBy: String
     $skip: Float
     $direction: OrderDirection
-    $orderBy: String
-    $pluginNames: [String!]
     $networks: [Network!]
+    $take: Float
+    $memberAddress: String
   ) {
     daos(
-      take: $take
-      skip: $skip
+      pluginNames: $pluginNames
       direction: $direction
       orderBy: $orderBy
-      pluginNames: $pluginNames
       networks: $networks
+      take: $take
+      skip: $skip
+      memberAddress: $memberAddress
     ) {
       data {
+        createdAt
         creatorAddress
         daoAddress
+        description
         ens
+        logo
+        name
         network
         pluginName
-        name
-        description
-        logo
-        createdAt
         stats {
-          tvl
+          members
           proposalsCreated
           proposalsExecuted
-          members
-          uniqueVoters
+          tvl
           votes
+          uniqueVoters
         }
       }
-      total
       skip
+      total
       take
     }
   }
@@ -71,7 +73,7 @@ export const useDaos = (
       ...options,
       getNextPageParam: (lastPage: IPaginatedResponse<IDao>) => {
         const {skip, total, take} = lastPage;
-        const hasNextPage = skip < total;
+        const hasNextPage = skip + take < total;
 
         if (!hasNextPage) {
           return undefined;

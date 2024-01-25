@@ -31,7 +31,7 @@ type GetFollowedDaosFromCacheOptions = {
   skip: number;
   limit?: number;
   networks?: SupportedNetworks[];
-  governanceIds?: string[];
+  pluginNames?: string[];
   includeTotal?: boolean;
 };
 
@@ -53,7 +53,7 @@ export function getFollowedDaosFromCache(
 export async function getFollowedDaosFromCache(
   options: GetFollowedDaosFromCacheOptions
 ): Promise<FollowedDaosResultWithTotal | NavigationDao[]> {
-  const {skip, limit, includeTotal, governanceIds, networks} = options;
+  const {skip, limit, includeTotal, pluginNames, networks} = options;
 
   const favoriteDaos = JSON.parse(
     localStorage.getItem(FOLLOWED_DAOS_KEY) ?? '[]'
@@ -68,7 +68,7 @@ export async function getFollowedDaosFromCache(
     ) as SupportedNetworks;
 
     return (
-      (!governanceIds?.length || governanceIds?.includes(pluginId)) &&
+      (!pluginNames?.length || pluginNames?.includes(pluginId)) &&
       (!networks?.length || networks.includes(daoNetwork))
     );
   });

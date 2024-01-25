@@ -1,6 +1,7 @@
 import type {SupportedNetworks} from 'utils/constants';
 import type {IOrderedRequest} from './domain/ordered-request';
 import {IPaginatedRequest} from './domain/paginated-request';
+import {OrderByValue} from 'containers/daoFilterModal/data';
 
 export interface IFetchTokenHoldersParams {
   network: SupportedNetworks;
@@ -9,8 +10,8 @@ export interface IFetchTokenHoldersParams {
 }
 
 export interface IFetchDaosParams
-  extends IOrderedRequest<'CREATED_AT' | 'TVL' | 'MEMBERS' | 'PROPOSALS'>,
+  extends IOrderedRequest<OrderByValue>,
     IPaginatedRequest {
-  governanceIds?: string[];
+  pluginNames?: string[];
   networks?: SupportedNetworks[];
 }

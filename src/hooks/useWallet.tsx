@@ -1,12 +1,6 @@
 import {useMemo} from 'react';
 import {clearWagmiCache} from 'utils/library';
-import {
-  LIVE_CONTRACTS,
-  SupportedNetwork,
-  SupportedVersion,
-} from '@aragon/sdk-client-common';
 import {JsonRpcSigner, Web3Provider} from '@ethersproject/providers';
-import {JsonRpcProvider} from '@ethersproject/providers';
 import {
   useAccount,
   useDisconnect,
@@ -20,9 +14,9 @@ import {useWeb3Modal} from '@web3modal/react';
 
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
-import {translateToNetworkishName} from 'utils/library';
 import {useEthersSigner} from './useEthersSigner';
 import {BigNumber} from 'ethers';
+import {aragonGateway} from 'utils/aragonGateway';
 
 export interface IUseWallet {
   connectorName: string;
@@ -62,18 +56,13 @@ export const useWallet = (): IUseWallet => {
   const chainId = chain?.id || 0;
   const signer = useEthersSigner(chainId);
 
-  const provider = useMemo(() => {
-    if (['mumbai', 'polygon'].includes(network)) {
-      return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
-        chainId: CHAIN_METADATA[network].id,
-        name: translateToNetworkishName(network),
-        ensAddress:
-          LIVE_CONTRACTS[SupportedVersion.LATEST][
-            translateToNetworkishName(network) as SupportedNetwork
-          ].ensRegistryAddress,
-      });
-    } else return signer?.provider;
-  }, [network, signer?.provider]);
+  const provider = useMemo(
+    () =>
+      ['mumbai', 'polygon'].includes(network)
+        ? aragonGateway.getRpcProvider(network)
+        : signer?.provider,
+    [network, signer?.provider]
+  );
 
   const {data: wagmiBalance} = useBalance({
     address,

@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import VerificationCard from 'components/verificationCard';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useNetwork} from 'context/network';
-import {useSpecificProvider} from 'context/providers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {htmlIn} from 'utils/htmlIn';
 import {Web3Address} from 'utils/library';
@@ -16,6 +15,7 @@ import {getTokenInfo} from 'utils/tokens';
 import {validateGovernanceTokenAddress} from 'utils/validators';
 import {usePluginClient} from 'hooks/usePluginClient';
 import {TokenVotingClient} from '@aragon/sdk-client';
+import {aragonGateway} from 'utils/aragonGateway';
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
@@ -29,7 +29,7 @@ const AddExistingToken: React.FC = () => {
 
   // non-null assertion because blockchain comes from the list of
   // supported chains
-  const provider = useSpecificProvider(blockchain.id)!;
+  const provider = aragonGateway.getRpcProvider(blockchain.id)!;
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const tokenAddressBlockExplorerURL =
     CHAIN_METADATA[network].explorer + 'token/';

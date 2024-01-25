@@ -1,4 +1,3 @@
-import {PluginTypes, GaselessPluginType} from 'hooks/usePluginClient';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 
 type NetworkFilter = {
@@ -19,16 +18,16 @@ export const networkFilters: Array<NetworkFilter> = Object.entries(
 
 type GovernanceFilter = {
   label: string;
-  value: Exclude<PluginTypes, GaselessPluginType>;
+  value: 'token-voting-repo' | 'multisig-repo';
 };
 export const governanceFilters: GovernanceFilter[] = [
   {
     label: 'explore.modal.filterDAOs.label.tokenVoting',
-    value: 'token-voting.plugin.dao.eth',
+    value: 'token-voting-repo',
   },
   {
     label: 'explore.modal.filterDAOs.label.member',
-    value: 'multisig.plugin.dao.eth',
+    value: 'multisig-repo',
   },
 ];
 
@@ -38,6 +37,8 @@ type QuickFilter = {
   value: QuickFilterValue;
   disabled?: boolean;
 };
+
+export type OrderByValue = 'createdAt' | 'tvl' | 'members' | 'proposals';
 
 export const quickFilters: QuickFilter[] = [
   {label: 'explore.toggleFilter.allDAOs', value: 'allDaos'},

@@ -4,10 +4,9 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import useScreen from 'hooks/useScreen';
-import {useHref} from 'react-router-dom';
+import {generatePath, useHref} from 'react-router-dom';
 import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 import {CHAIN_METADATA} from 'utils/constants';
-import {generatePath} from 'react-router-dom';
 import {toDisplayEns} from 'utils/library';
 import {Dashboard} from 'utils/paths';
 import {IDao} from 'services/aragon-backend/domain/dao';
@@ -31,11 +30,12 @@ export const DaoCard = (props: IDaoCardProps) => {
   });
   const daoUrl = useHref(daoPage);
 
-  const daoType = t(
+  // TODO: This should be changed for new plugin types
+  const daoType =
+    pluginName === 'token-voting.plugin.dao.eth' ||
     pluginName === 'token-voting-repo'
-      ? 'explore.explorer.tokenBased'
-      : 'explore.explorer.walletBased'
-  );
+      ? t('explore.explorer.tokenBased')
+      : t('explore.explorer.walletBased');
 
   return (
     <Container href={daoUrl}>
