@@ -48,17 +48,20 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
-"@aragon/ods@^1.0.8":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.8.tgz#825bd83449ed4ceab91771a0c1de6e09730d9eb6"
-  integrity sha512-ihvufK+vtN5EfNiHLrSkE/++M3QCUngS1rwojtrW931FmBrG2sp9HqsByNW46ey9VgweanHGnUt0Or8Nh76LEg==
+"@aragon/ods@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.9.tgz#8205ce254e6d389fd25ce9938d1a035015475169"
+  integrity sha512-FeCB6BKujJfZTlSsT9WThYqj8037upST60XGX7TWxbq7AVMJs4bf351Rly50fs12hnqQSRcbkoAo/uaIJNHqZg==
   dependencies:
+    "@radix-ui/react-avatar" "^1.0.0"
     "@radix-ui/react-progress" "^1.0.0"
     "@radix-ui/react-switch" "^1.0.0"
     "@radix-ui/react-toggle-group" "^1.0.0"
     classnames "^2.0.0"
     react "^18.0.0"
     react-dom "^18.0.0"
+    react-imask "^7.3.0"
+    react-merge-refs "^2.0.0"
 
 "@aragon/osx-ethers-v1.0.0@npm:@aragon/osx-ethers@1.2.1":
   version "1.2.1"
@@ -1228,6 +1231,14 @@
   dependencies:
     core-js-pure "^3.19.0"
     regenerator-runtime "^0.13.4"
+
+"@babel/runtime-corejs3@^7.23.6":
+  version "7.23.9"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.23.9.tgz#1b43062a13ecb60158aecdd81bc3fab4108b7cbc"
+  integrity sha512-oeOFTrYWdWXCvXGB5orvMTJ6gCZ9I6FBjR+M38iKNXCsPxr4xT0RTdg5uz1H7QP8pp74IzPtwritEr+JscqHXQ==
+  dependencies:
+    core-js-pure "^3.30.2"
+    regenerator-runtime "^0.14.0"
 
 "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.13.9", "@babel/runtime@^7.14.6", "@babel/runtime@^7.17.2", "@babel/runtime@^7.21.0", "@babel/runtime@^7.22.5", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.23.1"
@@ -2812,6 +2823,17 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-primitive" "1.0.3"
+
+"@radix-ui/react-avatar@^1.0.0":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-avatar/-/react-avatar-1.0.4.tgz#de9a5349d9e3de7bbe990334c4d2011acbbb9623"
+  integrity sha512-kVK2K7ZD3wwj3qhle0ElXhOjbezIgyl2hVvgwfIdexL3rN6zJmy5AqqIf+D31lxVppdzV8CjAfZ6PklkmInZLw==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-use-callback-ref" "1.0.1"
+    "@radix-ui/react-use-layout-effect" "1.0.1"
 
 "@radix-ui/react-collapsible@1.0.3":
   version "1.0.3"
@@ -7823,6 +7845,11 @@ core-js-pure@^3.19.0:
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.19.1.tgz#edffc1fc7634000a55ba05e95b3f0fe9587a5aa4"
   integrity sha512-Q0Knr8Es84vtv62ei6/6jXH/7izKmOrtrxH9WJTHLCMAVeU+8TF8z8Nr08CsH4Ot0oJKzBzJJL9SJBYIv7WlfQ==
 
+core-js-pure@^3.30.2:
+  version "3.35.1"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.35.1.tgz#f33ad7fdf9dddae260339a30e5f8363f5c49a3bc"
+  integrity sha512-zcIdi/CL3MWbBJYo5YCeVAAx+Sy9yJE9I3/u9LkFABwbeaPhTMRWraM8mYFp9jW5Z50hOy7FVzCc8dCrpZqtIQ==
+
 core-js@^2.4.0, core-js@^2.5.0:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
@@ -11484,6 +11511,13 @@ ignore@^5.1.1, ignore@^5.1.4, ignore@^5.2.0, ignore@^5.2.4:
   version "5.2.4"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.4.tgz#a291c0c6178ff1b960befe47fcdec301674a6324"
   integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
+
+imask@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/imask/-/imask-7.3.0.tgz#2b851ae8dc517f92cdd0d6dea0447bec9f27731d"
+  integrity sha512-TG+/rfb62JaQDM2KVrzEHMb4lv2srbsby7vHndXhqgQFB1MgPIXl60VQUfly/Xv5iWfA9ytB+rfQ+skUgINw7A==
+  dependencies:
+    "@babel/runtime-corejs3" "^7.23.6"
 
 immediate@^3.2.3:
   version "3.3.0"
@@ -15225,6 +15259,14 @@ react-i18next@^13.2.2:
     "@babel/runtime" "^7.22.5"
     html-parse-stringify "^3.0.1"
 
+react-imask@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/react-imask/-/react-imask-7.3.0.tgz#c9c9dd67a1e3f49f6b7261ff20ef50b18c0381a7"
+  integrity sha512-AHoQUeXil6PfqDzJHN08hO2liWxNDRJosNUa2XSqliFY2tXGL/3Elm0msupDNAyNPItAnyF9G5FGFoCfiCn+AQ==
+  dependencies:
+    imask "^7.3.0"
+    prop-types "^15.8.1"
+
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -15239,6 +15281,11 @@ react-is@^18.0.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
+
+react-merge-refs@^2.0.0:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-merge-refs/-/react-merge-refs-2.1.1.tgz#e46763f8f1b881c0226ee54a1a2a10ffefba0233"
+  integrity sha512-jLQXJ/URln51zskhgppGJ2ub7b2WFKGq3cl3NYKtlHoTG+dN2q7EzWrn3hN3EgPsTMvpR9tpq5ijdp7YwFZkag==
 
 react-refresh@^0.14.0:
   version "0.14.0"

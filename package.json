@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
-    "@aragon/ods": "^1.0.8",
+    "@aragon/ods": "^1.0.9",
     "@aragon/sdk-client": "^1.21.1",
     "@aragon/sdk-client-common": "^1.13.0",
     "@elastic/apm-rum-react": "^2.0.0",
