@@ -181,66 +181,70 @@ export const DaoExplorer = () => {
                 setShowAdvancedFilters(true);
               }}
             />
-            <Dropdown
-              side="bottom"
-              align="end"
-              sideOffset={4}
-              trigger={
-                <ButtonIcon
-                  isActive={activeDropdown}
-                  mode="secondary"
-                  size="large"
-                  icon={<IconSort />}
-                />
-              }
-              onOpenChange={e => {
-                setActiveDropdown(e);
-              }}
-              listItems={[
-                {
-                  component: (
-                    <CredentialsDropdownItem isActive={filters.order === 'tvl'}>
-                      {t('explore.sortBy.largestTreasury')}
-                      {filters.order === 'tvl' && <IconCheckmark />}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('tvl'),
-                },
-                {
-                  component: (
-                    <CredentialsDropdownItem
-                      isActive={filters.order === 'proposals'}
-                    >
-                      {t('explore.sortBy.mostProposals')}
-                      {filters.order === 'proposals' && <IconCheckmark />}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('proposals'),
-                },
-                {
-                  component: (
-                    <CredentialsDropdownItem
-                      isActive={filters.order === 'members'}
-                    >
-                      {t('explore.sortBy.largestCommunity')}
-                      {filters.order === 'members' && <IconCheckmark />}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('members'),
-                },
-                {
-                  component: (
-                    <CredentialsDropdownItem
-                      isActive={filters.order === 'createdAt'}
-                    >
-                      {t('explore.sortBy.recentlyCreated')}
-                      {filters.order === 'createdAt' && <IconCheckmark />}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('createdAt'),
-                },
-              ]}
-            />
+            {filters.quickFilter !== 'following' && (
+              <Dropdown
+                side="bottom"
+                align="end"
+                sideOffset={4}
+                trigger={
+                  <ButtonIcon
+                    isActive={activeDropdown}
+                    mode="secondary"
+                    size="large"
+                    icon={<IconSort />}
+                  />
+                }
+                onOpenChange={e => {
+                  setActiveDropdown(e);
+                }}
+                listItems={[
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'tvl'}
+                      >
+                        {t('explore.sortBy.largestTreasury')}
+                        {filters.order === 'tvl' && <IconCheckmark />}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('tvl'),
+                  },
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'proposals'}
+                      >
+                        {t('explore.sortBy.mostProposals')}
+                        {filters.order === 'proposals' && <IconCheckmark />}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('proposals'),
+                  },
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'members'}
+                      >
+                        {t('explore.sortBy.largestCommunity')}
+                        {filters.order === 'members' && <IconCheckmark />}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('members'),
+                  },
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'createdAt'}
+                      >
+                        {t('explore.sortBy.recentlyCreated')}
+                        {filters.order === 'createdAt' && <IconCheckmark />}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('createdAt'),
+                  },
+                ]}
+              />
+            )}
           </ButtonGroupContainer>
         </FilterGroupContainer>
         {noDaosFound ? (
