@@ -1,5 +1,5 @@
 import {Label} from '@aragon/ods-old';
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -7,6 +7,12 @@ import AddCommittee from 'components/addCommittee';
 import ExecutionExpirationTime from 'components/executionExpirationTime';
 import MinimumApproval from '../../components/multisigMinimumApproval/minimumApproval';
 import {generateAlert} from '../../components/multisigMinimumApproval';
+import {
+  Controller,
+  useFormContext,
+  useWatch,
+  ValidateResult,
+} from 'react-hook-form';
 
 const MIN_REQUIRED_APPROVALS = 1;
 

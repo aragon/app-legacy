@@ -1,8 +1,12 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
-import {AlertInline, ButtonText, ListItemAction} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {
+  AlertInline,
+  ButtonText,
+  IconGovernance,
+  ListItemAction,
+} from '@aragon/ods-old';
 import {
   useFieldArray,
   useFormContext,
