@@ -259,8 +259,8 @@ export const DaoExplorer = () => {
           />
         ) : (
           <CardsWrapper>
-            {filteredDaoList?.map(dao => (
-              <DaoCard key={dao.daoAddress} dao={dao} />
+            {filteredDaoList?.map((dao, index) => (
+              <DaoCard key={index} dao={dao} />
             ))}
             {isLoading && <Spinner size="default" />}
           </CardsWrapper>
