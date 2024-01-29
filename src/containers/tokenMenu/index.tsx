@@ -88,7 +88,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
         <>
           <NoTokenContainer>
             <IconWrapper>
-              <IconStorage height={24} width={24} />
+              <IconStorage size="lg" />
             </IconWrapper>
             <TokenTitle>{t('TokenModal.tokenNotAvailable')}</TokenTitle>
             <TokenDescription>

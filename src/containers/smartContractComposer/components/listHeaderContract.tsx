@@ -43,12 +43,7 @@ export const ListHeaderContract: React.FC<Props> = ({
           external
           type="neutral"
           iconRight={
-            <Icon
-              icon={IconType.LINK_EXTERNAL}
-              height={16}
-              width={16}
-              className="ml-8"
-            />
+            <Icon icon={IconType.LINK_EXTERNAL} size="md" className="ml-8" />
           }
           href={chainExplorerAddressLink(network, sc.address) + '#code'}
           label={t('scc.detailContract.dropdownExplorerLinkLabel', {
@@ -64,14 +59,7 @@ export const ListHeaderContract: React.FC<Props> = ({
         <Link
           external
           type="neutral"
-          iconRight={
-            <Icon
-              icon={IconType.COPY}
-              height={16}
-              width={16}
-              className="ml-8"
-            />
-          }
+          iconRight={<Icon icon={IconType.COPY} size="md" className="ml-8" />}
           label={t('scc.detailContract.dropdownCopyLabel')}
           className="my-2 w-full justify-between px-4"
         />
@@ -85,14 +73,7 @@ export const ListHeaderContract: React.FC<Props> = ({
         <Link
           external
           type="neutral"
-          iconRight={
-            <Icon
-              icon={IconType.CLOSE}
-              height={16}
-              width={16}
-              className="ml-8"
-            />
-          }
+          iconRight={<Icon icon={IconType.CLOSE} size="md" className="ml-8" />}
           label={t('scc.detailContract.dropdownRemoveLabel')}
           className="my-2 w-full justify-between px-4"
         />

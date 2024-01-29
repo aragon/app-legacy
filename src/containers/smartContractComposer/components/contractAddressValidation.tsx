@@ -563,13 +563,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={
-                      <Icon
-                        icon={IconType.LINK_EXTERNAL}
-                        height={13}
-                        width={13}
-                      />
-                    }
+                    iconRight={<Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
                     href={`https://sourcify.dev/#/lookup/${addressField}`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"
@@ -582,13 +576,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={
-                      <Icon
-                        icon={IconType.LINK_EXTERNAL}
-                        height={13}
-                        width={13}
-                      />
-                    }
+                    iconRight={<Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
                     href={`${CHAIN_METADATA[network].explorer}address/${addressField}#code`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"

@@ -112,13 +112,7 @@ const MobileModal: React.FC<Props> = props => {
                 <Link
                   external
                   type="primary"
-                  iconRight={
-                    <Icon
-                      icon={IconType.LINK_EXTERNAL}
-                      height={13}
-                      width={13}
-                    />
-                  }
+                  iconRight={<Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
                   className="mt-4 w-full justify-center"
