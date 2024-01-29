@@ -67,7 +67,7 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx-ethers@1.3.0", "@aragon/osx-ethers@^1.3.0":
+"@aragon/osx-ethers@1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0.tgz#85ddd93f4448789e94154b313f9ddd8069dff568"
   integrity sha512-zfLAYdgZ3SSifHiyJLkBKmoDw/IEX/yzvw6liUAa/gz7HZOsrwp3JsBJaIwB2epOnGa6vhXyWTKKZ15aJvoMaA==
@@ -85,6 +85,13 @@
   version "1.3.0-rc0.4"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.4.tgz#878af071e454ef068801104deae8439f0f8f1720"
   integrity sha512-FDuF6LC1OLnjFK4C8+P4Wf0sORrrUQ/JtUAxL5ABVtBD8JpyyhtdWGDiv/yWIooLyC2l8aqbDLPuiYWhw1DjEQ==
+  dependencies:
+    ethers "^5.6.2"
+
+"@aragon/osx-ethers@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.1.tgz#d72decea14cc5c11c55ad6654e97b3380429c1c9"
+  integrity sha512-6APDAasHrIVmJ0SxUSmWCxusVe46OF3eGZGp8MVD3j4BDJjJ+FIrrjN9ePkTpPja3X8GL6PD00l1WIzW2GZQMQ==
   dependencies:
     ethers "^5.6.2"
 
@@ -106,12 +113,12 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client-common@^1.13.0":
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.13.0.tgz#3006d14b4b3faab29c5b7430a40759de9b7de96b"
-  integrity sha512-E5GZazXSX0LCVgx4KundbTmdyqhHI2IFEhEd/F0ACYGQwgvjAe073ADAb4WqVlVAVVnOHoU/T6KkgliFRN/Vmw==
+"@aragon/sdk-client-common@^1.14.1":
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.14.1.tgz#75f2b8341170c98ef8b83a8a6f9cad1ea9d96db8"
+  integrity sha512-ySJ6Mgr/7/LzIzyLpWi/1RODPiHsgz5EhQyBi3u3GGJ2mcZIRPlturcDjjGnv8mO1hqNWEdjPuuX95RWnW/kKQ==
   dependencies:
-    "@aragon/osx-ethers" "^1.3.0"
+    "@aragon/osx-ethers" "^1.3.1"
     "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
@@ -124,13 +131,13 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client@^1.21.1":
-  version "1.21.1"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.21.1.tgz#c8d72bca42b95a8205173cf899e2d50ca92e19b8"
-  integrity sha512-frPpT07knwua2VCjzNYPo+dtQfYeG+k5i3HMpk4pK8N5pEweCaeJPLoc4+AZVPPw8LxNdnmkxsKqi7rtUdJN/A==
+"@aragon/sdk-client@^1.22.1":
+  version "1.22.1"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.22.1.tgz#229f5e2f97982fc54c36afd6a8655c2fbfa8a88a"
+  integrity sha512-AaL+z40RDCwToVYH54xj333KuR674eO0JZ9fCgDCru9rii3mX/Y/tmsa4aFz4/Hu3LA5PVFS5vnXbi3fp0P2Ug==
   dependencies:
     "@aragon/osx-ethers" "1.3.0"
-    "@aragon/sdk-client-common" "^1.13.0"
+    "@aragon/sdk-client-common" "^1.14.1"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
