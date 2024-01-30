@@ -14,10 +14,7 @@ import {getTokenInfo, isNativeToken} from 'utils/tokens';
 import {CoingeckoError, Token} from './domain';
 import {AlchemyTransfer} from './domain/alchemy-transfer';
 import {CovalentResponse} from './domain/covalent-response';
-import {
-  CovalentTokenBalance,
-  TokenBalanceResponse,
-} from './domain/covalent-token';
+import {TokenBalanceResponse} from './domain/covalent-token';
 import {
   CovalentTokenTransfer,
   CovalentTransferInfo,
