@@ -14,7 +14,10 @@ import {getTokenInfo, isNativeToken} from 'utils/tokens';
 import {CoingeckoError, Token} from './domain';
 import {AlchemyTransfer} from './domain/alchemy-transfer';
 import {CovalentResponse} from './domain/covalent-response';
-import {CovalentTokenBalance} from './domain/covalent-token';
+import {
+  CovalentTokenBalance,
+  TokenBalanceResponse,
+} from './domain/covalent-token';
 import {
   CovalentTokenTransfer,
   CovalentTransferInfo,
@@ -141,6 +144,31 @@ class TokenService {
     return token;
   };
 
+  tokenBalanceQueryDocument = gql`
+    query TokensBalances(
+      $currency: String!
+      $networkId: String!
+      $address: String!
+    ) {
+      tokensBalances(
+        currency: $currency
+        networkId: $networkId
+        address: $address
+      ) {
+        updatedAt
+        items {
+          contractAddress
+          contractName
+          contractTickerSymbol
+          contractDecimals
+          logoUrl
+          native_token
+          balance
+        }
+      }
+    }
+  `;
+
   // Note: Purposefully not including a function to fetch token balances
   // via Alchemy because we want to slowly remove the Alchemy dependency
   // F.F. [01/01/2023]
@@ -161,53 +189,49 @@ class TokenService {
 
     const {nativeCurrency} = CHAIN_METADATA[network];
 
-    const endpoint = `/${networkId}/address/${address}/balances_v2/?quote-currency=${this.defaultCurrency}`;
-    const url = `${this.baseUrl.covalent}${endpoint}`;
-    const authToken = window.btoa(`${COVALENT_API_KEY}:`);
-    const headers = {Authorization: `Basic ${authToken}`};
+    const {tokensBalances: data} = await request(
+      `${import.meta.env.VITE_BACKEND_URL}/graphql`,
+      this.tokenBalanceQueryDocument,
+      {networkId, address, currency: this.defaultCurrency}
+    );
 
-    const res = await fetch(url, {headers});
-    const parsed: CovalentResponse<CovalentTokenBalance | null> =
-      await res.json();
-    const data = parsed.data;
-
-    if (parsed.error || data == null) {
+    if (data.error || data == null) {
       console.info(
-        `fetchTokenBalances - Covalent returned error: ${parsed.error_message}`
+        `fetchTokenBalances - Covalent returned error: ${data.error_message}`
       );
       return null;
     }
 
-    return data.items.flatMap(({native_token, ...item}) => {
-      if (
-        ignoreZeroBalances &&
-        ((native_token && nativeTokenBalance === BigInt(0)) ||
-          BigNumber.from(item.balance).isZero())
-      )
-        // ignore zero balances if indicated
-        return [];
+    return (data as TokenBalanceResponse).items.flatMap(
+      ({native_token, ...item}) => {
+        if (
+          ignoreZeroBalances &&
+          ((native_token && nativeTokenBalance === BigInt(0)) ||
+            BigNumber.from(item.balance).isZero())
+        )
+          // ignore zero balances if indicated
+          return [];
 
-      return {
-        id: native_token ? AddressZero : item.contract_address,
-        address: native_token ? AddressZero : item.contract_address,
-        name: native_token ? nativeCurrency.name : item.contract_name,
-        symbol: native_token
-          ? nativeCurrency.symbol
-          : item.contract_ticker_symbol?.toUpperCase(),
-        decimals: native_token
-          ? nativeCurrency.decimals
-          : item.contract_decimals,
-        type: (native_token
-          ? TokenType.NATIVE
-          : item.nft_data
-          ? TokenType.ERC721
-          : TokenType.ERC20) as tokenType,
-        balance: native_token
-          ? (nativeTokenBalance as bigint)
-          : BigInt(item.balance),
-        updateDate: new Date(data.updated_at),
-      };
-    });
+        return {
+          id: native_token ? AddressZero : item.contractAddress,
+          address: native_token ? AddressZero : item.contractAddress,
+          name: native_token ? nativeCurrency.name : item.contractName,
+          symbol: native_token
+            ? nativeCurrency.symbol
+            : item.contractTickerSymbol?.toUpperCase(),
+          decimals: native_token
+            ? nativeCurrency.decimals
+            : item.contractDecimals,
+          type: (native_token
+            ? TokenType.NATIVE
+            : TokenType.ERC20) as tokenType,
+          balance: native_token
+            ? (nativeTokenBalance as bigint)
+            : BigInt(item.balance),
+          updateDate: new Date(data.updated_at),
+        };
+      }
+    );
   };
 
   fetchErc20Deposits = async ({
