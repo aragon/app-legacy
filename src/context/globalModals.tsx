@@ -27,7 +27,6 @@ export type DialogType =
   | 'wallet'
   | 'network'
   | 'mobileMenu'
-  | 'network'
   | 'manageWallet'
   | 'gating'
   | 'deposit'
@@ -35,7 +34,8 @@ export type DialogType =
   | 'exportCsv'
   | 'delegateVoting'
   | 'delegationGating'
-  | 'committeeMembers';
+  | 'committeeMembers'
+  | 'cannotDelegate';
 
 type Props = Record<'children', ReactNode>;
 

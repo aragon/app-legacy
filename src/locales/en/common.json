@@ -489,6 +489,8 @@
     "gatingUsers": {
       "tokenTitle": "You can’t create a proposal",
       "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
+      "cannotDelegateTitle": "You can’t delegate",
+      "cannotDelegateDescription": "You don’t have the required token balance. Delegating in {{daoName}} requires holding {{tokenName}}.",
       "walletTitle": "You can’t create a proposal",
       "walletDescription": "You are not a member. Creating proposals in {{daoName}} can only be done by addresses that have been added to its member list.",
       "buttonLabel": "Ok, understood"

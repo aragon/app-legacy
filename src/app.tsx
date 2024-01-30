@@ -31,6 +31,7 @@ import {ProposalSettingsFormData} from 'utils/types';
 import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
+import {CannotDelegateModal} from 'containers/cannotDelegateModal';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -193,6 +194,7 @@ const DaoWrapper: React.FC = () => {
           <TransferMenu />
           <DepositModal />
           <GatingMenu />
+          <CannotDelegateModal />
           <DelegateVotingMenu />
           <DelegationGatingMenu />
           {isOpen && <TransactionDetail />}

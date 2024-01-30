@@ -172,74 +172,78 @@ export const DaoExplorer = () => {
                 setShowAdvancedFilters(true);
               }}
             />
-            <Dropdown
-              side="bottom"
-              align="end"
-              sideOffset={4}
-              trigger={
-                <ButtonIcon
-                  isActive={activeDropdown}
-                  mode="secondary"
-                  size="large"
-                  icon={<Icon icon={IconType.SORT} />}
-                />
-              }
-              onOpenChange={e => {
-                setActiveDropdown(e);
-              }}
-              listItems={[
-                {
-                  component: (
-                    <CredentialsDropdownItem isActive={filters.order === 'tvl'}>
-                      {t('explore.sortBy.largestTreasury')}
-                      {filters.order === 'tvl' && (
-                        <Icon icon={IconType.CHECKMARK} />
-                      )}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('tvl'),
-                },
-                {
-                  component: (
-                    <CredentialsDropdownItem
-                      isActive={filters.order === 'proposals'}
-                    >
-                      {t('explore.sortBy.mostProposals')}
-                      {filters.order === 'proposals' && (
-                        <Icon icon={IconType.CHECKMARK} />
-                      )}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('proposals'),
-                },
-                {
-                  component: (
-                    <CredentialsDropdownItem
-                      isActive={filters.order === 'members'}
-                    >
-                      {t('explore.sortBy.largestCommunity')}
-                      {filters.order === 'members' && (
-                        <Icon icon={IconType.CHECKMARK} />
-                      )}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('members'),
-                },
-                {
-                  component: (
-                    <CredentialsDropdownItem
-                      isActive={filters.order === 'createdAt'}
-                    >
-                      {t('explore.sortBy.recentlyCreated')}
-                      {filters.order === 'createdAt' && (
-                        <Icon icon={IconType.CHECKMARK} />
-                      )}
-                    </CredentialsDropdownItem>
-                  ),
-                  callback: () => toggleOrderby('createdAt'),
-                },
-              ]}
-            />
+            {filters.quickFilter !== 'following' && (
+              <Dropdown
+                side="bottom"
+                align="end"
+                sideOffset={4}
+                trigger={
+                  <ButtonIcon
+                    isActive={activeDropdown}
+                    mode="secondary"
+                    size="large"
+                    icon={<Icon icon={IconType.SORT} />}
+                  />
+                }
+                onOpenChange={e => {
+                  setActiveDropdown(e);
+                }}
+                listItems={[
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'tvl'}
+                      >
+                        {t('explore.sortBy.largestTreasury')}
+                        {filters.order === 'tvl' && (
+                          <Icon icon={IconType.CHECKMARK} />
+                        )}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('tvl'),
+                  },
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'proposals'}
+                      >
+                        {t('explore.sortBy.mostProposals')}
+                        {filters.order === 'proposals' && (
+                          <Icon icon={IconType.CHECKMARK} />
+                        )}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('proposals'),
+                  },
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'members'}
+                      >
+                        {t('explore.sortBy.largestCommunity')}
+                        {filters.order === 'members' && (
+                          <Icon icon={IconType.CHECKMARK} />
+                        )}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('members'),
+                  },
+                  {
+                    component: (
+                      <CredentialsDropdownItem
+                        isActive={filters.order === 'createdAt'}
+                      >
+                        {t('explore.sortBy.recentlyCreated')}
+                        {filters.order === 'createdAt' && (
+                          <Icon icon={IconType.CHECKMARK} />
+                        )}
+                      </CredentialsDropdownItem>
+                    ),
+                    callback: () => toggleOrderby('createdAt'),
+                  },
+                ]}
+              />
+            )}
           </ButtonGroupContainer>
         </FilterGroupContainer>
         {noDaosFound ? (
