@@ -13,8 +13,8 @@ import {
   VersionTag,
 } from '@aragon/sdk-client-common';
 import React, {
-  ReactElement,
   createContext,
+  ReactElement,
   useCallback,
   useContext,
   useEffect,
@@ -26,7 +26,11 @@ import {useTranslation} from 'react-i18next';
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
@@ -344,10 +348,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
     if (!state.daoUpdateData) return;
-    if (
-      state.showModal.type === 'plugin' &&
-      pluginType !== 'vocdoni-gasless-voting-poc.plugin.dao.eth'
-    )
+    if (state.showModal.type === 'plugin' && pluginType !== GaselessPluginName)
       return (
         pluginClient as MultisigClient | TokenVotingClient
       )?.estimation.prepareUpdate(state.daoUpdateData);

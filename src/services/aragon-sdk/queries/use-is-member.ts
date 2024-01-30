@@ -1,12 +1,16 @@
 import {MajorityVotingSettings} from '@aragon/sdk-client';
-import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+import {useQuery, UseQueryOptions} from '@tanstack/react-query';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 import {useCallback} from 'react';
 
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {TokenDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {formatUnits} from 'utils/library';
@@ -37,8 +41,7 @@ export const useIsMember = (
   const fetchVotingPower = useVotingPowerAsync();
 
   const isTokenVoting = params.pluginType === 'token-voting.plugin.dao.eth';
-  const isGaslessVoting =
-    params.pluginType === 'vocdoni-gasless-voting-poc.plugin.dao.eth';
+  const isGaslessVoting = params.pluginType === GaselessPluginName;
 
   // fetch voting settings
   const {data: votingSettings, isLoading: settingsAreLoading} =
