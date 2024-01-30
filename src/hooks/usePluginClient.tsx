@@ -8,7 +8,8 @@ import {useEffect, useState} from 'react';
 import {useClient} from './useClient';
 import {VocdoniEnv} from './useVocdoniSdk';
 
-export const GaselessPluginName = 'vocdoni-gasless-voting-poc.plugin.dao.eth';
+export const GaselessPluginName =
+  'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth';
 export type GaselessPluginType = typeof GaselessPluginName;
 
 export type PluginTypes =

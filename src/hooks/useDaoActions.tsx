@@ -7,10 +7,28 @@ import {useDaoToken} from './useDaoToken';
 import {useProviders} from 'context/providers';
 import {useEffect, useState} from 'react';
 import {featureFlags} from 'utils/featureFlags';
+import {PluginTypes} from './usePluginClient';
+import {
+  isGaslessVotingSettings,
+  useVotingSettings,
+} from '../services/aragon-sdk/queries/use-voting-settings';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
-  const {data: daoDetails, error, isLoading} = useDaoQuery(dao);
-  const multisig = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
+  const {
+    data: daoDetails,
+    error,
+    isLoading: daoDetailsLoading,
+  } = useDaoQuery(dao);
+  const {id: pluginType} = daoDetails?.plugins[0] || {};
+  const multisig = pluginType === 'multisig.plugin.dao.eth';
+
+  const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
+    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
+    pluginType: daoDetails?.plugins[0].id as PluginTypes,
+  });
+
+  const isLoading = daoDetailsLoading || settingsLoading;
+
   const [showMintOption, setShowMintOption] = useState(false);
 
   const {api: provider} = useProviders();
@@ -25,20 +43,25 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
         daoToken?.address || '',
         provider
       );
-
       setShowMintOption(
         daoTokenView?.toLocaleLowerCase() === daoDetails?.address
       );
     }
-
-    fetch();
+    if (isLoading) return;
+    if (votingSettings && isGaslessVotingSettings(votingSettings)) {
+      setShowMintOption(votingSettings.hasGovernanceEnabled!);
+      return;
+    }
+    void fetch();
   }, [
     dao,
     daoDetails,
     daoDetails?.address,
     daoToken?.address,
+    isLoading,
     provider,
     showMintOption,
+    votingSettings,
   ]);
 
   const {t} = useTranslation();
