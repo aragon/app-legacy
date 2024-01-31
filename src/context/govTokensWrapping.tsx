@@ -25,7 +25,7 @@ import React, {
   useState,
 } from 'react';
 import {useForm, useWatch} from 'react-hook-form';
-import {generatePath, useLocation, useNavigate} from 'react-router-dom';
+import {generatePath, useLocation} from 'react-router-dom';
 import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
@@ -41,7 +41,6 @@ const GovTokensWrappingContext =
   createContext<IGovTokensWrappingContextType | null>(null);
 
 const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
-  const navigate = useNavigate();
   const {address: userAddress} = useWallet();
   const {network} = useNetwork();
   const loc = useLocation();
@@ -165,17 +164,10 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
 
         if (isOnCommunityPage) {
           location.reload();
-        } else {
-          navigate(
-            generatePath(Community, {
-              network,
-              dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
-            })
-          );
         }
       }
     },
-    [isTxLoading, reset, isFlowFinished, daoDetails, network, loc, navigate]
+    [isTxLoading, reset, isFlowFinished, daoDetails, network, loc]
   );
 
   // Invalidate wagmi balance cache to display the correct token balances after

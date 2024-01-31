@@ -1,7 +1,6 @@
 import {ButtonText} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
@@ -12,15 +11,13 @@ import {
   WarningTitle,
 } from 'containers/networkErrorMenu';
 import {useGlobalModalContext} from 'context/globalModals';
-import {useNetwork} from 'context/network';
 import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import WalletIcon from 'public/wallet.svg';
-import {Community, Governance} from 'utils/paths';
 import {
   Erc20WrapperTokenDetails,
   MajorityVotingSettings,
 } from '@aragon/sdk-client';
-import {formatUnits, toDisplayEns} from 'utils/library';
+import {formatUnits} from 'utils/library';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {htmlIn} from 'utils/htmlIn';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
@@ -32,14 +29,10 @@ export const GatingMenu: React.FC = () => {
   const {close, isOpen} = useGlobalModalContext('gating');
 
   const {t} = useTranslation();
-  const navigate = useNavigate();
-  const {networkUrlSegment: network} = useNetwork();
   const {handleOpenModal} = useGovTokensWrapping();
 
   const {data: daoDetails} = useDaoDetailsQuery();
-  const {plugins, ensDomain, address} = daoDetails ?? {};
-  const daoDisplayName =
-    toDisplayEns(ensDomain) !== '' ? toDisplayEns(ensDomain) : address;
+  const {plugins} = daoDetails ?? {};
   const daoName = daoDetails?.metadata.name;
 
   const {data: daoToken} = useDaoToken(plugins?.[0].instanceAddress);
@@ -51,20 +44,10 @@ export const GatingMenu: React.FC = () => {
   });
 
   const handleCloseMenu = () => {
-    const governancePath = generatePath(Governance, {
-      network,
-      dao: daoDisplayName,
-    });
-    navigate(governancePath);
     close();
   };
 
   const handleWrapTokens = () => {
-    const communityPath = generatePath(Community, {
-      network,
-      dao: daoDisplayName,
-    });
-    navigate(communityPath);
     close();
     handleOpenModal();
   };
