@@ -205,7 +205,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *************************************************/
   const estimateVoteOrApprovalFees = useCallback(async () => {
     if (isGaslessVotingPluginClient && approvalParams) {
-      return pluginClient?.estimation.approveTally(
+      return pluginClient?.estimation.approve(
         approvalParams.proposalId,
         approvalParams.tryExecution
       );
@@ -528,7 +528,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     async (params: ApproveMultisigProposalParams) => {
       if (!isGaslessVotingPluginClient) return;
 
-      const approveSteps = await pluginClient?.methods.approveTally(
+      const approveSteps = await pluginClient?.methods.approve(
         params.proposalId,
         params.tryExecution
       );
