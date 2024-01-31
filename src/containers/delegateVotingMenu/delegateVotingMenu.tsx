@@ -15,12 +15,13 @@ import {DelegateVotingForm} from './delegateVotingForm';
 import {DelegateVotingSuccess} from './delegateVotingSuccess';
 import {aragonSdkQueryKeys} from 'services/aragon-sdk/query-keys';
 import {useQueryClient} from '@tanstack/react-query';
-import {FormProvider, UseFormProps, useForm, useWatch} from 'react-hook-form';
+import {FormProvider, useForm, UseFormProps, useWatch} from 'react-hook-form';
 import {
   DelegateVotingFormField,
   IDelegateVotingFormValues,
 } from './delegateVotingUtils';
 import {aragonBackendQueryKeys} from 'services/aragon-backend/query-keys';
+import {GaselessPluginName, PluginTypes} from '../../hooks/usePluginClient';
 
 const buildFormSettings = (
   delegateAddress = ''
@@ -83,7 +84,8 @@ export const DelegateVotingMenu: React.FC = () => {
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
-    {enabled: daoToken != null && !isOnWrongNetwork}
+    {enabled: daoToken != null && !isOnWrongNetwork},
+    daoDetails?.plugins?.[0]?.id as PluginTypes
   );
 
   // The useDelegatee hook returns null when current delegate is connected address

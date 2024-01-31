@@ -17,6 +17,7 @@ import {
   DelegateVotingFormField,
   IDelegateVotingFormValues,
 } from './delegateVotingUtils';
+import {PluginTypes} from '../../hooks/usePluginClient';
 
 export interface IDelegateVotingFormProps {
   initialMode?: 'delegate' | 'reclaim';
@@ -61,7 +62,8 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
-    {enabled: daoToken != null && !isOnWrongNetwork}
+    {enabled: daoToken != null && !isOnWrongNetwork},
+    daoDetails?.plugins?.[0]?.id as PluginTypes
   );
   const currentDelegate = delegateData === null ? address : delegateData;
 
