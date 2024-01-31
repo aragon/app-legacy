@@ -73,7 +73,14 @@ export const DaoExplorer = () => {
         pluginNames: filters.pluginNames,
       }),
       ...(filters.networks?.length !== 0 && {
-        networks: filters.networks,
+        networks: filters.networks?.map(network => {
+          if (network === 'arbitrum-goerli') {
+            return 'arbitrumGoerli';
+          } else if (network === 'base-goerli') {
+            return 'baseGoerli';
+          }
+          return network;
+        }),
       }),
       ...(filters.quickFilter === 'memberOf' && address
         ? {memberAddress: address}
