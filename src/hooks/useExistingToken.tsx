@@ -15,7 +15,6 @@ import {
   PluginTypes,
   usePluginClient,
 } from './usePluginClient';
-import {isGaslessVotingSettings} from '../services/aragon-sdk/queries/use-voting-settings';
 import {useGaslessGovernanceEnabled} from './useGaslessGovernanceEnabled';
 
 export const useExistingToken = ({

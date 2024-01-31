@@ -123,7 +123,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
       default:
         return null;
     }
-  }, [t, tokenSymbol, tokenType]);
+  }, [t, tokenSymbol, tokenType, votingType]);
 
   const formattedTokenTotalSupply = useMemo(() => {
     if (tokenTotalSupply < 100) {

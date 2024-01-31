@@ -3,7 +3,6 @@ import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchDelegateeParams} from '../aragon-sdk-service.api';
 import {
   GaselessPluginName,
-  GaselessPluginType,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';

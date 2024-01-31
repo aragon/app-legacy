@@ -21,7 +21,6 @@ import {
   IDelegateVotingFormValues,
 } from './delegateVotingUtils';
 import {aragonBackendQueryKeys} from 'services/aragon-backend/query-keys';
-import {GaselessPluginName, PluginTypes} from '../../hooks/usePluginClient';
 
 const buildFormSettings = (
   delegateAddress = ''
