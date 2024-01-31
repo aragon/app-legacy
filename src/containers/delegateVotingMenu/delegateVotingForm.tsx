@@ -63,7 +63,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
     {enabled: daoToken != null && !isOnWrongNetwork},
-    daoDetails?.plugins?.[0]?.id as PluginTypes
+    daoDetails
   );
   const currentDelegate = delegateData === null ? address : delegateData;
 

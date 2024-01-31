@@ -9,9 +9,10 @@ import {
 } from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {SupportedNetworks} from 'utils/constants';
-import {TokenVotingClient} from '@aragon/sdk-client';
+import {DaoDetails, TokenVotingClient} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
+import {useGaslessGovernanceEnabled} from '../../../hooks/useGaslessGovernanceEnabled';
 
 const fetchDelegatee = async (
   params: IFetchDelegateeParams,
@@ -26,14 +27,18 @@ const fetchDelegatee = async (
 export const useDelegatee = (
   params: IFetchDelegateeParams,
   options: UseQueryOptions<string | null> = {},
-  pluginType: PluginTypes
+  daoDetails: DaoDetails | null | undefined
 ) => {
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled(daoDetails);
+
   const client = usePluginClient(
     pluginType === GaselessPluginName
       ? GaselessPluginName
       : 'token-voting.plugin.dao.eth'
   );
   const {address, network} = useWallet();
+
   const baseParams = {
     address: address as string,
     network: network as SupportedNetworks,
@@ -56,7 +61,13 @@ export const useDelegatee = (
 
   return useQuery(
     aragonSdkQueryKeys.delegatee(baseParams, params),
-    () => fetchDelegatee(params, client),
+    () => {
+      // If is gasless and governance is not enabled, return
+      if (pluginType === GaselessPluginName && !isGovernanceEnabled) {
+        return null;
+      }
+      return fetchDelegatee(params, client);
+    },
     options
   );
 };

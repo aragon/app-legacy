@@ -10,11 +10,13 @@ import {
   TokenVotingClient,
 } from '@aragon/sdk-client';
 import {validateGovernanceTokenAddress} from 'utils/validators';
-import {PluginTypes, usePluginClient} from './usePluginClient';
 import {
-  isGaslessVotingSettings,
-  useVotingSettings,
-} from '../services/aragon-sdk/queries/use-voting-settings';
+  isGaslessVotingClient,
+  PluginTypes,
+  usePluginClient,
+} from './usePluginClient';
+import {isGaslessVotingSettings} from '../services/aragon-sdk/queries/use-voting-settings';
+import {useGaslessGovernanceEnabled} from './useGaslessGovernanceEnabled';
 
 export const useExistingToken = ({
   daoDetails,
@@ -25,10 +27,7 @@ export const useExistingToken = ({
 } = {}) => {
   const {api: provider} = useProviders();
   const {data: daoDetailsFetched} = useDaoDetailsQuery();
-  const {data: votingSettings} = useVotingSettings({
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-    pluginType: daoDetails?.plugins[0].id as PluginTypes,
-  });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled(daoDetails);
 
   const dao = useMemo(
     () => daoDetails || daoDetailsFetched,
@@ -52,9 +51,9 @@ export const useExistingToken = ({
 
   useEffect(() => {
     async function isTokenMintable() {
-      if (!dao || !token || !votingSettings) return;
-      if (isGaslessVotingSettings(votingSettings)) {
-        setIsTokenMintable(votingSettings.hasGovernanceEnabled!);
+      if (!dao || !token || !pluginClient) return;
+      if (isGaslessVotingClient(pluginClient)) {
+        setIsTokenMintable(isGovernanceEnabled);
         return;
       }
       const tokenDaoOwner = await getDaoTokenOwner(token.address, provider);
@@ -63,15 +62,15 @@ export const useExistingToken = ({
     }
 
     void isTokenMintable();
-  }, [dao, provider, token, votingSettings]);
+  }, [dao, isGovernanceEnabled, pluginClient, provider, token]);
 
   useEffect(() => {
     async function detectWhetherGovTokenIsWrapped(
       token: Erc20WrapperTokenDetails | undefined
     ) {
-      if (!token || !votingSettings) return;
-      if (isGaslessVotingSettings(votingSettings)) {
-        setIsTokenMintable(votingSettings.hasGovernanceEnabled!);
+      if (!token || !pluginClient) return;
+      if (isGaslessVotingClient(pluginClient)) {
+        setIsTokenMintable(isGovernanceEnabled);
         return;
       }
 
@@ -96,7 +95,7 @@ export const useExistingToken = ({
     detectWhetherGovTokenIsWrapped(
       token as Erc20WrapperTokenDetails | undefined
     );
-  }, [pluginClient, provider, token, votingSettings]);
+  }, [isGovernanceEnabled, pluginClient, provider, token]);
 
   return {
     isTokenMintable,
