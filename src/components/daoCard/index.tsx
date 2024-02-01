@@ -22,6 +22,8 @@ export const DaoCard = (props: IDaoCardProps) => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
 
+  console.log('Test', logo);
+
   const {avatar} = useResolveDaoAvatar(logo);
 
   const daoPage = generatePath(Dashboard, {
@@ -41,7 +43,7 @@ export const DaoCard = (props: IDaoCardProps) => {
     <Container href={daoUrl}>
       <DaoDataWrapper>
         <HeaderContainer>
-          <AvatarDao daoName={name} src={avatar} />
+          <AvatarDao daoName={name} src={logo && avatar} />
           <div className="space-y-0.5 text-left xl:space-y-1">
             <Title>{name}</Title>
             <p className="font-semibold text-neutral-500 ft-text-sm">
