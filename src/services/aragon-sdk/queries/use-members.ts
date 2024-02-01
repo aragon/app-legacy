@@ -33,7 +33,7 @@ export const useMembers = (
 ) => {
   const client = usePluginClient(params.pluginType);
 
-  if (client == null) {
+  if (client == null || !params.pluginAddress) {
     options.enabled = false;
   }
 
