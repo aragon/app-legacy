@@ -11,7 +11,10 @@ import {invariant} from 'utils/invariant';
 import {useNetwork} from 'context/network';
 import {ProposalBase, SortDirection} from '@aragon/sdk-client-common';
 import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
-import {GaslessVotingClient, GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {
+  GaslessVotingClient,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 
 type Proposal = MultisigProposal | TokenVotingProposal | GaslessVotingProposal;
 
