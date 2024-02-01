@@ -21,9 +21,6 @@ export const DaoCard = (props: IDaoCardProps) => {
 
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
-
-  console.log('Test', logo);
-
   const {avatar} = useResolveDaoAvatar(logo);
 
   const daoPage = generatePath(Dashboard, {
