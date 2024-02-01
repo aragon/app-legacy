@@ -11,7 +11,7 @@ import {invariant} from 'utils/invariant';
 import {useNetwork} from 'context/network';
 import {ProposalBase, SortDirection} from '@aragon/sdk-client-common';
 import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {GaslessVotingClient, GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 type Proposal = MultisigProposal | TokenVotingProposal | GaslessVotingProposal;
 
@@ -50,6 +50,31 @@ export const multisigProposalsQuery = gql`
     }
   }
 `;
+
+const fetchCreatorGaslessProposals = async (
+  {pluginAddress, address, blockNumber}: IFetchCreatorProposalsParams,
+  client?: PluginClient
+): Promise<Proposal[]> => {
+  invariant(client != null, 'fetchCreatorProposals: client is not defined');
+
+  const resultProposalsIds = await (
+    client as GaslessVotingClient
+  ).methods.getMemberProposals(
+    pluginAddress,
+    address,
+    blockNumber ? blockNumber : 0,
+    SortDirection.DESC,
+    ProposalSortBy.CREATED_AT
+  );
+
+  const proposalQueriesPromises = resultProposalsIds.map(
+    (id: string) => client?.methods.getProposal(id)
+  );
+
+  const resultsProposals = await Promise.all(proposalQueriesPromises);
+
+  return resultsProposals.filter(item => !!item) as Proposal[];
+};
 
 const fetchCreatorProposals = async (
   {
@@ -118,7 +143,11 @@ export const useCreatorProposals = (
 
   return useQuery(
     aragonSdkQueryKeys.getCreatorProposals(baseParams, params),
-    () => fetchCreatorProposals(params, client),
+    () =>
+      params.pluginType ===
+      'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth'
+        ? fetchCreatorGaslessProposals(params, client)
+        : fetchCreatorProposals(params, client),
     options
   );
 };
