@@ -221,7 +221,7 @@ class TokenService {
           balance: nativeToken
             ? (nativeTokenBalance as bigint)
             : BigInt(item.balance),
-          updateDate: new Date(data.updated_at),
+          updateDate: new Date(data.updatedAt),
         };
       }
     );
