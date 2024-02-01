@@ -5,7 +5,7 @@ export type TokenItemType = {
   contractName: string;
   contractTickerSymbol: string;
   logoUrl: string;
-  native_token: boolean;
+  nativeToken: boolean;
 };
 
 export type TokenBalanceResponse = {

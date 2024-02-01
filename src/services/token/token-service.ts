@@ -144,12 +144,12 @@ class TokenService {
   tokenBalanceQueryDocument = gql`
     query TokensBalances(
       $currency: String!
-      $networkId: String!
+      $network: Network!
       $address: String!
     ) {
       tokensBalances(
         currency: $currency
-        networkId: $networkId
+        network: $network
         address: $address
       ) {
         updatedAt
@@ -159,7 +159,7 @@ class TokenService {
           contractTickerSymbol
           contractDecimals
           logoUrl
-          native_token
+          nativeToken
           balance
         }
       }
@@ -175,9 +175,7 @@ class TokenService {
     ignoreZeroBalances = true,
     nativeTokenBalance,
   }: IFetchTokenBalancesParams): Promise<AssetBalance[] | null> => {
-    const {networkId} = CHAIN_METADATA[network].covalent ?? {};
-
-    if (!networkId) {
+    if (!network) {
       console.info(
         `fetchTokenBalances - network ${network} not supported by Covalent`
       );
@@ -189,7 +187,7 @@ class TokenService {
     const {tokensBalances: data} = await request(
       aragonGateway.backendUrl,
       this.tokenBalanceQueryDocument,
-      {networkId, address, currency: this.defaultCurrency}
+      {network, address, currency: this.defaultCurrency}
     );
 
     if (data.error || data == null) {
@@ -200,29 +198,27 @@ class TokenService {
     }
 
     return (data as TokenBalanceResponse).items.flatMap(
-      ({native_token, ...item}) => {
+      ({nativeToken, ...item}) => {
         if (
           ignoreZeroBalances &&
-          ((native_token && nativeTokenBalance === BigInt(0)) ||
+          ((nativeToken && nativeTokenBalance === BigInt(0)) ||
             BigNumber.from(item.balance).isZero())
         )
           // ignore zero balances if indicated
           return [];
 
         return {
-          id: native_token ? AddressZero : item.contractAddress,
-          address: native_token ? AddressZero : item.contractAddress,
-          name: native_token ? nativeCurrency.name : item.contractName,
-          symbol: native_token
+          id: nativeToken ? AddressZero : item.contractAddress,
+          address: nativeToken ? AddressZero : item.contractAddress,
+          name: nativeToken ? nativeCurrency.name : item.contractName,
+          symbol: nativeToken
             ? nativeCurrency.symbol
             : item.contractTickerSymbol?.toUpperCase(),
-          decimals: native_token
+          decimals: nativeToken
             ? nativeCurrency.decimals
             : item.contractDecimals,
-          type: (native_token
-            ? TokenType.NATIVE
-            : TokenType.ERC20) as tokenType,
-          balance: native_token
+          type: (nativeToken ? TokenType.NATIVE : TokenType.ERC20) as tokenType,
+          balance: nativeToken
             ? (nativeTokenBalance as bigint)
             : BigInt(item.balance),
           updateDate: new Date(data.updated_at),
