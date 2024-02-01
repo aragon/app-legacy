@@ -67,7 +67,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
         setValue('durationHours', '0');
         setValue('durationMinutes', '0');
       } else if (value === 0 && durationHours === '0') {
-        setValue('durationHours', MIN_DURATION_HOURS.toString());
+        // setValue('durationHours', MIN_DURATION_HOURS.toString());
       }
       trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
@@ -92,9 +92,9 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
           );
         }
       } else if (value === 0 && durationDays === '0') {
-        setValue('durationHours', MIN_DURATION_HOURS.toString());
-        setValue('durationMinutes', '0');
-        e.target.value = MIN_DURATION_HOURS.toString();
+        // setValue('durationHours', MIN_DURATION_HOURS.toString());
+        // setValue('durationMinutes', '0');
+        // e.target.value = MIN_DURATION_HOURS.toString();
       }
       trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
