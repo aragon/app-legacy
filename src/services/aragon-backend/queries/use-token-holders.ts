@@ -4,6 +4,7 @@ import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchTokenHoldersParams} from '../aragon-backend-service.api';
 import {TokenHoldersResponse} from '../domain/token-holders-response';
 import {aragonGateway} from 'utils/aragonGateway';
+import {supportedNetworksToBackendMap} from 'utils/constants';
 
 const tokenHoldersQueryDocument = gql`
   query Holders($network: Network!, $tokenAddress: String!, $page: Int!) {
@@ -34,6 +35,7 @@ const fetchTokenHolders = async (
 ): Promise<TokenHoldersResponse> => {
   return request(aragonGateway.backendUrl, tokenHoldersQueryDocument, {
     ...params,
+    network: supportedNetworksToBackendMap[params.network],
     page: params.page ?? 0,
   });
 };

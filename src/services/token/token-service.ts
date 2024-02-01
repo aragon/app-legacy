@@ -8,6 +8,7 @@ import {
   COVALENT_API_KEY,
   SupportedNetworks,
   alchemyApiKeys,
+  supportedNetworksToBackendMap,
 } from 'utils/constants';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 import {getTokenInfo, isNativeToken} from 'utils/tokens';
@@ -107,7 +108,7 @@ class TokenService {
       const {token: resp} = await request(
         aragonGateway.backendUrl,
         this.tokenQueryDocument,
-        {network, tokenAddress}
+        {network: supportedNetworksToBackendMap[network], tokenAddress}
       );
       const currPriceUsd = resp.priceUsd || 0;
       const prevPriceUsd = currPriceUsd - (resp.priceChangeOnDayUsd || 0);
@@ -187,7 +188,11 @@ class TokenService {
     const {tokensBalances: data} = await request(
       aragonGateway.backendUrl,
       this.tokenBalanceQueryDocument,
-      {network, address, currency: this.defaultCurrency}
+      {
+        network: supportedNetworksToBackendMap[network],
+        address,
+        currency: this.defaultCurrency,
+      }
     );
 
     if (data.error || data == null) {

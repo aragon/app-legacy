@@ -51,6 +51,18 @@ export function toSupportedNetwork(network: string): SupportedNetworks {
     : 'unsupported';
 }
 
+export const supportedNetworksToBackendMap = {
+  ethereum: 'ethereum',
+  goerli: 'goerli',
+  sepolia: 'sepolia',
+  polygon: 'polygon',
+  mumbai: 'mumbai',
+  base: 'base',
+  'base-goerli': 'baseGoerli',
+  arbitrum: 'arbitrum',
+  'arbitrum-goerli': 'arbitrumGoerli',
+} as Record<SupportedNetworks, string>;
+
 /**
  * Get the network name with given chain id
  * @param chainId Chain id
