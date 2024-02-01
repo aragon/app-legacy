@@ -18,6 +18,8 @@ import {useGlobalModalContext} from '../../../context/globalModals';
 import ModalBottomSheetSwitcher from '../../../components/modalBottomSheetSwitcher';
 import {FilteredAddressList} from '../../../components/filteredAddressList';
 import {MultisigWalletField} from '../../../components/multisigWallets/row';
+import {CHAIN_METADATA} from '../../../utils/constants';
+import {useNetwork} from '../../../context/network';
 
 const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
@@ -49,7 +51,6 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
 
   return (
     <>
-      {/* COMMUNITY SECTION */}
       <SettingsCard title={t('label.executionMultisig')}>
         <DescriptionPair>
           <Term>{t('labels.members')}</Term>
@@ -81,6 +82,10 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             })}
           </Definition>
         </DescriptionPair>
+        <DescriptionPair>
+          <Term>DEV Wrapped token</Term>
+          <Definition>{String(votingSettings.hasGovernanceEnabled)}</Definition>
+        </DescriptionPair>
       </SettingsCard>
       <CustomCommitteeAddressesModal
         wallets={
@@ -100,6 +105,7 @@ const CustomCommitteeAddressesModal = ({
   wallets: MultisigWalletField[];
 }) => {
   const {isOpen, close} = useGlobalModalContext('committeeMembers');
+  const {network} = useNetwork();
 
   /*************************************************
    *                    Render                     *
@@ -110,7 +116,15 @@ const CustomCommitteeAddressesModal = ({
       onClose={close}
       data-testid="communityModal"
     >
-      <FilteredAddressList wallets={wallets} />
+      <FilteredAddressList
+        wallets={wallets}
+        onVoterClick={user => {
+          window.open(
+            `${CHAIN_METADATA[network].explorer}address/${user}`,
+            '_blank'
+          );
+        }}
+      />
     </ModalBottomSheetSwitcher>
   );
 };
