@@ -207,18 +207,15 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     }
   }, [i18n.language, isApprovalPeriod, proposal, t]);
 
-  // alert message, only shown when not eligible to vote
-  const alertMessage = useMemo(() => {
-    if (
-      proposal &&
-      isApprovalPeriod && // active proposal
-      address && // logged in
-      !isOnWrongNetwork && // on proper network
-      !canApprove // cannot vote
-    ) {
-      return t('votingTerminal.status.ineligibleWhitelist');
-    }
-  }, [isApprovalPeriod, proposal, address, isOnWrongNetwork, canApprove, t]);
+  const displayAlertMessage =
+    isApprovalPeriod && // active proposal
+    address && // logged in
+    !isOnWrongNetwork && // on proper network
+    !canApprove; // cannot approve
+
+  const alertMessage = displayAlertMessage
+    ? t('votingTerminal.status.ineligibleWhitelist')
+    : undefined;
 
   const ApprovalVotingTerminal = () => {
     return (
