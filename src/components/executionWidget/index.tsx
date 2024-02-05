@@ -1,11 +1,6 @@
-import {
-  AlertCard,
-  AlertInline,
-  ButtonText,
-  IconAdd,
-  IconLinkExternal,
-} from '@aragon/ods-old';
 import React from 'react';
+import {AlertCard, AlertInline, ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -51,7 +46,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
             onAddAction && {
               label: t('governance.executionCard.addAction'),
               onClick: onAddAction,
-              iconLeft: <IconAdd />,
+              iconLeft: <Icon icon={IconType.ADD} />,
             }
           }
         />
@@ -135,7 +130,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
             <StyledButtonText
               label={t('governance.executionCard.seeTransaction')}
               mode="secondary"
-              iconRight={<IconLinkExternal />}
+              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
               size="large"
               bgWhite
               onClick={handleTxViewButtonClick}
@@ -154,7 +149,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
             <StyledButtonText
               label={t('governance.executionCard.seeTransaction')}
               mode="secondary"
-              iconRight={<IconLinkExternal />}
+              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
               size="large"
               bgWhite
               onClick={handleTxViewButtonClick}

@@ -9,13 +9,14 @@ import {
   COVALENT_API_KEY,
   SupportedNetworks,
   alchemyApiKeys,
+  supportedNetworksToBackendMap,
 } from 'utils/constants';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 import {getTokenInfo, isNativeToken} from 'utils/tokens';
 import {CoingeckoError, Token} from './domain';
 import {AlchemyTransfer} from './domain/alchemy-transfer';
 import {CovalentResponse} from './domain/covalent-response';
-import {CovalentTokenBalance} from './domain/covalent-token';
+import {TokenBalanceResponse} from './domain/covalent-token';
 import {
   CovalentTokenTransfer,
   CovalentTransferInfo,
@@ -107,7 +108,7 @@ class TokenService {
       const {token: resp} = await request(
         `${import.meta.env.VITE_BACKEND_URL}/graphql`,
         this.tokenQueryDocument,
-        {network, tokenAddress}
+        {network: supportedNetworksToBackendMap[network], tokenAddress}
       );
       const currPriceUsd = resp.priceUsd || 0;
       const prevPriceUsd = currPriceUsd - (resp.priceChangeOnDayUsd || 0);
@@ -141,6 +142,31 @@ class TokenService {
     return token;
   };
 
+  tokenBalanceQueryDocument = gql`
+    query TokensBalances(
+      $currency: String!
+      $network: Network!
+      $address: String!
+    ) {
+      tokensBalances(
+        currency: $currency
+        network: $network
+        address: $address
+      ) {
+        updatedAt
+        items {
+          contractAddress
+          contractName
+          contractTickerSymbol
+          contractDecimals
+          logoUrl
+          nativeToken
+          balance
+        }
+      }
+    }
+  `;
+
   // Note: Purposefully not including a function to fetch token balances
   // via Alchemy because we want to slowly remove the Alchemy dependency
   // F.F. [01/01/2023]
@@ -150,9 +176,7 @@ class TokenService {
     ignoreZeroBalances = true,
     nativeTokenBalance,
   }: IFetchTokenBalancesParams): Promise<AssetBalance[] | null> => {
-    const {networkId} = CHAIN_METADATA[network].covalent ?? {};
-
-    if (!networkId) {
+    if (!network) {
       console.info(
         `fetchTokenBalances - network ${network} not supported by Covalent`
       );
@@ -161,53 +185,51 @@ class TokenService {
 
     const {nativeCurrency} = CHAIN_METADATA[network];
 
-    const endpoint = `/${networkId}/address/${address}/balances_v2/?quote-currency=${this.defaultCurrency}`;
-    const url = `${this.baseUrl.covalent}${endpoint}`;
-    const authToken = window.btoa(`${COVALENT_API_KEY}:`);
-    const headers = {Authorization: `Basic ${authToken}`};
+    const {tokensBalances: data} = await request(
+      `${import.meta.env.VITE_BACKEND_URL}/graphql`,
+      this.tokenBalanceQueryDocument,
+      {
+        network: supportedNetworksToBackendMap[network],
+        address,
+        currency: this.defaultCurrency,
+      }
+    );
 
-    const res = await fetch(url, {headers});
-    const parsed: CovalentResponse<CovalentTokenBalance | null> =
-      await res.json();
-    const data = parsed.data;
-
-    if (parsed.error || data == null) {
+    if (data.error || data == null) {
       console.info(
-        `fetchTokenBalances - Covalent returned error: ${parsed.error_message}`
+        `fetchTokenBalances - Covalent returned error: ${data.error_message}`
       );
       return null;
     }
 
-    return data.items.flatMap(({native_token, ...item}) => {
-      if (
-        ignoreZeroBalances &&
-        ((native_token && nativeTokenBalance === BigInt(0)) ||
-          BigNumber.from(item.balance).isZero())
-      )
-        // ignore zero balances if indicated
-        return [];
+    return (data as TokenBalanceResponse).items.flatMap(
+      ({nativeToken, ...item}) => {
+        if (
+          ignoreZeroBalances &&
+          ((nativeToken && nativeTokenBalance === BigInt(0)) ||
+            BigNumber.from(item.balance).isZero())
+        )
+          // ignore zero balances if indicated
+          return [];
 
-      return {
-        id: native_token ? AddressZero : item.contract_address,
-        address: native_token ? AddressZero : item.contract_address,
-        name: native_token ? nativeCurrency.name : item.contract_name,
-        symbol: native_token
-          ? nativeCurrency.symbol
-          : item.contract_ticker_symbol?.toUpperCase(),
-        decimals: native_token
-          ? nativeCurrency.decimals
-          : item.contract_decimals,
-        type: (native_token
-          ? TokenType.NATIVE
-          : item.nft_data
-          ? TokenType.ERC721
-          : TokenType.ERC20) as tokenType,
-        balance: native_token
-          ? (nativeTokenBalance as bigint)
-          : BigInt(item.balance),
-        updateDate: new Date(data.updated_at),
-      };
-    });
+        return {
+          id: nativeToken ? AddressZero : item.contractAddress,
+          address: nativeToken ? AddressZero : item.contractAddress,
+          name: nativeToken ? nativeCurrency.name : item.contractName,
+          symbol: nativeToken
+            ? nativeCurrency.symbol
+            : item.contractTickerSymbol?.toUpperCase(),
+          decimals: nativeToken
+            ? nativeCurrency.decimals
+            : item.contractDecimals,
+          type: (nativeToken ? TokenType.NATIVE : TokenType.ERC20) as tokenType,
+          balance: nativeToken
+            ? (nativeTokenBalance as bigint)
+            : BigInt(item.balance),
+          updateDate: new Date(data.updatedAt),
+        };
+      }
+    );
   };
 
   fetchErc20Deposits = async ({

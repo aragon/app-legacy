@@ -1,14 +1,7 @@
-import {
-  Avatar,
-  ButtonIcon,
-  ButtonText,
-  IconClose,
-  IconCopy,
-  IconSwitch,
-  IconTurnOff,
-} from '@aragon/ods-old';
-import {useGlobalModalContext} from 'context/globalModals';
 import React, {useEffect} from 'react';
+import {Avatar, ButtonIcon, ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -86,7 +79,7 @@ export const WalletMenu = () => {
         </AvatarAddressContainer>
         <ButtonIcon
           mode="secondary"
-          icon={<IconCopy />}
+          icon={<Icon icon={IconType.COPY} />}
           size="small"
           onClick={() =>
             address ? handleClipboardActions(address, () => null, alert) : null
@@ -95,7 +88,7 @@ export const WalletMenu = () => {
         {isDesktop && (
           <ButtonIcon
             mode="ghost"
-            icon={<IconClose />}
+            icon={<Icon icon={IconType.CLOSE} />}
             size="small"
             onClick={() => close()}
           />
@@ -105,14 +98,14 @@ export const WalletMenu = () => {
         <StyledButtonText
           size="large"
           mode="ghost"
-          iconLeft={<IconSwitch />}
+          iconLeft={<Icon icon={IconType.SWITCH} />}
           label={t('labels.viewTransactions')}
           onClick={handleViewTransactions}
         />
         <StyledButtonText
           size="large"
           mode="ghost"
-          iconLeft={<IconTurnOff />}
+          iconLeft={<Icon icon={IconType.TURN_OFF} />}
           label={t('labels.disconnectWallet')}
           onClick={handleDisconnect}
         />

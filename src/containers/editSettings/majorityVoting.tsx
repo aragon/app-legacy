@@ -1,12 +1,8 @@
-import {
-  AlertInline,
-  ButtonText,
-  IconGovernance,
-  ListItemAction,
-} from '@aragon/ods-old';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
-import React, {useCallback, useEffect, useMemo} from 'react';
+import {AlertInline, ButtonText, ListItemAction} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -550,7 +546,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
               <ButtonText
                 className="w-full md:w-max"
                 label={t('settings.reviewProposal')}
-                iconLeft={<IconGovernance />}
+                iconLeft={<Icon icon={IconType.APP_GOVERNANCE} />}
                 size="large"
                 disabled={settingsUnchanged || !isValid}
                 onClick={() =>

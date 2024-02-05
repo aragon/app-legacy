@@ -1,5 +1,6 @@
-import {IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import React from 'react';
+import {ListItemAction} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -43,13 +44,13 @@ const TransferMenu: React.FC = () => {
         <ListItemAction
           title={t('modal.deposit.headerTitle')}
           subtitle={t('modal.deposit.headerDescription')}
-          iconRight={<IconChevronRight />}
+          iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
           onClick={() => handleClick('deposit_assets')}
         />
         <ListItemAction
           title={t('TransferModal.item2Title')}
           subtitle={t('TransferModal.item2Subtitle')}
-          iconRight={<IconChevronRight />}
+          iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
           onClick={() => handleClick('withdraw_assets')}
         />
       </Container>

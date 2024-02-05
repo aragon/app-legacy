@@ -1,14 +1,12 @@
+import React, {useCallback} from 'react';
 import {
   ButtonIcon,
   CardText,
   CardToken,
   CardTransfer,
-  IconChevronRight,
-  IconClose,
-  IconLinkExternal,
   ListItemAction,
 } from '@aragon/ods-old';
-import React, {useCallback} from 'react';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -71,7 +69,7 @@ const TransactionDetail: React.FC = () => {
           mode="secondary"
           size="small"
           bgWhite
-          icon={<IconClose />}
+          icon={<Icon icon={IconType.CLOSE} />}
           onClick={onClose}
         />
       </ModalHeader>
@@ -117,7 +115,7 @@ const TransactionDetail: React.FC = () => {
               <ListItemAction
                 title={proposal?.metadata.title || t('labels.loading')}
                 subtitle="Linked Proposal"
-                iconRight={<IconChevronRight />}
+                iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
                 onClick={handleNavigateToProposal}
               />
             )}
@@ -136,7 +134,7 @@ const TransactionDetail: React.FC = () => {
           >
             <ListItemAction
               title={t('transactionDetail.viewTransaction')}
-              iconRight={<IconLinkExternal />}
+              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
             />
           </a>
         </div>

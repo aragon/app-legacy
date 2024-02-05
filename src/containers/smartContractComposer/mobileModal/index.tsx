@@ -1,13 +1,7 @@
-import {
-  ButtonIcon,
-  ButtonText,
-  IconChevronLeft,
-  IconClose,
-  IconHome,
-  IconLinkExternal,
-  Link,
-} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
+import {ButtonIcon, ButtonText, Link} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
@@ -118,7 +112,7 @@ const MobileModal: React.FC<Props> = props => {
                 <Link
                   external
                   type="primary"
-                  iconRight={<IconLinkExternal height={13} width={13} />}
+                  iconRight={<Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
                   className="mt-4 w-full justify-center"
@@ -177,12 +171,17 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
         <ButtonIcon
           mode="secondary"
           size="small"
-          icon={<IconChevronLeft />}
+          icon={<Icon icon={IconType.CHEVRON_LEFT} />}
           bgWhite
           onClick={props.onBackButtonClicked}
         />
       ) : (
-        <ButtonIcon mode="secondary" size="small" icon={<IconHome />} bgWhite />
+        <ButtonIcon
+          mode="secondary"
+          size="small"
+          icon={<Icon icon={IconType.HOME} />}
+          bgWhite
+        />
       )}
 
       <ActionSearchInput
@@ -194,7 +193,7 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
       <ButtonIcon
         mode="secondary"
         size="small"
-        icon={<IconClose />}
+        icon={<Icon icon={IconType.CLOSE} />}
         onClick={props.onClose}
         bgWhite
       />

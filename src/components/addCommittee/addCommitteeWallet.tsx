@@ -1,11 +1,11 @@
 import {
   ButtonIcon,
   Dropdown,
-  IconMenuVertical,
   Label,
   ListItemAction,
   InputValue as WalletInputValue,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -121,7 +121,7 @@ const AddCommitteeWalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               mode="ghost"
               size="large"
               bgWhite
-              icon={<IconMenuVertical />}
+              icon={<Icon icon={IconType.MENU_VERTICAL} />}
               data-testid="trigger"
             />
           }

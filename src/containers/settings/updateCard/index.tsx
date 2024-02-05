@@ -1,8 +1,8 @@
-import {IconLinkExternal, IconUpdate} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {Icon, IconType} from '@aragon/ods';
 
 import {StyledLink} from 'components/styledLink';
 import useScreen from 'hooks/useScreen';
@@ -23,7 +23,7 @@ export const SettingsUpdateCard: React.FC = () => {
         <div className="flex items-start gap-x-12">
           <div className="flex-1 space-y-2">
             <Head>
-              <IconUpdate />
+              <Icon icon={IconType.UPDATE} />
               <Title>{t('update.alert.title')}</Title>
             </Head>
             <ContentWrapper className="space-y-0">
@@ -33,7 +33,7 @@ export const SettingsUpdateCard: React.FC = () => {
           <StyledLink
             label={t('update.alert.ctaLabel')}
             type="neutral"
-            iconRight={<IconLinkExternal />}
+            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
             onClick={() =>
               navigate(
                 generatePath(NewProposal, {
@@ -53,7 +53,7 @@ export const SettingsUpdateCard: React.FC = () => {
   return (
     <Container>
       <Head>
-        <IconUpdate />
+        <Icon icon={IconType.UPDATE} />
         <Title>{t('update.alert.title')}</Title>
       </Head>
       <ContentWrapper>
@@ -61,7 +61,7 @@ export const SettingsUpdateCard: React.FC = () => {
         <StyledLink
           label={t('update.alert.ctaLabel')}
           type="neutral"
-          iconRight={<IconLinkExternal />}
+          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
           onClick={() =>
             navigate(
               generatePath(NewProposal, {

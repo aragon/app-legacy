@@ -7,6 +7,7 @@ on:
 jobs:
   webapp-preview:
     if: contains(github.event.pull_request.labels.*.name, 'preview')
+    environment: staging
     runs-on: ubuntu-latest
     steps:
       - name: Find a PR comment

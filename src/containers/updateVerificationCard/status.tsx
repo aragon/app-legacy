@@ -1,13 +1,7 @@
 import React, {ReactNode} from 'react';
 import styled from 'styled-components';
-import {
-  Spinner,
-  IconRadioCancel,
-  IconSuccess,
-  ButtonText,
-  IconLinkExternal,
-  Tag,
-} from '@aragon/ods-old';
+import {Spinner, ButtonText, Tag} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 export interface StatusProps {
   mode: 'loading' | 'success' | 'error';
@@ -30,14 +24,14 @@ const iconColors: Record<StatusProps['mode'], string> = {
   error: 'text-critical-500',
 };
 
-const Icon: React.FC<{mode: StatusProps['mode']}> = ({mode}) => {
+const StatusIcon: React.FC<{mode: StatusProps['mode']}> = ({mode}) => {
   switch (mode) {
     case 'loading':
       return <Spinner size="xs" className={iconColors[mode]} />;
     case 'error':
-      return <IconRadioCancel className={iconColors[mode]} />;
+      return <Icon icon={IconType.RADIO_CANCEL} className={iconColors[mode]} />;
     default:
-      return <IconSuccess className={iconColors[mode]} />;
+      return <Icon icon={IconType.RADIO_CHECK} className={iconColors[mode]} />;
   }
 };
 
@@ -52,7 +46,7 @@ export const Status: React.FC<StatusProps> = ({
   return (
     <Content>
       <IconContainer>
-        <Icon mode={mode} />
+        <StatusIcon mode={mode} />
       </IconContainer>
       <Wrapper>
         <Label mode={mode}>{label}</Label>
@@ -72,7 +66,7 @@ export const Status: React.FC<StatusProps> = ({
           <div>
             <ButtonText
               label={DetailsButtonLabel as string}
-              iconRight={<IconLinkExternal />}
+              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
               mode="secondary"
               size="small"
               bgWhite

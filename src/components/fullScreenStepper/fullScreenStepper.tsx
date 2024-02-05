@@ -1,10 +1,3 @@
-import {
-  Breadcrumb,
-  ButtonText,
-  IconChevronLeft,
-  IconChevronRight,
-  Wizard,
-} from '@aragon/ods-old';
 import React, {
   createContext,
   useCallback,
@@ -13,6 +6,8 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import {Breadcrumb, ButtonText, Wizard} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -171,7 +166,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
                   onBackButtonClicked ? onBackButtonClicked() : prev()
                 }
                 disabled={currentStep === 1}
-                iconLeft={<IconChevronLeft />}
+                iconLeft={<Icon icon={IconType.CHEVRON_LEFT} />}
               />
               <ButtonValidationTrigger onClick={onNextButtonDisabledClicked}>
                 <ButtonText
@@ -181,7 +176,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
                     onNextButtonClicked ? onNextButtonClicked(next) : next()
                   }
                   disabled={isNextButtonDisabled}
-                  iconRight={<IconChevronRight />}
+                  iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
                 />
               </ButtonValidationTrigger>
             </FormFooter>

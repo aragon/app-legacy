@@ -1,15 +1,7 @@
-import {
-  IconCommunity,
-  IconDashboard,
-  IconFinance,
-  IconGovernance,
-  IconSettings,
-  Tag,
-  TagColorScheme,
-  TagProps,
-} from '@aragon/ods-old';
-import {ProposalStatus} from '@aragon/sdk-client-common';
 import React, {useMemo} from 'react';
+import {Tag, TagColorScheme, TagProps} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useMatch} from 'react-router-dom';
 import useBreadcrumbs, {BreadcrumbData} from 'use-react-router-breadcrumbs';
 
@@ -46,11 +38,11 @@ const routes = Object.values(Paths).map(path => {
 });
 
 function basePathIcons(path: string) {
-  if (path.includes('dashboard')) return <IconDashboard />;
-  if (path.includes('community')) return <IconCommunity />;
-  if (path.includes('finance')) return <IconFinance />;
-  if (path.includes('settings')) return <IconSettings />;
-  else return <IconGovernance />;
+  if (path.includes('dashboard')) return <Icon icon={IconType.APP_DASHBOARD} />;
+  if (path.includes('community')) return <Icon icon={IconType.APP_COMMUNITY} />;
+  if (path.includes('finance')) return <Icon icon={IconType.APP_FINANCE} />;
+  if (path.includes('settings')) return <Icon icon={IconType.SETTINGS} />;
+  else return <Icon icon={IconType.APP_GOVERNANCE} />;
 }
 
 export function useMappedBreadcrumbs(): MappedBreadcrumbs {

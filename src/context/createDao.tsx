@@ -488,7 +488,15 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
                     address: step.address.toLocaleLowerCase(),
                     chain: CHAIN_METADATA[network].id,
                     ensDomain: daoCreationData.ensSubdomain || '',
-                    plugins: daoCreationData.plugins,
+                    plugins: [
+                      {
+                        id:
+                          membership === 'token'
+                            ? 'token-voting.plugin.dao.eth'
+                            : 'multisig.plugin.dao.eth',
+                        data: daoCreationData.plugins[0].data,
+                      },
+                    ],
                     metadata: {
                       name: metadata.name,
                       avatar: metadata.avatar,

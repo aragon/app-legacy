@@ -1,18 +1,21 @@
-import {StepData, StepStatus} from '../../hooks/useFunctionStepper';
 import React from 'react';
-import {
-  IconRadioCancel,
-  IconRadioDefault,
-  IconSuccess,
-  Spinner,
-} from '../../@aragon/ods-old';
 import styled from 'styled-components';
 
+import {Spinner} from '../../@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+import {StepData, StepStatus} from '../../hooks/useFunctionStepper';
+
 const icons = {
-  [StepStatus.WAITING]: <IconRadioDefault className="text-neutral-200" />,
+  [StepStatus.WAITING]: (
+    <Icon icon={IconType.RADIO_DEFAULT} className="text-neutral-200" />
+  ),
   [StepStatus.LOADING]: <Spinner size="xs" />,
-  [StepStatus.SUCCESS]: <IconSuccess className="text-success-500" />,
-  [StepStatus.ERROR]: <IconRadioCancel className="text-critical-700" />,
+  [StepStatus.SUCCESS]: (
+    <Icon icon={IconType.RADIO_CHECK} className="text-success-500" />
+  ),
+  [StepStatus.ERROR]: (
+    <Icon icon={IconType.RADIO_CANCEL} className="text-critical-700" />
+  ),
 };
 
 const textColor = {

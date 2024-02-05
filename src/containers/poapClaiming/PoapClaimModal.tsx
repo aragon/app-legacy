@@ -1,6 +1,7 @@
-import {ButtonText, IconLinkExternal} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {useGlobalModalContext} from 'context/globalModals';
 
@@ -30,7 +31,7 @@ const PoapClaimModal: React.FC = () => {
             size="large"
             label={t('modal.claimPoap.ctaLabel')}
             className="w-full"
-            iconRight={<IconLinkExternal />}
+            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
             onClick={() => {
               window.open(t('modal.claimPoap.ctaURL'), '_blank');
               close();

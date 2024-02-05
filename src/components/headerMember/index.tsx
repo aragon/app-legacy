@@ -1,15 +1,13 @@
 import React, {useMemo, ReactNode} from 'react';
 import {styled} from 'styled-components';
 import {
-  IconChevronDown,
-  IconCopy,
   Dropdown,
   ButtonText,
   AvatarWallet,
   shortenAddress,
   shortenDaoUrl,
-  IconLinkExternal,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 export interface HeaderMemberStat {
   value: ReactNode;
@@ -48,7 +46,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
         component: (
           <CredentialsDropdownItem key={2} onClick={() => onCopy?.(address)}>
             {shortenAddress(address)}
-            <StyledCopyIcon />
+            <Icon className="text-neutral-400" icon={IconType.COPY} />
           </CredentialsDropdownItem>
         ),
       },
@@ -59,7 +57,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
             onClick={() => onCopy?.(`https://${profileUrl}`)}
           >
             {shortenDaoUrl(profileUrl)}
-            <StyledCopyIcon />
+            <Icon className="text-neutral-400" icon={IconType.COPY} />
           </CredentialsDropdownItem>
         ),
       },
@@ -73,7 +71,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
             onClick={() => window.open(explorerUrl, '_blank')}
           >
             {explorerName}
-            <IconLinkExternal className="text-neutral-400" />
+            <Icon className="text-neutral-400" icon={IconType.LINK_EXTERNAL} />
           </CredentialsDropdownItem>
         ),
       },
@@ -84,7 +82,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
         component: (
           <CredentialsDropdownItem key={1} onClick={() => onCopy?.(ens)}>
             {ens}
-            <StyledCopyIcon />
+            <Icon className="text-neutral-400" icon={IconType.COPY} />
           </CredentialsDropdownItem>
         ),
       });
@@ -107,7 +105,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
                 trigger={
                   <ButtonText
                     label={shortenAddress(address)}
-                    iconRight={<IconChevronDown />}
+                    iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
                     mode="secondary"
                     className="border border-neutral-100"
                   />
@@ -181,10 +179,6 @@ const CredentialsDropdownItem = styled.div.attrs({
 
 const Break = styled.hr.attrs({
   className: 'border-neutral-100',
-})``;
-
-const StyledCopyIcon = styled(IconCopy).attrs({
-  className: 'text-neutral-400',
 })``;
 
 const StatsContainer = styled.div.attrs<{total: number}>({

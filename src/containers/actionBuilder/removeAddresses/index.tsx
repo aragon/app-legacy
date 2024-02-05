@@ -2,10 +2,10 @@ import {
   ButtonIcon,
   ButtonText,
   Dropdown,
-  IconMenuVertical,
   Label,
   ListItemAction,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -209,7 +209,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                   <ButtonIcon
                     size="large"
                     mode="secondary"
-                    icon={<IconMenuVertical />}
+                    icon={<Icon icon={IconType.MENU_VERTICAL} />}
                     data-testid="trigger"
                     bgWhite
                   />

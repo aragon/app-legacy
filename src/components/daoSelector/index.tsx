@@ -2,9 +2,9 @@ import {
   AvatarDao,
   AvatarDaoProps,
   ButtonIcon,
-  IconChevronDown,
   shortenAddress,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -39,7 +39,7 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
       </LeftContent>
 
       <ButtonIcon
-        icon={<IconChevronDown />}
+        icon={<Icon icon={IconType.CHEVRON_DOWN} />}
         mode="secondary"
         size="small"
         bgWhite={!isDesktop}

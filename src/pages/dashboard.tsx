@@ -1,13 +1,13 @@
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ButtonText,
   HeaderDao,
-  IconCheckmark,
-  IconClose,
   IconSpinner,
   IlluObject,
   IllustrationHuman,
 } from '@aragon/ods-old';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {Icon, IconType} from '@aragon/ods';
+
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -71,7 +71,7 @@ export const Dashboard: React.FC = () => {
 
   const removeFollowedDaoMutation = useRemoveFollowedDaoMutation({
     onMutate: () => {
-      alert(t('alert.chip.unfavorite'), <IconClose />);
+      alert(t('alert.chip.unfavorite'), <Icon icon={IconType.CLOSE} />);
     },
   });
 
@@ -227,7 +227,7 @@ export const Dashboard: React.FC = () => {
       [DaoCreationState.ASSEMBLING_DAO]: (
         <IconSpinner className="h-3 w-3 animate-spin xl:h-4 xl:w-4" />
       ),
-      [DaoCreationState.DAO_READY]: <IconCheckmark />,
+      [DaoCreationState.DAO_READY]: <Icon icon={IconType.CHECKMARK} />,
       [DaoCreationState.OPEN_DAO]: undefined,
     };
 

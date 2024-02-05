@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {shortenAddress, IconChevronRight, AvatarDao} from '@aragon/ods-old';
+import {shortenAddress, AvatarDao} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {useClient} from 'hooks/useClient';
 import {Client, DaoListItem} from '@aragon/sdk-client';
@@ -11,7 +12,6 @@ import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 import {useQueryClient} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from 'services/aragon-sdk/query-keys';
 import {SupportedNetworks} from 'utils/constants';
-
 /**
  * Type declarations for `ActionItemAddressProps`.
  */
@@ -104,7 +104,7 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
           </Activity> */}
         </div>
       </div>
-      <IconChevronRight />
+      <Icon icon={IconType.CHEVRON_RIGHT} />
     </a>
   );
 };

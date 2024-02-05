@@ -1,6 +1,7 @@
-import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods-old';
-import {useWallet} from 'hooks/useWallet';
 import React from 'react';
+import {ButtonIcon, ButtonText} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+import {useWallet} from 'hooks/useWallet';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -47,7 +48,7 @@ export const LoginRequired: React.FC<ILoginRequiredProps> = props => {
         {isDesktop && (
           <ButtonIcon
             mode="ghost"
-            icon={<IconClose />}
+            icon={<Icon icon={IconType.CLOSE} />}
             size="small"
             onClick={() => onClose()}
           />

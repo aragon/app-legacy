@@ -1,10 +1,6 @@
-import {
-  ButtonText,
-  IconChevronRight,
-  IconCommunity,
-  ListItemHeader,
-} from '@aragon/ods-old';
 import React from 'react';
+import {ButtonText, ListItemHeader} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -82,7 +78,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
       <div className="flex space-x-6">
         <div className="w-1/3">
           <ListItemHeader
-            icon={<IconCommunity />}
+            icon={<Icon icon={IconType.APP_COMMUNITY} />}
             value={`${totalMemberCount} ${t('labels.members')}`}
             label={
               walletBased
@@ -109,7 +105,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
           <ButtonText
             mode="secondary"
             size="large"
-            iconRight={<IconChevronRight />}
+            iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
             label={t('labels.seeAll')}
             onClick={() =>
               navigate(generatePath(Community, {network, dao: daoAddressOrEns}))
@@ -123,7 +119,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
   return (
     <VerticalContainer>
       <ListItemHeader
-        icon={<IconCommunity />}
+        icon={<Icon icon={IconType.APP_COMMUNITY} />}
         value={`${totalMemberCount} ${t('labels.members')}`}
         label={
           walletBased
@@ -150,7 +146,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
       <ButtonText
         mode="secondary"
         size="large"
-        iconRight={<IconChevronRight />}
+        iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
         label={t('labels.seeAll')}
         onClick={() =>
           navigate(generatePath(Community, {network, dao: daoAddressOrEns}))

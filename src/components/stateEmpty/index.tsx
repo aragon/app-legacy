@@ -21,6 +21,7 @@ type BaseProps = {
   renderHtml?: boolean;
   actionsColumn?: boolean;
   customCardPaddingClassName?: string;
+  contentWrapperClassName?: string;
 };
 
 type StateEmptyProps =
@@ -52,12 +53,12 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
       <div className="flex">
         <RenderIllustration {...props} />
       </div>
-      <ContentWrapper>
+      <ContentWrapper className={props.contentWrapperClassName}>
         <TextWrapper>
           <Title>{props.title}</Title>
           {props.renderHtml ? (
             <Description
-              dangerouslySetInnerHTML={{__html: props.description || ''}}
+              dangerouslySetInnerHTML={{__html: props.description ?? ''}}
             />
           ) : (
             props.description && <Description>{props.description}</Description>
@@ -137,7 +138,7 @@ const Card = styled.div.attrs<
 
   if (mode === 'card') {
     className += 'border border-neutral-100 bg-neutral-0 ';
-    className += `${customCardPaddingClassName || 'p-6 md:p-12'} `;
+    className += `${customCardPaddingClassName ?? 'p-6 md:p-12'} `;
 
     if (type === 'Object') className += 'gap-y-2 ';
   }

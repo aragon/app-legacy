@@ -1,11 +1,6 @@
-import {
-  AlertCard,
-  ButtonIcon,
-  ButtonText,
-  IconChevronLeft,
-  InputValue,
-} from '@aragon/ods-old';
 import React, {useCallback, useMemo, useState} from 'react';
+import {AlertCard, ButtonIcon, ButtonText, InputValue} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -103,7 +98,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             <ButtonIcon
               mode="secondary"
               size="small"
-              icon={<IconChevronLeft />}
+              icon={<Icon icon={IconType.CHEVRON_LEFT} />}
               onClick={() => {
                 setStep(0);
                 resetField('mintTokensToTreasury');

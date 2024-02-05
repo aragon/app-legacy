@@ -1,14 +1,15 @@
+import React, {useCallback, useMemo, FC} from 'react';
+
 import {
   AlertInline,
   ButtonText,
   CheckboxListItem,
-  IconReload,
   Label,
   LinearProgress,
   Spinner,
   ValueInput,
 } from '@aragon/ods-old';
-import React, {useCallback, useMemo, FC} from 'react';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -368,7 +369,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       isTokenApproveLoading ? (
                         <Spinner size="xs" color="white" />
                       ) : isTokenApproveError ? (
-                        <IconReload />
+                        <Icon icon={IconType.RELOAD} />
                       ) : undefined
                     }
                     size="large"
@@ -388,7 +389,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       isTokenWrapLoading ? (
                         <Spinner size="xs" color="white" />
                       ) : isTokenWrapError ? (
-                        <IconReload />
+                        <Icon icon={IconType.RELOAD} />
                       ) : undefined
                     }
                     size="large"
@@ -411,7 +412,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       isTokenUnwrapLoading ? (
                         <Spinner size="xs" color="white" />
                       ) : isTokenUnwrapError ? (
-                        <IconReload />
+                        <Icon icon={IconType.RELOAD} />
                       ) : undefined
                     }
                     size="large"

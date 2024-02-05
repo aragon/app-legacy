@@ -102,7 +102,8 @@ export const SelectEligibility = () => {
           name="eligibilityTokenAmount"
           control={control}
           rules={{
-            validate: value => eligibilityValidator(value),
+            validate: value =>
+              anyoneIsEligible ? true : eligibilityValidator(value),
           }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <OptionsContainers>

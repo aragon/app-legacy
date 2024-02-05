@@ -1,17 +1,13 @@
 import React, {useMemo} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
+import {Icon, IconType} from '@aragon/ods';
+import {AlertInline, ButtonText} from '@aragon/ods-old';
 
 import {CHAIN_METADATA} from 'utils/constants';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useNetwork} from 'context/network';
 import {formatUnits} from 'utils/library';
-import {
-  AlertInline,
-  ButtonText,
-  IconChevronRight,
-  IconReload,
-} from '@aragon/ods-old';
 import {StepsMap, StepStatus} from '../hooks/useFunctionStepper';
 import {
   StepperModalProgress,
@@ -174,12 +170,14 @@ const StepperModal = <TStepKey extends string>({
               className="mt-3 w-full"
               label={buttonLabels[globalState]!}
               iconLeft={
-                globalState === StepStatus.ERROR ? <IconReload /> : undefined
+                globalState === StepStatus.ERROR ? (
+                  <Icon icon={IconType.RELOAD} />
+                ) : undefined
               }
               iconRight={
                 globalState === StepStatus.WAITING ||
                 globalState === StepStatus.SUCCESS ? (
-                  <IconChevronRight />
+                  <Icon icon={IconType.CHEVRON_RIGHT} />
                 ) : undefined
               }
               disabled={gasEstimationError !== undefined}

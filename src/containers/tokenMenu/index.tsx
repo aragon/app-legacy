@@ -1,6 +1,7 @@
-import {AssetBalance} from '@aragon/sdk-client';
-import {ButtonText, IconAdd, IconStorage, SearchInput} from '@aragon/ods-old';
 import React, {useCallback, useState} from 'react';
+import {AssetBalance} from '@aragon/sdk-client';
+import {ButtonText, IconStorage, SearchInput} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -87,7 +88,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
         <>
           <NoTokenContainer>
             <IconWrapper>
-              <IconStorage height={24} width={24} />
+              <IconStorage size="lg" />
             </IconWrapper>
             <TokenTitle>{t('TokenModal.tokenNotAvailable')}</TokenTitle>
             <TokenDescription>
@@ -158,7 +159,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
           mode="secondary"
           size="large"
           label="Add Custom Token"
-          iconLeft={<IconAdd />}
+          iconLeft={<Icon icon={IconType.ADD} />}
           onClick={() => {
             onTokenSelect({...customToken, symbol: searchValue});
             close();

@@ -1,11 +1,7 @@
-import {
-  AlertInline,
-  ButtonText,
-  IconGovernance,
-  ListItemAction,
-} from '@aragon/ods-old';
-import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useMemo} from 'react';
+import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
+import {AlertInline, ButtonText, ListItemAction} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -347,7 +343,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
               <ButtonText
                 className="w-full md:w-max"
                 label={t('settings.reviewProposal')}
-                iconLeft={<IconGovernance />}
+                iconLeft={<Icon icon={IconType.APP_GOVERNANCE} />}
                 size="large"
                 disabled={settingsUnchanged || !isValid}
                 onClick={() =>
