@@ -1,5 +1,11 @@
 import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
-import React, {PropsWithChildren, useEffect, useMemo, useState} from 'react';
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {useTranslation} from 'react-i18next';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
@@ -22,6 +28,7 @@ import {
 } from '../../utils/committeeVoting';
 import {PluginTypes} from '../../hooks/usePluginClient';
 import {VotingTerminalAccordionItem} from './accordionItem';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 
 type GaslessExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
@@ -36,6 +43,7 @@ type GaslessVotingTerminalProps = {
     wasNotLoggedIn: boolean;
     wasOnWrongNetwork: boolean;
   }>;
+  connectedToRightNetwork: boolean;
   pluginType: PluginTypes;
 } & GaslessExecutionWidgetProps &
   PropsWithChildren;
@@ -47,6 +55,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   statusRef,
   actions,
   onExecuteClicked,
+  connectedToRightNetwork,
   pluginType,
   children,
 }) => {
@@ -127,58 +136,37 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     t,
   ]);
 
-  // vote button state and handler
-  // todo(kon): Should be refactored to use the same logic as the proposal page (using stateRef)
-  const {voteNowDisabled, onClick} = useMemo(() => {
-    // disable voting on non-active proposals or when wallet has voted or can't vote
-    if (!isApprovalPeriod || !canApprove || isUserApproved) {
-      return {voteNowDisabled: true};
-    }
+  const voteNowDisabled =
+    // can only vote on active proposals
+    proposal?.status !== ProposalStatus.ACTIVE ||
+    // when disconnected or on wrong network,
+    // login and network modals should be shown respectively
+    (connectedToRightNetwork && !canApprove);
 
-    // not logged in
-    if (!address) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('wallet');
-          statusRef.current.wasNotLoggedIn = true;
-        },
-      };
-    }
-
-    // wrong network
-    else if (isOnWrongNetwork) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('network');
-          statusRef.current.wasOnWrongNetwork = true;
-        },
-      };
-    }
-
-    // member, not yet voted
-    else if (canApprove) {
-      return {
-        voteNowDisabled: false,
-        onClick: (tryExecution: boolean) => {
-          handleExecutionMultisigApprove({
-            proposalId: proposal.id,
-            tryExecution,
-          });
-        },
-      };
-    } else return {voteNowDisabled: true};
-  }, [
-    isApprovalPeriod,
-    canApprove,
-    isUserApproved,
-    address,
-    isOnWrongNetwork,
-    statusRef,
-    handleExecutionMultisigApprove,
-    proposal.id,
-  ]);
+  const handleApprovalClick = useCallback(
+    (tryExecution: boolean) => {
+      if (address == null) {
+        open('wallet');
+        statusRef.current.wasNotLoggedIn = true;
+      } else if (isOnWrongNetwork) {
+        open('network');
+        statusRef.current.wasOnWrongNetwork = true;
+      } else if (canApprove) {
+        handleExecutionMultisigApprove({
+          proposalId: proposal.id,
+          tryExecution,
+        });
+      }
+    },
+    [
+      address,
+      canApprove,
+      handleExecutionMultisigApprove,
+      isOnWrongNetwork,
+      proposal.id,
+      statusRef,
+    ]
+  );
 
   /**
    * It sets the approval status label.
@@ -225,7 +213,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
         selectedTab={terminalTab}
         alertMessage={alertMessage}
         onTabSelected={setTerminalTab}
-        onApprovalClicked={onClick}
+        onApprovalClicked={handleApprovalClick}
         voteButtonLabel={buttonLabel}
         voteNowDisabled={voteNowDisabled}
         executableWithNextApproval={executableWithNextApproval}

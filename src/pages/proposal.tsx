@@ -864,6 +864,7 @@ export const Proposal: React.FC = () => {
               statusRef={statusRef}
               onExecuteClicked={handleExecuteNowClicked}
               actions={decodedActions}
+              connectedToRightNetwork={connectedToRightNetwork}
               pluginType={pluginType}
             >
               <VTerminal />
