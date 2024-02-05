@@ -361,7 +361,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         case 'plugin_update': {
           const pluginUpdateActions =
             client.encoding.applyUpdateAndPermissionsActionBlock(
-              daoDetails.address as string,
+              daoDetails.address,
               {
                 ...action.inputs,
               }
@@ -387,7 +387,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
               const logoCID = await client.ipfs.add(
                 new Uint8Array(daoLogoBuffer)
               );
-              await client.ipfs.pin(logoCID!);
+              await client.ipfs.pin(logoCID);
               preparedAction.inputs.avatar = `ipfs://${logoCID}`;
             } catch (e) {
               preparedAction.inputs.avatar = undefined;
