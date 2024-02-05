@@ -186,7 +186,7 @@ class TokenService {
     const {nativeCurrency} = CHAIN_METADATA[network];
 
     const {tokensBalances: data} = await request(
-      aragonGateway.backendUrl,
+      `${import.meta.env.VITE_BACKEND_URL}/graphql`,
       this.tokenBalanceQueryDocument,
       {
         network: supportedNetworksToBackendMap[network],

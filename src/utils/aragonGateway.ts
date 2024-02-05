@@ -1,3 +1,4 @@
+/*
 import {
   LIVE_CONTRACTS,
   SupportedVersion,
@@ -73,3 +74,4 @@ class AragonGateway {
 }
 
 export const aragonGateway = new AragonGateway();
+*/
