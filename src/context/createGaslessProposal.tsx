@@ -2,6 +2,7 @@ import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
+  VoteValues,
 } from '@aragon/sdk-client';
 import {ProposalMetadata} from '@aragon/sdk-client-common';
 import {useCallback, useState} from 'react';
@@ -18,14 +19,13 @@ import {
   ErrNotFoundToken,
   ErrFaucetAlreadyFunded,
 } from '@vocdoni/sdk';
-import {VoteValues} from '@aragon/sdk-client';
 import {useClient} from '@vocdoni/react-providers';
 import {
   StepsMap,
   StepStatus,
   useFunctionStepper,
-} from '../hooks/useFunctionStepper';
-import {useCensus3Client, useCensus3CreateToken} from '../hooks/useCensus3';
+} from 'hooks/useFunctionStepper';
+import {useCensus3Client, useCensus3CreateToken} from 'hooks/useCensus3';
 
 export enum GaslessProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',

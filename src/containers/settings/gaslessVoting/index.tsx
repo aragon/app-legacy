@@ -14,12 +14,12 @@ import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings
 import {IPluginSettings} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
-import {useGlobalModalContext} from '../../../context/globalModals';
-import ModalBottomSheetSwitcher from '../../../components/modalBottomSheetSwitcher';
-import {FilteredAddressList} from '../../../components/filteredAddressList';
-import {MultisigWalletField} from '../../../components/multisigWallets/row';
-import {CHAIN_METADATA} from '../../../utils/constants';
-import {useNetwork} from '../../../context/network';
+import {useGlobalModalContext} from 'context/globalModals';
+import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
+import {FilteredAddressList} from 'components/filteredAddressList';
+import {MultisigWalletField} from 'components/multisigWallets/row';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
