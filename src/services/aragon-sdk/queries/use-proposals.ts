@@ -23,6 +23,11 @@ import {GaslessVotingProposalListItem} from '@vocdoni/gasless-voting';
 
 export const PROPOSALS_PER_PAGE = 6;
 
+type FetchProposalsResponseTypes =
+  | Array<MultisigProposalListItem>
+  | Array<TokenVotingProposalListItem>
+  | Array<GaslessVotingProposalListItem>;
+
 const DEFAULT_PARAMS = {
   limit: PROPOSALS_PER_PAGE,
   skip: 0,
@@ -33,11 +38,7 @@ const DEFAULT_PARAMS = {
 async function fetchProposals(
   params: IFetchProposalsParams,
   client: PluginClient | undefined
-): Promise<
-  | Array<MultisigProposalListItem>
-  | Array<TokenVotingProposalListItem>
-  | Array<GaslessVotingProposalListItem>
-> {
+): Promise<FetchProposalsResponseTypes> {
   invariant(!!client, 'fetchProposalsAsync: client is not defined');
   const data = await client.methods.getProposals(params);
   return data;
@@ -45,11 +46,7 @@ async function fetchProposals(
 
 export const useProposals = (
   userParams: Partial<IFetchProposalsParams> & {pluginAddress: string},
-  options: UseInfiniteQueryOptions<
-    | Array<MultisigProposalListItem>
-    | Array<TokenVotingProposalListItem>
-    | Array<GaslessVotingProposalListItem>
-  > = {}
+  options: UseInfiniteQueryOptions<FetchProposalsResponseTypes> = {}
 ) => {
   const params = {...DEFAULT_PARAMS, ...userParams};
   const client = usePluginClient(params.pluginType);
@@ -73,13 +70,8 @@ export const useProposals = (
       aragonSdkQueryKeys.localProposals(params.status)
     ) ?? new Set();
 
-  const defaultSelect = (
-    data: InfiniteData<
-      | Array<MultisigProposalListItem>
-      | Array<TokenVotingProposalListItem>
-      | Array<GaslessVotingProposalListItem>
-    >
-  ) => transformInfiniteProposals(chainId, data);
+  const defaultSelect = (data: InfiniteData<FetchProposalsResponseTypes>) =>
+    transformInfiniteProposals(chainId, data);
 
   return useInfiniteQuery({
     ...options,
@@ -127,10 +119,7 @@ export const useProposals = (
       return [...finalStoredProposals, ...serverProposals].slice(
         0,
         params.limit
-      ) as
-        | Array<MultisigProposalListItem>
-        | Array<TokenVotingProposalListItem>
-        | Array<GaslessVotingProposalListItem>;
+      ) as FetchProposalsResponseTypes;
     },
 
     // If the length of the last page is equal to the limit from params,
