@@ -97,9 +97,9 @@ export const ReviewExecutionMultisig: React.FC<
       <Dl>
         <Dt>{t('labels.minimumApproval')}</Dt>
         <Dd>
-          {committeeMinimumApproval}&nbsp;
           {t('labels.review.multisigMinimumApprovals', {
-            count: committee?.length || 0,
+            count: committeeMinimumApproval,
+            total: committee?.length || 0,
           })}
         </Dd>
       </Dl>
