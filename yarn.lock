@@ -84,26 +84,19 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx-ethers@^1.3.0-rc0.4":
-  version "1.3.0-rc0.4"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.4.tgz#878af071e454ef068801104deae8439f0f8f1720"
-  integrity sha512-FDuF6LC1OLnjFK4C8+P4Wf0sORrrUQ/JtUAxL5ABVtBD8JpyyhtdWGDiv/yWIooLyC2l8aqbDLPuiYWhw1DjEQ==
-  dependencies:
-    ethers "^5.6.2"
-
-"@aragon/osx-ethers@^1.3.1":
+"@aragon/osx-ethers@^1.3.0", "@aragon/osx-ethers@^1.3.1":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.1.tgz#d72decea14cc5c11c55ad6654e97b3380429c1c9"
   integrity sha512-6APDAasHrIVmJ0SxUSmWCxusVe46OF3eGZGp8MVD3j4BDJjJ+FIrrjN9ePkTpPja3X8GL6PD00l1WIzW2GZQMQ==
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/sdk-client-common@1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.10.0.tgz#603b4e4d8a5079283ba1fb08ef22de6d13b51f1b"
-  integrity sha512-nWkTPA1Tzk2ULcf0lGbwyalZJkhKUnYN4cd4xQiwnEwvy6traYaw9HRB2sNUlEFgPrLIKIkgjGS9diZjXXW0xQ==
+"@aragon/sdk-client-common@1.13.0":
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.13.0.tgz#3006d14b4b3faab29c5b7430a40759de9b7de96b"
+  integrity sha512-E5GZazXSX0LCVgx4KundbTmdyqhHI2IFEhEd/F0ACYGQwgvjAe073ADAb4WqVlVAVVnOHoU/T6KkgliFRN/Vmw==
   dependencies:
-    "@aragon/osx-ethers" "^1.3.0-rc0.4"
+    "@aragon/osx-ethers" "^1.3.0"
     "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
@@ -116,7 +109,7 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client-common@^1.14.1":
+"@aragon/sdk-client-common@^1.13.0", "@aragon/sdk-client-common@^1.14.1":
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.14.1.tgz#75f2b8341170c98ef8b83a8a6f9cad1ea9d96db8"
   integrity sha512-ySJ6Mgr/7/LzIzyLpWi/1RODPiHsgz5EhQyBi3u3GGJ2mcZIRPlturcDjjGnv8mO1hqNWEdjPuuX95RWnW/kKQ==
@@ -130,6 +123,26 @@
     "@ethersproject/contracts" "^5.5.0"
     "@ethersproject/providers" "^5.5.0"
     "@ethersproject/wallet" "^5.6.0"
+    graphql "^16.5.0"
+    graphql-request "^4.3.0"
+    yup "^1.2.0"
+
+"@aragon/sdk-client@1.21.1":
+  version "1.21.1"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.21.1.tgz#c8d72bca42b95a8205173cf899e2d50ca92e19b8"
+  integrity sha512-frPpT07knwua2VCjzNYPo+dtQfYeG+k5i3HMpk4pK8N5pEweCaeJPLoc4+AZVPPw8LxNdnmkxsKqi7rtUdJN/A==
+  dependencies:
+    "@aragon/osx-ethers" "1.3.0"
+    "@aragon/sdk-client-common" "^1.13.0"
+    "@aragon/sdk-ipfs" "^1.1.0"
+    "@ethersproject/abstract-signer" "^5.5.0"
+    "@ethersproject/bignumber" "^5.6.0"
+    "@ethersproject/constants" "^5.6.0"
+    "@ethersproject/contracts" "^5.5.0"
+    "@ethersproject/providers" "^5.5.0"
+    "@ethersproject/wallet" "^5.6.0"
+    "@openzeppelin/contracts" "^4.8.1"
+    "@openzeppelin/contracts-upgradeable" "^4.8.1"
     graphql "^16.5.0"
     graphql-request "^4.3.0"
     yup "^1.2.0"
@@ -4690,13 +4703,21 @@
   dependencies:
     ethers "^5.6.2"
 
-"@vocdoni/gasless-voting@0.0.1-rc2":
+"@vocdoni/gasless-voting-ethers@0.0.1-rc2":
   version "0.0.1-rc2"
-  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc2.tgz#77301d029d74f78ad1b12a21a4d69176e35db646"
-  integrity sha512-4RN+yIvo9ki2Qx7v3XXlQ3cxZt13ilnZOpPj9BCGjwtcQUAS2UvNvX2+kOYk7grjLzG2pEwdszq+j9QLzvpcEQ==
+  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting-ethers/-/gasless-voting-ethers-0.0.1-rc2.tgz#ce2d3f0457f2504df0f38fa2cb82c555d58512f2"
+  integrity sha512-n9MpaUwpKyykwaZnMPsm6B298AsCdSGdn8T7PTHMDVesBkKtX9z3/nDcmWyZAgk+bm8odSm0Xze6or4epb0JqA==
+  dependencies:
+    ethers "^5.6.2"
+
+"@vocdoni/gasless-voting@^0.0.1-rc18":
+  version "0.0.1-rc21"
+  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc21.tgz#244e18580bb082e43750b3c85425663b217fcc99"
+  integrity sha512-vyvrLeHdZ+hSkMd5bh40Fk40NoDyf4JdDetXuQ43rgGHxLonom9kr7XR3Kdoju1cLqOrnMvhOwI1xDWuWjZLdg==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0.3"
-    "@aragon/sdk-client-common" "1.10.0"
+    "@aragon/sdk-client" "1.21.1"
+    "@aragon/sdk-client-common" "1.13.0"
     "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/bignumber" "^5.7.0"
     "@ethersproject/constants" "^5.7.0"
@@ -4704,8 +4725,8 @@
     "@ethersproject/providers" "^5.7.2"
     "@ethersproject/wallet" "^5.7.0"
     "@types/big.js" "^6.1.5"
-    "@vocdoni/gasless-voting-ethers" "0.0.1-rc1"
-    "@vocdoni/sdk" "0.5.0"
+    "@vocdoni/gasless-voting-ethers" "0.0.1-rc2"
+    "@vocdoni/sdk" "0.7.1"
     axios "0.27.2"
     graphql "^16.6.0"
     graphql-request "4.3.0"
@@ -4718,17 +4739,15 @@
     long "^5.2.1"
     protobufjs "^7.1.2"
 
-"@vocdoni/react-providers@0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@vocdoni/react-providers/-/react-providers-0.1.14.tgz#abecb2cb439481b1504a88db33ad62921978ea8f"
-  integrity sha512-r14l9BJ16FgAcJ+42g8kYmVoQ4r/iyoCYUjLL1pWjLnZBSlJ1OZEgliDFUvS2SlqlV8Ij+l/6+jhmx0jjRM5aQ==
-  dependencies:
-    "@vocdoni/sdk" "^0.4.2"
+"@vocdoni/react-providers@0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@vocdoni/react-providers/-/react-providers-0.3.1.tgz#c4e4416926871d4f1ead7b022ffd1592b298115a"
+  integrity sha512-Q7Op4wf4Ig/Mf5ceDDxmyHShEhVuioQShW9GOwAcsIiUl7ijeuAuO89uLq6u/PlVuwGJkppHG07O5oUNlxe6UQ==
 
-"@vocdoni/sdk@0.5.0", "@vocdoni/sdk@^0.4.2":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.5.0.tgz#34084e796bb744c68c17e107f80cdf30b9b316e4"
-  integrity sha512-7MobpmGeCyMyywj8UdpwHdJTE/z28m6jENgwe7UHIYYsaTqzSyWV8Zq/RisRA5vD2jgQbXTVmhzzzV0LXBDwuQ==
+"@vocdoni/sdk@0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.7.1.tgz#99504b04222c521a65e5bd352bfc04379fb5b568"
+  integrity sha512-qgHZoFsaJBkwWsrJeu1EZM5iMqqB2DlvQKjtncwAR8PZK/7ueVvavBMoig1Zx5REBhEhY1MKWs1d253lMHjIpw==
   dependencies:
     "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/address" "^5.7.0"
@@ -4736,7 +4755,6 @@
     "@ethersproject/bytes" "^5.7.0"
     "@ethersproject/keccak256" "^5.7.0"
     "@ethersproject/providers" "^5.7.1"
-    "@ethersproject/sha2" "^5.7.0"
     "@ethersproject/signing-key" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
     "@ethersproject/units" "^5.7.0"
@@ -4746,6 +4764,7 @@
     axios "0.27.2"
     blake2b "^2.1.4"
     iso-language-codes "^1.1.0"
+    js-sha256 "^0.10.1"
     readable-stream "^4.4.2"
     tiny-invariant "^1.3.1"
     tweetnacl "^1.0.3"
@@ -12580,6 +12599,11 @@ js-levenshtein@^1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/js-levenshtein/-/js-levenshtein-1.1.6.tgz#c6cee58eb3550372df8deb85fad5ce66ce01d59d"
   integrity sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==
+
+js-sha256@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.10.1.tgz#b40104ba1368e823fdd5f41b66b104b15a0da60d"
+  integrity sha512-5obBtsz9301ULlsgggLg542s/jqtddfOpV5KJc4hajc9JV8GeY2gZHSVpYBn4nWqAUTJ9v+xwtbJ1mIBgIH5Vw==
 
 js-sha3@0.5.7, js-sha3@^0.5.7:
   version "0.5.7"
