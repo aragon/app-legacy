@@ -1,25 +1,26 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useGlobalModalContext} from 'context/globalModals';
 import {useForm, useWatch, Controller} from 'react-hook-form';
 import {saveAs} from 'file-saver';
 
-import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {
   AlertInline,
   ButtonText,
   DateInput,
-  IconReload,
   Label,
   Spinner,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+import {DaoDetails} from '@aragon/sdk-client';
+
 import {getCanonicalDate} from 'utils/date';
 import {StateEmpty} from 'components/stateEmpty';
 import {Transfer, Deposit, Withdraw} from 'utils/types';
 import {TransferTypes} from 'utils/constants';
-import {DaoDetails} from '@aragon/sdk-client';
 import {toDisplayEns} from 'utils/library';
+import {useGlobalModalContext} from 'context/globalModals';
+import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 
 interface ExportCsvModalProps {
   transfers: Transfer[];
@@ -271,7 +272,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                     isCsvGenerationLoading ? (
                       <Spinner size="xs" color="white" />
                     ) : (
-                      <IconReload />
+                      <Icon icon={IconType.RELOAD} />
                     )
                   }
                   size="large"

@@ -225,7 +225,7 @@ export const DelegateVotingMenu: React.FC = () => {
       !isOnWrongNetwork &&
       tokenBalance?.value === 0n
     ) {
-      open('gating');
+      open('cannotDelegate');
     }
   }, [
     isConnected,

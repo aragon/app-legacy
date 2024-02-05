@@ -1,12 +1,8 @@
-import {
-  ButtonIcon,
-  ButtonText,
-  CheckboxListItem,
-  IconChevronLeft,
-} from '@aragon/ods-old';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import React, {useState} from 'react';
+import {ButtonIcon, ButtonText, CheckboxListItem} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 export type CookiesType = {
   analytics: boolean;
@@ -32,7 +28,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
           <ButtonIcon
             mode="secondary"
             size="small"
-            icon={<IconChevronLeft />}
+            icon={<Icon icon={IconType.CHEVRON_LEFT} />}
             onClick={props.onClose}
             bgWhite
           />

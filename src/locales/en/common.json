@@ -245,7 +245,9 @@
     "mintableByDao": "Mintable by DAO",
     "basescan": "BaseScan",
     "Arbiscan": "Arbiscan",
-    "polygonscan": "Polygonscan"
+    "polygonscan": "Polygonscan",
+    "updateExecutionMultisigAction": "Update Execution Multisig",
+    "updateExecutionMultisigActionDescription": "Change addresses that can participate in the multisig"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -487,6 +489,8 @@
     "gatingUsers": {
       "tokenTitle": "You can’t create a proposal",
       "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
+      "cannotDelegateTitle": "You can’t delegate",
+      "cannotDelegateDescription": "You don’t have the required token balance. Delegating in {{daoName}} requires holding {{tokenName}}.",
       "walletTitle": "You can’t create a proposal",
       "walletDescription": "You are not a member. Creating proposals in {{daoName}} can only be done by addresses that have been added to its member list.",
       "buttonLabel": "Ok, understood"
@@ -1064,11 +1068,13 @@
           "polygon": "Polygon",
           "tokenVoting": "Token-based",
           "ethereum": "Ethereum",
-          "ethereumGoerli": "Ethereum Goerli",
           "baseGoerli": "Base Goerli",
           "polygonMumbai": "Polygon Mumbai",
           "member": "Wallet-based",
-          "governanceType": "Governance type"
+          "governanceType": "Governance type",
+          "arbitrumGoerli": "Arbitrum Goerli",
+          "arbitrum": "Arbitrum",
+          "ethereumSepolia": "Ethereum Sepolia"
         },
         "ctaLabel": {
           "see0": "See 0 DAOs",
@@ -1097,7 +1103,7 @@
     "sortBy": {
       "largestTreasury": "Sort by largest treasury",
       "mostProposals": "Sort by most proposals",
-      "largestCommunity": "Sort by largest community",
+      "largestCommunity": "Sort by most members",
       "recentlyCreated": "Sort by recently created"
     }
   },

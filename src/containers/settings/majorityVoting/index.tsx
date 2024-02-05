@@ -1,8 +1,9 @@
-import {IconLinkExternal, Link, Tag} from '@aragon/ods-old';
-import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import React from 'react';
+import {Link, Tag} from '@aragon/ods-old';
+import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
+import {Icon, IconType} from '@aragon/ods';
 
 import {Loading} from 'components/temporary';
 import {
@@ -108,7 +109,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             <div className="flex flex-1 flex-wrap items-start justify-between gap-y-2">
               <Link
                 label={`${daoToken.name} ${daoToken.symbol}`}
-                iconRight={<IconLinkExternal />}
+                iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
                 href={daoTokenBlockUrl}
                 description={shortenAddress(daoToken.address)}
                 className="shrink-0"
@@ -128,7 +129,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
                 value: daoMembers.memberCount,
               })}
               description={t('settings.community.distributionHelptext')}
-              iconRight={<IconLinkExternal />}
+              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
               onClick={() =>
                 navigate(
                   generatePath(Community, {network, dao: daoDetails.address})

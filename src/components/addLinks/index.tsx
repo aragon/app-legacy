@@ -1,4 +1,4 @@
-import {ButtonText, IconAdd} from '@aragon/ods-old';
+import {ButtonText} from '@aragon/ods-old';
 import {useAlertContext} from 'context/alert';
 import React from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import Header from './header';
 import Row from './row';
+import {Icon, IconType} from '@aragon/ods';
 
 export type AddLinks = {
   /** Name of the fieldArray that is the target of the link inputs. Defaults to
@@ -66,7 +67,7 @@ const AddLinks: React.FC<AddLinks> = ({
         mode={bgWhite ? 'ghost' : 'secondary'}
         size="large"
         onClick={handleAddLink}
-        {...(buttonPlusIcon ? {iconLeft: <IconAdd />} : {})}
+        {...(buttonPlusIcon ? {iconLeft: <Icon icon={IconType.ADD} />} : {})}
       />
     </Container>
   );

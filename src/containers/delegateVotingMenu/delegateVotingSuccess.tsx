@@ -1,10 +1,11 @@
 import {
   ButtonText,
-  IconLinkExternal,
   IllustrationHuman,
   InputValue,
   shortenAddress,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -100,7 +101,7 @@ export const DelegateVotingSuccess: React.FC<
           label={t('modal.delegation.successBtnSecondaryLabel')}
           mode="secondary"
           size="large"
-          iconRight={<IconLinkExternal />}
+          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
           onClick={handleTransactionClick}
         />
       </FormGroup>

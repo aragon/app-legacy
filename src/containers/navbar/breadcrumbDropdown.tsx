@@ -1,6 +1,7 @@
-import {ButtonIcon, Dropdown, IconClose, IconMenu} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import styled from 'styled-components';
+import {ButtonIcon, Dropdown} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 import NavLink from 'components/navLink';
 import {NAV_LINKS_DATA} from 'utils/constants';
@@ -17,7 +18,13 @@ export const NavlinksDropdown: React.FC = () => {
         <ButtonIcon
           mode="secondary"
           size="large"
-          icon={showCrumbMenu ? <IconClose /> : <IconMenu />}
+          icon={
+            showCrumbMenu ? (
+              <Icon icon={IconType.CLOSE} />
+            ) : (
+              <Icon icon={IconType.MENU_DEFAULT} />
+            )
+          }
           isActive={showCrumbMenu}
         />
       }

@@ -2,9 +2,9 @@ import {
   ButtonIcon,
   ButtonText,
   Dropdown,
-  IconMenuVertical,
   ListItemAction,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -115,7 +115,7 @@ const AddWallets: React.FC = () => {
               mode="ghost"
               size="large"
               bgWhite
-              icon={<IconMenuVertical />}
+              icon={<Icon icon={IconType.MENU_VERTICAL} />}
               data-testid="trigger"
             />
           }

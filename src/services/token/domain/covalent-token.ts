@@ -1,27 +1,14 @@
-export type CovalentBaseToken = {
-  contract_decimals: number;
-  contract_name: string;
-  contract_ticker_symbol: string;
-  contract_address: string;
-  logo_url: string;
+export type TokenItemType = {
+  balance: string;
+  contractAddress: string;
+  contractDecimals: number;
+  contractName: string;
+  contractTickerSymbol: string;
+  logoUrl: string;
+  nativeToken: boolean;
 };
 
-export type CovalentTokenBalance = {
+export type TokenBalanceResponse = {
   updated_at: string;
-  items: Array<
-    CovalentBaseToken & {
-      native_token: boolean;
-      nft_data: CovalentNFTData;
-
-      // this is BigInt value that needs to be adjusted using the
-      // decimals for human-friendly display
-      balance: string;
-    }
-  >;
-};
-
-// TODO: flesh this out when NFT support
-// has been added
-type CovalentNFTData = {
-  token_id: string;
+  items: Array<TokenItemType>;
 };

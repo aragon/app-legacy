@@ -1,7 +1,6 @@
 import {
   Breadcrumb,
   ButtonText,
-  IconAdd,
   IlluObject,
   IllustrationHuman,
   Tag,
@@ -10,6 +9,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
@@ -185,7 +185,7 @@ export const Finance: React.FC = () => {
                   <ButtonText
                     size="large"
                     label={t('TransferModal.newTransfer')}
-                    iconLeft={<IconAdd />}
+                    iconLeft={<Icon icon={IconType.ADD} />}
                     className="w-full md:w-auto"
                     onClick={() => {
                       trackEvent('finance_newTransferBtn_clicked', {
@@ -320,7 +320,7 @@ export const Finance: React.FC = () => {
               <ButtonText
                 size="large"
                 label={t('TransferModal.newTransfer')}
-                iconLeft={<IconAdd />}
+                iconLeft={<Icon icon={IconType.ADD} />}
                 className="w-full md:w-auto"
                 onClick={() => {
                   trackEvent('finance_newTransferBtn_clicked', {

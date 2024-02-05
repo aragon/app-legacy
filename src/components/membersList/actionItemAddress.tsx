@@ -7,8 +7,8 @@ import {
   Avatar,
   ButtonIcon,
   Tag,
-  IconChevronRight,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {DaoMember} from 'utils/paths';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {useNetwork} from 'context/network';
@@ -145,7 +145,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         {!useCompactMode && (
           <ButtonIcon
             mode="ghost"
-            icon={<IconChevronRight />}
+            icon={<Icon icon={IconType.CHEVRON_RIGHT} />}
             size="medium"
             bgWhite
             className="group-hover:text-primary-600"

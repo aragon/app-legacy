@@ -1,6 +1,7 @@
-import {ButtonIcon, IconChevronLeft, IconClose} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
+import {ButtonIcon} from '@aragon/ods-old';
 
 type Props = {
   title: string;
@@ -33,7 +34,7 @@ const ModalHeader: React.FC<Props> = props => {
           <ButtonIcon
             mode="secondary"
             size="small"
-            icon={<IconChevronLeft />}
+            icon={<Icon icon={IconType.CHEVRON_LEFT} />}
             onClick={onBackButtonClicked}
             bgWhite
             {...otherProps}
@@ -49,7 +50,7 @@ const ModalHeader: React.FC<Props> = props => {
           <ButtonIcon
             mode="secondary"
             size="small"
-            icon={<IconClose />}
+            icon={<Icon icon={IconType.CLOSE} />}
             onClick={onClose}
             bgWhite
             className="hidden xl:block"

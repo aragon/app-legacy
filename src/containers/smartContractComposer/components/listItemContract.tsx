@@ -1,11 +1,11 @@
+import React from 'react';
 import {
   Dropdown,
-  IconMenuVertical,
   ListItemAction,
   ListItemActionProps,
   ListItemProps,
 } from '@aragon/ods-old';
-import React from 'react';
+import {Icon, IconType} from '@aragon/ods';
 
 type Props = Omit<ListItemActionProps, 'iconLeft'> & {
   logo?: string;
@@ -24,7 +24,7 @@ export const ListItemContract: React.FC<Props> = ({
         align="start"
         trigger={
           <button>
-            <IconMenuVertical />
+            <Icon icon={IconType.MENU_VERTICAL} />
           </button>
         }
         sideOffset={8}

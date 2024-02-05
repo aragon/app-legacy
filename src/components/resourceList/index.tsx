@@ -1,10 +1,11 @@
-import {IconAdd, ListItemLink} from '@aragon/ods-old';
+import {ListItemLink} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {ProposalResource} from 'utils/types';
+import {Icon, IconType} from '@aragon/ods';
 
 type ResourceListProps = {
   links?: Array<ProposalResource>;
@@ -42,7 +43,7 @@ const ResourceList: React.FC<ResourceListProps> = ({
             ? {
                 label: t('labels.addResource'),
                 onClick: emptyStateButtonClick,
-                iconLeft: <IconAdd />,
+                iconLeft: <Icon icon={IconType.ADD} />,
               }
             : undefined
         }

@@ -1,6 +1,6 @@
-import {IconInfo} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
 
 import {GridLayout} from 'components/layout';
 import {StyledLink} from 'components/styledLink';
@@ -61,7 +61,7 @@ const Footer: React.FC = () => {
         </FullSpan>
       </GridLayout>
       <div className="z-10 flex items-center justify-center space-x-2 bg-primary-400 py-1 text-sm leading-normal text-neutral-0">
-        <IconInfo />
+        <Icon icon={IconType.INFO} />
         <span>Aragon App Public Beta</span>
       </div>
     </Section>

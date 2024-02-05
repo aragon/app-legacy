@@ -1,7 +1,8 @@
+import React from 'react';
 import {ListItemAction} from '@aragon/ods-old';
+import {Icon} from '@aragon/ods';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
-import React from 'react';
 import {
   generatePath,
   matchRoutes,
@@ -10,6 +11,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import styled from 'styled-components';
+
 import {NavLinkData} from 'utils/constants';
 
 type NavLinkProps = {
@@ -58,7 +60,7 @@ const NavLink = ({caller, data, onItemClick}: NavLinkProps) => {
       <ListItemAction
         bgWhite
         title={data.label}
-        iconLeft={<data.icon />}
+        iconLeft={<Icon icon={data.icon} />}
         onClick={handleOnClick}
         mode={matches ? 'selected' : 'default'}
       />
@@ -73,7 +75,7 @@ const NavLink = ({caller, data, onItemClick}: NavLinkProps) => {
     return (
       <ListItemAction
         title={data.label}
-        iconLeft={<data.icon />}
+        iconLeft={<Icon icon={data.icon} />}
         onClick={handleOnClick}
         mode={matches ? 'selected' : 'default'}
       />

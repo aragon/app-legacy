@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import {BreadcrumbData} from 'use-react-router-breadcrumbs';
-import {IconChevronRight} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 type Props = {
   breadcrumbs: BreadcrumbData[];
@@ -24,7 +24,7 @@ const Breadcrumbs: React.FC<Props> = ({breadcrumbs}) => {
             >
               {breadcrumb}
             </Link>
-            {!isLast && <IconChevronRight />}
+            {!isLast && <Icon icon={IconType.CHEVRON_RIGHT} />}
           </Breadcrumb>
         );
       })}

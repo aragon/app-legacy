@@ -82,7 +82,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 };
 
 const StyledContent = styled(DropdownMenu.Content).attrs({
-  className: 'bg-neutral-0 rounded-xl p-2 shadow-neutral-xl' as string,
+  className: 'bg-neutral-0 rounded-xl p-2 shadow-neutral-xl z-50' as string,
 })``;
 
 const StyledItem = styled(DropdownMenu.Item).attrs({

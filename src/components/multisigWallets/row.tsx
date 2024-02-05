@@ -1,11 +1,11 @@
+import React from 'react';
 import {
   ButtonIcon,
   Dropdown,
-  IconMenuVertical,
   InputValue,
   ListItemAction,
 } from '@aragon/ods-old';
-import React from 'react';
+import {Icon, IconType} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -101,7 +101,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                   bgWhite
                   size="large"
                   mode="secondary"
-                  icon={<IconMenuVertical />}
+                  icon={<Icon icon={IconType.MENU_VERTICAL} />}
                   data-testid="trigger"
                 />
               }

@@ -3,13 +3,10 @@ import * as Accordion from '@radix-ui/react-accordion';
 import {
   AlertInline,
   ButtonIcon,
-  IconChevronDown,
-  IconMenuVertical,
-  IconSuccess,
-  IconWarning,
   Dropdown,
   ListItemProps,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {shortenAddress} from 'utils/library';
 
@@ -78,7 +75,10 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
           <FlexContainer>
             <MethodName>{methodName}</MethodName>
             {smartContractName && (
-              <div
+              <a
+                href={blockExplorerLink}
+                target="_blank"
+                rel="noreferrer"
                 className={`flex items-center ${
                   verified ? 'text-primary-600' : 'text-warning-600'
                 }`}
@@ -88,18 +88,19 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                     {shortenAddress(smartContractAddress)}
                   </p>
                 )}
-                {verified ? <IconSuccess /> : <IconWarning />}
-                <a
-                  href={blockExplorerLink}
-                  target="_blank"
-                  rel="noreferrer"
+                {verified ? (
+                  <Icon icon={IconType.RADIO_CHECK} />
+                ) : (
+                  <Icon icon={IconType.WARNING} />
+                )}
+                <p
                   className={`ml-2 font-semibold ${
                     verified ? 'text-primary-500' : 'text-warning-500'
                   }`}
                 >
                   {smartContractName}
-                </a>
-              </div>
+                </p>
+              </a>
             )}
             {alertLabel && <AlertInline label={alertLabel} />}
           </FlexContainer>
@@ -115,7 +116,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                   <ButtonIcon
                     mode="ghost"
                     size="medium"
-                    icon={<IconMenuVertical />}
+                    icon={<Icon icon={IconType.MENU_VERTICAL} />}
                   />
                 }
               />
@@ -124,7 +125,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
               <AccordionButton
                 mode={type === 'action-builder' ? 'ghost' : 'secondary'}
                 size="medium"
-                icon={<IconChevronDown />}
+                icon={<Icon icon={IconType.CHEVRON_DOWN} />}
               />
             </Accordion.Trigger>
           </VStack>

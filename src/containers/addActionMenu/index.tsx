@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ListItemAction, IconChevronRight} from '@aragon/ods-old';
+import {ListItemAction} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 
 import {useGlobalModalContext} from 'context/globalModals';
 import {useActionsContext} from 'context/actions';
@@ -37,7 +38,7 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
                 ? 'disabled'
                 : 'default'
             }
-            iconRight={<IconChevronRight />}
+            iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
             onClick={() => {
               trackEvent('newProposal_action_selected', {
                 dao_address: daoAddressOrEns,

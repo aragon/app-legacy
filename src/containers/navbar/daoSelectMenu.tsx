@@ -1,11 +1,6 @@
-import {
-  ButtonIcon,
-  ButtonText,
-  IconChevronLeft,
-  IconLinkExternal,
-  ListItemDao,
-} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
+import {ButtonIcon, ButtonText, ListItemDao} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -59,7 +54,7 @@ const DaoSelectMenu: React.FC = () => {
             mode="secondary"
             size="small"
             bgWhite
-            icon={<IconChevronLeft />}
+            icon={<Icon icon={IconType.CHEVRON_LEFT} />}
             onClick={handleBackButtonClick}
           />
           <Title>{t('daoSwitcher.title')}</Title>
@@ -97,7 +92,7 @@ const DaoSelectMenu: React.FC = () => {
             mode="secondary"
             size="large"
             label={t('daoSwitcher.subtitle')}
-            iconLeft={<IconLinkExternal />}
+            iconLeft={<Icon icon={IconType.LINK_EXTERNAL} />}
             className="w-full"
             onClick={() => {
               navigate('/');

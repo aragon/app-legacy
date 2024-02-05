@@ -1,6 +1,7 @@
-import {AlertInline, IconChevronRight, ListItemAction} from '@aragon/ods-old';
-import {SessionTypes, SignClientTypes} from '@walletconnect/types';
 import React, {useMemo} from 'react';
+import {AlertInline, ListItemAction} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+import {SessionTypes, SignClientTypes} from '@walletconnect/types';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -104,7 +105,7 @@ const SelectWCApp: React.FC<Props> = props => {
                         <p>{t('modal.dappConnect.dAppConnectedLabel')}</p>
                       </div>
                     )}
-                    <IconChevronRight />
+                    <Icon icon={IconType.CHEVRON_RIGHT} />
                   </div>
                 }
                 truncateText

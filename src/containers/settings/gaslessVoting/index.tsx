@@ -111,7 +111,7 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         {/*      <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">*/}
         {/*        <Link*/}
         {/*          label={`${daoToken.name} ${daoToken.symbol}`}*/}
-        {/*          iconRight={<IconLinkExternal />}*/}
+        {/*          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />} */}
         {/*          href={daoTokenBlockUrl}*/}
         {/*          description={shortenAddress(daoToken.address)}*/}
         {/*          className="shrink-0"*/}
@@ -130,7 +130,7 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         {/*          value: daoMembers.memberCount,*/}
         {/*        })}*/}
         {/*        description={t('settings.community.distributionHelptext')}*/}
-        {/*        iconRight={<IconLinkExternal />}*/}
+        {/*        iconRight={icon={IconType.LINK_EXTERNAL} />}*/}
         {/*        onClick={() =>*/}
         {/*          navigate(*/}
         {/*            generatePath(Community, {network, dao: daoDetails.address})*/}

@@ -1,30 +1,23 @@
-import {
-  ButtonText,
-  IconCheckboxDefault,
-  IconCheckboxSelected,
-  IconLinkExternal,
-  IconRadioDefault,
-  IconRadioSelected,
-  Link,
-  Tag,
-} from '@aragon/ods-old';
+import React, {useEffect} from 'react';
+import {ButtonText, Link, Tag} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {Markdown} from 'tiptap-markdown';
-import React, {useEffect} from 'react';
 import styled from 'styled-components';
+
 import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
 
 export const Icons = {
   multiSelect: {
-    active: <IconCheckboxSelected />,
-    default: <IconCheckboxDefault />,
-    error: <IconCheckboxDefault />,
+    active: <Icon icon={IconType.CHECKBOX_SELECTED} />,
+    default: <Icon icon={IconType.CHECKBOX_DEFAULT} />,
+    error: <Icon icon={IconType.CHECKBOX_DEFAULT} />,
   },
   radio: {
-    active: <IconRadioSelected />,
-    default: <IconRadioDefault />,
-    error: <IconRadioDefault />,
+    active: <Icon icon={IconType.RADIO_SELECTED} />,
+    default: <Icon icon={IconType.RADIO_DEFAULT} />,
+    error: <Icon icon={IconType.RADIO_DEFAULT} />,
   },
 };
 
@@ -90,7 +83,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
           <span>
             <Link
               label={linkLabel}
-              iconRight={<IconLinkExternal />}
+              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
               href={releaseNote?.html_url}
             />
           </span>

@@ -2,13 +2,13 @@ import {
   AlertInline,
   ButtonIcon,
   Dropdown,
-  IconMenuVertical,
   Label,
   ListItemAction,
   NumberInput,
   TextInput,
   InputValue as WalletInputValue,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import Big from 'big.js';
 import {constants} from 'ethers';
 import React, {useCallback, useState} from 'react';
@@ -236,7 +236,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               mode="ghost"
               size="large"
               bgWhite
-              icon={<IconMenuVertical />}
+              icon={<Icon icon={IconType.MENU_VERTICAL} />}
               data-testid="trigger"
             />
           }

@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {useWallet} from 'hooks/useWallet';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useTranslation} from 'react-i18next';
 import {
   AlertCard,
@@ -10,9 +8,12 @@ import {
   ButtonText,
   Spinner,
   AlertInline,
-  IconReload,
   InputValue,
 } from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
+
+import {useWallet} from 'hooks/useWallet';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
@@ -113,7 +114,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
   const ctaIcon = isLoading ? (
     <Spinner size="xs" color="white" />
   ) : isError ? (
-    <IconReload />
+    <Icon icon={IconType.RELOAD} />
   ) : undefined;
 
   const alertLabel = isReclaimMode

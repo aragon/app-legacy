@@ -1,5 +1,6 @@
-import {IconLinkExternal, Link} from '@aragon/ods-old';
 import React, {useMemo} from 'react';
+import {Link} from '@aragon/ods-old';
+import {Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -64,7 +65,7 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
           <Link
             href={membersHref}
             label={t('labels.seeCommunity')}
-            iconRight={<IconLinkExternal />}
+            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
           />
         </div>
       )}

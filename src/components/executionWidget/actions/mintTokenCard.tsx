@@ -1,7 +1,8 @@
-import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ods-old';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {Link, ListItemAddress} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Icon, IconType} from '@aragon/ods';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useNetwork} from 'context/network';
@@ -168,9 +169,9 @@ export const MintTokenCard: React.FC<{
           )}
           {/* TODO add total amount of token holders here. */}
           <Link
-            label={t('labels.seeCommunity')}
+            label={t('labels.seeAllHolders')}
             href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${action.summary.daoTokenAddress}`}
-            iconRight={<IconLinkExternal />}
+            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
           />
         </SummaryContainer>
       </Container>
