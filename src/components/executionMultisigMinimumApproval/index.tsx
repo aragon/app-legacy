@@ -56,33 +56,31 @@ export const ExecutionMultisigMinimumApproval = () => {
   }, [committeeCount, committeeMinimumApproval, setValue]);
 
   return (
-    <>
-      <Controller
-        name="committeeMinimumApproval"
-        control={control}
-        defaultValue="1"
-        rules={{
-          validate: value => validateMinimumApproval(value),
-        }}
-        render={({
-          field: {onBlur, onChange, value, name},
-          fieldState: {error},
-        }) => (
-          <>
-            <MinimumApproval
-              name={name}
-              value={value}
-              min={MIN_REQUIRED_APPROVALS}
-              max={committeeCount}
-              onBlur={onBlur}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                minApprovalChanged(e, onChange)
-              }
-              error={generateAlert(value, committee.length, t, error)}
-            />
-          </>
-        )}
-      />
-    </>
+    <Controller
+      name="committeeMinimumApproval"
+      control={control}
+      defaultValue="1"
+      rules={{
+        validate: value => validateMinimumApproval(value),
+      }}
+      render={({
+        field: {onBlur, onChange, value, name},
+        fieldState: {error},
+      }) => (
+        <>
+          <MinimumApproval
+            name={name}
+            value={value}
+            min={MIN_REQUIRED_APPROVALS}
+            max={committeeCount}
+            onBlur={onBlur}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              minApprovalChanged(e, onChange)
+            }
+            error={generateAlert(value, committee.length, t, error)}
+          />
+        </>
+      )}
+    />
   );
 };
