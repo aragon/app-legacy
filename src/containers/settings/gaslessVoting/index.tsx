@@ -82,10 +82,6 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             })}
           </Definition>
         </DescriptionPair>
-        <DescriptionPair>
-          <Term>DEV Wrapped token</Term>
-          <Definition>{String(votingSettings.hasGovernanceEnabled)}</Definition>
-        </DescriptionPair>
       </SettingsCard>
       <CustomCommitteeAddressesModal
         wallets={
