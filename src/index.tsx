@@ -20,7 +20,8 @@ import {
   polygonMumbai,
   sepolia,
 } from 'wagmi/chains';
-import {jsonRpcProvider} from 'wagmi/providers/jsonRpc';
+import {infuraProvider} from 'wagmi/providers/infura';
+//import {LedgerConnector} from 'wagmi/connectors/ledger';
 import {AlertProvider} from 'context/alert';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
@@ -30,11 +31,10 @@ import {TransactionDetailProvider} from 'context/transactionDetail';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
-import {walletConnectProjectID} from 'utils/constants';
+import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
 import {VocdoniClientProvider} from './hooks/useVocdoniSdk';
 
 import {App} from './app';
-import {aragonGateway} from 'utils/aragonGateway';
 
 const chains = [
   base,
@@ -47,12 +47,21 @@ const chains = [
   arbitrumGoerli,
   sepolia,
 ];
+/*
+const ledgerChains = [
+  goerli,
+  mainnet,
+  polygon,
+  polygonMumbai,
+  arbitrum,
+  arbitrumGoerli,
+  sepolia,
+];
+*/
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),
-  jsonRpcProvider({
-    rpc: chain => ({http: aragonGateway.buildRpcUrl(chain.id) ?? ''}),
-  }),
+  infuraProvider({apiKey: infuraApiKey}),
 ]);
 
 const wagmiConfig = createConfig({
@@ -63,6 +72,16 @@ const wagmiConfig = createConfig({
       version: 2,
       chains,
     }),
+    /*
+    new LedgerConnector({
+      chains: ledgerChains,
+      options: {
+        walletConnectVersion: 2,
+        enableDebugLogs: false,
+        projectId: walletConnectProjectID,
+      },
+    }),
+    */
   ],
 
   publicClient,

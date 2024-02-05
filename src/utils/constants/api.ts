@@ -43,6 +43,9 @@ export const alchemyApiKeys: AlchemyApiKeys = {
   unsupported: undefined,
 };
 
+export const infuraApiKey = import.meta.env
+  .VITE_INFURA_MAINNET_PROJECT_ID as string;
+
 export const walletConnectProjectID = import.meta.env
   .VITE_WALLET_CONNECT_PROJECT_ID as string;
 

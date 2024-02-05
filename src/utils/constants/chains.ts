@@ -1,6 +1,7 @@
 /* SUPPORTED NETWORK TYPES ================================================== */
 
 import {i18n} from '../../../i18n.config';
+import {infuraApiKey} from './api';
 
 export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 8453, 80001, 84531, 42161, 421613, 11155111,
@@ -102,9 +103,7 @@ export type ChainData = {
   explorer: string;
   explorerName: string;
   logo: string;
-  // Public RPC endpoints only used to setup the network on MetaMask
-  publicRpc: string;
-  gatewayNetwork: string;
+  rpc: string[];
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
   etherscanApiKey?: string;
@@ -127,8 +126,10 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorer: 'https://etherscan.io/',
     explorerName: 'Etherscan',
     isTestnet: false,
-    publicRpc: 'https://ethereum.publicnode.com',
-    gatewayNetwork: 'ethereum/mainnet',
+    rpc: [
+      `https://mainnet.infura.io/v3/${infuraApiKey}`,
+      `wss://mainnet.infura.io/ws/v3/${infuraApiKey}`,
+    ],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -156,8 +157,10 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorer: 'https://polygonscan.com/',
     explorerName: 'Polygonscan',
     isTestnet: false,
-    publicRpc: 'https://polygon-bor.publicnode.com',
-    gatewayNetwork: 'polygon/mainnet',
+    rpc: [
+      `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
+      `wss://polygon-mainnet.infura.io/ws/v3/${infuraApiKey}`,
+    ],
     nativeCurrency: {
       name: 'MATIC',
       symbol: 'MATIC',
@@ -186,8 +189,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorer: 'https://arbiscan.io/',
     explorerName: 'Arbiscan',
     isTestnet: false,
-    publicRpc: 'https://arb1.arbitrum.io/rpc',
-    gatewayNetwork: 'arbitrum/mainnet',
+    rpc: ['https://arb1.arbitrum.io/rpc', 'wss://arb1.arbitrum.io/ws'],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -214,8 +216,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorer: 'https://basescan.org/',
     explorerName: 'Basescan',
     isTestnet: false,
-    publicRpc: 'https://mainnet.base.org',
-    gatewayNetwork: 'base/mainnet',
+    rpc: ['https://mainnet.base.org'],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -240,8 +241,10 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     isTestnet: true,
     explorerName: 'Etherscan',
     mainnet: 'ethereum',
-    publicRpc: 'https://ethereum-sepolia.publicnode.com',
-    gatewayNetwork: 'ethereum/sepolia',
+    rpc: [
+      `https://sepolia.infura.io/v3/${infuraApiKey}`,
+      `wss://sepolia.infura.io/ws/v3/${infuraApiKey}`,
+    ],
     nativeCurrency: {
       name: 'SepoliaETH',
       symbol: 'ETH',
@@ -266,8 +269,10 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorerName: 'Polygonscan',
     isTestnet: true,
     mainnet: 'polygon',
-    publicRpc: 'https://polygon-mumbai-bor.publicnode.com',
-    gatewayNetwork: 'polygon/mumbai',
+    rpc: [
+      `https://polygon-mumbai.infura.io/v3/${infuraApiKey}`,
+      `wss://polygon-mumbai.infura.io/ws/v3/${infuraApiKey}`,
+    ],
     nativeCurrency: {
       name: 'MATIC',
       symbol: 'MATIC',
@@ -292,8 +297,10 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorerName: 'Arbiscan',
     isTestnet: true,
     mainnet: 'arbitrum',
-    publicRpc: 'https://goerli-rollup.arbitrum.io/rpc',
-    gatewayNetwork: 'arbitrum/goerli',
+    rpc: [
+      `https://arbitrum-goerli.infura.io/v3/${infuraApiKey}`,
+      `wss://arbitrum-goerli.infura.io/ws/v3/${infuraApiKey}`,
+    ],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -317,8 +324,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorerName: 'Basescan',
     isTestnet: true,
     mainnet: 'base',
-    publicRpc: 'https://goerli.base.org',
-    gatewayNetwork: 'base/goerli',
+    rpc: ['https://goerli.base.org'],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -344,8 +350,10 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorerName: 'Etherscan',
     isTestnet: true,
     mainnet: 'ethereum',
-    publicRpc: 'https://ethereum-goerli.publicnode.com',
-    gatewayNetwork: 'ethereum/goerli',
+    rpc: [
+      `https://goerli.infura.io/v3/${infuraApiKey}`,
+      `wss://goerli.infura.io/ws/v3/${infuraApiKey}`,
+    ],
     nativeCurrency: {
       name: 'Goerli Ether',
       symbol: 'ETH',
@@ -369,8 +377,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     explorer: '',
     explorerName: '',
     isTestnet: false,
-    publicRpc: '',
-    gatewayNetwork: '',
+    rpc: [],
     nativeCurrency: {
       name: '',
       symbol: '',

@@ -7,7 +7,6 @@ import {
   useWatch,
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {JsonRpcProvider} from '@ethersproject/providers';
 
 import {TokenVotingWalletField} from 'components/addWallets/row';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
@@ -20,7 +19,7 @@ import SelectChain from 'containers/selectChainForm';
 import SetupCommunity from 'containers/setupCommunity';
 import {CreateDaoProvider} from 'context/createDao';
 import {useNetwork} from 'context/network';
-import {useProviders} from 'context/providers';
+import {ApiProvider, useProviders} from 'context/providers';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
@@ -465,7 +464,7 @@ type UpdateFunction = (
  */
 const updateWalletsENS = async (
   wallets: Array<MultisigWalletField | TokenVotingWalletField>,
-  provider: JsonRpcProvider,
+  provider: ApiProvider,
   updateFunction: UpdateFunction
 ) => {
   const ensNames = await Promise.all(
