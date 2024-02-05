@@ -47,9 +47,10 @@ export const ExecutionMultisigMinimumApproval = () => {
 
   // This is used to update the committeeMinimumApproval when a wallet is deleted
   useEffect(() => {
-    if (Number(committeeMinimumApproval) === 0 && committeeCount === 1) {
-      setValue('committeeMinimumApproval', committeeCount.toString());
-    } else if (Number(committeeMinimumApproval) > committeeCount) {
+    if (
+      (Number(committeeMinimumApproval) === 0 && committeeCount === 1) ||
+      Number(committeeMinimumApproval) > committeeCount
+    ) {
       setValue('committeeMinimumApproval', committeeCount.toString());
     }
   }, [committeeCount, committeeMinimumApproval, setValue]);
