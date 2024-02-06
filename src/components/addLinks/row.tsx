@@ -49,6 +49,9 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
     (currentValue: string, linkedField: string) => {
       const linkedFieldValue = getValues(linkedField);
 
+      // both undefined return no errors
+      if (!linkedFieldValue) return true;
+
       // both empty return no errors
       if (currentValue === '' && linkedFieldValue === '') {
         clearErrors(linkedField);
