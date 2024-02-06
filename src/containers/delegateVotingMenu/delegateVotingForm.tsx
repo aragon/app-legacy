@@ -6,11 +6,10 @@ import {
   CheckboxListItem,
   Label,
   ButtonText,
-  Spinner,
   AlertInline,
   InputValue,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 
 import {useWallet} from 'hooks/useWallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -112,7 +111,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
   const delegateLabel = getDelegateLabel(isReclaimMode, isLoading, isError);
 
   const ctaIcon = isLoading ? (
-    <Spinner size="xs" color="white" />
+    <Spinner size="sm" variant="primary" />
   ) : isError ? (
     <Icon icon={IconType.RELOAD} />
   ) : undefined;

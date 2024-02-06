@@ -1,4 +1,4 @@
-import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ods-old';
+import {AvatarDao, ButtonText, Tag} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -21,6 +21,7 @@ import {
 } from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
 import {AllowListDApp} from '../selectAppModal';
+import {Spinner} from '@aragon/ods';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -200,7 +201,7 @@ const ActionListenerModal: React.FC<Props> = ({
         <div className="flex flex-col items-center space-y-3">
           <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
           <div className="flex items-center justify-center text-center font-semibold text-neutral-800">
-            <Spinner size={'xs'} />
+            <Spinner size="sm" variant="primary" />
             <p className="ml-4">
               {t('modal.dappConnect.detaildApp.spinnerLabel')}
             </p>
