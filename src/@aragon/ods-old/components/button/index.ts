@@ -1,4 +1,4 @@
 export * from './buttonGroup';
-export * from './buttonIcon';
-export * from './buttonText';
-export * from './buttonWallet';
+export * from './buttonGroup/buttonIcon';
+export * from './buttonGroup/buttonText';
+export * from './buttonGroup/buttonWallet';

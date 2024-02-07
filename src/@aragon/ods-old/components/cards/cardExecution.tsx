@@ -1,6 +1,6 @@
 import React from 'react';
 import {styled} from 'styled-components';
-import {ButtonText} from '../button';
+import {Button} from '@aragon/ods';
 import {CardToken, type CardTokenProps} from './cardToken';
 import {CardTransfer, type CardTransferProps} from './cardTransfer';
 
@@ -77,11 +77,14 @@ export const CardExecution: React.FC<CardExecutionProps> = ({
         />
       </Content>
       <Action>
-        <ButtonText
-          label="Execute Now"
+        <Button
           onClick={onClick}
           {...(disabledAction && {disabled: true})}
-        />
+          variant="primary"
+          size="md"
+        >
+          Execute Now
+        </Button>
       </Action>
     </Card>
   );

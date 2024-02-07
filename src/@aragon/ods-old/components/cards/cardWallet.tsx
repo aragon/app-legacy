@@ -3,8 +3,7 @@ import {styled} from 'styled-components';
 
 import {shortenAddress} from '../../utils/addresses';
 import {Avatar} from '../avatar';
-import {ButtonText} from '../button';
-import {IconCopy} from '../icons';
+import {Button, IconType} from '@aragon/ods';
 
 export type CardWalletProps = {
   /**
@@ -47,14 +46,14 @@ export const CardWallet: React.FC<CardWalletProps> = ({
           {name && <Subtitle>{shortenAddress(address)}</Subtitle>}
         </TextContainer>
       </Content>
-      <ButtonText
-        label="copy"
-        iconRight={<IconCopy />}
-        mode="ghost"
-        bgWhite
-        size="small"
+      <Button
+        iconRight={IconType.COPY}
+        variant="tertiary"
+        size="sm"
         onClick={copyToClipboard}
-      />
+      >
+        copy
+      </Button>
     </Card>
   );
 };
