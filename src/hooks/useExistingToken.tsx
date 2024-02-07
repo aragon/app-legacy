@@ -26,7 +26,7 @@ export const useExistingToken = ({
 } = {}) => {
   const {api: provider} = useProviders();
   const {data: daoDetailsFetched} = useDaoDetailsQuery();
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled(daoDetails);
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({daoDetails});
 
   const dao = useMemo(
     () => daoDetails || daoDetailsFetched,

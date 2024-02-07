@@ -37,7 +37,7 @@ export const MembersList: React.FC<MembersListProps> = ({
   // Gasless voting plugin support non wrapped tokens
   // Used to hide delegation column in case of gasless voting plugin
   const {data: daoDetails} = useDaoDetailsQuery();
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled(daoDetails);
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({daoDetails});
 
   const isTokenBasedDao = token != null;
   const useCompactMode = isCompactMode ?? !isDesktop;

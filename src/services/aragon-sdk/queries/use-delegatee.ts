@@ -29,7 +29,7 @@ export const useDelegatee = (
   daoDetails: DaoDetails | null | undefined
 ) => {
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled(daoDetails);
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({daoDetails});
 
   const client = usePluginClient(
     pluginType === GaselessPluginName

@@ -42,7 +42,7 @@ export const MintToken: React.FC = () => {
     pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
     pluginType: daoDetails?.plugins[0].id as PluginTypes,
   });
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled(daoDetails);
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({daoDetails});
 
   const {t} = useTranslation();
   const {network} = useNetwork();
