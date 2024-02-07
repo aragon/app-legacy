@@ -124,27 +124,23 @@ export const useGaslessHasAlreadyVote = ({
   const {address} = useWallet();
 
   useEffect(() => {
-    const checkAlreadyVote = async () => {
-      const p = proposal as GaslessVotingProposal;
-      if (p.voters && p.voters.some(vote => vote === address)) {
-        setHasAlreadyVote(true);
-        return;
-      }
-      if (!signer) return;
-      setHasAlreadyVote(
-        !!(await client.hasAlreadyVoted({
-          wallet: signer,
-          electionId: p!.vochainProposalId!,
-        }))
-      );
-    };
     if (
       client &&
       proposal &&
       isGaslessProposal(proposal) &&
-      proposal?.vochainProposalId
+      proposal.vochainProposalId
     ) {
-      checkAlreadyVote();
+      (async () => {
+        if (proposal.voters && proposal.voters.some(vote => vote === address)) {
+          setHasAlreadyVote(true);
+          return;
+        }
+        const hasAlreadyVote: boolean = !!(await client.hasAlreadyVoted({
+          wallet: signer,
+          electionId: proposal.vochainProposalId,
+        }));
+        setHasAlreadyVote(hasAlreadyVote);
+      })();
     }
   }, [address, client, proposal, signer]);
 
