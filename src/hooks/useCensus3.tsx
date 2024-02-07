@@ -1,7 +1,15 @@
 import {useClient} from '@vocdoni/react-providers';
 import {useCallback, useEffect, useState} from 'react';
-import {GaselessPluginName, usePluginClient} from './usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from './usePluginClient';
 import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
+import {useParams} from 'react-router-dom';
+import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {DaoMember, TokenDaoMember} from './useDaoMembers';
 
 const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
 
@@ -58,4 +66,75 @@ export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
   );
 
   return {createToken};
+};
+
+// Hook that return census3 census id if is gasless plugin
+export const useGaslessCensusId = ({
+  pluginType,
+  enable = true,
+}: {
+  pluginType?: PluginTypes;
+  enable?: boolean;
+}) => {
+  const {dao, id: proposalId} = useParams();
+
+  const isGasless = pluginType === GaselessPluginName;
+  const _enable: boolean = enable && !!dao && !!proposalId && isGasless;
+
+  const {data: proposalData} = useProposal(
+    {
+      pluginType: pluginType,
+      id: proposalId ?? '',
+    },
+    {
+      enabled: _enable,
+    }
+  );
+
+  let censusId: string | null = null;
+  let censusSize: number | null = null;
+  if (_enable && proposalData) {
+    const census = (proposalData as GaslessVotingProposal).vochain.metadata
+      .census;
+    censusId = census.censusId;
+    censusSize = census.size;
+  }
+
+  return {censusId, censusSize};
+};
+
+export const useNonWrappedDaoMemberBalance = ({
+  isGovernanceEnabled,
+  censusId,
+  subgraphMembers,
+}: {
+  isGovernanceEnabled: boolean;
+  censusId: string | null;
+  subgraphMembers: TokenDaoMember[];
+}) => {
+  // State to store DaoMembers[]
+  const [members, setMembers] = useState<DaoMember[]>(subgraphMembers);
+  const {client: vocdoniClient} = useClient();
+
+  // UseEffect to calculate the vocdoni client fetchProof function
+  useEffect(() => {
+    if (vocdoniClient && isGovernanceEnabled && censusId) {
+      (async () => {
+        const members = await Promise.all(
+          subgraphMembers.map(async member => {
+            const proof = await vocdoniClient.fetchProof(
+              censusId,
+              member.address
+            );
+            member.balance = Number(proof.weight);
+            member.votingPower = Number(proof.weight);
+            return member;
+          })
+        );
+        setMembers(members);
+      })();
+    }
+  }, [censusId, isGovernanceEnabled, subgraphMembers, vocdoniClient]);
+
+  return {members};
 };

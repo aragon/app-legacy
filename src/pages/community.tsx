@@ -63,6 +63,8 @@ export const Community: React.FC = () => {
     }
   );
 
+  console.log('AAAAAAAAAAAAAA', members);
+
   const {isDAOTokenWrapped, isTokenMintable} = useExistingToken({
     daoToken,
     daoDetails,
