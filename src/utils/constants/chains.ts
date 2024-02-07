@@ -41,6 +41,13 @@ const SUPPORTED_NETWORKS = [
   'sepolia',
 ] as const;
 
+export const GOERLI_BASED_NETWORKS: SupportedNetworks[] = [
+  'goerli',
+  'base-goerli',
+  'arbitrum-goerli',
+  'mumbai',
+];
+
 export type SupportedNetworks =
   | (typeof SUPPORTED_NETWORKS)[number]
   | 'unsupported';
