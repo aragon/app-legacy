@@ -100,7 +100,7 @@ const useGaslessVoting = () => {
 
       // 2. Sumbit vote
       await doStep(GaslessVotingStepId.PUBLISH_VOTE, async () => {
-        await submitVote(vote, electionId!);
+        await submitVote(vote, electionId);
       });
     },
     [doStep, getElectionId, globalState, resetStates, submitVote]
