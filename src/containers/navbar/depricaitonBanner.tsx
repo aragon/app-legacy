@@ -1,6 +1,5 @@
 import {ButtonText} from '@aragon/ods-old';
 import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {useLocation} from 'react-router-dom';
 import styled from 'styled-components';
 import {Icon, IconType} from '@aragon/ods';
@@ -12,7 +11,6 @@ import {GOERLI_BASED_NETWORKS} from 'utils/constants';
 const DeprecationBanner: React.FC = () => {
   const [bannerHidden, setBannerHidden] = useState(false);
 
-  const {t} = useTranslation();
   const location = useLocation();
 
   const {network} = useNetwork();
