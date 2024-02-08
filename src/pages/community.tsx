@@ -175,9 +175,16 @@ export const Community: React.FC = () => {
     );
   }
 
+  const isGaslessNonWrappedDao =
+    isGasless && !isDAOTokenWrapped && !isTokenMintable;
+
+  const pageTitle = isGaslessNonWrappedDao
+    ? `DEV ${totalMemberCount} Active Members`
+    : `${totalMemberCount} ${t('labels.members')}`;
+
   return (
     <PageWrapper
-      title={`${totalMemberCount} ${t('labels.members')}`}
+      title={pageTitle}
       {...(walletBased
         ? {
             description: t('explore.explorer.walletBased'),
@@ -223,8 +230,9 @@ export const Community: React.FC = () => {
               onClick: navigateToTokenHoldersChart,
             },
           }
-        : isGasless && !isDAOTokenWrapped && !isTokenMintable
+        : isGaslessNonWrappedDao
         ? {
+            description: t('explore.explorer.tokenBased'),
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,
