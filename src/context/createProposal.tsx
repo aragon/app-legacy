@@ -548,17 +548,26 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
       endDateTime = new Date(endDateTimeMill);
 
-      // In case the endDate is close to being minimum durable, (and we starting immediately)
+      // In case the endDate is close to being minimum durable, (and starting immediately)
       // to avoid passing late-date possibly, we just rely on SDK to set proper Date
       if (
-        // If is Gasless, undefined is not allowed on vocdoni SDK election creation, and is not suposed to happen
-        // since SC not allow durations lower than 1 hour
+        // If is Gasless, undefined is not allowed on vocdoni SDK election creation, and end date need to be specified
+        // to be synced with the offchain proposal
         !gasless &&
         endDateTime.valueOf() <= minEndDateTimeMills &&
         startSwitch === 'now'
       ) {
         /* Pass end date as undefined to SDK to auto-calculate min endDate */
         endDateTime = undefined;
+      } else if (
+        // In order to have a concordance between onchain and offchain endates, we add an offset to the end date to avoid
+        // transaction fail due the end date is before the min end date
+        gasless &&
+        endDateTime.valueOf() <= minEndDateTimeMills &&
+        startSwitch === 'now'
+      ) {
+        const endDateOffset = 5; // Minutes
+        endDateTime.setMinutes(endDateTime.getMinutes() + endDateOffset);
       }
     } else {
       // In case exact time specified by user
@@ -621,12 +630,18 @@ const CreateProposalWrapper: React.FC<Props> = ({
     (
       params: CreateMajorityVotingProposalParams
     ): GaslessProposalCreationParams => {
+      // The offchain offset is used to ensure that the offchain proposal is enough long to don't overlap the onchain proposal
+      // limits. As both chains don't use the same clock, and we are calculating the times using blocks, we ensure that
+      // the times will be properly set to let the voters vote between the onchain proposal limits.
+      const offchainOffsets = 1; // Minutes
       const gaslessEndDate = new Date(params.endDate!);
-      gaslessEndDate.setMinutes(params.endDate!.getMinutes() + 1);
+      gaslessEndDate.setMinutes(params.endDate!.getMinutes() + offchainOffsets);
       let gaslessStartDate;
       if (params.startDate) {
         gaslessStartDate = new Date(params.startDate);
-        gaslessStartDate.setMinutes(params.startDate.getMinutes() - 1);
+        gaslessStartDate.setMinutes(
+          params.startDate.getMinutes() - offchainOffsets
+        );
       }
       return {
         ...params,
@@ -1004,13 +1019,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     async function setProposalData() {
       if (showTxModal && creationProcessState === TransactionState.WAITING) {
         if (gasless) {
-          // const {params} = await getProposalCreationParams();
-          //           // console.log(
-          //           //   'XXXXXXXXXXXXXXXXX',
-          //           //   (await getProposalCreationParams()).params.endDate,
-          //           //   gaslessParamsxx.endDate,
-          //           //   getOffChainProposalParams(gaslessParamsxx).endDate
-          //           // );
           setProposalCreationData(
             getOffChainProposalParams(
               (await getProposalCreationParams()).params
