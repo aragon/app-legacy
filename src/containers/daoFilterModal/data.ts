@@ -11,6 +11,7 @@ export const networkFilters: Array<NetworkFilter> = Object.entries(
 ).flatMap(([key, {name, isTestnet}]) => {
   const value: SupportedNetworks = key as SupportedNetworks;
 
+  // TODO: Remove this Goerli based network conditions
   return value !== 'goerli' && value !== 'unsupported'
     ? ({label: name, value, testnet: isTestnet} as NetworkFilter)
     : [];

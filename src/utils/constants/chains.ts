@@ -2,6 +2,9 @@
 
 import {i18n} from '../../../i18n.config';
 
+const ShowGoerliBasedNetworks =
+  import.meta.env.VITE_FEATURE_FLAG_HIDE_GOERLIBASED_NETWORKS === 'false';
+
 export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 8453, 80001, 84531, 42161, 421613, 11155111,
 ] as const;
@@ -16,29 +19,29 @@ export function isSupportedChainId(
 
 export const ENS_SUPPORTED_NETWORKS: SupportedNetworks[] = [
   'ethereum',
-  'goerli',
+  ...(ShowGoerliBasedNetworks ? (['goerli'] as SupportedNetworks[]) : []),
 ];
 export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'arbitrum',
-  'arbitrum-goerli',
   'base',
-  'base-goerli',
-  'mumbai',
   'polygon',
   'sepolia',
+  ...(ShowGoerliBasedNetworks
+    ? (['arbitrum-goerli', 'base-goerli', 'mumbai'] as SupportedNetworks[])
+    : []),
 ];
+
 export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
 
 const SUPPORTED_NETWORKS = [
   'arbitrum',
-  'arbitrum-goerli',
   'base',
-  'base-goerli',
   'ethereum',
-  'goerli',
-  'mumbai',
   'polygon',
   'sepolia',
+  ...(ShowGoerliBasedNetworks
+    ? ['goerli', 'arbitrum-goerli', 'base-goerli', 'mumbai']
+    : []),
 ] as const;
 
 export type SupportedNetworks =
@@ -53,14 +56,16 @@ export function toSupportedNetwork(network: string): SupportedNetworks {
 
 export const supportedNetworksToBackendMap = {
   ethereum: 'ethereum',
-  goerli: 'goerli',
   sepolia: 'sepolia',
   polygon: 'polygon',
-  mumbai: 'mumbai',
+  ...(ShowGoerliBasedNetworks && {
+    goerli: 'goerli',
+    mumbai: 'mumbai',
+    'base-goerli': 'baseGoerli',
+    'arbitrum-goerli': 'arbitrumGoerli',
+  }),
   base: 'base',
-  'base-goerli': 'baseGoerli',
   arbitrum: 'arbitrum',
-  'arbitrum-goerli': 'arbitrumGoerli',
 } as Record<SupportedNetworks, string>;
 
 /**
@@ -257,110 +262,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     supportsEns: false,
     ipfs: 'https://test.ipfs.aragon.network',
   },
-  mumbai: {
-    id: 80001,
-    name: i18n.t('explore.modal.filterDAOs.label.polygonMumbai'),
-    domain: 'L2 Blockchain',
-    logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
-    explorer: 'https://mumbai.polygonscan.com/',
-    explorerName: 'Polygonscan',
-    isTestnet: true,
-    mainnet: 'polygon',
-    publicRpc: 'https://polygon-mumbai-bor.publicnode.com',
-    gatewayNetwork: 'polygon/mumbai',
-    nativeCurrency: {
-      name: 'MATIC',
-      symbol: 'MATIC',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api-testnet.polygonscan.com/api',
-    etherscanApiKey: polygonscanApiKey,
-    covalent: {
-      networkId: 'matic-mumbai',
-      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-    },
-    alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
-    supportsEns: false,
-    ipfs: 'https://test.ipfs.aragon.network',
-  },
-  'arbitrum-goerli': {
-    id: 421613,
-    name: i18n.t('explore.modal.filterDAOs.label.arbitrumGoerli'),
-    domain: 'L2 Blockchain',
-    logo: 'https://bridge.arbitrum.io/logo.png',
-    explorer: 'https://testnet.arbiscan.io/',
-    explorerName: 'Arbiscan',
-    isTestnet: true,
-    mainnet: 'arbitrum',
-    publicRpc: 'https://goerli-rollup.arbitrum.io/rpc',
-    gatewayNetwork: 'arbitrum/goerli',
-    nativeCurrency: {
-      name: 'Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api-goerli.arbiscan.io/api',
-    alchemyApi: 'https://arb-goerli.g.alchemy.com/v2',
-    covalent: {
-      networkId: 'arbitrum-goerli',
-      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-    },
-    supportsEns: false,
-    ipfs: 'https://test.ipfs.aragon.network',
-  },
-  'base-goerli': {
-    id: 84531,
-    name: i18n.t('explore.modal.filterDAOs.label.baseGoerli'),
-    domain: 'L2 Blockchain',
-    logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
-    explorer: 'https://goerli.basescan.org/',
-    explorerName: 'Basescan',
-    isTestnet: true,
-    mainnet: 'base',
-    publicRpc: 'https://goerli.base.org',
-    gatewayNetwork: 'base/goerli',
-    nativeCurrency: {
-      name: 'Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api.basescan.org/api',
-    etherscanApiKey: '',
-    covalent: {
-      networkId: 'base-testnet',
-      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-    },
-    alchemyApi: '',
-    supportsEns: false,
-    ipfs: 'https://prod.ipfs.aragon.network',
-  },
-
-  goerli: {
-    id: 5,
-    name: 'Goerli',
-    domain: 'L1 Blockchain',
-    logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
-    explorer: 'https://goerli.etherscan.io/',
-    explorerName: 'Etherscan',
-    isTestnet: true,
-    mainnet: 'ethereum',
-    publicRpc: 'https://ethereum-goerli.publicnode.com',
-    gatewayNetwork: 'ethereum/goerli',
-    nativeCurrency: {
-      name: 'Goerli Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api-goerli.etherscan.io/api',
-    etherscanApiKey: etherscanApiKey,
-    covalent: {
-      networkId: 'eth-goerli',
-      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-    },
-    alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
-    supportsEns: true,
-    ipfs: 'https://test.ipfs.aragon.network',
-  },
   unsupported: {
     id: 1,
     name: 'Unsupported',
@@ -381,6 +282,113 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     supportsEns: false,
     ipfs: '',
   },
+  ...(ShowGoerliBasedNetworks
+    ? {
+        goerli: {
+          id: 5,
+          name: 'Goerli',
+          domain: 'L1 Blockchain',
+          logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
+          explorer: 'https://goerli.etherscan.io/',
+          explorerName: 'Etherscan',
+          isTestnet: true,
+          mainnet: 'ethereum',
+          publicRpc: 'https://ethereum-goerli.publicnode.com',
+          gatewayNetwork: 'ethereum/goerli',
+          nativeCurrency: {
+            name: 'Goerli Ether',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          etherscanApi: 'https://api-goerli.etherscan.io/api',
+          etherscanApiKey: etherscanApiKey,
+          covalent: {
+            networkId: 'eth-goerli',
+            nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+          },
+          alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
+          supportsEns: true,
+          ipfs: 'https://test.ipfs.aragon.network',
+        },
+        mumbai: {
+          id: 80001,
+          name: i18n.t('explore.modal.filterDAOs.label.polygonMumbai'),
+          domain: 'L2 Blockchain',
+          logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
+          explorer: 'https://mumbai.polygonscan.com/',
+          explorerName: 'Polygonscan',
+          isTestnet: true,
+          mainnet: 'polygon',
+          publicRpc: 'https://polygon-mumbai-bor.publicnode.com',
+          gatewayNetwork: 'polygon/mumbai',
+          nativeCurrency: {
+            name: 'MATIC',
+            symbol: 'MATIC',
+            decimals: 18,
+          },
+          etherscanApi: 'https://api-testnet.polygonscan.com/api',
+          etherscanApiKey: polygonscanApiKey,
+          covalent: {
+            networkId: 'matic-mumbai',
+            nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+          },
+          alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
+          supportsEns: false,
+          ipfs: 'https://test.ipfs.aragon.network',
+        },
+        'arbitrum-goerli': {
+          id: 421613,
+          name: i18n.t('explore.modal.filterDAOs.label.arbitrumGoerli'),
+          domain: 'L2 Blockchain',
+          logo: 'https://bridge.arbitrum.io/logo.png',
+          explorer: 'https://testnet.arbiscan.io/',
+          explorerName: 'Arbiscan',
+          isTestnet: true,
+          mainnet: 'arbitrum',
+          publicRpc: 'https://goerli-rollup.arbitrum.io/rpc',
+          gatewayNetwork: 'arbitrum/goerli',
+          nativeCurrency: {
+            name: 'Ether',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          etherscanApi: 'https://api-goerli.arbiscan.io/api',
+          alchemyApi: 'https://arb-goerli.g.alchemy.com/v2',
+          covalent: {
+            networkId: 'arbitrum-goerli',
+            nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+          },
+          supportsEns: false,
+          ipfs: 'https://test.ipfs.aragon.network',
+        },
+        'base-goerli': {
+          id: 84531,
+          name: i18n.t('explore.modal.filterDAOs.label.baseGoerli'),
+          domain: 'L2 Blockchain',
+          logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
+          explorer: 'https://goerli.basescan.org/',
+          explorerName: 'Basescan',
+          isTestnet: true,
+          mainnet: 'base',
+          publicRpc: 'https://goerli.base.org',
+          gatewayNetwork: 'base/goerli',
+          nativeCurrency: {
+            name: 'Ether',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          etherscanApi: 'https://api.basescan.org/api',
+          etherscanApiKey: '',
+          covalent: {
+            networkId: 'base-testnet',
+            nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+          },
+          alchemyApi: '',
+          supportsEns: false,
+          ipfs: 'https://prod.ipfs.aragon.network',
+        },
+      }
+    : null),
 };
 
 export const chainExplorerAddressLink = (

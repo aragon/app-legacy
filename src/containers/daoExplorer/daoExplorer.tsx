@@ -65,6 +65,7 @@ export const DaoExplorer = () => {
       }),
       ...(filters.networks?.length !== 0 && {
         networks: filters.networks?.map(network => {
+          // TODO: Remove this Goerli based network conditions
           if (network === 'arbitrum-goerli') {
             return 'arbitrumGoerli';
           } else if (network === 'base-goerli') {
