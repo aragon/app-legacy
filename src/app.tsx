@@ -1,6 +1,12 @@
 import {ApmRoutes} from '@elastic/apm-rum-react';
 import React, {Suspense, lazy, useEffect} from 'react';
-import {Navigate, Outlet, Route, useLocation} from 'react-router-dom';
+import {
+  Navigate,
+  Outlet,
+  Route,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
 
 import {GridLayout} from 'components/layout';
 import ProtectedRoute from 'components/protectedRoute';
@@ -31,8 +37,8 @@ import {ProposalSettingsFormData} from 'utils/types';
 import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
-import {CannotDelegateModal} from 'containers/cannotDelegateModal';
 import DeprecationBanner from 'containers/navbar/depricaitonBanner';
+import {ActionsProvider} from './context/actions';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -153,12 +159,18 @@ const NewSettingsWrapper: React.FC = () => {
       durationDays: '1',
       durationHours: '0',
       durationMinutes: '0',
+      proposalTitle: '',
+      actions: [],
     },
   });
 
+  const {dao} = useParams();
+
   return (
     <FormProvider {...formMethods}>
-      <Outlet />
+      <ActionsProvider daoId={dao!}>
+        <Outlet />
+      </ActionsProvider>
     </FormProvider>
   );
 };
@@ -196,7 +208,6 @@ const DaoWrapper: React.FC = () => {
           <TransferMenu />
           <DepositModal />
           <GatingMenu />
-          <CannotDelegateModal />
           <DelegateVotingMenu />
           <DelegationGatingMenu />
           {isOpen && <TransactionDetail />}

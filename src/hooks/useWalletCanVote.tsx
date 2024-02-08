@@ -42,7 +42,7 @@ export const useWalletCanVote = (
   const isGaslessVoting = pluginType === GaselessPluginName;
 
   const client = usePluginClient(pluginType);
-  const {client: vocdoniClient} = useVocdoniClient();
+  const {client: vocdoniClient, signer} = useVocdoniClient();
 
   useEffect(() => {
     async function fetchOnchainVoting() {
@@ -77,9 +77,10 @@ export const useWalletCanVote = (
     async function fetchCanVoteGasless() {
       let canVote = false;
       if (gaslessProposalId) {
-        canVote =
-          (await vocdoniClient.isInCensus(gaslessProposalId)) &&
-          !(await vocdoniClient.hasAlreadyVoted(gaslessProposalId));
+        canVote = await vocdoniClient.isInCensus({
+          wallet: signer,
+          electionId: gaslessProposalId,
+        });
       }
       setData(canVote);
     }
@@ -118,6 +119,7 @@ export const useWalletCanVote = (
     proposalId,
     proposalStatus,
     vocdoniClient,
+    signer,
   ]);
 
   return {

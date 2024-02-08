@@ -1,11 +1,5 @@
 import {Label} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
-import {
-  Controller,
-  useFormContext,
-  useWatch,
-  ValidateResult,
-} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -13,6 +7,12 @@ import AddCommittee from 'components/addCommittee';
 import ExecutionExpirationTime from 'components/executionExpirationTime';
 import MinimumApproval from '../../components/multisigMinimumApproval/minimumApproval';
 import {generateAlert} from '../../components/multisigMinimumApproval';
+import {
+  Controller,
+  useFormContext,
+  useWatch,
+  ValidateResult,
+} from 'react-hook-form';
 
 const MIN_REQUIRED_APPROVALS = 1;
 
@@ -107,13 +107,7 @@ const DefineExecutionMultisig: React.FC = () => {
       </FormItem>
 
       {/* Execution Expiration Time */}
-      <FormItem>
-        <Label
-          label={t('createDao.executionMultisig.executionTitle')}
-          helpText={t('createDao.executionMultisig.executionDesc')}
-        />
-        <ExecutionExpirationTime />
-      </FormItem>
+      <ExecutionExpirationTime />
     </>
   );
 };

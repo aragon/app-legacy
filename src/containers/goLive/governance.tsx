@@ -25,6 +25,7 @@ const Governance: React.FC = () => {
     multisigWallets,
     isCustomToken,
     tokenType,
+    votingType,
   } = getValues();
 
   const isGovTokenRequiresWrapping = !isCustomToken && tokenType === 'ERC-20';
@@ -103,14 +104,20 @@ const Governance: React.FC = () => {
                   </div>
                 </Dd>
               </Dl>
-              <Dl>
-                <Dt>{t('labels.earlyExecution')}</Dt>
-                <Dd>{earlyExecution ? t('labels.yes') : t('labels.no')}</Dd>
-              </Dl>
-              <Dl>
-                <Dt>{t('labels.voteReplacement')}</Dt>
-                <Dd>{voteReplacement ? t('labels.yes') : t('labels.no')}</Dd>
-              </Dl>
+              {votingType === 'onChain' && (
+                <>
+                  <Dl>
+                    <Dt>{t('labels.earlyExecution')}</Dt>
+                    <Dd>{earlyExecution ? t('labels.yes') : t('labels.no')}</Dd>
+                  </Dl>
+                  <Dl>
+                    <Dt>{t('labels.voteReplacement')}</Dt>
+                    <Dd>
+                      {voteReplacement ? t('labels.yes') : t('labels.no')}
+                    </Dd>
+                  </Dl>{' '}
+                </>
+              )}
             </>
           )}
         </DescriptionListContainer>

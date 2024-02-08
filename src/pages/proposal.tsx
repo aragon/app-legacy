@@ -13,7 +13,7 @@ import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams, Link} from 'react-router-dom';
+import {generatePath, Link, useNavigate, useParams} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
 import styled from 'styled-components';
 
@@ -50,12 +50,16 @@ import {
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {
+  GaslessVotingClient,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 import {constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
   decodeApplyUpdateAction,
+  decodeGaslessSettingsToAction,
   decodeMetadataToAction,
   decodeMintTokensToAction,
   decodeMultisigSettingsToAction,
@@ -286,6 +290,7 @@ export const Proposal: React.FC = () => {
 
     const multisigClient = pluginClient as MultisigClient;
     const tokenVotingClient = pluginClient as TokenVotingClient;
+    const gaslessVotingClient = pluginClient as GaslessVotingClient;
 
     const getAction = async (action: DaoAction, index: number) => {
       const functionParams =
@@ -315,6 +320,10 @@ export const Proposal: React.FC = () => {
           if (mintTokenActionsData.length === 0) mintTokenActionsIndex = index;
           mintTokenActionsData.push(action.data);
           return;
+        case 'addExecutionMultisigMembers':
+          return decodeAddMembersToAction(action.data, gaslessVotingClient);
+        case 'removeExecutionMultisigMembers':
+          return decodeRemoveMembersToAction(action.data, multisigClient);
         case 'addAddresses':
           return decodeAddMembersToAction(action.data, multisigClient);
         case 'removeAddresses':
@@ -323,7 +332,7 @@ export const Proposal: React.FC = () => {
           return decodePluginSettingsToAction(
             action.data,
             tokenVotingClient,
-            totalVotingWeight as bigint,
+            totalVotingWeight,
             proposalErc20Token
           );
         case 'updateMultisigSettings':
@@ -332,6 +341,13 @@ export const Proposal: React.FC = () => {
           return decodeMetadataToAction(action.data, client);
         case 'upgradeToAndCall':
           return decodeUpgradeToAndCallAction(action, client);
+        case 'updatePluginSettings':
+          return decodeGaslessSettingsToAction(
+            action.data,
+            gaslessVotingClient,
+            (proposal as GaslessVotingProposal).totalVotingWeight,
+            proposalErc20Token
+          );
         case 'grant':
         case 'revoke': {
           return decodeOSUpdateActions(
@@ -411,7 +427,7 @@ export const Proposal: React.FC = () => {
     proposalErc20Token,
     totalVotingWeight,
     daoAddress,
-    proposal?.actions,
+    proposal,
     client,
     network,
     pluginClient,
@@ -599,7 +615,7 @@ export const Proposal: React.FC = () => {
       // need to check canVote status on Multisig because
       // the delegation modals are not shown for Multisig
       ((isMultisigPlugin && (voted || canVote === false)) ||
-        (isGaslessVotingPlugin && voted) ||
+        (isGaslessVotingPlugin && (voted || canVote === false)) ||
         (isTokenVotingPlugin && voted && !canRevote)));
 
   const handleApprovalClick = useCallback(
@@ -670,6 +686,16 @@ export const Proposal: React.FC = () => {
     ? t('votingTerminal.status.ineligibleWhitelist')
     : undefined;
 
+  let proposalStateEndate = proposal?.endDate;
+  // If is gasless proposal and is defeated because is not approved, but the offchain election passed, use the tally end date
+  if (
+    proposal &&
+    isGaslessProposal(proposal) &&
+    proposal.status === ProposalStatus.DEFEATED &&
+    proposal.canBeApproved // Offchain election passed
+  ) {
+    proposalStateEndate = proposal.tallyEndDate;
+  }
   // status steps for proposal
   const proposalSteps = proposal
     ? getProposalStatusSteps(
@@ -678,7 +704,7 @@ export const Proposal: React.FC = () => {
         pluginType,
         proposal.startDate,
         // If is gasless the proposal ends after the expiration period
-        isGaslessProposal(proposal) ? proposal.tallyEndDate : proposal.endDate,
+        proposalStateEndate!,
         proposal.creationDate,
         proposal.creationBlockNumber
           ? NumberFormatter.format(proposal.creationBlockNumber)
@@ -838,8 +864,8 @@ export const Proposal: React.FC = () => {
               statusRef={statusRef}
               onExecuteClicked={handleExecuteNowClicked}
               actions={decodedActions}
+              connectedToRightNetwork={connectedToRightNetwork}
               pluginType={pluginType}
-              votingPower={pastVotingPower}
             >
               <VTerminal />
             </GaslessVotingTerminal>

@@ -27,7 +27,7 @@ import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voti
 import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {DaoMember} from 'utils/paths';
 import {useNetwork} from 'context/network';
@@ -126,7 +126,10 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const fetchPastVotingPower = usePastVotingPowerAsync();
 
   const isMultisigProposal =
-    pluginType === 'multisig.plugin.dao.eth' && !!approvals && !!minApproval;
+    (pluginType === 'multisig.plugin.dao.eth' ||
+      pluginType === GaselessPluginName) && // If is gasless and have approvals or min approvals act as multisig voting terminal
+    !!approvals &&
+    !!minApproval;
 
   useEffect(() => {
     // fetch avatar fpr each voter
@@ -250,7 +253,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       {selectedTab === 'breakdown' ? (
         <BreakdownTab
           approvals={approvals}
-          memberCount={voters.length}
+          memberCount={minApproval ?? voters.length} // For gasless proposals, the member count is the minimum approval and not all voters
           results={results}
           token={daoToken}
         />

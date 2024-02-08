@@ -4,7 +4,7 @@ import {
 } from '@vocdoni/react-providers';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {VoteProposalParams} from '@aragon/sdk-client';
-import {Vote} from '@vocdoni/sdk';
+import {ErrElectionFinished, Vote} from '@vocdoni/sdk';
 import {
   StepsMap,
   StepStatus,
@@ -65,7 +65,14 @@ const useGaslessVoting = () => {
     async (vote: VoteProposalParams, electionId: string) => {
       const vocVote = new Vote([vote.vote - 1]); // See values on the enum, using vocdoni starts on 0
       await vocdoniClient.setElectionId(electionId);
-      return await vocdoniClient.submitVote(vocVote);
+      try {
+        return vocdoniClient.submitVote(vocVote);
+      } catch (e) {
+        if (e instanceof ErrElectionFinished) {
+          throw new Error('The election has finished');
+        }
+        throw e;
+      }
     },
     [vocdoniClient]
   );
@@ -81,7 +88,7 @@ const useGaslessVoting = () => {
       const electionId = await doStep(
         GaslessVotingStepId.CREATE_VOTE_ID,
         async () => {
-          const electionId = getElectionId(vote.proposalId);
+          const electionId = await getElectionId(vote.proposalId);
           if (!electionId) {
             throw Error(
               'Proposal id has not any associated vocdoni electionId'
@@ -93,7 +100,7 @@ const useGaslessVoting = () => {
 
       // 2. Sumbit vote
       await doStep(GaslessVotingStepId.PUBLISH_VOTE, async () => {
-        await submitVote(vote, electionId!);
+        await submitVote(vote, electionId);
       });
     },
     [doStep, getElectionId, globalState, resetStates, submitVote]
@@ -113,29 +120,29 @@ export const useGaslessHasAlreadyVote = ({
   proposal: DetailedProposal | undefined | null;
 }) => {
   const [hasAlreadyVote, setHasAlreadyVote] = useState(false);
-  const {client} = useClient();
+  const {client, signer} = useClient();
   const {address} = useWallet();
 
   useEffect(() => {
-    const checkAlreadyVote = async () => {
-      const p = proposal as GaslessVotingProposal;
-      if (p.voters && p.voters.some(vote => vote === address)) {
-        setHasAlreadyVote(true);
-        return;
-      }
-      setHasAlreadyVote(
-        !!(await client.hasAlreadyVoted(p!.vochainProposalId!))
-      );
-    };
     if (
       client &&
       proposal &&
       isGaslessProposal(proposal) &&
-      proposal?.vochainProposalId
+      proposal.vochainProposalId
     ) {
-      checkAlreadyVote();
+      (async () => {
+        if (proposal.voters && proposal.voters.some(vote => vote === address)) {
+          setHasAlreadyVote(true);
+          return;
+        }
+        const hasAlreadyVote: boolean = !!(await client.hasAlreadyVoted({
+          wallet: signer,
+          electionId: proposal.vochainProposalId,
+        }));
+        setHasAlreadyVote(hasAlreadyVote);
+      })();
     }
-  }, [address, client, proposal]);
+  }, [address, client, proposal, signer]);
 
   return {hasAlreadyVote};
 };
@@ -149,36 +156,40 @@ export const useGaslessCommiteVotes = (
   const {address} = useWallet();
 
   const isApprovalPeriod = (proposal => {
-    if (!proposal) return false;
+    if (!proposal || proposal.status !== 'Active') return false;
     return (
-      proposal.endDate.valueOf() < new Date().valueOf() &&
-      proposal.tallyEndDate.valueOf() > new Date().valueOf()
+      (proposal.endDate.valueOf() < new Date().valueOf() &&
+        proposal.tallyEndDate.valueOf() > new Date().valueOf() &&
+        proposal?.canBeApproved) ??
+      false
     );
   })(proposal);
 
-  const proposalCanBeApproved =
-    isApprovalPeriod && proposal.status === ProposalStatus.SUCCEEDED;
-
-  const approved = useMemo(() => {
-    return proposal.approvers?.some(approver => approver === address);
+  const isUserApproved = useMemo(() => {
+    return proposal.approvers?.some(
+      approver => approver.toLowerCase() === address?.toLowerCase()
+    );
   }, [address, proposal.approvers]);
 
-  const isApproved = (proposal => {
+  const isProposalApproved = (proposal => {
     if (!proposal) return false;
     return proposal.settings.minTallyApprovals <= proposal.approvers.length;
   })(proposal);
 
   const canBeExecuted = (proposal => {
-    if (!client || !proposal) return false;
-    return isApproved && proposalCanBeApproved;
+    if (!client || !proposal || proposal.status !== 'Active') return false;
+    return isProposalApproved && isApprovalPeriod;
   })(proposal);
-
-  const nextVoteWillApprove =
-    proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
 
   const executed = proposal.executed;
 
   const notBegan = proposal.endDate.valueOf() > new Date().valueOf();
+
+  const executableWithNextApproval =
+    proposal.status === ProposalStatus.ACTIVE &&
+    proposal.actions.length > 0 &&
+    proposal.settings.minTallyApprovals > 1 &&
+    proposal.settings.minTallyApprovals - 1 === proposal.approvers.length;
 
   useEffect(() => {
     const checkCanVote = async () => {
@@ -188,32 +199,24 @@ export const useGaslessCommiteVotes = (
       setCanApprove(canApprove);
     };
 
-    if (!(address && client)) {
+    if (!address || !client) {
       return;
     }
 
-    if (approved || !isApprovalPeriod || !proposalCanBeApproved) {
+    if (isUserApproved || !isApprovalPeriod) {
       setCanApprove(false);
       return;
     }
-    checkCanVote();
-  }, [
-    address,
-    client,
-    isApprovalPeriod,
-    pluginAddress,
-    proposalCanBeApproved,
-    approved,
-  ]);
+    void checkCanVote();
+  }, [address, client, isApprovalPeriod, pluginAddress, isUserApproved]);
 
   return {
     isApprovalPeriod,
     canApprove,
-    approved,
-    isApproved,
+    isUserApproved,
+    isProposalApproved,
     canBeExecuted,
-    nextVoteWillApprove,
-    proposalCanBeApproved,
+    executableWithNextApproval,
     executed,
     notBegan,
   };

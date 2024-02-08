@@ -224,7 +224,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
         minProposerVotingPower:
           eligibilityType === 'token' && eligibilityTokenAmount !== undefined
             ? parseUnits(eligibilityTokenAmount.toString(), decimals).toBigInt()
-            : eligibilityType === 'multisig'
+            : eligibilityType === 'multisig' || eligibilityType === 'anyone'
             ? BigInt(0)
             : parseUnits('1', decimals).toBigInt(),
         votingMode,

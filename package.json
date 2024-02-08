@@ -36,10 +36,10 @@
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
-    "@vocdoni/gasless-voting": "0.0.1-rc2",
+    "@vocdoni/gasless-voting": "0.0.1-rc18-2",
     "@vocdoni/gasless-voting-ethers": "0.0.1-rc1",
-    "@vocdoni/react-providers": "0.1.14",
-    "@vocdoni/sdk": "0.5.0",
+    "@vocdoni/react-providers": "0.3.1",
+    "@vocdoni/sdk": "0.7.1",
     "@walletconnect/core": "^2.8.3",
     "@walletconnect/utils": "^2.8.3",
     "@walletconnect/web3wallet": "^1.8.2",
@@ -65,6 +65,7 @@
     "react-router-dom": "^6.0.2",
     "rudder-sdk-js": "^2.20.0",
     "sanitize-html": "^2.10.0",
+    "source-map-explorer": "^2.5.3",
     "styled-components": "^6.0.8",
     "tiptap-markdown": "^0.8.4",
     "use-react-router-breadcrumbs": "^3.0.1",
@@ -117,7 +118,6 @@
     "vite-tsconfig-paths": "^4.2.0"
   },
   "resolutions": {
-    "@vocdoni/sdk": "0.5.0",
     "@types/react": "^18.2.23"
   },
   "engines": {

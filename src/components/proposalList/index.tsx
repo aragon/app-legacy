@@ -211,10 +211,10 @@ export function proposal2CardProps(
       alertMessage: translateProposalDate(
         proposal.status,
         proposal.startDate,
-        proposal.endDate
+        proposal.tallyEndDate
       ),
-      title: proposal.vochain.metadata.title.default,
-      description: proposal.vochain.metadata.questions[0].title.default,
+      title: proposal.metadata.title,
+      description: proposal.metadata.description,
     };
     return {...props, ...specificProps};
   } else if (isErc20VotingProposal(proposal)) {

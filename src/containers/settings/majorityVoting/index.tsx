@@ -16,7 +16,7 @@ import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useExistingToken} from 'hooks/useExistingToken';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {IPluginSettings} from 'pages/settings';
@@ -32,6 +32,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const isGasless = pluginType === GaselessPluginName;
 
   const {data: pluginVotingSettings, isLoading: votingSettingsLoading} =
     useVotingSettings({pluginAddress, pluginType});
@@ -172,14 +173,18 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             })}
           </Definition>
         </DescriptionPair>
-        <DescriptionPair>
-          <Term>{t('labels.review.earlyExecution')}</Term>
-          <Definition>{votingMode.earlyExecution}</Definition>
-        </DescriptionPair>
-        <DescriptionPair>
-          <Term>{t('labels.review.voteReplacement')}</Term>
-          <Definition>{votingMode.voteReplacement}</Definition>
-        </DescriptionPair>
+        {!isGasless && (
+          <>
+            <DescriptionPair>
+              <Term>{t('labels.review.earlyExecution')}</Term>
+              <Definition>{votingMode.earlyExecution}</Definition>
+            </DescriptionPair>
+            <DescriptionPair>
+              <Term>{t('labels.review.voteReplacement')}</Term>
+              <Definition>{votingMode.voteReplacement}</Definition>
+            </DescriptionPair>
+          </>
+        )}
         <DescriptionPair className="border-none">
           <Term>{t('labels.review.proposalThreshold')}</Term>
           <Definition>
