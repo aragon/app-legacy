@@ -5,7 +5,7 @@ import {
   type BreadcrumbProps,
   type DefaultCrumbProps,
 } from '../breadcrumb';
-import {ButtonText, type ButtonTextProps} from '../button/index-old';
+import {ButtonText, type ButtonTextProps} from '../button';
 
 export type HeaderPageProps = {
   /** Page title */
