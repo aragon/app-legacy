@@ -32,6 +32,7 @@ import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
 import {CannotDelegateModal} from 'containers/cannotDelegateModal';
+import DeprecationBanner from 'containers/navbar/depricaitonBanner';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -186,6 +187,7 @@ const DaoWrapper: React.FC = () => {
 
   return (
     <GovTokensWrappingProvider>
+      <DeprecationBanner />
       <UpdateBanner />
       <Navbar />
       <div className="min-h-screen">
