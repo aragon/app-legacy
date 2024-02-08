@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import useScreen from 'hooks/useScreen';
 import {generatePath, useHref} from 'react-router-dom';
 import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, GOERLI_BASED_NETWORKS} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {Dashboard} from 'utils/paths';
 import {IDao} from 'services/aragon-backend/domain/dao';
@@ -35,6 +35,12 @@ export const DaoCard = (props: IDaoCardProps) => {
     pluginName === 'token-voting-repo'
       ? t('explore.explorer.tokenBased')
       : t('explore.explorer.walletBased');
+
+  const ShowGoerliBasedNetworks =
+    import.meta.env.VITE_FEATURE_FLAG_HIDE_GOERLIBASED_NETWORKS === 'false';
+
+  if (!ShowGoerliBasedNetworks && GOERLI_BASED_NETWORKS.includes(network))
+    return null;
 
   return (
     <Container href={daoUrl}>
