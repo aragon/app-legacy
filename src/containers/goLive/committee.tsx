@@ -135,7 +135,11 @@ export const ReviewExecutionMultisig: React.FC<
       </Dl>
       <Dl>
         <Dt>{'DEV Gobernance enabled'}</Dt>
-        <Dd>{tokenType === 'governance-ERC20'}</Dd>
+        <Dd>
+          {tokenType === 'governance-ERC20'
+            ? t('labels.review.yes')
+            : t('labels.review.no')}
+        </Dd>
       </Dl>
       <CommitteeAddressesModal
         committee={committee.map(w => {

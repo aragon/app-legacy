@@ -20,6 +20,7 @@ export const MinParticipation: FC = () => {
     tokenType,
     isCustomToken,
     minimumParticipationPercentage,
+    votingType,
   ] = useWatch({
     name: [
       'tokenTotalSupply',
@@ -27,10 +28,12 @@ export const MinParticipation: FC = () => {
       'tokenType',
       'isCustomToken',
       'minimumParticipation',
+      'votingType',
     ],
   });
 
-  const isGovTokenRequiresWrapping = !isCustomToken && tokenType === 'ERC-20';
+  const isGovTokenRequiresWrapping =
+    !isCustomToken && tokenType === 'ERC-20' && votingType !== 'gasless';
 
   const [
     simulatedWrappedTokensPercentage,
