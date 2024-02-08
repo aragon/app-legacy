@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
-import {Avatar, ButtonIcon, ButtonText} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Avatar} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -77,38 +77,40 @@ export const WalletMenu = () => {
             {ensName && <SubTitle>{shortenAddress(address)}</SubTitle>}
           </AddressContainer>
         </AvatarAddressContainer>
-        <ButtonIcon
-          mode="secondary"
-          icon={<Icon icon={IconType.COPY} />}
-          size="small"
+        <Button
+          variant="secondary"
+          iconLeft={IconType.COPY}
+          size="sm"
           onClick={() =>
             address ? handleClipboardActions(address, () => null, alert) : null
           }
         />
         {isDesktop && (
-          <ButtonIcon
-            mode="ghost"
-            icon={<Icon icon={IconType.CLOSE} />}
-            size="small"
+          <Button
+            variant="tertiary"
+            iconLeft={IconType.CLOSE}
+            size="sm"
             onClick={() => close()}
           />
         )}
       </ModalHeader>
       <ModalBody>
         <StyledButtonText
-          size="large"
-          mode="ghost"
-          iconLeft={<Icon icon={IconType.SWITCH} />}
-          label={t('labels.viewTransactions')}
+          size="lg"
+          variant="tertiary"
+          iconLeft={IconType.SWITCH}
           onClick={handleViewTransactions}
-        />
+        >
+          {t('labels.viewTransactions')}
+        </StyledButtonText>
         <StyledButtonText
-          size="large"
-          mode="ghost"
-          iconLeft={<Icon icon={IconType.TURN_OFF} />}
-          label={t('labels.disconnectWallet')}
+          size="lg"
+          variant="tertiary"
+          iconLeft={IconType.TURN_OFF}
           onClick={handleDisconnect}
-        />
+        >
+          {t('labels.disconnectWallet')}
+        </StyledButtonText>
       </ModalBody>
     </ModalBottomSheetSwitcher>
   );
@@ -138,6 +140,6 @@ const ModalBody = styled.div.attrs({
   className: 'flex flex-col p-6 gap-3',
 })``;
 
-const StyledButtonText = styled(ButtonText)`
+const StyledButtonText = styled(Button)`
   justify-content: flex-start;
 `;

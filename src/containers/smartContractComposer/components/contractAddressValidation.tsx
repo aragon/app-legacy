@@ -1,14 +1,13 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   AlertInline,
-  ButtonText,
   IconRadioMulti,
   Link,
   TextareaSimple,
   shortenAddress,
   WalletInputLegacy,
 } from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {Button, Icon, IconType, Spinner} from '@aragon/ods';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 
@@ -65,7 +64,7 @@ type Props = {
 const icons = {
   [TransactionState.WAITING]: undefined,
   [TransactionState.LOADING]: undefined,
-  [TransactionState.SUCCESS]: <Icon icon={IconType.CHEVRON_RIGHT} />,
+  [TransactionState.SUCCESS]: IconType.CHEVRON_RIGHT,
   [TransactionState.ERROR]: undefined,
   [TransactionState.INCORRECT_URI]: undefined,
 };
@@ -621,8 +620,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           )}
 
         {isTransactionLoading ? (
-          <ButtonText
-            label={t('scc.validation.cancelLabel') as string}
+          <Button
             onClick={async () => {
               queryClient.cancelQueries({
                 queryKey: [
@@ -633,18 +631,15 @@ const ContractAddressValidation: React.FC<Props> = props => {
               });
               setVerificationState(TransactionState.WAITING);
             }}
-            size="large"
+            size="lg"
             className="mt-6 w-full"
-            mode="secondary"
-          />
+            variant="secondary"
+          >
+            {t('scc.validation.cancelLabel')}
+          </Button>
         ) : (
           ABIFlowState !== ManualABIFlowState.WAITING && (
-            <ButtonText
-              label={
-                ABIFlowState !== ManualABIFlowState.NOT_STARTED
-                  ? ABIFlowLabel[ABIFlowState]
-                  : label[verificationState]
-              }
+            <Button
               onClick={async () => {
                 if (verificationState === TransactionState.SUCCESS) {
                   props.onVerificationSuccess();
@@ -695,31 +690,32 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   setABIFlowState(ManualABIFlowState.NOT_STARTED);
                 }
               }}
-              iconLeft={
-                isTransactionLoading ? (
-                  <Spinner size="sm" variant="primary" />
-                ) : undefined
-              }
+              state={isTransactionLoading ? 'loading' : undefined}
               iconRight={icons[verificationState]}
-              isActive={isTransactionLoading}
               disabled={isButtonDisabled}
-              size="large"
+              size="lg"
+              variant="primary"
               className="mt-6 w-full"
-            />
+            >
+              {ABIFlowState !== ManualABIFlowState.NOT_STARTED
+                ? ABIFlowLabel[ABIFlowState]
+                : label[verificationState]}
+            </Button>
           )
         )}
         {isTransactionError && ABIFlowState === ManualABIFlowState.WAITING && (
-          <ButtonText
-            label={t('scc.validation.cancelLabel')}
+          <Button
             onClick={() => {
               resetField('contractAddress');
               setVerificationState(TransactionState.WAITING);
               props.onClose();
             }}
-            size="large"
+            size="lg"
             className="mt-4 w-full"
-            mode="secondary"
-          />
+            variant="secondary"
+          >
+            {t('scc.validation.cancelLabel')}
+          </Button>
         )}
         {error?.message && (
           <div className="mt-4 flex justify-center">

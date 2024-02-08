@@ -1,6 +1,6 @@
 import React from 'react';
 import {styled} from 'styled-components';
-import {ButtonText} from '../button';
+import {Button} from '@aragon/ods';
 
 import {type IconType} from '../icons';
 
@@ -32,11 +32,14 @@ export const ListItemHeader: React.FC<ListItemHeaderProps> = ({
       <IconWrapper>{props.icon}</IconWrapper>
 
       <ButtonWrapper horizontal={horizontal}>
-        <ButtonText
-          label={props.buttonText}
+        <Button
           onClick={props.onClick}
           disabled={disabled}
-        />
+          variant="primary"
+          size="md"
+        >
+          {props.buttonText}
+        </Button>
       </ButtonWrapper>
 
       <Break horizontal={horizontal} />

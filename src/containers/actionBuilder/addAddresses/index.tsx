@@ -1,11 +1,5 @@
-import {
-  ButtonIcon,
-  ButtonText,
-  Dropdown,
-  Label,
-  ListItemAction,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Dropdown, Label, ListItemAction} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import React, {useCallback, useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -223,25 +217,20 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
         );
       })}
       <FormItem className="flex justify-between">
-        <ButtonText
-          label={t('labels.addWallet')}
-          mode="secondary"
-          size="large"
-          bgWhite
-          onClick={handleAdd}
-        />
+        <Button variant="secondary" size="lg" onClick={handleAdd}>
+          {t('labels.addWallet')}
+        </Button>
 
         <Dropdown
           side="bottom"
           align="start"
           sideOffset={4}
           trigger={
-            <ButtonIcon
-              size="large"
-              mode="secondary"
-              icon={<Icon icon={IconType.MENU_VERTICAL} />}
+            <Button
+              size="lg"
+              variant="secondary"
+              iconLeft={IconType.MENU_VERTICAL}
               data-testid="trigger"
-              bgWhite
             />
           }
           listItems={[

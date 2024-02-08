@@ -2,12 +2,11 @@ import React, {useMemo, ReactNode} from 'react';
 import {styled} from 'styled-components';
 import {
   Dropdown,
-  ButtonText,
   AvatarWallet,
   shortenAddress,
   shortenDaoUrl,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 export interface HeaderMemberStat {
   value: ReactNode;
@@ -103,12 +102,14 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
                 className="z-20 w-60"
                 align="start"
                 trigger={
-                  <ButtonText
-                    label={shortenAddress(address)}
-                    iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
-                    mode="secondary"
+                  <Button
+                    iconRight={IconType.CHEVRON_DOWN}
+                    variant="secondary"
+                    size="md"
                     className="border border-neutral-100"
-                  />
+                  >
+                    {shortenAddress(address)}
+                  </Button>
                 }
                 sideOffset={8}
                 listItems={credentialsDropdownItems}

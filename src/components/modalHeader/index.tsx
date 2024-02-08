@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Icon, IconType} from '@aragon/ods';
-import {ButtonIcon} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 
 type Props = {
   title: string;
@@ -31,12 +30,11 @@ const ModalHeader: React.FC<Props> = props => {
     <Header>
       <ButtonWrapper className="h-8 w-8">
         {showBackButton && (
-          <ButtonIcon
-            mode="secondary"
-            size="small"
-            icon={<Icon icon={IconType.CHEVRON_LEFT} />}
+          <Button
+            variant="secondary"
+            size="sm"
+            iconLeft={IconType.CHEVRON_LEFT}
             onClick={onBackButtonClicked}
-            bgWhite
             {...otherProps}
           />
         )}
@@ -47,12 +45,11 @@ const ModalHeader: React.FC<Props> = props => {
       </div>
       <ButtonWrapper className="h-8 w-8">
         {showCloseButton && (
-          <ButtonIcon
-            mode="secondary"
-            size="small"
-            icon={<Icon icon={IconType.CLOSE} />}
+          <Button
+            variant="secondary"
+            size="sm"
+            iconLeft={IconType.CLOSE}
             onClick={onClose}
-            bgWhite
             className="hidden xl:block"
           />
         )}

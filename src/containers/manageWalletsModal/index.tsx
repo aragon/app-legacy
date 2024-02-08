@@ -1,9 +1,4 @@
-import {
-  ButtonText,
-  CheckboxListItem,
-  CheckboxSimple,
-  SearchInput,
-} from '@aragon/ods-old';
+import {CheckboxListItem, CheckboxSimple, SearchInput} from '@aragon/ods-old';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -11,6 +6,7 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {shortenAddress} from 'utils/library';
+import {Button} from '@aragon/ods';
 
 type ManageWalletsModalProps = {
   addWalletCallback: (wallets: Array<string>) => void;
@@ -162,21 +158,19 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
       </Container>
 
       <ButtonContainer>
-        <ButtonText
-          label={labels.button as string}
-          size="large"
+        <Button
+          size="lg"
+          variant="primary"
           onClick={() => {
             addWalletCallback(Array.from(selectedWallets));
             handleClose();
           }}
-        />
-        <ButtonText
-          label={t('labels.cancel')}
-          mode="secondary"
-          size="large"
-          bgWhite
-          onClick={handleClose}
-        />
+        >
+          {labels.button as string}
+        </Button>
+        <Button variant="secondary" size="lg" onClick={handleClose}>
+          {t('labels.cancel')}
+        </Button>
       </ButtonContainer>
     </ModalBottomSheetSwitcher>
   );

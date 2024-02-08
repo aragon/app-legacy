@@ -1,4 +1,3 @@
-import {ButtonText} from '@aragon/ods-old';
 import {useAlertContext} from 'context/alert';
 import React from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
@@ -7,7 +6,7 @@ import styled from 'styled-components';
 
 import Header from './header';
 import Row from './row';
-import {Icon, IconType} from '@aragon/ods';
+import {IconType, Button} from '@aragon/ods';
 
 export type AddLinks = {
   /** Name of the fieldArray that is the target of the link inputs. Defaults to
@@ -62,13 +61,14 @@ const AddLinks: React.FC<AddLinks> = ({
         </ListGroup>
       )}
 
-      <ButtonText
-        label={buttonLabel || t('labels.addLink')}
-        mode={bgWhite ? 'ghost' : 'secondary'}
-        size="large"
+      <Button
+        variant={bgWhite ? 'tertiary' : 'secondary'}
+        size="lg"
         onClick={handleAddLink}
-        {...(buttonPlusIcon ? {iconLeft: <Icon icon={IconType.ADD} />} : {})}
-      />
+        {...(buttonPlusIcon ? {iconLeft: IconType.ADD} : {})}
+      >
+        {buttonLabel || t('labels.addLink')}
+      </Button>
     </Container>
   );
 };

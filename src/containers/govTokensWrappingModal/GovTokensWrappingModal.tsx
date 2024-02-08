@@ -2,13 +2,12 @@ import React, {useCallback, useMemo, FC} from 'react';
 
 import {
   AlertInline,
-  ButtonText,
   CheckboxListItem,
   Label,
   LinearProgress,
   ValueInput,
 } from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {Button, IconType, Spinner} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -360,76 +359,74 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
             <ActionsContainer>
               {isWrapMode ? (
                 <>
-                  <ButtonText
-                    mode="primary"
-                    isActive={isTokenApproveLoading}
+                  <Button
+                    variant="primary"
                     disabled={!isUserInputValid || currentStep !== 1}
+                    state={isTokenApproveLoading ? 'loading' : undefined}
                     iconLeft={
-                      isTokenApproveLoading ? (
-                        <Spinner size="sm" variant="primary" />
-                      ) : isTokenApproveError ? (
-                        <Icon icon={IconType.RELOAD} />
-                      ) : undefined
+                      isTokenApproveLoading
+                        ? undefined
+                        : isTokenApproveError
+                        ? IconType.RELOAD
+                        : undefined
                     }
-                    size="large"
-                    label={
-                      isTokenApproveError
-                        ? t('modal.wrapToken.footerCtaError')
-                        : t('modal.wrapToken.footerCtaFirst')
-                    }
+                    size="lg"
                     className="w-full"
                     onClick={handleApprove}
-                  />
-                  <ButtonText
-                    mode="primary"
-                    isActive={isTokenWrapLoading}
+                  >
+                    {isTokenApproveError
+                      ? t('modal.wrapToken.footerCtaError')
+                      : t('modal.wrapToken.footerCtaFirst')}
+                  </Button>
+                  <Button
+                    variant="primary"
                     disabled={!isUserInputValid || currentStep !== 2}
+                    state={isTokenWrapLoading ? 'loading' : undefined}
                     iconLeft={
-                      isTokenWrapLoading ? (
-                        <Spinner size="sm" variant="primary" />
-                      ) : isTokenWrapError ? (
-                        <Icon icon={IconType.RELOAD} />
-                      ) : undefined
+                      isTokenWrapLoading
+                        ? undefined
+                        : isTokenWrapError
+                        ? IconType.RELOAD
+                        : undefined
                     }
-                    size="large"
-                    label={
-                      isTokenWrapError
-                        ? t('modal.wrapToken.footerCtaError')
-                        : t('modal.wrapToken.footerCtaSecond')
-                    }
+                    size="lg"
                     className="w-full"
                     onClick={handleWrap}
-                  />
+                  >
+                    {isTokenWrapError
+                      ? t('modal.wrapToken.footerCtaError')
+                      : t('modal.wrapToken.footerCtaSecond')}
+                  </Button>
                 </>
               ) : (
                 <>
-                  <ButtonText
+                  <Button
                     disabled={!isUserInputValid}
-                    mode="primary"
-                    isActive={isTokenUnwrapLoading}
+                    variant="primary"
+                    state={isTokenUnwrapLoading ? 'loading' : undefined}
                     iconLeft={
-                      isTokenUnwrapLoading ? (
-                        <Spinner size="sm" variant="primary" />
-                      ) : isTokenUnwrapError ? (
-                        <Icon icon={IconType.RELOAD} />
-                      ) : undefined
+                      isTokenUnwrapLoading
+                        ? undefined
+                        : isTokenUnwrapError
+                        ? IconType.RELOAD
+                        : undefined
                     }
-                    size="large"
-                    label={
-                      isTokenUnwrapError
-                        ? t('modal.wrapToken.footerCtaError')
-                        : t('modal.wrapToken.footerWrappedCtaLabel')
-                    }
+                    size="lg"
                     className="w-full"
                     onClick={handleUnwrap}
-                  />
-                  <ButtonText
-                    mode="secondary"
-                    size="large"
-                    label={t('modal.wrapToken.footerWrappedCancelLabel')}
+                  >
+                    {isTokenUnwrapError
+                      ? t('modal.wrapToken.footerCtaError')
+                      : t('modal.wrapToken.footerWrappedCtaLabel')}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="lg"
                     className="w-full"
                     onClick={() => onClose()}
-                  />
+                  >
+                    {t('modal.wrapToken.footerWrappedCancelLabel')}
+                  </Button>
                 </>
               )}
             </ActionsContainer>

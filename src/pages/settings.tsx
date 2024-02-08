@@ -1,13 +1,6 @@
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
-import {
-  AlertInline,
-  AvatarDao,
-  ButtonText,
-  Dropdown,
-  Link,
-  Tag,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AlertInline, AvatarDao, Dropdown, Link, Tag} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -110,15 +103,15 @@ export const Settings: React.FC = () => {
         }`}
       >
         <div className="mt-2 space-y-4 xl:-mt-2">
-          <ButtonText
-            label={t('settings.edit')}
+          <Button
             className="w-full md:w-max"
-            size="large"
-            iconLeft={
-              !isDesktop ? <Icon icon={IconType.APP_GOVERNANCE} /> : undefined
-            }
+            size="lg"
+            variant="primary"
+            iconLeft={!isDesktop ? IconType.APP_GOVERNANCE : undefined}
             onClick={() => navigate('edit')}
-          />
+          >
+            {t('settings.edit')}
+          </Button>
           <AlertInline label={t('settings.proposeSettingsInfo')} />
         </div>
       </div>

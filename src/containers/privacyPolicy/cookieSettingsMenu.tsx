@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonIcon, ButtonText, CheckboxListItem} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {CheckboxListItem} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 
 export type CookiesType = {
   analytics: boolean;
@@ -25,12 +25,11 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
     <Modal show={props.show}>
       <div>
         <ModalHeader>
-          <ButtonIcon
-            mode="secondary"
-            size="small"
-            icon={<Icon icon={IconType.CHEVRON_LEFT} />}
+          <Button
+            variant="secondary"
+            size="sm"
+            iconLeft={IconType.CHEVRON_LEFT}
             onClick={props.onClose}
-            bgWhite
           />
           <Title>{t('privacyPolicy.cookieSettings')}</Title>
           <div role="presentation" className="h-8 w-8" />
@@ -53,24 +52,27 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
             />
           </div>
           <div className="flex space-x-4">
-            <ButtonText
+            <Button
               className="flex-1"
-              label={t('privacyPolicy.acceptSelectedCookies')}
-              size="large"
+              size="lg"
+              variant="primary"
               onClick={() =>
                 props.onAcceptClick({
                   analytics: analyticsSelected,
                   functional: functionalSelected,
                 })
               }
-            />
-            <ButtonText
+            >
+              {t('privacyPolicy.acceptSelectedCookies')}
+            </Button>
+            <Button
               className="flex-1"
-              label={t('privacyPolicy.rejectAllCookies')}
-              size="large"
-              mode="secondary"
+              size="lg"
+              variant="secondary"
               onClick={props.onRejectAllClick}
-            />
+            >
+              {t('privacyPolicy.rejectAllCookies')}
+            </Button>
           </div>
         </BottomSheetContentContainer>
       </div>

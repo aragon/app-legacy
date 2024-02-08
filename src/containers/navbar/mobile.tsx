@@ -2,8 +2,8 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useReactiveVar} from '@apollo/client';
-import {AvatarDao, ButtonIcon, ButtonText, ButtonWallet} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AvatarDao, ButtonWallet} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -30,20 +30,21 @@ const MobileNav: React.FC<MobileNavProps> = props => {
         <Menu>
           <FlexOne>
             {isMobile ? (
-              <ButtonIcon
-                mode="secondary"
-                size="large"
-                icon={<Icon icon={IconType.MENU_DEFAULT} />}
+              <Button
+                variant="secondary"
+                size="lg"
+                iconLeft={IconType.MENU_DEFAULT}
                 onClick={() => open('mobileMenu')}
               />
             ) : (
-              <ButtonText
-                size="large"
-                mode="secondary"
-                label={t('menu')}
-                iconLeft={<Icon icon={IconType.MENU_DEFAULT} />}
+              <Button
+                size="lg"
+                variant="secondary"
+                iconLeft={IconType.MENU_DEFAULT}
                 onClick={() => open('mobileMenu')}
-              />
+              >
+                {t('menu')}
+              </Button>
             )}
           </FlexOne>
           <FlexOne className="justify-center">

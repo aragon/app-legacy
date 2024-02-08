@@ -1,14 +1,7 @@
-/* eslint-disable tailwindcss/no-custom-classname */
 import React from 'react';
 import styled from 'styled-components';
-import {
-  useScreen,
-  shortenAddress,
-  Avatar,
-  ButtonIcon,
-  Tag,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {useScreen, shortenAddress, Avatar, Tag} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {DaoMember} from 'utils/paths';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {useNetwork} from 'context/network';
@@ -143,11 +136,10 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
       <TableCell className="flex justify-end gap-x-3">
         {!useCompactMode && (
-          <ButtonIcon
-            mode="ghost"
-            icon={<Icon icon={IconType.CHEVRON_RIGHT} />}
-            size="medium"
-            bgWhite
+          <Button
+            variant="tertiary"
+            iconLeft={IconType.CHEVRON_RIGHT}
+            size="md"
             className="group-hover:text-primary-600"
           />
         )}

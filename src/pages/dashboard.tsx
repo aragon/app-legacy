@@ -1,11 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {
-  ButtonText,
-  HeaderDao,
-  IlluObject,
-  IllustrationHuman,
-} from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {HeaderDao, IlluObject, IllustrationHuman} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -223,10 +218,8 @@ export const Dashboard: React.FC = () => {
     };
 
     const buttonIcon = {
-      [DaoCreationState.ASSEMBLING_DAO]: (
-        <Spinner size="sm" variant="primary" />
-      ),
-      [DaoCreationState.DAO_READY]: <Icon icon={IconType.CHECKMARK} />,
+      [DaoCreationState.ASSEMBLING_DAO]: undefined,
+      [DaoCreationState.DAO_READY]: IconType.CHECKMARK,
       [DaoCreationState.OPEN_DAO]: undefined,
     };
 
@@ -257,13 +250,20 @@ export const Dashboard: React.FC = () => {
           <p className="mt-3 text-center text-base leading-normal">
             {t('dashboard.emptyState.subtitle')}
           </p>
-          <ButtonText
-            size="large"
-            label={buttonLabel[daoCreationState]}
+          <Button
+            size="lg"
+            variant="primary"
+            state={
+              daoCreationState === DaoCreationState.ASSEMBLING_DAO
+                ? 'loading'
+                : undefined
+            }
             iconLeft={buttonIcon[daoCreationState]}
             className={`mt-8 ${daoCreationState === 0 && 'bg-primary-800'}`}
             onClick={handleOpenYourDaoClick}
-          />
+          >
+            {buttonLabel[daoCreationState]}
+          </Button>
         </EmptyStateContainer>
       </Container>
     );

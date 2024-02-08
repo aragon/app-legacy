@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
-import {AlertInline, ButtonText, ListItemAction} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AlertInline, ListItemAction} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -340,11 +340,11 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
           {/* Footer */}
           <Footer>
             <HStack>
-              <ButtonText
+              <Button
                 className="w-full md:w-max"
-                label={t('settings.reviewProposal')}
-                iconLeft={<Icon icon={IconType.APP_GOVERNANCE} />}
-                size="large"
+                iconLeft={IconType.APP_GOVERNANCE}
+                size="lg"
+                variant="primary"
                 disabled={settingsUnchanged || !isValid}
                 onClick={() =>
                   navigate(
@@ -356,15 +356,18 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                     })
                   )
                 }
-              />
-              <ButtonText
+              >
+                {t('settings.reviewProposal')}
+              </Button>
+              <Button
                 className="w-full md:w-max"
-                label={t('settings.resetChanges')}
-                mode="secondary"
-                size="large"
+                variant="secondary"
+                size="lg"
                 disabled={settingsUnchanged}
                 onClick={handleResetChanges}
-              />
+              >
+                {t('settings.resetChanges')}
+              </Button>
             </HStack>
             <AlertInline label={t('settings.proposeSettingsInfo')} />
           </Footer>

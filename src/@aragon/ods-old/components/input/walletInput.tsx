@@ -14,8 +14,7 @@ import {
   shortenAddress,
   shortenENS,
 } from '../../utils/addresses';
-import {ButtonIcon, ButtonText} from '../button';
-import {IconCopy, IconLinkExternal} from '../icons';
+import {Button, IconType} from '@aragon/ods';
 
 /** Input Wallet value type */
 export type WalletInputValue = {
@@ -472,52 +471,50 @@ export const WalletInput = React.forwardRef<
 
           <div>
             {!displayedValue && (
-              <ButtonText
-                label="Paste"
-                size="small"
-                mode="secondary"
-                bgWhite
+              <Button
+                size="sm"
+                variant="secondary"
                 onClick={handlePasteFromClipboard}
                 disabled={disabled}
-              />
+              >
+                Paste
+              </Button>
             )}
             {displayedValue && isEditing && (
-              <ButtonText
-                label="Clear"
-                size="small"
-                mode="secondary"
-                bgWhite
+              <Button
+                size="sm"
+                variant="secondary"
                 onMouseDown={handleClearInput}
                 disabled={disabled}
-              />
+              >
+                Clear
+              </Button>
             )}
 
             {displayedValue && !isEditing && (
               <AdornmentWrapper>
                 {canToggle && (
-                  <ButtonText
-                    label={togglerLabel}
-                    size="small"
-                    mode="secondary"
-                    bgWhite={true}
+                  <Button
+                    size="sm"
+                    variant="secondary"
                     onClick={toggleDisplayMode}
                     disabled={adornmentsDisabled}
-                  />
+                  >
+                    {togglerLabel}
+                  </Button>
                 )}
-                <ButtonIcon
-                  icon={<IconCopy />}
-                  mode="secondary"
-                  size="small"
-                  bgWhite
+                <Button
+                  iconLeft={IconType.COPY}
+                  variant="secondary"
+                  size="sm"
                   onClick={handleCopyToClipboard}
                   disabled={adornmentsDisabled}
                 />
                 {showExternalButton && (
-                  <ButtonIcon
-                    icon={<IconLinkExternal />}
-                    mode="secondary"
-                    size="small"
-                    bgWhite
+                  <Button
+                    iconLeft={IconType.LINK_EXTERNAL}
+                    variant="secondary"
+                    size="sm"
                     disabled={adornmentsDisabled}
                     onClick={handleViewOnExplorer}
                   />

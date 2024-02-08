@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonText} from '@aragon/ods-old';
 import {htmlIn} from 'utils/htmlIn';
+import {Button} from '@aragon/ods';
 
 type PrivacyPolicyContentProps = {
   isDesktop: boolean;
@@ -26,36 +26,32 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
       />
 
       <ButtonGroup>
-        <ButtonText
-          label={t('privacyPolicy.acceptAllCookies')}
-          mode="secondary"
-          bgWhite
-          {...(isDesktop
-            ? {size: 'small'}
-            : {size: 'large', className: 'w-full'})}
+        <Button
+          variant="secondary"
+          {...(isDesktop ? {size: 'md'} : {size: 'lg', className: 'w-full'})}
           onClick={props.onAcceptAll}
-        />
-        <ButtonText
-          label={t('privacyPolicy.rejectAllCookies')}
-          mode="secondary"
-          bgWhite
-          {...(isDesktop
-            ? {size: 'small'}
-            : {size: 'large', className: 'w-full'})}
+        >
+          {t('privacyPolicy.acceptAllCookies')}
+        </Button>
+        <Button
+          variant="secondary"
+          {...(isDesktop ? {size: 'sm'} : {size: 'lg', className: 'w-full'})}
           onClick={props.onRejectAll}
-        />
-        <ButtonText
-          label={t('privacyPolicy.cookieSettings')}
+        >
+          {t('privacyPolicy.rejectAllCookies')}
+        </Button>
+        <Button
           {...(isDesktop
-            ? {mode: 'secondary', size: 'small'}
+            ? {variant: 'secondary', size: 'sm'}
             : {
-                mode: 'ghost',
-                bgWhite: true,
-                size: 'large',
+                variant: 'tertiary',
+                size: 'lg',
                 className: 'w-full',
               })}
           onClick={props.onShowCookieSettings}
-        />
+        >
+          {t('privacyPolicy.cookieSettings')}
+        </Button>
       </ButtonGroup>
     </>
   );

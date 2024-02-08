@@ -6,7 +6,7 @@ import React, {useCallback, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {styled} from 'styled-components';
 
-import {ButtonIcon} from '../button';
+import {ButtonIcon} from '../button/index-old';
 import {
   IconBold,
   IconExpand,

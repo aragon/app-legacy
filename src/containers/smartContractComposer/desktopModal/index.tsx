@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {ButtonText, Link, Modal} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Link, Modal} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -95,10 +95,9 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
             <>
               <SmartContractListGroup />
               <div>
-                <ButtonText
-                  mode="secondary"
-                  size="large"
-                  label={t('scc.labels.connect')}
+                <Button
+                  variant="secondary"
+                  size="lg"
                   onClick={() => {
                     trackEvent('newProposal_connectSmartContract_clicked', {
                       dao_address: daoAddressOrEns,
@@ -106,7 +105,9 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                     props.onConnectNew();
                   }}
                   className="w-full"
-                />
+                >
+                  {t('scc.labels.connect')}
+                </Button>
                 <Link
                   external
                   type="primary"
@@ -158,10 +159,11 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
           description={t('scc.writeContractEmptyState.desc')}
         />
         {selectedSC.implementationData && (
-          <ButtonText
+          <Button
             className="mx-auto mt-6"
-            iconLeft={<Icon icon={IconType.SWITCH} />}
-            label={t('scc.writeContractEmptyState.ctaLabel')}
+            size="md"
+            variant="primary"
+            iconLeft={IconType.SWITCH}
             onClick={() => {
               setValue(
                 'selectedSC',
@@ -177,7 +179,9 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
                 )?.[0]
               );
             }}
-          />
+          >
+            {t('scc.writeContractEmptyState.ctaLabel')}
+          </Button>
         )}
       </div>
     </Container>

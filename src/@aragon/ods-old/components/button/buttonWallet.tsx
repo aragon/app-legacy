@@ -1,10 +1,10 @@
 import React, {type ButtonHTMLAttributes, type FC} from 'react';
 import {styled} from 'styled-components';
 
-import {shortenAddress} from '../../../utils/addresses';
-import {AvatarWallet} from '../../avatar';
-import {IconPerson} from '../../icons';
-import {Spinner} from '../../spinner';
+import {shortenAddress} from '../../utils/addresses';
+import {AvatarWallet} from '../avatar';
+import {IconPerson} from '../icons';
+import {Spinner} from '../spinner';
 
 export type ButtonWalletProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /**

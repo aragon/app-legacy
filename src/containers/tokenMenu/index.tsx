@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {AssetBalance} from '@aragon/sdk-client';
-import {ButtonText, IconStorage, SearchInput} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {IconStorage, SearchInput} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -156,15 +156,16 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
           <RenderTokens />
         </TokensWrapper>
         <WideButton
-          mode="secondary"
-          size="large"
-          label="Add Custom Token"
-          iconLeft={<Icon icon={IconType.ADD} />}
+          variant="secondary"
+          size="lg"
+          iconLeft={IconType.ADD}
           onClick={() => {
             onTokenSelect({...customToken, symbol: searchValue});
             close();
           }}
-        />
+        >
+          Add Custom Token
+        </WideButton>
       </Container>
     </ModalBottomSheetSwitcher>
   );
@@ -192,7 +193,7 @@ const TokenDescription = styled.h2.attrs({
   className: 'text-sm leading-normal text-center text-neutral-600',
 })``;
 
-const WideButton = styled(ButtonText).attrs({
+const WideButton = styled(Button).attrs({
   className: 'w-full justify-center',
 })``;
 

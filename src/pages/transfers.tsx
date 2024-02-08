@@ -1,12 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {
-  ButtonGroup,
-  ButtonIcon,
-  Dropdown,
-  ListItemAction,
-  Option,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ButtonGroup, Dropdown, ListItemAction, Option} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import {useTranslation} from 'react-i18next';
@@ -143,10 +137,10 @@ export const Transfers: React.FC = () => {
                   listItems={dropdownActions}
                   disabled={dropdownActions.length === 0}
                   trigger={
-                    <ButtonIcon
-                      mode="secondary"
-                      size="medium"
-                      icon={<Icon icon={IconType.MENU_VERTICAL} />}
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      iconLeft={IconType.MENU_VERTICAL}
                     />
                   }
                 />

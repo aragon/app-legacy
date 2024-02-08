@@ -1,10 +1,4 @@
-import {
-  AlertInline,
-  ButtonIcon,
-  ButtonText,
-  Dropdown,
-  ListItemAction,
-} from '@aragon/ods-old';
+import {AlertInline, Dropdown, ListItemAction} from '@aragon/ods-old';
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -18,7 +12,7 @@ import Row from './addCommitteeWallet';
 import {useNetwork} from '../../context/network';
 import {Address, useEnsName} from 'wagmi';
 import {CHAIN_METADATA} from '../../utils/constants';
-import {Icon, IconType} from '@aragon/ods';
+import {IconType, Button} from '@aragon/ods';
 
 const AddCommittee: React.FC = () => {
   const {t} = useTranslation();
@@ -85,20 +79,16 @@ const AddCommittee: React.FC = () => {
         <Footer totalAddresses={fields.length || 0} />
       </ListGroup>
       <ActionsWrapper>
-        <ButtonText
-          label={t('labels.addWallet')}
-          mode="secondary"
-          size="large"
-          onClick={handleAddWallet}
-        />
+        <Button variant="secondary" size="lg" onClick={handleAddWallet}>
+          {t('labels.addWallet')}
+        </Button>
         <Dropdown
           align="start"
           trigger={
-            <ButtonIcon
-              mode="ghost"
-              size="large"
-              bgWhite
-              icon={<Icon icon={IconType.MENU_VERTICAL} />}
+            <Button
+              variant="tertiary"
+              size="lg"
+              iconLeft={IconType.MENU_VERTICAL}
               data-testid="trigger"
             />
           }

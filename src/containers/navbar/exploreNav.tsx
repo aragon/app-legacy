@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {ButtonIcon, ButtonText, ButtonWallet, useScreen} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ButtonWallet, useScreen} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useWallet} from 'hooks/useWallet';
@@ -48,18 +48,19 @@ const ExploreNav: React.FC = () => {
           <RightContent>
             <ActionsWrapper>
               {isDesktop ? (
-                <ButtonText
-                  size="large"
-                  label={t('navButtons.giveFeedback')}
-                  mode="secondary"
-                  iconRight={<Icon icon={IconType.FEEDBACK} />}
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  iconRight={IconType.FEEDBACK}
                   onClick={handleFeedbackButtonClick}
-                />
+                >
+                  {t('navButtons.giveFeedback')}
+                </Button>
               ) : (
-                <ButtonIcon
-                  size="large"
-                  mode="secondary"
-                  icon={<Icon icon={IconType.FEEDBACK} />}
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  iconLeft={IconType.FEEDBACK}
                   onClick={handleFeedbackButtonClick}
                 />
               )}

@@ -1,6 +1,6 @@
 import React, {useMemo, useReducer, useState} from 'react';
-import {ButtonText, Dropdown, ButtonIcon} from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {Dropdown} from '@aragon/ods-old';
+import {Spinner, Button, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
@@ -169,27 +169,26 @@ export const DaoExplorer = () => {
             })}
           </ToggleGroup>
           <ButtonGroupContainer>
-            <ButtonText
-              label={filtersCount}
-              isActive={filtersCount !== ''}
-              mode="secondary"
-              size="large"
-              iconLeft={<Icon icon={IconType.FILTER} />}
+            <Button
+              variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
+              size="lg"
+              iconLeft={IconType.FILTER}
               onClick={() => {
                 setShowAdvancedFilters(true);
               }}
-            />
+            >
+              {filtersCount}
+            </Button>
             {filters.quickFilter !== 'following' && (
               <Dropdown
                 side="bottom"
                 align="end"
                 sideOffset={4}
                 trigger={
-                  <ButtonIcon
-                    isActive={activeDropdown}
-                    mode="secondary"
-                    size="large"
-                    icon={<Icon icon={IconType.SORT} />}
+                  <Button
+                    variant={activeDropdown ? 'secondary' : 'tertiary'}
+                    size="lg"
+                    iconLeft={IconType.SORT}
                   />
                 }
                 onOpenChange={e => {
@@ -280,20 +279,18 @@ export const DaoExplorer = () => {
       {totalDaos > 0 && totalDaosShown > 0 && (
         <div className="flex items-center lg:gap-x-6">
           {hasNextPage && (
-            <ButtonText
-              label={t('explore.explorer.showMore')}
+            <Button
               className="self-start"
+              state={isFetchingNextPage ? 'loading' : undefined}
               iconRight={
-                isFetchingNextPage ? (
-                  <Spinner size="sm" variant="primary" />
-                ) : (
-                  <Icon icon={IconType.CHEVRON_DOWN} />
-                )
+                !isFetchingNextPage ? IconType.CHEVRON_DOWN : undefined
               }
-              bgWhite={true}
-              mode="ghost"
+              variant="tertiary"
+              size="md"
               onClick={() => fetchNextPage()}
-            />
+            >
+              {t('explore.explorer.showMore')}
+            </Button>
           )}
           <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
             {t('explore.pagination.label.amountOf DAOs', {
