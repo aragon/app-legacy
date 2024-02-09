@@ -10,6 +10,7 @@ import {useParams} from 'react-router-dom';
 import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {DaoMember, TokenDaoMember} from './useDaoMembers';
+import {getCensus3VotingPower} from '../utils/tokens';
 
 const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
 
@@ -122,12 +123,13 @@ export const useNonWrappedDaoMemberBalance = ({
       (async () => {
         const members = await Promise.all(
           subgraphMembers.map(async member => {
-            const proof = await vocdoniClient.fetchProof(
+            const votingPower = await getCensus3VotingPower(
+              member.address,
               censusId,
-              member.address
+              vocdoniClient
             );
-            member.balance = Number(proof.weight);
-            member.votingPower = Number(proof.weight);
+            member.balance = Number(votingPower);
+            member.votingPower = Number(votingPower);
             return member;
           })
         );
