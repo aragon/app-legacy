@@ -2,12 +2,7 @@ import {Controller, useFormContext} from 'react-hook-form';
 import {useFormStep} from '../../components/fullScreenStepper';
 import {useGlobalModalContext} from '../../context/globalModals';
 import {useTranslation} from 'react-i18next';
-import {
-  Dd,
-  DescriptionListContainer,
-  Dl,
-  Dt,
-} from 'components/descriptionList';
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Link} from '@aragon/ods-old';
 import React from 'react';
 import CommitteeAddressesModal from '../committeeAddressesModal';
