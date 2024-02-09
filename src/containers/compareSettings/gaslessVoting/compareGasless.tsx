@@ -45,6 +45,9 @@ export const CompareGasless: React.FC<CompareGaslessProps> = ({
       executionExpirationMinutes,
       executionExpirationHours,
       executionExpirationDays,
+      tokenType: daoSettings?.hasGovernanceEnabled
+        ? 'governance-ERC20'
+        : 'ERC-20',
     };
     if (actions && actions.length > 0) {
       info.committee = getNewMultisigMembers(
@@ -77,6 +80,9 @@ export const CompareGasless: React.FC<CompareGaslessProps> = ({
       executionExpirationMinutes: minutes!,
       executionExpirationHours: hours!,
       executionExpirationDays: days!,
+      tokenType: daoSettings?.hasGovernanceEnabled
+        ? 'governance-ERC20'
+        : 'ERC-20',
     };
   }
   return (
