@@ -1,5 +1,5 @@
-import {AlertInline} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
+import {AlertInline} from '@aragon/ods';
 import {useFormContext, FieldError, useWatch} from 'react-hook-form';
 
 type DateTimeErrorsProps = {
@@ -46,7 +46,7 @@ export function DateTimeErrors({mode}: DateTimeErrorsProps) {
     return (
       <div>
         {requiredErrors.map((msg, i) => (
-          <AlertInline key={i} label={msg} mode="critical" />
+          <AlertInline key={i} message={msg} variant="critical" />
         ))}
       </div>
     );
@@ -55,13 +55,13 @@ export function DateTimeErrors({mode}: DateTimeErrorsProps) {
   if (validatedErrors.length > 0) {
     return (
       <div>
-        <AlertInline label={validatedErrors[0]} mode="critical" />
+        <AlertInline message={validatedErrors[0]} variant="critical" />
       </div>
     );
   }
 
   if (warning && warning !== '') {
-    return <AlertInline label={warning} mode="critical" />;
+    return <AlertInline message={warning} variant="critical" />;
   }
 
   return null;

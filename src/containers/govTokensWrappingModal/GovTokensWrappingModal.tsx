@@ -1,14 +1,13 @@
 import React, {useCallback, useMemo, FC} from 'react';
 
 import {
-  AlertInline,
   ButtonText,
   CheckboxListItem,
   Label,
   LinearProgress,
   ValueInput,
 } from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -315,8 +314,8 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                         <div className="space-y-2">
                           {error?.message && (
                             <AlertInline
-                              label={error.message}
-                              mode="critical"
+                              message={error.message}
+                              variant="critical"
                             />
                           )}
                         </div>
@@ -437,7 +436,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
             {isTxError && (
               <div className="flex justify-center text-center">
                 <AlertInline
-                  label={
+                  message={
                     isTokenApproveError
                       ? t('modal.wrapToken.footerAlertCriticalApprove')
                       : isTokenWrapError
@@ -446,7 +445,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       ? t('TransactionModal.errorLabel')
                       : ''
                   }
-                  mode="critical"
+                  variant="critical"
                 />
               </div>
             )}

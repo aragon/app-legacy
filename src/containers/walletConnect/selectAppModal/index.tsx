@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
-import {AlertInline, ListItemAction} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ListItemAction} from '@aragon/ods-old';
+import {AlertInline, Icon, IconType} from '@aragon/ods';
 import {SessionTypes, SignClientTypes} from '@walletconnect/types';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -121,7 +121,10 @@ const SelectWCApp: React.FC<Props> = props => {
           })}
         </div>
         <div className="mt-4 flex justify-center">
-          <AlertInline label={t('modal.dappConnect.alertInfo')} />
+          <AlertInline
+            message={t('modal.dappConnect.alertInfo')}
+            variant="info"
+          />
         </div>
       </Content>
     </ModalBottomSheetSwitcher>

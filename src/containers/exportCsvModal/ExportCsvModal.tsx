@@ -3,9 +3,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useForm, useWatch, Controller} from 'react-hook-form';
 import {saveAs} from 'file-saver';
-
-import {AlertInline, ButtonText, DateInput, Label} from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {ButtonText, DateInput, Label} from '@aragon/ods-old';
+import {AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 
 import {getCanonicalDate} from 'utils/date';
@@ -307,8 +306,8 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
               {isCsvGenerationError && (
                 <div className="flex justify-center text-center">
                   <AlertInline
-                    label={t('finance.modalExport.alertCritical')}
-                    mode="critical"
+                    message={t('finance.modalExport.alertCritical')}
+                    variant="critical"
                   />
                 </div>
               )}
@@ -316,8 +315,8 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
               {isCsvGenerationSuccess && (
                 <div className="flex justify-center text-center">
                   <AlertInline
-                    label={t('finance.modalExport.statusSuccess')}
-                    mode="success"
+                    message={t('finance.modalExport.statusSuccess')}
+                    variant="success"
                   />
                 </div>
               )}

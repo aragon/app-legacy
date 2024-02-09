@@ -1,14 +1,14 @@
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import {
-  AlertInline,
   ButtonWallet,
   Label,
   TextareaSimple,
   TextareaWYSIWYG,
   TextInput,
 } from '@aragon/ods-old';
-import React from 'react';
-import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
+import {AlertInline} from '@aragon/ods';
 
 import AddLinks from 'components/addLinks';
 import {useWallet} from 'hooks/useWallet';
@@ -58,7 +58,7 @@ export const DefineProposal: React.FC = () => {
                 placeholder={t('newWithdraw.defineProposal.titlePlaceholder')}
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </>
           )}
@@ -88,7 +88,7 @@ export const DefineProposal: React.FC = () => {
                 placeholder={t('newWithdraw.defineProposal.summaryPlaceholder')}
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </>
           )}

@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
-import {AlertInline, ButtonText} from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
+import {AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 
@@ -145,24 +145,24 @@ const PublishModal: React.FC<PublishModalProps> = ({
         {state === TransactionState.SUCCESS && (
           <AlertInlineContainer>
             <AlertInline
-              label={t('TransactionModal.successLabel')}
-              mode="success"
+              message={t('TransactionModal.successLabel')}
+              variant="success"
             />
           </AlertInlineContainer>
         )}
         {state === TransactionState.ERROR && (
           <AlertInlineContainer>
             <AlertInline
-              label={t('TransactionModal.errorLabel')}
-              mode="critical"
+              message={t('TransactionModal.errorLabel')}
+              variant="critical"
             />
           </AlertInlineContainer>
         )}
         {gasEstimationError && (
           <AlertInlineContainer>
             <AlertInline
-              label={t('TransactionModal.gasEstimationErrorLabel')}
-              mode="warning"
+              message={t('TransactionModal.gasEstimationErrorLabel')}
+              variant="warning"
             />
           </AlertInlineContainer>
         )}

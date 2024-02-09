@@ -1,11 +1,13 @@
 import React, {FC, useState, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import numeral from 'numeral';
+import {Label, LinearProgress, NumberInput} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
+
 import {htmlIn} from 'utils/htmlIn';
 import {gTokenSymbol} from 'utils/tokens';
-import numeral from 'numeral';
 
 export const MinParticipation: FC = () => {
   const {t} = useTranslation();
@@ -217,12 +219,12 @@ export const MinParticipation: FC = () => {
                         />
                       </div>
                       <AlertInline
-                        label={
+                        message={
                           t(
                             'createDAO.step4.wrappedReferenceAlertInfo'
                           ) as string
                         }
-                        mode="neutral"
+                        variant="info"
                       />
                     </SimulationSection>
 
@@ -320,7 +322,7 @@ export const MinParticipation: FC = () => {
             </div>
 
             {error?.message && (
-              <AlertInline label={error.message} mode="critical" />
+              <AlertInline message={error.message} variant="critical" />
             )}
           </>
         )}

@@ -1,11 +1,11 @@
+import React, {useCallback} from 'react';
 import {
-  AlertInline,
   InputImageSingle,
   Label,
   TextareaSimple,
   TextInput,
 } from '@aragon/ods-old';
-import React, {useCallback} from 'react';
+import {AlertInline} from '@aragon/ods';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -82,19 +82,21 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
       if (error.message === t('infos.checkingEns')) {
         return (
           <AlertInline
-            label={t('infos.checkingEns') as string}
-            mode="neutral"
+            message={t('infos.checkingEns') as string}
+            variant="info"
           />
         );
       } else {
-        return <AlertInline label={error.message as string} mode="critical" />;
+        return (
+          <AlertInline message={error.message as string} variant="critical" />
+        );
       }
     } else {
       if (value) {
         return (
           <AlertInline
-            label={t('infos.ensAvailable') as string}
-            mode="success"
+            message={t('infos.ensAvailable') as string}
+            variant="success"
           />
         );
       } else return null;
@@ -128,7 +130,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
               />
               <InputCount>{`${value.length}/128`}</InputCount>
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </>
           )}
@@ -227,7 +229,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                   />
                 </LogoContainer>
                 {error?.message && (
-                  <AlertInline label={error.message} mode="critical" />
+                  <AlertInline message={error.message} variant="critical" />
                 )}
               </>
             );
@@ -256,7 +258,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                 placeholder={t('placeHolders.daoDescription')}
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </>
           )}

@@ -1,13 +1,14 @@
+import React, {ReactNode} from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+
 import {
-  AlertInline,
   ButtonText,
   CheckboxListItem,
   CheckboxListItemProps,
   Tag,
 } from '@aragon/ods-old';
-import React, {ReactNode} from 'react';
-import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
+import {AlertInline} from '@aragon/ods';
 
 export type DescriptionListProps = {
   title: string;
@@ -72,7 +73,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
             />
           </div>
           {checkedState === 'error' && checkBoxErrorMessage && (
-            <AlertInline label={checkBoxErrorMessage} mode="critical" />
+            <AlertInline message={checkBoxErrorMessage} variant="critical" />
           )}
         </div>
       )}

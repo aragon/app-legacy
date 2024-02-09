@@ -1,11 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {
-  AlertInline,
-  ButtonText,
-  Label,
-  WalletInputLegacy,
-} from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {ButtonText, Label, WalletInputLegacy} from '@aragon/ods-old';
+import {AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
 import {
   Controller,
   useFormContext,
@@ -235,7 +230,7 @@ const WCdAppValidation: React.FC<Props> = props => {
                 />
                 <div className="mt-2">
                   {error?.message && (
-                    <AlertInline label={error.message} mode="critical" />
+                    <AlertInline variant="critical" message={error.message} />
                   )}
                 </div>
               </>
@@ -260,30 +255,30 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline
-              label={t('modal.dappConnect.validation.alertSuccess', {
+              message={t('modal.dappConnect.validation.alertSuccess', {
                 dappName,
               })}
-              mode="success"
+              variant="success"
             />
           </AlertWrapper>
         )}
         {connectionStatus === ConnectionState.INCORRECT_URI && (
           <AlertWrapper>
             <AlertInline
-              label={t('modal.dappConnect.validation.alertCriticalQRcode', {
+              message={t('modal.dappConnect.validation.alertCriticalQRcode', {
                 dappName,
               })}
-              mode="critical"
+              variant="critical"
             />
           </AlertWrapper>
         )}
         {connectionStatus === ConnectionState.ERROR && (
           <AlertWrapper>
             <AlertInline
-              label={t('modal.dappConnect.validation.alertCriticalGeneral', {
+              message={t('modal.dappConnect.validation.alertCriticalGeneral', {
                 dappName,
               })}
-              mode="critical"
+              variant="critical"
             />
           </AlertWrapper>
         )}

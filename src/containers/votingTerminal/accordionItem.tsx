@@ -2,13 +2,13 @@ import React, {PropsWithChildren} from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 
 import styled from 'styled-components';
-import {Icon, IconType} from '@aragon/ods';
+import {AlertInline, Icon, IconType} from '@aragon/ods';
 
 import {
   AccordionMethodType,
   AccordionType,
 } from '../../components/accordionMethod';
-import {AlertInline, ButtonIcon} from '../../@aragon/ods-old';
+import {ButtonIcon} from '../../@aragon/ods-old';
 
 type AccordionCustomHeaderType = Pick<
   AccordionMethodType,
@@ -23,7 +23,7 @@ export const VotingTerminalAccordionItem: React.FC<
       <HStack>
         <FlexContainer>
           <MethodName>{methodName}</MethodName>
-          {alertLabel && <AlertInline label={alertLabel} />}
+          {alertLabel && <AlertInline message={alertLabel} variant="info" />}
         </FlexContainer>
         <Accordion.Trigger asChild>
           <AccordionButton

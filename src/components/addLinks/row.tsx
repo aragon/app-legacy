@@ -1,5 +1,4 @@
 import {
-  AlertInline,
   ButtonIcon,
   Dropdown,
   Label,
@@ -10,6 +9,7 @@ import React, {useCallback} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useFormState} from 'react-hook-form';
+import {AlertInline, Icon, IconType} from '@aragon/ods';
 
 import {
   EMAIL_PATTERN,
@@ -18,7 +18,6 @@ import {
 } from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {BgWhite} from './header';
-import {Icon, IconType} from '@aragon/ods';
 
 type LinkRowProps = {
   index: number;
@@ -134,7 +133,7 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
               />
               {error?.message && (
                 <ErrorContainer>
-                  <AlertInline label={error.message} mode="critical" />
+                  <AlertInline message={error.message} variant="critical" />
                 </ErrorContainer>
               )}
             </>
@@ -168,7 +167,7 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
               />
               {error?.message && (
                 <ErrorContainer>
-                  <AlertInline label={error.message} mode="critical" />
+                  <AlertInline message={error.message} variant="critical" />
                 </ErrorContainer>
               )}
             </>

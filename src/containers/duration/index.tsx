@@ -1,5 +1,6 @@
-import {AlertInline, NumberInput} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
+import {AlertInline} from '@aragon/ods';
+import {NumberInput} from '@aragon/ods-old';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -239,7 +240,7 @@ const Duration: React.FC<Props> = ({
               disabled={isMaxDurationDays}
             />
             {error?.message && (
-              <AlertInline label={error.message} mode="critical" />
+              <AlertInline message={error.message} variant="critical" />
             )}
           </TimeLabelWrapper>
         )}
@@ -268,7 +269,7 @@ const Duration: React.FC<Props> = ({
               disabled={isMaxDurationDays}
             />
             {error?.message && (
-              <AlertInline label={error.message} mode="critical" />
+              <AlertInline message={error.message} variant="critical" />
             )}
           </TimeLabelWrapper>
         )}
@@ -299,7 +300,7 @@ const Duration: React.FC<Props> = ({
               min="0"
             />
             {error?.message && (
-              <AlertInline label={error.message} mode="critical" />
+              <AlertInline message={error.message} variant="critical" />
             )}
           </TimeLabelWrapper>
         )}
@@ -326,17 +327,17 @@ export const DurationLabel: React.FC<DurationLabelProps> = ({
   ...props
 }) => {
   if (props.minDuration && alerts?.minDuration) {
-    return <AlertInline label={alerts.minDuration} mode="critical" />;
+    return <AlertInline message={alerts.minDuration} variant="critical" />;
   } else if (props.maxDuration && alerts?.maxDuration) {
     return (
       <AlertInline
-        label={alerts.maxDuration}
-        mode={props.limitOnMax ? 'critical' : 'warning'}
+        message={alerts.maxDuration}
+        variant={props.limitOnMax ? 'critical' : 'warning'}
       />
     );
   } else {
     return alerts?.acceptableDuration ? (
-      <AlertInline label={alerts.acceptableDuration} mode="neutral" />
+      <AlertInline message={alerts.acceptableDuration} variant="info" />
     ) : null;
   }
 };

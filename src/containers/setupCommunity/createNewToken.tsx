@@ -1,4 +1,3 @@
-import {AlertInline, Label, TextInput} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
@@ -6,6 +5,8 @@ import {Controller, useFormContext} from 'react-hook-form';
 import AddWallets from 'components/addWallets';
 import {alphaNumericValidator} from 'utils/validators';
 import {htmlIn} from 'utils/htmlIn';
+import {Label, TextInput} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
 
 const CreateNewToken: React.FC = () => {
   const {t} = useTranslation();
@@ -48,7 +49,7 @@ const CreateNewToken: React.FC = () => {
                 onChange={onChange}
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </>
           )}
@@ -81,7 +82,7 @@ const CreateNewToken: React.FC = () => {
                 onChange={onChange}
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </>
           )}
@@ -96,8 +97,8 @@ const CreateNewToken: React.FC = () => {
           />
         </DescriptionContainer>
         <AlertInline
-          label={t('createDAO.step3.distributionWalletAlertText')}
-          mode="neutral"
+          message={t('createDAO.step3.distributionWalletAlertText')}
+          variant="info"
         />
         <AddWallets />
       </FormItem>

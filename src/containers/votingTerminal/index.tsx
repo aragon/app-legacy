@@ -1,6 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {
-  AlertCard,
   AlertInline,
   ButtonGroup,
   ButtonText,
@@ -10,7 +9,7 @@ import {
   VoterType,
   VotersTable,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AlertCard, Icon, IconType} from '@aragon/ods';
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
@@ -430,7 +429,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
 
             {alertMessage && (
               <div className="pt-4 md:mt-6 md:pt-0">
-                <AlertCard title={alertMessage} mode="warning" />
+                <AlertCard message={alertMessage} variant="warning" />
               </div>
             )}
           </>

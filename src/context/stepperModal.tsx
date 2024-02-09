@@ -1,8 +1,8 @@
 import React, {useMemo} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {Icon, IconType} from '@aragon/ods';
-import {AlertInline, ButtonText} from '@aragon/ods-old';
+import {AlertInline, Icon, IconType} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
 
 import {CHAIN_METADATA} from 'utils/constants';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
@@ -142,8 +142,10 @@ const StepperModal = <TStepKey extends string>({
           {gasEstimationError && (
             <AlertInlineContainer>
               <AlertInline
-                label={t('TransactionModal.gasEstimationErrorLabel') as string}
-                mode="warning"
+                message={
+                  t('TransactionModal.gasEstimationErrorLabel') as string
+                }
+                variant="warning"
               />
             </AlertInlineContainer>
           )}
@@ -154,12 +156,12 @@ const StepperModal = <TStepKey extends string>({
           <StepperModalProgress steps={steps} labels={stepLabels} />
           {globalState === StepStatus.LOADING && (
             <AlertInline
-              label={t('createDAO.deployDAO.alertCritical.dontClosePage')}
-              mode="critical"
+              message={t('createDAO.deployDAO.alertCritical.dontClosePage')}
+              variant="critical"
             />
           )}
           {globalState === StepStatus.ERROR && (
-            <AlertInline label={errorMessage} mode="critical" />
+            <AlertInline message={errorMessage} variant="critical" />
           )}
         </StepsContainer>
       )}

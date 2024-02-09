@@ -1,12 +1,7 @@
 import React, {ReactNode} from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
-import {
-  AlertInline,
-  ButtonIcon,
-  Dropdown,
-  ListItemProps,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ButtonIcon, Dropdown, ListItemProps} from '@aragon/ods-old';
+import {AlertInline, Icon, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {shortenAddress} from 'utils/library';
 
@@ -102,7 +97,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                 </p>
               </a>
             )}
-            {alertLabel && <AlertInline label={alertLabel} />}
+            {alertLabel && <AlertInline message={alertLabel} variant="info" />}
           </FlexContainer>
 
           <VStack>
@@ -136,7 +131,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
             <p className="md:pr-20">{methodDescription}</p>
 
             {additionalInfo && (
-              <AlertInline label={additionalInfo} mode="neutral" />
+              <AlertInline message={additionalInfo} variant="info" />
             )}
           </AdditionalInfoContainer>
         )}

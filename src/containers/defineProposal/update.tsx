@@ -1,7 +1,3 @@
-import {AlertInline} from '@aragon/ods-old';
-import {ApplyUpdateParams, VersionTag} from '@aragon/sdk-client-common';
-import {useEditor} from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import React, {useEffect, useState} from 'react';
 import {
   Controller,
@@ -9,10 +5,14 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form';
+import {ApplyUpdateParams, VersionTag} from '@aragon/sdk-client-common';
+import {useEditor} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {Markdown} from 'tiptap-markdown';
+import {AlertInline} from '@aragon/ods';
 
 import {Loading} from 'components/temporary';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
@@ -363,7 +363,7 @@ export const DefineUpdateProposal: React.FC = () => {
           });
         }}
       />
-      <AlertInline label={t('update.itemList.alertInfo')} mode="neutral" />
+      <AlertInline message={t('update.itemList.alertInfo')} variant="info" />
     </UpdateContainer>
   );
 };

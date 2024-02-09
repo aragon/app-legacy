@@ -1,12 +1,8 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
-import {
-  AlertInline,
-  ButtonText,
-  IconGovernance,
-  ListItemAction,
-} from '@aragon/ods-old';
+import {ButtonText, IconGovernance, ListItemAction} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -641,7 +637,10 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                   onClick={handleResetChanges}
                 />
               </HStack>
-              <AlertInline label={t('settings.proposeSettingsInfo')} />
+              <AlertInline
+                message={t('settings.proposeSettingsInfo')}
+                variant="info"
+              />
             </Footer>
           </Layout>
         }

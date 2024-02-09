@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {AlertCard, ButtonIcon, ButtonText, InputValue} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ButtonIcon, ButtonText, InputValue} from '@aragon/ods-old';
+import {AlertCard, Icon, IconType} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -69,9 +69,9 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             content={
               <div className="mb-3 mt-6">
                 <AlertCard
-                  mode="critical"
-                  title={t('modal.mintTokensToTreasury.alertTitle')}
-                  helpText={t('modal.mintTokensToTreasury.alertDescription')}
+                  variant="critical"
+                  message={t('modal.mintTokensToTreasury.alertTitle')}
+                  description={t('modal.mintTokensToTreasury.alertDescription')}
                 />
               </div>
             }
@@ -136,9 +136,9 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                   </InputContainer>
                   <div className="mb-3 mt-6">
                     <AlertCard
-                      mode="critical"
-                      title={t('modal.mintTokensToTreasury.alertTitle')}
-                      helpText={t(
+                      variant="critical"
+                      message={t('modal.mintTokensToTreasury.alertTitle')}
+                      description={t(
                         'modal.mintTokensToTreasury.alertDescription'
                       )}
                     />

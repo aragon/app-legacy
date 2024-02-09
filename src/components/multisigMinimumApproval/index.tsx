@@ -1,4 +1,3 @@
-import {AlertInlineProps, Label} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
 import {
   Controller,
@@ -8,6 +7,8 @@ import {
   ValidateResult,
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import {Label} from '@aragon/ods-old';
+import {IAlertInlineProps} from '@aragon/ods';
 import {TFunction} from 'i18next';
 import {CORRECTION_DELAY} from 'utils/constants';
 
@@ -122,22 +123,22 @@ export function generateAlert(
   max: number,
   t: TFunction,
   error?: FieldError
-): AlertInlineProps {
-  if (error?.message) return {label: error.message, mode: 'critical'};
+): IAlertInlineProps {
+  if (error?.message) return {message: error.message, variant: 'critical'};
 
   const value = Number(inputValue);
 
   // minority can pass proposal (0-50%)
   if (value <= max / 2 && value > 0)
-    return {label: t('createDAO.step4.alerts.minority'), mode: 'warning'};
+    return {message: t('createDAO.step4.alerts.minority'), variant: 'warning'};
 
   // majority to pass proposal (50% +1 -> 75%)
   if (value > 0 && value < max * 0.75)
-    return {label: t('createDAO.step4.alerts.majority'), mode: 'success'};
+    return {message: t('createDAO.step4.alerts.majority'), variant: 'success'};
 
   // absolute majority
   return {
-    label: t('createDAO.step4.alerts.absoluteMajority'),
-    mode: 'warning',
+    message: t('createDAO.step4.alerts.absoluteMajority'),
+    variant: 'warning',
   };
 }

@@ -1,4 +1,3 @@
-import {AlertInline} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {
   FieldErrors,
@@ -7,6 +6,8 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form';
+import {MajorityVotingSettings} from '@aragon/sdk-client';
+import {AlertInline} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
 
@@ -30,7 +31,6 @@ import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {MintTokensFormData} from 'utils/types';
-import {MajorityVotingSettings} from '@aragon/sdk-client';
 
 export const MintToken: React.FC = () => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
@@ -101,8 +101,8 @@ export const MintToken: React.FC = () => {
             >
               <div className="space-y-4">
                 <AlertInline
-                  label={t('newProposal.mintTokens.additionalInfo')}
-                  mode="neutral"
+                  message={t('newProposal.mintTokens.additionalInfo')}
+                  variant="info"
                 />
                 <MintTokenForm actionIndex={0} standAlone />
               </div>

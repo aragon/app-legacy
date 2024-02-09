@@ -1,7 +1,8 @@
-import {AlertInline, CheckboxListItem, Label} from '@aragon/ods-old';
-import {MultisigVotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useMemo, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {CheckboxListItem, Label} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -206,8 +207,8 @@ const SetupMultisigVotingForm: React.FC = () => {
           multiSelect={false}
         />
         <AlertInline
-          mode="neutral"
-          label={t('newWithdraw.setupVoting.multisig.votingOption.alert')}
+          message={t('newWithdraw.setupVoting.multisig.votingOption.alert')}
+          variant="info"
         />
       </FormSection>
 

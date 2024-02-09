@@ -1,15 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {
-  AlertCard,
-  CheckboxListItem,
-  Label,
-  ButtonText,
-  AlertInline,
-  InputValue,
-} from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {CheckboxListItem, Label, ButtonText, InputValue} from '@aragon/ods-old';
+import {AlertCard, AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
 
 import {useWallet} from 'hooks/useWallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -157,9 +150,9 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
           )}
         />
         <AlertCard
-          mode="info"
-          title={t('modal.delegation.alertCard.title')}
-          helpText={t('modal.delegation.alertCard.desc', {
+          variant="info"
+          message={t('modal.delegation.alertCard.title')}
+          description={t('modal.delegation.alertCard.desc', {
             tokenSymbol: daoToken?.symbol,
           })}
         />
@@ -184,8 +177,8 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
         />
         {isError && (
           <AlertInline
-            label={t(`modal.delegation.${alertLabel}`)}
-            mode="critical"
+            message={t(`modal.delegation.${alertLabel}`)}
+            variant="critical"
           />
         )}
       </FormGroup>

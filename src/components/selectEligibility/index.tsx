@@ -1,10 +1,6 @@
-import {
-  AlertInline,
-  CheckboxListItem,
-  Label,
-  NumberInput,
-} from '@aragon/ods-old';
 import React, {useEffect} from 'react';
+import {AlertInline} from '@aragon/ods';
+import {CheckboxListItem, Label, NumberInput} from '@aragon/ods-old';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -119,7 +115,7 @@ export const SelectEligibility = () => {
                 disabled={anyoneIsEligible}
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </OptionsContainers>
           )}
@@ -127,8 +123,8 @@ export const SelectEligibility = () => {
       </Container>
       {anyoneIsEligible && (
         <AlertInline
-          label={t('createDAO.step3.eligibility.anyone.warning')}
-          mode="warning"
+          message={t('createDAO.step3.eligibility.anyone.warning')}
+          variant="warning"
         />
       )}
     </>
