@@ -76,8 +76,6 @@ export const useWallet = (): IUseWallet => {
     name: ensName,
   });
 
-  console.log('view', network);
-
   const balance: bigint | null = wagmiBalance?.value || null;
   const isOnWrongNetwork: boolean =
     isConnected && CHAIN_METADATA[network].id !== chainId;
