@@ -32,7 +32,7 @@ import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
 import {CannotDelegateModal} from 'containers/cannotDelegateModal';
-import DeprecationBanner from 'containers/navbar/depricaitonBanner';
+import DeprecationBanner from 'containers/navbar/deprecationBanner';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
