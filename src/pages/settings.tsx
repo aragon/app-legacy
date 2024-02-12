@@ -1,6 +1,6 @@
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
-import {AlertInline, AvatarDao, Dropdown, Link, Tag} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {AlertInline, AvatarDao, Dropdown, Link} from '@aragon/ods-old';
+import {Button, Icon, IconType, Tag} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -190,7 +190,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
             <p className="shrink-0 ft-text-base xl:font-semibold">
               {chainLabel}
             </p>
-            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+            <Tag label={t('labels.notChangeable')} variant="neutral" />
           </div>
         </Definition>
       </DescriptionPair>
@@ -213,7 +213,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
               href={explorerLink}
               iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
             />
-            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+            <Tag label={t('labels.notChangeable')} variant="neutral" />
           </div>
         </Definition>
       </DescriptionPair>

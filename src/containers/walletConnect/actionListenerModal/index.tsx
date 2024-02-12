@@ -1,4 +1,4 @@
-import {AvatarDao, Tag} from '@aragon/ods-old';
+import {AvatarDao} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -21,7 +21,7 @@ import {
 } from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
 import {AllowListDApp} from '../selectAppModal';
-import {Button, Spinner} from '@aragon/ods';
+import {Button, Spinner, Tag} from '@aragon/ods';
 
 type Props = {
   onBackButtonClicked: () => void;

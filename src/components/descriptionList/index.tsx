@@ -1,9 +1,8 @@
-import {Button} from '@aragon/ods';
+import {Button, Tag} from '@aragon/ods';
 import {
   AlertInline,
   CheckboxListItem,
   CheckboxListItemProps,
-  Tag,
 } from '@aragon/ods-old';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -46,7 +45,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
           <TitleText>{title}</TitleText>
           {badgeLabel && (
             <div>
-              <Tag label={badgeLabel || ''} colorScheme="info" />
+              <Tag label={badgeLabel || ''} variant="info" />
             </div>
           )}
         </TitleContainer>
