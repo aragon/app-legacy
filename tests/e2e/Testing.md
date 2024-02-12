@@ -1,6 +1,6 @@
 # End to End Testing
 
-[Synpress](https://github.com/Synthetixio/synpress), a package based on Cypress, is used for end to end testing. The relevant files are located at `/tests/e2e` (this base path is assumed for any other file locations metioned).
+[Synpress](https://github.com/Synthetixio/synpress), a package based on Cypress, is used for end to end testing. The relevant files are located at `/tests/e2e` (this base path is assumed for any other file locations mentioned).
 
 ## First use
 

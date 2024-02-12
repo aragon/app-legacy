@@ -132,7 +132,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     !!minApproval;
 
   useEffect(() => {
-    // fetch avatar fpr each voter
+    // fetch avatar for each voter
     async function fetchEns() {
       const response = await Promise.all(
         voters.map(async voter => {

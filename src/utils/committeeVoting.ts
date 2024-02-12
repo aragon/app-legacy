@@ -49,7 +49,7 @@ export function getApproveStatusLabel(
       label = t('votingTerminal.status.pending', {timeUntilNow});
     }
     // If the status is succeeded but the approval period passed
-    // So te proposal is nor active/succeeded neither executed
+    // So the proposal is nor active/succeeded neither executed
     else if (proposal.tallyEndDate < new Date()) {
       label = t('votingTerminal.status.succeeded');
     }

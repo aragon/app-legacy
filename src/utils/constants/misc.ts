@@ -134,7 +134,7 @@ export const PROPOSAL_STATE_LABELS = [
   i18n.t('governance.proposals.states.defeated'),
 ];
 
-// Storage and cacheing keys
+// Storage and caching keys
 export const VERIFIED_CONTRACTS_KEY = 'verifiedContracts';
 
 // TODO: build more

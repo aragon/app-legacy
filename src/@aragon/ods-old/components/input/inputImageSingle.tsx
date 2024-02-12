@@ -27,7 +27,7 @@ export type InputImageSingleProps = {
    */
   maxFileSize?: number;
   /**
-   * Alow Square image only
+   * Allow Square image only
    */
   onlySquare?: boolean;
   /**

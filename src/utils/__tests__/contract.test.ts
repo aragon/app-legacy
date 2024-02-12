@@ -329,7 +329,7 @@ contract DAO is
     /// @param index The index of the action in the action array that failed.
     error ActionFailed(uint256 index);
 
-    /// @notice Thrown if an action has insufficent gas left.
+    /// @notice Thrown if an action has insufficient gas left.
     error InsufficientGas();
 
     /// @notice Thrown if the deposit amount is zero.
@@ -656,7 +656,7 @@ contract DAO is
             keyword: 'error',
             name: 'InsufficientGas',
             tags: {
-              notice: 'Thrown if an action has insufficent gas left.',
+              notice: 'Thrown if an action has insufficient gas left.',
             },
           },
           ZeroAmount: {

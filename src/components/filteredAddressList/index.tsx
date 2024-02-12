@@ -16,7 +16,7 @@ type FilteredAddressListProps = {
 /**
  * Component to filter a list of addresses.
  * @param wallets {TokenVotingWalletField[] | MultisigWalletField[]}
- * @param tokenSymbol If token symbol is defined it treat the adresses as TokenVotingWalletField, which mean that shows
+ * @param tokenSymbol If token symbol is defined it treat the addresses as TokenVotingWalletField, which mean that shows
  * an amount on the voters table.
  */
 export const FilteredAddressList = ({

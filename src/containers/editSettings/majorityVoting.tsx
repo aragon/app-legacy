@@ -297,7 +297,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     /**
      * FIXME - this is the dumbest workaround: because there is an internal
      * field array in 'AddLinks', conflicts arise when removing rows via remove
-     * and update. While the append, remove and replace technically happens whe
+     * and update. While the append, remove and replace technically happens when
      * we reset the form, a row is not added to the AddLinks component leaving
      * the component in a state where one or more rows are hidden until the Add
      * Link button is clicked. The workaround is to forcefully set empty fields

@@ -153,7 +153,7 @@ export async function updateFollowedDaoInCache(dao: NavigationDao) {
 }
 
 /**
- * Fetch the details of a pending DAO fro the cache, if available
+ * Fetch the details of a pending DAO from the cache, if available
  * @param cache cache object that holds the pending DAOs (remove when migrating to server)
  * @param network network in which the DAO is being created.
  * @param daoAddressOrEns the address or ens domain of the DAO

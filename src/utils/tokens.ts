@@ -370,7 +370,7 @@ export const isCompatibleToken = async (
  * - '111.1 SYM' ok
  * - '1'111'111.1 SYM' not ok.
  *
- * The output, in general, is engineering notation (scientific notation wher the
+ * The output, in general, is engineering notation (scientific notation where the
  * exponent is divisible by 3 and the coefficient is between in [1,999]). For
  * numbers up to a trillon, the power is replaced by the letters k (10^3), M
  * (10^6) and G (10^9).

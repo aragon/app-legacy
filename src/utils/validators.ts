@@ -173,7 +173,7 @@ export const validateAddress = (address: string): ValidateResult => {
 };
 
 /**
- * Check if given string is a valid alpha-numeric string
+ * Check if given string is a valid alphanumeric string
  *
  * @param value value to be validated
  * @param field name of field to be validated

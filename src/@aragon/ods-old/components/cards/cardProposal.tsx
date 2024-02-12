@@ -27,7 +27,7 @@ export type CardProposalProps = {
   onClick: () => void;
   /**
    * Available states that proposal card have. by changing the status,
-   * the headers & buttons wil change to proper format also the progress
+   * the headers & buttons will change to proper format also the progress
    * section only available on active state.
    * */
   process:
