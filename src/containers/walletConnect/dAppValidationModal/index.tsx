@@ -3,10 +3,9 @@ import {
   AlertInline,
   ButtonText,
   Label,
-  Spinner,
   WalletInputLegacy,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 import {
   Controller,
   useFormContext,
@@ -249,7 +248,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           disabled={disableCta}
           className="w-full"
           {...(connectionStatus === ConnectionState.LOADING && {
-            iconLeft: <Spinner size={'xs'} />,
+            iconLeft: <Spinner size="sm" variant="primary" />,
             isActive: true,
           })}
           {...((connectionStatus === ConnectionState.ERROR ||

@@ -1,8 +1,12 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
-import {AlertInline, ButtonText, ListItemAction} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {
+  AlertInline,
+  ButtonText,
+  IconGovernance,
+  ListItemAction,
+} from '@aragon/ods-old';
 import {
   useFieldArray,
   useFormContext,
@@ -33,6 +37,13 @@ import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
+import {ManageExecutionMultisig} from '../manageExecutionMultisig';
+import {MultisigDaoMember} from '../../hooks/useDaoMembers';
+import {
+  ActionAddAddress,
+  ActionRemoveAddress,
+  ManageMembersFormData,
+} from '../../utils/types';
 
 type EditMvSettingsProps = {
   daoDetails: DaoDetails;
@@ -93,8 +104,8 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     executionExpirationMinutes,
     executionExpirationHours,
     executionExpirationDays,
-    committee,
     committeeMinimumApproval,
+    actions,
   ] = useWatch({
     name: [
       'daoName',
@@ -110,13 +121,11 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       'daoLinks',
       'earlyExecution',
       'voteReplacement',
-
-      'votingType',
       'executionExpirationMinutes',
       'executionExpirationHours',
       'executionExpirationDays',
-      'committee',
       'committeeMinimumApproval',
+      'actions',
     ],
     control,
   });
@@ -126,13 +135,19 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   let approvalDays: number | undefined;
   let approvalHours: number | undefined;
   let approvalMinutes: number | undefined;
-  if (isGasless) {
+  let executionMultisigMembers: MultisigDaoMember[] | undefined;
+  if (isGasless && votingSettings) {
     const {days, hours, minutes} = getDHMFromSeconds(
-      (votingSettings as GaslessPluginVotingSettings)?.minTallyDuration ?? 0
+      (votingSettings as GaslessPluginVotingSettings).minTallyDuration ?? 0
     );
     approvalDays = days;
     approvalHours = hours;
     approvalMinutes = minutes;
+    executionMultisigMembers = (
+      votingSettings as GaslessPluginVotingSettings
+    ).executionMultisigMembers?.map(wallet => ({
+      address: wallet,
+    })) as MultisigDaoMember[];
   }
 
   const controlledLinks = fields.map((field, index) => {
@@ -216,15 +231,31 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       voteReplacement !== daoVotingMode.voteReplacement;
   }
 
-  let isGaslessChanged = false;
-  if (isGasless && votingSettings) {
-    isGaslessChanged =
-      Number(executionExpirationMinutes) !== approvalMinutes ||
-      Number(executionExpirationHours) !== approvalHours ||
-      Number(executionExpirationDays) !== approvalDays ||
-      committeeMinimumApproval !== committee;
-    // committee !== committeList; // todo(kon): implement it
-  }
+  const gaslesSettingsChanged = useMemo(() => {
+    if (isGasless && votingSettings) {
+      return (
+        Number(executionExpirationMinutes) !== approvalMinutes ||
+        Number(executionExpirationHours) !== approvalHours ||
+        Number(executionExpirationDays) !== approvalDays ||
+        Number(committeeMinimumApproval) !==
+          (votingSettings as GaslessPluginVotingSettings).minTallyApprovals
+      );
+    }
+    return false;
+  }, [
+    approvalDays,
+    approvalHours,
+    approvalMinutes,
+    committeeMinimumApproval,
+    executionExpirationDays,
+    executionExpirationHours,
+    executionExpirationMinutes,
+    isGasless,
+    votingSettings,
+  ]);
+
+  const isGaslessChanged =
+    gaslesSettingsChanged || gaslessActionsChanged(actions);
 
   // calculate proposer
   let daoEligibleProposer: TokenVotingProposalEligibility =
@@ -322,7 +353,8 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     // TODO: Alerts share will be added later
     setValue(
       'membership',
-      daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
+      daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth' ||
+        daoDetails?.plugins[0].id === GaselessPluginName
         ? 'token'
         : 'wallet'
     );
@@ -342,11 +374,12 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     if (!isGasless) return;
 
     setValue('votingType', 'gasless');
-    setValue('executionExpirationMinutes', approvalMinutes);
-    setValue('executionExpirationHours', approvalHours);
-    setValue('executionExpirationDays', approvalDays);
-    // todo(kon): implement this
-    // setValue('committee', []);
+    setValue('executionExpirationMinutes', approvalMinutes?.toString());
+    setValue('executionExpirationHours', approvalHours?.toString());
+    setValue('executionExpirationDays', approvalDays?.toString());
+    // Used to show the original execution committee members on the review screen
+    setValue('committee', executionMultisigMembers);
+
     setValue(
       'committeeMinimumApproval',
       (votingSettings as GaslessPluginVotingSettings).minTallyApprovals
@@ -355,10 +388,34 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     approvalDays,
     approvalHours,
     approvalMinutes,
+    executionMultisigMembers,
     isGasless,
     setValue,
     votingSettings,
   ]);
+
+  // Initialize actions when reset to avoid undefined data issues
+  const resetGaslessActions = useCallback(() => {
+    setValue('actions', [
+      {
+        inputs: {
+          memberWallets: [
+            {
+              address: '',
+              ensName: '',
+            },
+          ],
+        },
+        name: 'add_address',
+      },
+      {
+        inputs: {
+          memberWallets: [],
+        },
+        name: 'remove_address',
+      },
+    ]);
+  }, [setValue]);
 
   const settingsUnchanged =
     !isGovernanceChanged &&
@@ -370,7 +427,11 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     setCurrentMetadata();
     setCurrentCommunity();
     setCurrentGovernance();
-    setCurrentGasless();
+    if (isGasless) {
+      setCurrentGasless();
+      // This is separated from the initial use effect to avoid a re-render bug related to the isDirty variable
+      resetGaslessActions();
+    }
   };
 
   useEffect(() => {
@@ -392,11 +453,16 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       setCurrentMetadata();
       setCurrentCommunity();
       setCurrentGovernance();
+      if (isGasless) {
+        setCurrentGasless();
+      }
     }
   }, [
     dataFetched,
     isDirty,
+    isGasless,
     setCurrentCommunity,
+    setCurrentGasless,
     setCurrentGovernance,
     setCurrentMetadata,
   ]);
@@ -439,143 +505,170 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     },
   ];
 
-  /*todo(kon): fix or remove before pr turn to non-draft*/
-  // const gaslessAction = [
-  //   {
-  //     component: (
-  //       <ListItemAction
-  //         title={t('settings.resetChanges')}
-  //         bgWhite
-  //         mode={isGaslessChanged ? 'default' : 'disabled'}
-  //       />
-  //     ),
-  //     callback: setCurrentGasless,
-  //   },
-  // ];
+  const gaslessAction = [
+    {
+      component: (
+        <ListItemAction
+          title={t('settings.resetChanges')}
+          bgWhite
+          mode={isGaslessChanged ? 'default' : 'disabled'}
+        />
+      ),
+      callback: setCurrentGasless,
+    },
+  ];
 
-  if (isLoading) {
+  if (isLoading && !dataFetched) {
     return <Loading />;
   }
 
-  // Note: using isDirty here to allow time for form to fill up before
-  // rendering a value or else there will be noticeable render with blank form.
-  if (!isDirty) {
-    return <Loading />;
-  }
+  if (dataFetched)
+    return (
+      <PageWrapper
+        title={t('settings.editDaoSettings')}
+        description={t('settings.editSubtitle')}
+        secondaryBtnProps={
+          isMobile
+            ? {
+                disabled: settingsUnchanged,
+                label: t('settings.resetChanges'),
+                onClick: () => handleResetChanges(),
+              }
+            : undefined
+        }
+        customBody={
+          <Layout>
+            <Container>
+              <AccordionMultiple defaultValue="metadata" className="space-y-6">
+                <AccordionItem
+                  type="action-builder"
+                  name="metadata"
+                  methodName={t('labels.review.daoMetadata')}
+                  alertLabel={
+                    isMetadataChanged ? t('settings.newSettings') : undefined
+                  }
+                  dropdownItems={metadataAction}
+                >
+                  <AccordionContent>
+                    <DefineMetadata
+                      bgWhite
+                      arrayName="daoLinks"
+                      isSettingPage
+                    />
+                  </AccordionContent>
+                </AccordionItem>
 
-  return (
-    <PageWrapper
-      title={t('settings.editDaoSettings')}
-      description={t('settings.editSubtitle')}
-      secondaryBtnProps={
-        isMobile
-          ? {
-              disabled: settingsUnchanged,
-              label: t('settings.resetChanges'),
-              onClick: () => handleResetChanges(),
-            }
-          : undefined
-      }
-      customBody={
-        <Layout>
-          <Container>
-            <AccordionMultiple defaultValue="metadata" className="space-y-6">
-              <AccordionItem
-                type="action-builder"
-                name="metadata"
-                methodName={t('labels.review.daoMetadata')}
-                alertLabel={
-                  isMetadataChanged ? t('settings.newSettings') : undefined
-                }
-                dropdownItems={metadataAction}
-              >
-                <AccordionContent>
-                  <DefineMetadata bgWhite arrayName="daoLinks" isSettingPage />
-                </AccordionContent>
-              </AccordionItem>
+                <AccordionItem
+                  type="action-builder"
+                  name="community"
+                  methodName={t('navLinks.members')}
+                  alertLabel={
+                    isCommunityChanged ? t('settings.newSettings') : undefined
+                  }
+                  dropdownItems={communityAction}
+                >
+                  <AccordionContent>
+                    <EligibilityWrapper>
+                      <SelectEligibility />
+                    </EligibilityWrapper>
+                  </AccordionContent>
+                </AccordionItem>
 
-              <AccordionItem
-                type="action-builder"
-                name="community"
-                methodName={t('navLinks.members')}
-                alertLabel={
-                  isCommunityChanged ? t('settings.newSettings') : undefined
-                }
-                dropdownItems={communityAction}
-              >
-                <AccordionContent>
-                  <EligibilityWrapper>
-                    <SelectEligibility />
-                  </EligibilityWrapper>
-                </AccordionContent>
-              </AccordionItem>
+                <AccordionItem
+                  type="action-builder"
+                  name="governance"
+                  methodName={t('labels.review.governance')}
+                  alertLabel={
+                    isGovernanceChanged ? t('settings.newSettings') : undefined
+                  }
+                  dropdownItems={governanceAction}
+                >
+                  <AccordionContent>
+                    <ConfigureCommunity isSettingPage />
+                  </AccordionContent>
+                </AccordionItem>
 
-              <AccordionItem
-                type="action-builder"
-                name="governance"
-                methodName={t('labels.review.governance')}
-                alertLabel={
-                  isGovernanceChanged ? t('settings.newSettings') : undefined
-                }
-                dropdownItems={governanceAction}
-              >
-                <AccordionContent>
-                  <ConfigureCommunity isSettingPage />
-                </AccordionContent>
-              </AccordionItem>
-
-              {/*todo(kon): this is not going to work until the executive committe list can be retrieved */}
-              {/*<AccordionItem*/}
-              {/*  type="action-builder"*/}
-              {/*  name="committee"*/}
-              {/*  methodName={t('createDAO.review.executionMultisig')}*/}
-              {/*  alertLabel={*/}
-              {/*    isGaslessChanged ? t('settings.newSettings') : undefined*/}
-              {/*  }*/}
-              {/*  dropdownItems={gaslessAction}*/}
-              {/*>*/}
-              {/*  <AccordionContent>*/}
-              {/*    <DefineCommittee />*/}
-              {/*  </AccordionContent>*/}
-              {/*</AccordionItem>*/}
-            </AccordionMultiple>
-          </Container>
-          {/* Footer */}
-          <Footer>
-            <HStack>
-              <ButtonText
-                className="w-full md:w-max"
-                label={t('settings.reviewProposal')}
-                iconLeft={<Icon icon={IconType.APP_GOVERNANCE} />}
-                size="large"
-                disabled={settingsUnchanged || !isValid}
-                onClick={() =>
-                  navigate(
-                    generatePath(ProposeNewSettings, {
-                      network,
-                      dao:
-                        toDisplayEns(daoDetails.ensDomain) ||
-                        daoDetails.address,
-                    })
-                  )
-                }
-              />
-              <ButtonText
-                className="w-full md:w-max"
-                label={t('settings.resetChanges')}
-                mode="secondary"
-                size="large"
-                disabled={settingsUnchanged}
-                onClick={handleResetChanges}
-              />
-            </HStack>
-            <AlertInline label={t('settings.proposeSettingsInfo')} />
-          </Footer>
-        </Layout>
-      }
-    />
-  );
+                {isGasless && (
+                  <AccordionItem
+                    type="action-builder"
+                    name="executionMultisigSettings"
+                    methodName={t('label.executionMultisig')}
+                    alertLabel={
+                      isGaslessChanged ? t('settings.newSettings') : undefined
+                    }
+                    dropdownItems={gaslessAction}
+                  >
+                    <AccordionContent>
+                      <ManageExecutionMultisig
+                        members={executionMultisigMembers}
+                        minTallyApprovals={
+                          (votingSettings as GaslessPluginVotingSettings)
+                            .minTallyApprovals
+                        }
+                        daoAddress={daoDetails.address}
+                      />
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+              </AccordionMultiple>
+            </Container>
+            {/* Footer */}
+            <Footer>
+              <HStack>
+                <ButtonText
+                  className="w-full md:w-max"
+                  label={t('settings.reviewProposal')}
+                  iconLeft={<IconGovernance />}
+                  size="large"
+                  disabled={settingsUnchanged || !isValid}
+                  onClick={() =>
+                    navigate(
+                      generatePath(ProposeNewSettings, {
+                        network,
+                        dao:
+                          toDisplayEns(daoDetails.ensDomain) ||
+                          daoDetails.address,
+                      })
+                    )
+                  }
+                />
+                <ButtonText
+                  className="w-full md:w-max"
+                  label={t('settings.resetChanges')}
+                  mode="secondary"
+                  size="large"
+                  disabled={settingsUnchanged}
+                  onClick={handleResetChanges}
+                />
+              </HStack>
+              <AlertInline label={t('settings.proposeSettingsInfo')} />
+            </Footer>
+          </Layout>
+        }
+      />
+    );
 };
+
+/**
+ * Util function to know if remove/add actions are added for the gasless plugin.
+ * @param formActions
+ */
+function gaslessActionsChanged(formActions: ManageMembersFormData['actions']) {
+  for (let i = 0; i < formActions.length; i++) {
+    if (
+      formActions[i].name === 'add_address' ||
+      formActions[i].name === 'remove_address'
+    ) {
+      const memberWallets = (
+        formActions[i] as ActionAddAddress | ActionRemoveAddress
+      ).inputs.memberWallets;
+      // Check if at least one of the member wallets contain info
+      if (memberWallets.length > 0 && memberWallets[0].address !== '')
+        return true;
+    }
+  }
+  return false;
+}
 
 const Container = styled.div.attrs({})``;
 

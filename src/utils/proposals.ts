@@ -68,6 +68,8 @@ import {
 
 import {ethers} from 'ethers';
 import {SupportedNetworks} from './constants';
+import {FieldValues, UseFormGetValues} from 'react-hook-form';
+import {isGaslessActionChangingSettings} from './committeeVoting';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -119,7 +121,7 @@ export function isGaslessProposal(
   proposal: SupportedProposals | undefined | null
 ): proposal is GaslessVotingProposal {
   if (!proposal) return false;
-  return 'vochainProposalId' in proposal;
+  return 'settings' in proposal && 'minTallyApprovals' in proposal.settings;
 }
 
 /**
@@ -741,6 +743,11 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
           locale,
         });
 
+        if (isGaslessProposal(proposal) && proposal.endDate < new Date()) {
+          label = t('votingTerminal.status.succeeded');
+          break;
+        }
+
         label = t('votingTerminal.status.active', {timeUntilEnd});
       }
       break;
@@ -915,18 +922,26 @@ export function getProposalExecutionStatus(
 }
 
 /**
- * Filter out all empty add/remove address and minimul approval actions
+ * Filter out all empty add/remove address and minimum approval actions
  * @param actions supported actions
  * @returns list of non empty address
  */
 export function getNonEmptyActions(
   actions: Array<Action>,
-  msVoteSettings?: MultisigVotingSettings
+  msVoteSettings?: MultisigVotingSettings,
+  gaslessVoteSettings?: GaslessPluginVotingSettings
 ): Action[] {
   return actions.flatMap(action => {
     if (action == null) return [];
 
-    if (action.name === 'modify_multisig_voting_settings') {
+    if (action.name === 'modify_gasless_voting_settings') {
+      return isGaslessActionChangingSettings(
+        action.inputs,
+        gaslessVoteSettings!
+      )
+        ? action
+        : [];
+    } else if (action.name === 'modify_multisig_voting_settings') {
       // minimum approval or onlyListed changed: return action or don't include
       return action.inputs.minApprovals !== msVoteSettings?.minApprovals ||
         action.inputs.onlyListed !== msVoteSettings.onlyListed
@@ -953,6 +968,52 @@ export function getNonEmptyActions(
       return action;
     }
   });
+}
+
+/**
+ * For a list of actions, it takes the add/remove wallet actions and calculates which are added or removed
+ * from a list of old wallets. The actions must to be stored on a react hook form
+ * @param actions list of actions that can include add/remove wallet actions
+ * @param oldMultisig the old wallet list which is going to be updated
+ * @param getValues react form getValues function, used to get the memberwallets from the actions
+ */
+export function getNewMultisigMembers(
+  actions: Array<Action>,
+  oldMultisig: string[],
+  getValues: UseFormGetValues<FieldValues>
+): string[] {
+  const addActionIndex = actions
+    .map(action => action.name)
+    .indexOf('add_address');
+
+  const removeActionIndex = actions
+    .map(action => action.name)
+    .indexOf('remove_address');
+
+  const [newAddedWallet, newRemovedWallet] = getValues([
+    `actions.${addActionIndex}.inputs.memberWallets`,
+    `actions.${removeActionIndex}.inputs.memberWallets`,
+  ]);
+  let newCommitteeMembers: string[] = oldMultisig;
+  // Delete the removed wallets from the current committee
+  if (newRemovedWallet !== undefined) {
+    newCommitteeMembers = newCommitteeMembers.filter(address => {
+      return !(newRemovedWallet as MultisigDaoMember[])
+        .map(wallet => wallet.address)
+        .includes(address);
+    });
+  }
+  if (newAddedWallet !== undefined) {
+    // Add new wallets
+    newCommitteeMembers = newCommitteeMembers.concat(
+      (newAddedWallet as MultisigDaoMember[])
+        .filter(wallet => wallet.address !== '')
+        .map(wallet => {
+          return wallet.address;
+        })
+    );
+  }
+  return newCommitteeMembers;
 }
 
 /**

@@ -4,14 +4,8 @@ import styled from 'styled-components';
 import {useForm, useWatch, Controller} from 'react-hook-form';
 import {saveAs} from 'file-saver';
 
-import {
-  AlertInline,
-  ButtonText,
-  DateInput,
-  Label,
-  Spinner,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AlertInline, ButtonText, DateInput, Label} from '@aragon/ods-old';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 
 import {getCanonicalDate} from 'utils/date';
@@ -270,7 +264,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                   isActive={isCsvGenerationLoading}
                   iconLeft={
                     isCsvGenerationLoading ? (
-                      <Spinner size="xs" color="white" />
+                      <Spinner size="sm" variant="primary" />
                     ) : (
                       <Icon icon={IconType.RELOAD} />
                     )
@@ -292,7 +286,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                     disabled={isCsvGenerationError}
                     iconLeft={
                       isCsvGenerationLoading ? (
-                        <Spinner size="xs" color="white" />
+                        <Spinner size="sm" variant="primary" />
                       ) : undefined
                     }
                     size="large"

@@ -1,5 +1,11 @@
 import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
-import React, {PropsWithChildren, useEffect, useMemo, useState} from 'react';
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {useTranslation} from 'react-i18next';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
@@ -10,30 +16,26 @@ import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessCommiteVotes} from '../../context/useGaslessVoting';
 import {useWallet} from '../../hooks/useWallet';
 import {useProposalTransactionContext} from '../../context/proposalTransaction';
-import {VoteValues} from '@aragon/sdk-client';
 import {
   ExecutionWidget,
   ExecutionWidgetProps,
 } from '../../components/executionWidget';
 import {getProposalExecutionStatus} from '../../utils/proposals';
-import {
-  PENDING_PROPOSAL_STATUS_INTERVAL,
-  // PROPOSAL_STATUS_INTERVAL,
-} from '../../pages/proposal';
+import {PENDING_PROPOSAL_STATUS_INTERVAL} from '../../pages/proposal';
 import {
   getApproveStatusLabel,
   getCommitteVoteButtonLabel,
 } from '../../utils/committeeVoting';
 import {PluginTypes} from '../../hooks/usePluginClient';
-import {BigNumber} from 'ethers';
 import {VotingTerminalAccordionItem} from './accordionItem';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 
-type CommitteeExecutionWidgetProps = Pick<
+type GaslessExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
   'actions' | 'onExecuteClicked'
 >;
 
-type CommitteeVotingTerminalProps = {
+type GaslessVotingTerminalProps = {
   votingStatusLabel: string;
   proposal: GaslessVotingProposal;
   pluginAddress: string;
@@ -41,36 +43,35 @@ type CommitteeVotingTerminalProps = {
     wasNotLoggedIn: boolean;
     wasOnWrongNetwork: boolean;
   }>;
+  connectedToRightNetwork: boolean;
   pluginType: PluginTypes;
-  votingPower: BigNumber;
-} & CommitteeExecutionWidgetProps &
+} & GaslessExecutionWidgetProps &
   PropsWithChildren;
 
-export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
+export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   votingStatusLabel,
-  votingPower,
   proposal,
   pluginAddress,
   statusRef,
   actions,
   onExecuteClicked,
+  connectedToRightNetwork,
   pluginType,
   children,
 }) => {
   const {t, i18n} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const [approvalStatus, setApprovalStatus] = useState('');
-  // const [intervalInMills, setIntervalInMills] = useState(0);
 
   const {address, isOnWrongNetwork} = useWallet();
 
   const {
     canApprove,
-    approved,
-    isApproved,
+    isUserApproved,
+    isProposalApproved,
     canBeExecuted,
+    executableWithNextApproval,
     isApprovalPeriod,
-    executed,
     notBegan,
   } = useGaslessCommiteVotes(pluginAddress, proposal);
 
@@ -117,67 +118,55 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
   const buttonLabel = useMemo(() => {
     if (proposal) {
       return getCommitteVoteButtonLabel(
-        executed,
         notBegan,
-        approved,
-        canApprove,
-        isApproved,
+        isUserApproved,
+        isProposalApproved,
+        isApprovalPeriod,
+        executableWithNextApproval,
         t
       );
     }
-  }, [proposal, executed, notBegan, approved, canApprove, isApproved, t]);
-
-  // vote button state and handler
-  const {voteNowDisabled, onClick} = useMemo(() => {
-    // disable voting on non-active proposals or when wallet has voted or can't vote
-    if (!isApprovalPeriod || !canApprove || approved) {
-      return {voteNowDisabled: true};
-    }
-
-    // not logged in
-    if (!address) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('wallet');
-          statusRef.current.wasNotLoggedIn = true;
-        },
-      };
-    }
-
-    // wrong network
-    else if (isOnWrongNetwork) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('network');
-          statusRef.current.wasOnWrongNetwork = true;
-        },
-      };
-    }
-
-    // member, not yet voted
-    else if (canApprove) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          handleExecutionMultisigApprove({
-            vote: VoteValues.YES,
-            votingPower,
-          });
-        },
-      };
-    } else return {voteNowDisabled: true};
   }, [
+    proposal,
+    notBegan,
+    isUserApproved,
+    isProposalApproved,
     isApprovalPeriod,
-    canApprove,
-    approved,
-    address,
-    isOnWrongNetwork,
-    statusRef,
-    handleExecutionMultisigApprove,
-    votingPower,
+    executableWithNextApproval,
+    t,
   ]);
+
+  const voteNowDisabled =
+    // can only vote on active proposals
+    proposal?.status !== ProposalStatus.ACTIVE ||
+    // when disconnected or on wrong network,
+    // login and network modals should be shown respectively
+    (connectedToRightNetwork && !canApprove);
+
+  const handleApprovalClick = useCallback(
+    (tryExecution: boolean) => {
+      if (address == null) {
+        open('wallet');
+        statusRef.current.wasNotLoggedIn = true;
+      } else if (isOnWrongNetwork) {
+        open('network');
+        statusRef.current.wasOnWrongNetwork = true;
+      } else if (canApprove) {
+        handleExecutionMultisigApprove({
+          proposalId: proposal.id,
+          tryExecution,
+        });
+      }
+    },
+    [
+      address,
+      canApprove,
+      handleExecutionMultisigApprove,
+      isOnWrongNetwork,
+      proposal.id,
+      statusRef,
+    ]
+  );
 
   /**
    * It sets the approval status label.
@@ -187,17 +176,10 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
   useEffect(() => {
     if (proposal) {
       // set the very first time
-      setApprovalStatus(
-        getApproveStatusLabel(proposal, isApprovalPeriod, t, i18n.language)
-      );
+      setApprovalStatus(getApproveStatusLabel(proposal, t, i18n.language));
 
       const interval = setInterval(async () => {
-        const v = getApproveStatusLabel(
-          proposal,
-          isApprovalPeriod,
-          t,
-          i18n.language
-        );
+        const v = getApproveStatusLabel(proposal, t, i18n.language);
 
         // remove interval timer once the proposal has started
         if (proposal.startDate.valueOf() <= new Date().valueOf()) {
@@ -213,27 +195,15 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
     }
   }, [i18n.language, isApprovalPeriod, proposal, t]);
 
-  // alert message, only shown when not eligible to vote
-  const alertMessage = useMemo(() => {
-    if (
-      proposal &&
-      isApprovalPeriod && // active proposal
-      address && // logged in
-      !isOnWrongNetwork && // on proper network
-      !canApprove && // cannot vote
-      !approved // Already voted
-    ) {
-      return t('votingTerminal.status.ineligibleWhitelist');
-    }
-  }, [
-    isApprovalPeriod,
-    proposal,
-    address,
-    isOnWrongNetwork,
-    canApprove,
-    approved,
-    t,
-  ]);
+  const displayAlertMessage =
+    isApprovalPeriod && // active proposal
+    address && // logged in
+    !isOnWrongNetwork && // on proper network
+    !canApprove; // cannot approve
+
+  const alertMessage = displayAlertMessage
+    ? t('votingTerminal.status.ineligibleWhitelist')
+    : undefined;
 
   const ApprovalVotingTerminal = () => {
     return (
@@ -243,9 +213,10 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
         selectedTab={terminalTab}
         alertMessage={alertMessage}
         onTabSelected={setTerminalTab}
-        onVoteClicked={onClick}
+        onApprovalClicked={handleApprovalClick}
         voteButtonLabel={buttonLabel}
         voteNowDisabled={voteNowDisabled}
+        executableWithNextApproval={executableWithNextApproval}
         className={
           'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
         }

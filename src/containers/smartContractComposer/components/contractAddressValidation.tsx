@@ -4,12 +4,11 @@ import {
   ButtonText,
   IconRadioMulti,
   Link,
-  Spinner,
   TextareaSimple,
   shortenAddress,
   WalletInputLegacy,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 
@@ -384,7 +383,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     if (sourcifyLoading && !isTransactionError) {
       return (
         <div className="flex space-x-2">
-          <Spinner size={'xs'} className="text-primary-500" />
+          <Spinner size="sm" variant="primary" />
           <VerificationStatus colorClassName="text-primary-800">
             {t('scc.validation.sourcifyStatusPending')}
           </VerificationStatus>
@@ -432,7 +431,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     if (etherscanLoading && !isTransactionError) {
       return (
         <div className="flex space-x-2">
-          <Spinner size={'xs'} className="text-primary-500" />
+          <Spinner size="sm" variant="primary" />
           <VerificationStatus colorClassName="text-primary-800">
             {t('scc.validation.etherscanStatusPending', {
               blockExplorerName: CHAIN_METADATA[network].explorerName,
@@ -698,7 +697,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
               }}
               iconLeft={
                 isTransactionLoading ? (
-                  <Spinner size="xs" color="white" />
+                  <Spinner size="sm" variant="primary" />
                 ) : undefined
               }
               iconRight={icons[verificationState]}

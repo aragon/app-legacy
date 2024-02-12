@@ -18,6 +18,7 @@ import {
 import {
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
+  GaslessVotingProposalListItem,
 } from '@vocdoni/gasless-voting';
 import {BigNumber} from 'ethers';
 
@@ -195,7 +196,7 @@ export type DetailedProposal =
 export type ProposalListItem =
   | TokenVotingProposalListItem
   | MultisigProposalListItem
-  | GaslessVotingProposal;
+  | GaslessVotingProposalListItem;
 export type SupportedProposals = DetailedProposal | ProposalListItem;
 
 export type SupportedVotingSettings =
@@ -257,7 +258,8 @@ export type ActionsTypes =
   | 'modify_multisig_voting_settings'
   | 'update_minimum_approval'
   | 'os_update'
-  | 'plugin_update';
+  | 'plugin_update'
+  | 'modify_gasless_voting_settings';
 
 export type ActionWithdraw = {
   amount: number;
@@ -344,12 +346,19 @@ export type ActionUpdateMultisigPluginSettings = {
   inputs: MultisigVotingSettings;
 };
 
+type TokenVotingActionAdditionalInfo = {
+  token?: Erc20TokenDetails;
+  totalVotingWeight: bigint;
+};
+
 export type ActionUpdatePluginSettings = {
   name: 'modify_token_voting_settings';
-  inputs: VotingSettings & {
-    token?: Erc20TokenDetails;
-    totalVotingWeight: bigint;
-  };
+  inputs: VotingSettings & TokenVotingActionAdditionalInfo;
+};
+
+export type ActionUpdateGaslessSettings = {
+  name: 'modify_gasless_voting_settings';
+  inputs: GaslessPluginVotingSettings & TokenVotingActionAdditionalInfo;
 };
 
 export type ActionUpdateMetadata = {
@@ -402,7 +411,8 @@ export type Action =
   | ActionSCC
   | ActionWC
   | ActionOSUpdate
-  | ActionPluginUpdate;
+  | ActionPluginUpdate
+  | ActionUpdateGaslessSettings;
 
 export type ParamType = {
   type: string;
@@ -609,7 +619,10 @@ export type ProposalSettingsFormData = ProposalFormData & {
 
 export interface ManageMembersFormData extends ProposalFormData {
   actions: Array<
-    ActionAddAddress | ActionRemoveAddress | ActionUpdateMultisigPluginSettings
+    | ActionAddAddress
+    | ActionRemoveAddress
+    | ActionUpdateMultisigPluginSettings
+    | ActionUpdateGaslessSettings
   >;
 }
 

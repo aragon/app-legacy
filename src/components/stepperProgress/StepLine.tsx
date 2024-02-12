@@ -1,15 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {Spinner} from '../../@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 import {StepData, StepStatus} from '../../hooks/useFunctionStepper';
 
 const icons = {
   [StepStatus.WAITING]: (
     <Icon icon={IconType.RADIO_DEFAULT} className="text-neutral-200" />
   ),
-  [StepStatus.LOADING]: <Spinner size="xs" />,
+  [StepStatus.LOADING]: <Spinner size="sm" variant="primary" />,
   [StepStatus.SUCCESS]: (
     <Icon icon={IconType.RADIO_CHECK} className="text-success-500" />
   ),

@@ -3,7 +3,6 @@ import {
   GaslessVotingClient,
   GaslessVotingContext,
 } from '@vocdoni/gasless-voting';
-import {EnvOptions} from '@vocdoni/sdk';
 import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
@@ -81,8 +80,8 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
         case GaselessPluginName:
           setPluginClient(
             new GaslessVotingClient(
-              new GaslessVotingContext(undefined, undefined),
-              VocdoniEnv as EnvOptions
+              new GaslessVotingContext(context),
+              VocdoniEnv
             )
           );
           break;

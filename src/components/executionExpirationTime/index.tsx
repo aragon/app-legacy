@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {AlertInline, NumberInput} from '@aragon/ods-old';
+import {AlertInline, Label, NumberInput} from '@aragon/ods-old';
 import {
   COMMITTEE_EXECUTION_MAX_DURATION_DAYS,
   COMMITTEE_EXECUTION_MIN_DURATION_HOURS,
@@ -11,6 +11,7 @@ import {
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {getDaysHoursMins} from '../../utils/date';
+import {FormItem} from '../../containers/actionBuilder/addAddresses';
 
 const ExecutionExpirationTime: React.FC = () => {
   const {control, setValue, trigger, getValues} = useFormContext();
@@ -43,7 +44,11 @@ const ExecutionExpirationTime: React.FC = () => {
         );
         setValue('executionExpirationHours', '0');
         setValue('executionExpirationMinutes', '0');
-      } else if (value === 0 && executionExpirationHours === '0') {
+      } else if (
+        value === 0 &&
+        (executionExpirationHours === undefined ||
+          executionExpirationHours === '0')
+      ) {
         setValue(
           'executionExpirationHours',
           COMMITTEE_EXECUTION_MIN_DURATION_HOURS.toString()
@@ -125,7 +130,11 @@ const ExecutionExpirationTime: React.FC = () => {
   );
 
   return (
-    <>
+    <FormItem>
+      <Label
+        label={t('createDao.executionMultisig.executionTitle')}
+        helpText={t('createDao.executionMultisig.executionDesc')}
+      />
       <DurationContainer>
         <Controller
           name="executionExpirationMinutes"
@@ -240,7 +249,7 @@ const ExecutionExpirationTime: React.FC = () => {
       ) : (
         <AlertInline label={t('alert.durationAlert')} mode="neutral" />
       )}
-    </>
+    </FormItem>
   );
 };
 

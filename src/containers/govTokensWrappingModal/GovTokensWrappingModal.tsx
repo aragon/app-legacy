@@ -6,10 +6,9 @@ import {
   CheckboxListItem,
   Label,
   LinearProgress,
-  Spinner,
   ValueInput,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -198,7 +197,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
       {isLoading ? (
         <Container>
           <LoadingContainer>
-            <Spinner size="big" />
+            <Spinner size="xl" variant="primary" />
             <LoadingLabel>{t('labels.loading')}</LoadingLabel>
           </LoadingContainer>
         </Container>
@@ -367,7 +366,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                     disabled={!isUserInputValid || currentStep !== 1}
                     iconLeft={
                       isTokenApproveLoading ? (
-                        <Spinner size="xs" color="white" />
+                        <Spinner size="sm" variant="primary" />
                       ) : isTokenApproveError ? (
                         <Icon icon={IconType.RELOAD} />
                       ) : undefined
@@ -387,7 +386,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                     disabled={!isUserInputValid || currentStep !== 2}
                     iconLeft={
                       isTokenWrapLoading ? (
-                        <Spinner size="xs" color="white" />
+                        <Spinner size="sm" variant="primary" />
                       ) : isTokenWrapError ? (
                         <Icon icon={IconType.RELOAD} />
                       ) : undefined
@@ -410,7 +409,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                     isActive={isTokenUnwrapLoading}
                     iconLeft={
                       isTokenUnwrapLoading ? (
-                        <Spinner size="xs" color="white" />
+                        <Spinner size="sm" variant="primary" />
                       ) : isTokenUnwrapError ? (
                         <Icon icon={IconType.RELOAD} />
                       ) : undefined

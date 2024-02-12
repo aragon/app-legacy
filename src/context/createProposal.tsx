@@ -50,6 +50,8 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
   GaselessPluginName,
+  isGaslessVotingClient,
+  isTokenVotingClient,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -81,6 +83,7 @@ import {
 } from 'utils/date';
 import {
   getDefaultPayableAmountInputName,
+  readFile,
   toDisplayEns,
   translateToNetworkishName,
 } from 'utils/library';
@@ -175,6 +178,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     createProposal,
   } = useCreateGaslessProposal({
     daoToken,
+    pluginAddress,
     chainId: CHAIN_METADATA[network].id,
   });
 
@@ -186,9 +190,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
     const actions: Array<Promise<DaoAction>> = [];
 
     // return an empty array for undefined clients
-    if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
+    if (!pluginClient || !client || !daoDetails?.address)
+      return Promise.resolve([] as DaoAction[]);
 
-    for await (const action of getNonEmptyActions(actionsFromForm)) {
+    for await (const action of getNonEmptyActions(
+      actionsFromForm,
+      isMultisigVotingSettings(votingSettings) ? votingSettings : undefined,
+      isGaslessVotingSettings(votingSettings) ? votingSettings : undefined
+    )) {
       switch (action.name) {
         case 'withdraw_assets': {
           actions.push(
@@ -233,7 +242,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
           );
           actions.push(
             Promise.resolve(
-              (pluginClient as MultisigClient).encoding.addAddressesAction({
+              (
+                pluginClient as MultisigClient | GaslessVotingClient
+              ).encoding.addAddressesAction({
                 pluginAddress: pluginAddress,
                 members: wallets,
               })
@@ -248,12 +259,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
           if (wallets.length > 0)
             actions.push(
               Promise.resolve(
-                (pluginClient as MultisigClient).encoding.removeAddressesAction(
-                  {
-                    pluginAddress: pluginAddress,
-                    members: wallets,
-                  }
-                )
+                (
+                  pluginClient as MultisigClient | GaslessVotingClient
+                ).encoding.removeAddressesAction({
+                  pluginAddress: pluginAddress,
+                  members: wallets,
+                })
               )
             );
           break;
@@ -333,12 +344,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
           if (
             translatedNetwork !== 'unsupported' &&
             SupportedNetworksArray.includes(translatedNetwork) &&
-            daoDetails?.address &&
+            daoDetails.address &&
             versions
           ) {
             actions.push(
               Promise.resolve(
-                client.encoding.daoUpdateAction(daoDetails?.address, {
+                client.encoding.daoUpdateAction(daoDetails.address, {
                   previousVersion: versions as [number, number, number],
                   daoFactoryAddress:
                     LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
@@ -354,7 +365,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         case 'plugin_update': {
           const pluginUpdateActions =
             client.encoding.applyUpdateAndPermissionsActionBlock(
-              daoDetails?.address as string,
+              daoDetails.address,
               {
                 ...action.inputs,
               }
@@ -364,13 +375,78 @@ const CreateProposalWrapper: React.FC<Props> = ({
           });
           break;
         }
+
+        case 'modify_metadata': {
+          const preparedAction = {...action};
+
+          if (
+            preparedAction.inputs.avatar &&
+            typeof preparedAction.inputs.avatar !== 'string'
+          ) {
+            try {
+              const daoLogoBuffer = await readFile(
+                preparedAction.inputs.avatar as unknown as Blob
+              );
+
+              const logoCID = await client.ipfs.add(
+                new Uint8Array(daoLogoBuffer)
+              );
+              await client.ipfs.pin(logoCID);
+              preparedAction.inputs.avatar = `ipfs://${logoCID}`;
+            } catch (e) {
+              preparedAction.inputs.avatar = undefined;
+            }
+          }
+
+          try {
+            const ipfsUri = await client.methods.pinMetadata(
+              preparedAction.inputs
+            );
+
+            actions.push(
+              client.encoding.updateDaoMetadataAction(
+                daoDetails.address,
+                ipfsUri
+              )
+            );
+          } catch (error) {
+            throw Error('Could not pin metadata on IPFS');
+          }
+          break;
+        }
+        case 'modify_gasless_voting_settings': {
+          if (isGaslessVotingClient(pluginClient)) {
+            actions.push(
+              Promise.resolve(
+                pluginClient.encoding.updatePluginSettingsAction(
+                  pluginAddress,
+                  action.inputs
+                )
+              )
+            );
+          }
+          break;
+        }
+        case 'modify_token_voting_settings': {
+          if (isTokenVotingClient(pluginClient)) {
+            actions.push(
+              Promise.resolve(
+                pluginClient.encoding.updatePluginSettingsAction(
+                  pluginAddress,
+                  action.inputs
+                )
+              )
+            );
+          }
+          break;
+        }
       }
     }
 
     return Promise.all(actions);
   }, [
     client,
-    daoDetails?.address,
+    daoDetails,
     getValues,
     network,
     pluginAddress,
@@ -888,13 +964,21 @@ const CreateProposalWrapper: React.FC<Props> = ({
     ]
   );
 
-  const handleOffChainProposal = useCallback(async () => {
+  const handleGaslessProposal = useCallback(async () => {
     if (!pluginClient || !daoToken) {
       return new Error('ERC20 SDK client is not initialized correctly');
     }
 
     const {params, metadata} = await getProposalCreationParams();
-
+    if (!params.endDate) {
+      const startDate = params.startDate || new Date();
+      params.endDate = new Date(
+        startDate.valueOf() +
+          daysToMills(minDays || 0) +
+          hoursToMills(minHours || 0) +
+          minutesToMills(minMinutes || 0)
+      );
+    }
     await createProposal(metadata, params, handlePublishProposal);
   }, [
     pluginClient,
@@ -902,6 +986,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
     getProposalCreationParams,
     createProposal,
     handlePublishProposal,
+    minDays,
+    minHours,
+    minMinutes,
   ]);
 
   /*************************************************
@@ -951,7 +1038,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           globalState={gaslessGlobalState}
           isOpen={showTxModal}
           onClose={handleCloseModal}
-          callback={handleOffChainProposal}
+          callback={handleGaslessProposal}
           closeOnDrag={
             creationProcessState !== TransactionState.LOADING ||
             gaslessGlobalState !== StepStatus.LOADING

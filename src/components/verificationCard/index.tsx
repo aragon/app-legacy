@@ -1,7 +1,7 @@
 import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods-old';
+import {AlertCard, shortenAddress} from '@aragon/ods-old';
 
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
@@ -9,6 +9,7 @@ import {gTokenSymbol} from 'utils/tokens';
 import {useNetwork} from 'context/network';
 import numeral from 'numeral';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
+import {Spinner} from '@aragon/ods';
 
 type TransferListProps = {
   tokenAddress: string;
@@ -149,7 +150,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
       <VerifyContainer>
         <VerifyTitle>{shortenAddress(tokenAddress)}</VerifyTitle>
         <LoadingWrapper>
-          <Spinner size={'xs'} />
+          <Spinner size="sm" variant="primary" />
           {t('createDAO.step3.existingToken.verificationLoading')}
         </LoadingWrapper>
       </VerifyContainer>
@@ -186,7 +187,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 </Dt>
                 {isTotalHoldersLoading ? (
                   <dd className="flex items-center" style={{width: '70%'}}>
-                    <IconSpinner className="h-3 w-3 animate-spin text-primary-500 xl:h-4 xl:w-4" />
+                    <Spinner size="sm" variant="primary" />
                   </dd>
                 ) : (
                   <Dd>{formattedTokenTotalHolders}</Dd>
