@@ -58,7 +58,7 @@ const Committee = () => {
 };
 
 export type ReviewExecutionMultisigProps = {
-  committee: string[];
+  committee: string[] | MultisigWalletField[];
   committeeMinimumApproval: number;
   executionExpirationMinutes: number;
   executionExpirationHours: number;
@@ -137,11 +137,16 @@ export const ReviewExecutionMultisig: React.FC<
         </Dd>
       </Dl>
       <CommitteeAddressesModal
-        committee={committee.map(w => {
-          return {
-            address: w,
-          } as MultisigWalletField;
-        })}
+        committee={
+          committee.map(w => {
+            if (typeof w === 'string') {
+              return {
+                address: w,
+              } as MultisigWalletField;
+            }
+            return w;
+          }) as MultisigWalletField[]
+        }
       />
     </>
   );
