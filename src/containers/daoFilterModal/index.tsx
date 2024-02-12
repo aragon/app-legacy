@@ -87,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
       />
       <Button
         iconLeft={IconType.CLOSE}
-        className="hidden lg:block"
+        className="hidden lg:flex"
         variant="secondary"
         size="lg"
         onClick={onClose}

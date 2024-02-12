@@ -36,7 +36,7 @@ const SelectChainForm: React.FC = () => {
       <Header>
         <NetworkTypeSwitcher>
           <Button
-            variant="tertiary"
+            variant={networkType === 'main' ? 'secondary' : 'tertiary'}
             size={isMobile ? 'sm' : 'md'}
             onClick={() => {
               setNetworkType('main');
@@ -45,7 +45,7 @@ const SelectChainForm: React.FC = () => {
             {t('labels.mainNet')}
           </Button>
           <Button
-            variant="tertiary"
+            variant={networkType === 'test' ? 'secondary' : 'tertiary'}
             size={isMobile ? 'sm' : 'md'}
             onClick={() => setNetworkType('test')}
           >
