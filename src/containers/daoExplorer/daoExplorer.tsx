@@ -1,6 +1,6 @@
 import React, {useMemo, useReducer, useState} from 'react';
-import {ButtonText, Spinner, Dropdown, ButtonIcon} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ButtonText, Dropdown, ButtonIcon} from '@aragon/ods-old';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
@@ -274,7 +274,7 @@ export const DaoExplorer = () => {
             {filteredDaoList?.map((dao, index) => (
               <DaoCard key={index} dao={dao} />
             ))}
-            {isLoading && <Spinner size="default" />}
+            {isLoading && <Spinner size="xl" variant="primary" />}
           </CardsWrapper>
         )}
       </MainContainer>
@@ -286,7 +286,7 @@ export const DaoExplorer = () => {
               className="self-start"
               iconRight={
                 isFetchingNextPage ? (
-                  <Spinner size="xs" />
+                  <Spinner size="sm" variant="primary" />
                 ) : (
                   <Icon icon={IconType.CHEVRON_DOWN} />
                 )

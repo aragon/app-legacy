@@ -4,9 +4,8 @@ import {
   ButtonText,
   IllustrationHuman,
   Option,
-  Spinner,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -184,7 +183,7 @@ export const Governance: React.FC = () => {
               label={t('explore.explorer.showMore')}
               iconRight={
                 isFetchingNextPage ? (
-                  <Spinner size="xs" />
+                  <Spinner size="sm" variant="primary" />
                 ) : (
                   <Icon icon={IconType.CHEVRON_DOWN} />
                 )

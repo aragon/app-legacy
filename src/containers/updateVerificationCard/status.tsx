@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
 import styled from 'styled-components';
-import {Spinner, ButtonText, Tag} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ButtonText, Tag} from '@aragon/ods-old';
+import {Icon, IconType, Spinner, SpinnerVariant} from '@aragon/ods';
 
 export interface StatusProps {
   mode: 'loading' | 'success' | 'error';
@@ -24,10 +24,16 @@ const iconColors: Record<StatusProps['mode'], string> = {
   error: 'text-critical-500',
 };
 
+const spinnerColors: Record<StatusProps['mode'], SpinnerVariant> = {
+  loading: 'primary',
+  success: 'success',
+  error: 'critical',
+};
+
 const StatusIcon: React.FC<{mode: StatusProps['mode']}> = ({mode}) => {
   switch (mode) {
     case 'loading':
-      return <Spinner size="xs" className={iconColors[mode]} />;
+      return <Spinner size="sm" variant={spinnerColors[mode]} />;
     case 'error':
       return <Icon icon={IconType.RADIO_CANCEL} className={iconColors[mode]} />;
     default:

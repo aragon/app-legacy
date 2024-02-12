@@ -1,4 +1,4 @@
-import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods-old';
+import {CardProposal, CardProposalProps} from '@aragon/ods-old';
 import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
@@ -29,6 +29,7 @@ import {
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
 import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
+import {Spinner} from '@aragon/ods';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
@@ -129,7 +130,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
   if (isLoading || areMembersLoading) {
     return (
       <div className="flex h-14 items-center justify-center">
-        <Spinner size="default" />
+        <Spinner size="xl" variant="primary" />
       </div>
     );
   }
