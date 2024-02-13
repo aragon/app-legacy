@@ -1,12 +1,5 @@
-import {
-  AlertInline,
-  ButtonIcon,
-  ButtonText,
-  Dropdown,
-  Label,
-  ListItemAction,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AlertInline, Dropdown, Label, ListItemAction} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -137,13 +130,9 @@ export const MultisigWallets = () => {
         <Divider />
         <ActionsContainer>
           <TextButtonsContainer>
-            <ButtonText
-              label={t('labels.whitelistWallets.addAddress')}
-              mode="secondary"
-              size="large"
-              bgWhite
-              onClick={handleAdd}
-            />
+            <Button variant="secondary" size="lg" onClick={handleAdd}>
+              {t('labels.whitelistWallets.addAddress')}
+            </Button>
             {/*
           To be enabled when csv functionality is there
           <ButtonText
@@ -158,11 +147,10 @@ export const MultisigWallets = () => {
             align="start"
             sideOffset={4}
             trigger={
-              <ButtonIcon
-                size="large"
-                mode="secondary"
-                bgWhite
-                icon={<Icon icon={IconType.MENU_VERTICAL} />}
+              <Button
+                size="lg"
+                variant="secondary"
+                iconLeft={IconType.MENU_VERTICAL}
                 data-testid="trigger"
               />
             }

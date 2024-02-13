@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {AlertCard, ButtonIcon, ButtonText, InputValue} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AlertCard, InputValue} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -87,7 +87,6 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               onClick: () => {
                 setStep(1);
               },
-              bgWhite: false,
             }}
             actionsColumn
           />
@@ -95,15 +94,14 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
       ) : (
         <>
           <ModalHeader>
-            <ButtonIcon
-              mode="secondary"
-              size="small"
-              icon={<Icon icon={IconType.CHEVRON_LEFT} />}
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft={IconType.CHEVRON_LEFT}
               onClick={() => {
                 setStep(0);
                 resetField('mintTokensToTreasury');
               }}
-              bgWhite
             />
             <Title>{t('modal.mintTokensToTreasury.title')}</Title>
             <div role="presentation" className="h-8 w-8" />
@@ -144,27 +142,28 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                     />
                   </div>
                   <ActionContainer>
-                    <ButtonText
-                      label={t('modal.mintTokensToTreasury.step2CtaLabel')}
-                      mode="primary"
-                      size="large"
+                    <Button
+                      variant="primary"
+                      size="lg"
                       onClick={() => {
                         onClose();
                         setStep(0);
                       }}
                       disabled={!isActionEnabled}
-                    />
-                    <ButtonText
-                      label={t('modal.mintTokensToTreasury.step2CancelLabel')}
-                      mode="secondary"
-                      size="large"
-                      bgWhite={false}
+                    >
+                      {t('modal.mintTokensToTreasury.step2CtaLabel')}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="lg"
                       onClick={() => {
                         resetField('mintTokensToTreasury');
                         onCloseReset();
                         setStep(0);
                       }}
-                    />
+                    >
+                      {t('modal.mintTokensToTreasury.step2CancelLabel')}
+                    </Button>
                   </ActionContainer>
                 </>
               )}

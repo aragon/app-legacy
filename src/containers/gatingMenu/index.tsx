@@ -1,4 +1,3 @@
-import {ButtonText} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -27,6 +26,7 @@ import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
+import {Button} from '@aragon/ods';
 
 export const GatingMenu: React.FC = () => {
   const {close, isOpen} = useGlobalModalContext('gating');
@@ -129,24 +129,17 @@ export const GatingMenu: React.FC = () => {
         )}
         {displayWrapToken ? (
           <div className="grid grid-cols-2 gap-6">
-            <ButtonText
-              label={t('modalAlert.wrapToken.ctaLabel')}
-              onClick={handleWrapTokens}
-              size="large"
-            />
-            <ButtonText
-              label={t('modalAlert.wrapToken.cancleLabel')}
-              mode="secondary"
-              onClick={handleCloseMenu}
-              size="large"
-            />
+            <Button onClick={handleWrapTokens} size="lg" variant="primary">
+              {t('modalAlert.wrapToken.ctaLabel')}
+            </Button>
+            <Button variant="secondary" onClick={handleCloseMenu} size="lg">
+              {t('modalAlert.wrapToken.cancleLabel')}
+            </Button>
           </div>
         ) : (
-          <ButtonText
-            label={t('alert.gatingUsers.buttonLabel')}
-            onClick={handleCloseMenu}
-            size="large"
-          />
+          <Button onClick={handleCloseMenu} size="lg" variant="primary">
+            {t('alert.gatingUsers.buttonLabel')}
+          </Button>
         )}
       </ModalBody>
     </ModalBottomSheetSwitcher>

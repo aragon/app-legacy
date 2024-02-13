@@ -1,10 +1,5 @@
-import {
-  ButtonText,
-  IllustrationHuman,
-  InputValue,
-  shortenAddress,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {IllustrationHuman, InputValue, shortenAddress} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -91,19 +86,17 @@ export const DelegateVotingSuccess: React.FC<
         </p>
       </FormGroup>
       <FormGroup>
-        <ButtonText
-          label={t('modal.delegation.successCtaLabel')}
-          mode="primary"
-          size="large"
-          onClick={handleCommunityClick}
-        />
-        <ButtonText
-          label={t('modal.delegation.successBtnSecondaryLabel')}
-          mode="secondary"
-          size="large"
-          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+        <Button variant="primary" size="lg" onClick={handleCommunityClick}>
+          {t('modal.delegation.successCtaLabel')}
+        </Button>
+        <Button
+          variant="secondary"
+          size="lg"
+          iconRight={IconType.LINK_EXTERNAL}
           onClick={handleTransactionClick}
-        />
+        >
+          {t('modal.delegation.successBtnSecondaryLabel')}
+        </Button>
       </FormGroup>
     </div>
   );

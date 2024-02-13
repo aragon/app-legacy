@@ -1,9 +1,4 @@
-import {
-  Breadcrumb,
-  ButtonText,
-  IconChevronRight,
-  IlluObject,
-} from '@aragon/ods-old';
+import {Breadcrumb, IlluObject} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -14,6 +9,7 @@ import {ActiveIndicator, Indicator, StyledCarousel} from 'containers/carousel';
 import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {i18n} from '../../../i18n.config';
+import {Button, IconType} from '@aragon/ods';
 
 type OverviewDAOHeaderProps = {
   navLabel: string;
@@ -63,13 +59,15 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
           className="whitespace-nowrap"
           label={'Continue Draft'}
         /> */}
-          <ButtonText
-            size="large"
+          <Button
+            size="lg"
+            variant="primary"
             className="w-full whitespace-nowrap md:w-max"
-            iconRight={<IconChevronRight />}
-            label={t('createDAO.overview.button')}
+            iconRight={IconType.CHEVRON_RIGHT}
             onClick={handleSetupClick}
-          />
+          >
+            {t('createDAO.overview.button')}
+          </Button>
         </div>
       </div>
     </div>

@@ -1,12 +1,11 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-  ButtonText,
   CheckboxListItem,
   NumberInput,
   TextInput,
   WalletInputLegacy,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {t} from 'i18next';
 import {
   Controller,
@@ -204,10 +203,9 @@ const InputForm: React.FC<InputFormProps> = ({
       ) : null}
 
       <HStack>
-        <ButtonText
-          label={t('scc.detailContract.ctaLabel')}
-          onClick={composeAction}
-        />
+        <Button onClick={composeAction} size="md" variant="primary">
+          {t('scc.detailContract.ctaLabel')}
+        </Button>
         <CheckboxListItem
           label={t('scc.detailContract.checkboxMultipleLabel')}
           multiSelect

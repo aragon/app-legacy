@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import {ButtonIcon, Dropdown} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Dropdown} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 
 import NavLink from 'components/navLink';
 import {NAV_LINKS_DATA} from 'utils/constants';
@@ -15,17 +15,10 @@ export const NavlinksDropdown: React.FC = () => {
       onOpenChange={setShowCrumbMenu}
       align="start"
       trigger={
-        <ButtonIcon
-          mode="secondary"
-          size="large"
-          icon={
-            showCrumbMenu ? (
-              <Icon icon={IconType.CLOSE} />
-            ) : (
-              <Icon icon={IconType.MENU_DEFAULT} />
-            )
-          }
-          isActive={showCrumbMenu}
+        <Button
+          variant="secondary"
+          size="lg"
+          iconLeft={showCrumbMenu ? IconType.CLOSE : IconType.MENU_DEFAULT}
         />
       }
       sideOffset={8}

@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Breadcrumb, ButtonText, WidgetStatus} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Breadcrumb, WidgetStatus} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {
   MultisigClient,
   MultisigProposal,
@@ -825,14 +825,15 @@ export const Proposal: React.FC = () => {
         </ContentWrapper>
         <SummaryText>{proposal.metadata.summary}</SummaryText>
         {proposal.metadata.description && !expandedProposal && (
-          <ButtonText
+          <Button
             className="w-full md:w-max"
-            size="large"
-            label={t('governance.proposals.buttons.readFullProposal')}
-            mode="secondary"
-            iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
+            size="lg"
+            variant="secondary"
+            iconRight={IconType.CHEVRON_DOWN}
             onClick={() => setExpandedProposal(true)}
-          />
+          >
+            {t('governance.proposals.buttons.readFullProposal')}
+          </Button>
         )}
       </HeaderContainer>
 
@@ -841,13 +842,15 @@ export const Proposal: React.FC = () => {
           {proposal.metadata.description && expandedProposal && (
             <>
               <StyledEditorContent editor={editor} />
-              <ButtonText
+              <Button
                 className="mt-6 w-full md:w-max"
-                label={t('governance.proposals.buttons.closeFullProposal')}
-                mode="secondary"
-                iconRight={<Icon icon={IconType.CHEVRON_UP} />}
+                variant="secondary"
+                size="md"
+                iconRight={IconType.CHEVRON_UP}
                 onClick={() => setExpandedProposal(false)}
-              />
+              >
+                {t('governance.proposals.buttons.closeFullProposal')}
+              </Button>
             </>
           )}
 

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {ProposalResource} from 'utils/types';
-import {Icon, IconType} from '@aragon/ods';
+import {IconType} from '@aragon/ods';
 
 type ResourceListProps = {
   links?: Array<ProposalResource>;
@@ -43,7 +43,7 @@ const ResourceList: React.FC<ResourceListProps> = ({
             ? {
                 label: t('labels.addResource'),
                 onClick: emptyStateButtonClick,
-                iconLeft: <Icon icon={IconType.ADD} />,
+                iconLeft: IconType.ADD,
               }
             : undefined
         }

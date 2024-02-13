@@ -1,8 +1,8 @@
 import React from 'react';
 import {Trans, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {Icon, IconType} from '@aragon/ods';
-import {Avatar, ButtonIcon, ButtonText} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
+import {Avatar} from '@aragon/ods-old';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
@@ -53,19 +53,19 @@ export const NetworkErrorMenu = () => {
             {ensName && <SubTitle>{shortenAddress(address)}</SubTitle>}
           </AddressContainer>
         </AvatarAddressContainer>
-        <ButtonIcon
-          mode="secondary"
-          icon={<Icon icon={IconType.COPY} />}
-          size="small"
+        <Button
+          variant="secondary"
+          iconLeft={IconType.COPY}
+          size="sm"
           onClick={() =>
             address ? handleClipboardActions(address, () => null, alert) : null
           }
         />
         {isDesktop && (
-          <ButtonIcon
-            mode="ghost"
-            icon={<Icon icon={IconType.CLOSE} />}
-            size="small"
+          <Button
+            variant="tertiary"
+            iconLeft={IconType.CLOSE}
+            size="sm"
             onClick={handleCloseMenu}
           />
         )}
@@ -87,13 +87,11 @@ export const NetworkErrorMenu = () => {
           </WarningDescription>
         </WarningContainer>
         {connectorName === 'MetaMask' && (
-          <ButtonText
-            label={t('alert.wrongNetwork.buttonLabel', {
+          <Button onClick={handleSwitchNetwork} size="lg" variant="primary">
+            {t('alert.wrongNetwork.buttonLabel', {
               network: CHAIN_METADATA[network].name,
             })}
-            onClick={handleSwitchNetwork}
-            size="large"
-          />
+          </Button>
         )}
       </ModalBody>
     </ModalBottomSheetSwitcher>

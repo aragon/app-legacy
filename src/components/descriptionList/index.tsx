@@ -1,6 +1,6 @@
+import {Button} from '@aragon/ods';
 import {
   AlertInline,
-  ButtonText,
   CheckboxListItem,
   CheckboxListItemProps,
   Tag,
@@ -51,13 +51,9 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
           )}
         </TitleContainer>
         {onEditClick && (
-          <ButtonText
-            label={editLabel || t('labels.edit')}
-            mode="secondary"
-            size="large"
-            bgWhite
-            onClick={onEditClick}
-          />
+          <Button variant="secondary" size="lg" onClick={onEditClick}>
+            {editLabel || t('labels.edit')}
+          </Button>
         )}
       </HStack>
       <DlContainer>{children}</DlContainer>

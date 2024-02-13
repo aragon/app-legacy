@@ -1,6 +1,5 @@
 import React from 'react';
-import {ButtonIcon, ButtonText} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 import {useWallet} from 'hooks/useWallet';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -46,10 +45,10 @@ export const LoginRequired: React.FC<ILoginRequiredProps> = props => {
       <ModalHeader>
         <Title>{t('alert.loginRequired.headerTitle')}</Title>
         {isDesktop && (
-          <ButtonIcon
-            mode="ghost"
-            icon={<Icon icon={IconType.CLOSE} />}
-            size="small"
+          <Button
+            variant="tertiary"
+            iconLeft={IconType.CLOSE}
+            size="sm"
             onClick={() => onClose()}
           />
         )}
@@ -62,11 +61,9 @@ export const LoginRequired: React.FC<ILoginRequiredProps> = props => {
             {t('alert.loginRequired.description')}
           </WarningDescription>
         </WarningContainer>
-        <ButtonText
-          label={t('alert.loginRequired.buttonLabel')}
-          onClick={handleConnectClick}
-          size="large"
-        />
+        <Button onClick={handleConnectClick} size="lg" variant="primary">
+          {t('alert.loginRequired.buttonLabel')}
+        </Button>
       </ModalBody>
     </ModalBottomSheetSwitcher>
   );

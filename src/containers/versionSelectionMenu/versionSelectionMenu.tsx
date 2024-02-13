@@ -1,4 +1,3 @@
-import {ButtonText} from '@aragon/ods-old';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {useUpdateContext} from 'context/update';
@@ -10,6 +9,7 @@ import styled from 'styled-components';
 import {osxUpdates} from 'utils/osxUpdates';
 import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
+import {Button} from '@aragon/ods';
 
 export type CheckboxListItemProps = {
   showModal: {
@@ -157,12 +157,9 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
           />
         )}
         <ActionContainer>
-          <ButtonText
-            label={t('update.modalVersion.ctaLabel')}
-            mode="primary"
-            size="large"
-            onClick={handleCloseMenu}
-          />
+          <Button variant="primary" size="lg" onClick={handleCloseMenu}>
+            {t('update.modalVersion.ctaLabel')}
+          </Button>
         </ActionContainer>
       </div>
     </ModalBottomSheetSwitcher>

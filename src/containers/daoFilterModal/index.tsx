@@ -1,5 +1,5 @@
 import React from 'react';
-import {ButtonIcon, ButtonText, Modal} from '@aragon/ods-old';
+import {Modal} from '@aragon/ods-old';
 import {Button, Icon, IconType, Switch, Toggle, ToggleGroup} from '@aragon/ods';
 
 import {useTranslation} from 'react-i18next';
@@ -78,20 +78,18 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
       <p className="flex-1 font-semibold text-neutral-600 ft-text-lg">
         {t('explore.modal.filterDAOs.title')}
       </p>
-      <ButtonIcon
-        icon={<Icon icon={IconType.CLOSE} />}
+      <Button
+        iconLeft={IconType.CLOSE}
         className="lg:hidden"
-        mode="secondary"
-        size="small"
-        bgWhite
+        variant="secondary"
+        size="sm"
         onClick={onClose}
       />
-      <ButtonIcon
-        icon={<Icon icon={IconType.CLOSE} />}
-        className="hidden lg:block"
-        mode="secondary"
-        size="large"
-        bgWhite
+      <Button
+        iconLeft={IconType.CLOSE}
+        className="hidden lg:flex"
+        variant="secondary"
+        size="lg"
         onClick={onClose}
       />
     </ModalHeader>
@@ -280,15 +278,15 @@ const ModalFooter: React.FC<FooterProps> = props => {
       >
         {label}
       </Button>
-      <ButtonText
-        size="large"
-        mode="ghost"
-        label={t('explore.modal.filterDAOs.buttonLabel.clearFilters')}
-        bgWhite
+      <Button
+        size="lg"
+        variant="tertiary"
         onClick={handleClearFilters}
-        iconLeft={<Icon icon={IconType.RELOAD} />}
+        iconLeft={IconType.RELOAD}
         className="w-full lg:w-auto"
-      />
+      >
+        {t('explore.modal.filterDAOs.buttonLabel.clearFilters')}
+      </Button>
     </Footer>
   );
 };

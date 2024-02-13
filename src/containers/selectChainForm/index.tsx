@@ -1,4 +1,4 @@
-import {ButtonText, ListItemBlockchain} from '@aragon/ods-old';
+import {ListItemBlockchain} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -8,6 +8,7 @@ import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
+import {Button} from '@aragon/ods';
 
 type NetworkType = 'main' | 'test';
 
@@ -34,24 +35,22 @@ const SelectChainForm: React.FC = () => {
     <>
       <Header>
         <NetworkTypeSwitcher>
-          <ButtonText
-            mode="ghost"
-            bgWhite
-            size={isMobile ? 'small' : 'medium'}
-            label={t('labels.mainNet')}
-            isActive={networkType === 'main'}
+          <Button
+            variant={networkType === 'main' ? 'secondary' : 'tertiary'}
+            size={isMobile ? 'sm' : 'md'}
             onClick={() => {
               setNetworkType('main');
             }}
-          />
-          <ButtonText
-            mode="ghost"
-            bgWhite
-            size={isMobile ? 'small' : 'medium'}
-            label={t('labels.testNet')}
-            isActive={networkType === 'test'}
+          >
+            {t('labels.mainNet')}
+          </Button>
+          <Button
+            variant={networkType === 'test' ? 'secondary' : 'tertiary'}
+            size={isMobile ? 'sm' : 'md'}
             onClick={() => setNetworkType('test')}
-          />
+          >
+            {t('labels.testNet')}
+          </Button>
         </NetworkTypeSwitcher>
       </Header>
       <FormItem>

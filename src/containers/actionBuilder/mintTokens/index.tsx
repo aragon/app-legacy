@@ -1,4 +1,4 @@
-import {ButtonText, ListItemAction, Label as FormLabel} from '@aragon/ods-old';
+import {ListItemAction, Label as FormLabel} from '@aragon/ods-old';
 import Big from 'big.js';
 import {BigNumber} from '@ethersproject/bignumber';
 import {isAddress} from 'ethers/lib/utils';
@@ -28,6 +28,7 @@ import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
 import MintTokensToTreasuryMenu from 'containers/mintTokensToTreasuryMenu';
+import {Button} from '@aragon/ods';
 
 type MintTokensProps = ActionIndex & {allowRemove?: boolean};
 
@@ -454,14 +455,14 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         })}
 
         <ButtonContainer>
-          <ButtonText
-            label={t('labels.addWallet')}
-            mode="secondary"
-            size="large"
-            bgWhite
+          <Button
+            variant="secondary"
+            size="lg"
             className="flex-1 md:flex-initial"
             onClick={handleAddWallet}
-          />
+          >
+            {t('labels.addWallet')}
+          </Button>
 
           {/* eslint-disable-next-line tailwindcss/classnames-order */}
           {/* <label className="flex-1 md:flex-initial py-3 px-4 space-x-3 h-12 font-semibold rounded-xl cursor-pointer hover:text-primary-500 bg-neutral-0 ft-text-base">

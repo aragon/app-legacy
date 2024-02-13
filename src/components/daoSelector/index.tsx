@@ -1,14 +1,7 @@
-import {
-  AvatarDao,
-  AvatarDaoProps,
-  ButtonIcon,
-  shortenAddress,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AvatarDao, AvatarDaoProps, shortenAddress} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import React from 'react';
 import styled from 'styled-components';
-
-import useScreen from 'hooks/useScreen';
 
 type DaoSelectorProps = {
   daoName: string;
@@ -24,8 +17,6 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
   onClick,
   src,
 }: DaoSelectorProps) => {
-  const {isDesktop} = useScreen();
-
   return (
     <Card data-testid="cardDao" onClick={onClick}>
       <LeftContent>
@@ -38,12 +29,7 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
         </TextContainer>
       </LeftContent>
 
-      <ButtonIcon
-        icon={<Icon icon={IconType.CHEVRON_DOWN} />}
-        mode="secondary"
-        size="small"
-        bgWhite={!isDesktop}
-      />
+      <Button iconLeft={IconType.CHEVRON_DOWN} variant="secondary" size="sm" />
     </Card>
   );
 };

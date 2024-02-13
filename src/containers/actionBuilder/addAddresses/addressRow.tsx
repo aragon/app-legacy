@@ -1,9 +1,5 @@
-import {
-  ButtonIcon,
-  Dropdown,
-  InputValue as WalletInputValue,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Dropdown, InputValue as WalletInputValue} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import {
   Controller,
@@ -152,12 +148,11 @@ export const AddressRow = ({
               callback: () => item.callback(fieldIndex),
             }))}
             trigger={
-              <ButtonIcon
-                size="large"
-                mode="secondary"
-                icon={<Icon icon={IconType.MENU_VERTICAL} />}
+              <Button
+                size="lg"
+                variant="secondary"
+                iconLeft={IconType.MENU_VERTICAL}
                 data-testid="trigger"
-                bgWhite
               />
             }
           />

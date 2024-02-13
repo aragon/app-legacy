@@ -1,8 +1,7 @@
 import React, {useRef} from 'react';
 import {styled} from 'styled-components';
 
-import {ButtonIcon} from '../button';
-import {IconAdd, IconRemove} from '../icons';
+import {Button, IconType} from '@aragon/ods';
 
 export type NumberInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   /** Changes a input's color schema */
@@ -97,10 +96,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     <Container data-testid="number-input" {...{mode, disabled, width}}>
       <StyledIconButton
         name="down"
-        mode="secondary"
-        bgWhite
-        size="small"
-        icon={<IconRemove />}
+        variant="secondary"
+        size="sm"
+        iconLeft={IconType.REMOVE}
         disabled={disabled ?? disableDecrement}
         onClick={() => handleStepperChange('down')}
       />
@@ -130,10 +128,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       </InputWrapper>
       <StyledIconButton
         name="up"
-        mode="secondary"
-        bgWhite
-        size="small"
-        icon={<IconAdd />}
+        variant="secondary"
+        size="sm"
+        iconLeft={IconType.ADD}
         disabled={disabled ?? disableIncrement}
         onClick={() => handleStepperChange('up')}
       />
@@ -222,6 +219,6 @@ const StyledNumberInput = styled.input.attrs<StyledNumberInputProps>(
   outline: 0;
 `;
 
-const StyledIconButton = styled(ButtonIcon).attrs({
+const StyledIconButton = styled(Button).attrs({
   className: 'rounded-lg',
 })``;

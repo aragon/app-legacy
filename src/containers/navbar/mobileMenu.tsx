@@ -2,8 +2,7 @@ import {useReactiveVar} from '@apollo/client';
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonText} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 
 import BottomSheet from 'components/bottomSheet';
 import {DaoSelector} from 'components/daoSelector';
@@ -43,14 +42,15 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
         <div className="space-y-6 px-4 py-6">
           <NavLinks onItemClick={close} />
 
-          <ButtonText
+          <Button
             className="w-full"
-            size="large"
-            label={t('navButtons.giveFeedback')}
-            mode="secondary"
-            iconRight={<Icon icon={IconType.FEEDBACK} />}
+            size="lg"
+            variant="secondary"
+            iconRight={IconType.FEEDBACK}
             onClick={props.onFeedbackClick}
-          />
+          >
+            {t('navButtons.giveFeedback')}
+          </Button>
         </div>
       </div>
     </BottomSheet>

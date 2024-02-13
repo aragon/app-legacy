@@ -1,4 +1,4 @@
-import {ButtonText, isEnsDomain} from '@aragon/ods-old';
+import {isEnsDomain} from '@aragon/ods-old';
 import {isEnsName} from '@aragon/sdk-client-common';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -21,7 +21,7 @@ import {useWallet} from 'hooks/useWallet';
 import {Address, formatUnits} from 'viem';
 import {useEnsAvatar, useEnsName, useEnsResolver} from 'wagmi';
 import {useMember, useMemberDAOs} from 'services/aragon-sdk/queries/use-member';
-import {NumberFormat, formatterUtils} from '@aragon/ods';
+import {Button, NumberFormat, formatterUtils} from '@aragon/ods';
 import {TokenVotingMember} from '@aragon/sdk-client';
 import {useCreatorProposals} from 'services/aragon-sdk/queries/use-creator-proposals';
 import {UserProposalList} from 'components/userProposalList';
@@ -221,15 +221,15 @@ export const DaoMember: React.FC = () => {
         stats={stats}
         actions={
           isDelegationEnabled && (
-            <ButtonText
-              label={
-                isDelegating
-                  ? t('members.profile.headerCTAchangeDelegation')
-                  : t('members.profile.headerCTAdelegateTo')
-              }
-              mode="primary"
+            <Button
+              variant="primary"
+              size="md"
               onClick={() => open('delegateVoting', {delegate: memberAddress})}
-            />
+            >
+              {isDelegating
+                ? t('members.profile.headerCTAchangeDelegation')
+                : t('members.profile.headerCTAdelegateTo')}
+            </Button>
           )
         }
       />

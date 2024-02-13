@@ -1,14 +1,21 @@
-import React from 'react';
+import React, {ButtonHTMLAttributes} from 'react';
 import styled from 'styled-components';
 
-import {ButtonText, ButtonTextProps} from '@aragon/ods-old';
+import {IButtonBaseProps} from '@aragon/ods/dist/types/src/components/button/button.api';
+import {Button} from '@aragon/ods';
 
 type PageEmptyStateProps = {
   title: string;
   subtitle: string;
   Illustration: JSX.Element;
-  primaryButton: Omit<ButtonTextProps, 'mode' | 'size'>;
-  secondaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
+  primaryButton: Omit<
+    IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
+    'variant' | 'size'
+  > & {label: string};
+  secondaryButton?: Omit<
+    IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
+    'variant' | 'size'
+  > & {label: string};
 };
 
 const PageEmptyState = ({
@@ -30,14 +37,9 @@ const PageEmptyState = ({
             dangerouslySetInnerHTML={{__html: subtitle || ''}}
           ></span>
           <ActionsContainer>
-            <ButtonText {...primaryButton} mode="primary" size="large" />
+            <Button {...primaryButton} variant="primary" size="lg" />
             {secondaryButton && (
-              <ButtonText
-                {...secondaryButton}
-                bgWhite={true}
-                mode="secondary"
-                size="large"
-              />
+              <Button {...secondaryButton} variant="secondary" size="lg" />
             )}
           </ActionsContainer>
         </EmptyStateContainer>

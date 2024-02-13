@@ -1,11 +1,6 @@
 import React, {useState} from 'react';
-import {
-  ButtonGroup,
-  ButtonText,
-  IllustrationHuman,
-  Option,
-} from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {ButtonGroup, IllustrationHuman, Option} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -179,19 +174,15 @@ export const Governance: React.FC = () => {
 
         {hasNextPage && (
           <div className="mt-6">
-            <ButtonText
-              label={t('explore.explorer.showMore')}
-              iconRight={
-                isFetchingNextPage ? (
-                  <Spinner size="sm" variant="primary" />
-                ) : (
-                  <Icon icon={IconType.CHEVRON_DOWN} />
-                )
-              }
-              bgWhite
-              mode="ghost"
+            <Button
+              state={isFetchingNextPage ? 'loading' : undefined}
+              iconRight={isFetchingNextPage ? undefined : IconType.CHEVRON_DOWN}
+              variant="tertiary"
+              size="md"
               onClick={handleShowMoreClick}
-            />
+            >
+              {t('explore.explorer.showMore')}
+            </Button>
           </div>
         )}
       </PageWrapper>

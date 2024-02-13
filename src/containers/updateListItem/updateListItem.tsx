@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
-import {ButtonText, Link, Tag} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Link, Tag} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {Markdown} from 'tiptap-markdown';
@@ -91,23 +91,24 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
         {(buttonPrimaryLabel || buttonSecondaryLabel) && (
           <div className="mt-6 flex flex-col gap-y-3 md:flex-row">
             {buttonSecondaryLabel && (
-              <ButtonText
-                label={buttonSecondaryLabel}
-                mode="secondary"
-                bgWhite
+              <Button
+                variant="secondary"
                 disabled={disabled}
-                size="medium"
+                size="md"
                 onClick={onClickActionSecondary}
-              />
+              >
+                {buttonSecondaryLabel}
+              </Button>
             )}
             {buttonPrimaryLabel && (
-              <ButtonText
-                label={buttonPrimaryLabel}
-                mode="primary"
+              <Button
+                variant="primary"
                 disabled={disabled}
-                size="medium"
+                size="md"
                 onClick={onClickActionPrimary}
-              />
+              >
+                {buttonPrimaryLabel}
+              </Button>
             )}
           </div>
         )}

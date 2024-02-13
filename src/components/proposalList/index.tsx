@@ -1,6 +1,6 @@
 import {CardProposal, CardProposalProps} from '@aragon/ods-old';
 import {MultisigProposalListItem} from '@aragon/sdk-client';
-import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 import {TFunction} from 'i18next';
 import React, {useMemo} from 'react';
@@ -56,7 +56,6 @@ function isMultisigProposalListItem(
 
 type ProposalListItemProps = CardProposalProps & {
   proposalId: string;
-  actions: DaoAction[];
 };
 
 const ProposalItem: React.FC<ProposalListItemProps> = ({
@@ -82,7 +81,7 @@ const ProposalItem: React.FC<ProposalListItemProps> = ({
 
 type MappedProposal = CardProposalProps & {
   id: string;
-  actions: DaoAction[];
+  //actions: DaoAction[];
 };
 
 const ProposalList: React.FC<ProposalListProps> = ({
@@ -188,7 +187,7 @@ export function proposal2CardProps(
     publisherDisplayName,
     publishLabel: t('governance.proposals.publishedBy'),
     process: proposal.status.toLowerCase() as CardProposalProps['process'],
-    actions: proposal.actions,
+    //actions: proposal.actions,
     onClick: () => {
       trackEvent('governance_viewProposal_clicked', {
         proposal_id: proposal.id,

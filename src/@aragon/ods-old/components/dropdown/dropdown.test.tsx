@@ -1,13 +1,20 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {ButtonText} from '../button';
+import {Button} from '@aragon/ods';
 import {Dropdown} from './dropdown';
 
 describe('Dropdown', () => {
   // eslint-disable-next-line
-    function setup({ children, ...props }: any) {
+  function setup({children, ...props}: any) {
     render(
-      <Dropdown trigger={<ButtonText label="button" />} {...props}>
+      <Dropdown
+        trigger={
+          <Button size="md" variant="primary">
+            button
+          </Button>
+        }
+        {...props}
+      >
         {children}
       </Dropdown>
     );

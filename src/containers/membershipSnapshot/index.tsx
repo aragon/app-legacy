@@ -1,6 +1,6 @@
 import React from 'react';
-import {ButtonText, ListItemHeader} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ListItemHeader} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -102,15 +102,16 @@ export const MembershipSnapshot: React.FC<Props> = ({
           <ListItemGrid>
             <MembersList token={daoToken} members={displayedMembers} />
           </ListItemGrid>
-          <ButtonText
-            mode="secondary"
-            size="large"
-            iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-            label={t('labels.seeAll')}
+          <Button
+            variant="secondary"
+            size="lg"
+            iconRight={IconType.CHEVRON_RIGHT}
             onClick={() =>
               navigate(generatePath(Community, {network, dao: daoAddressOrEns}))
             }
-          />
+          >
+            {t('labels.seeAll')}
+          </Button>
         </div>
       </div>
     );
@@ -143,15 +144,16 @@ export const MembershipSnapshot: React.FC<Props> = ({
         members={displayedMembers}
         isCompactMode={true}
       />
-      <ButtonText
-        mode="secondary"
-        size="large"
-        iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-        label={t('labels.seeAll')}
+      <Button
+        variant="secondary"
+        size="lg"
+        iconRight={IconType.CHEVRON_RIGHT}
         onClick={() =>
           navigate(generatePath(Community, {network, dao: daoAddressOrEns}))
         }
-      />
+      >
+        {t('labels.seeAll')}
+      </Button>
     </VerticalContainer>
   );
 };
