@@ -1,13 +1,13 @@
+import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
+import React, {useCallback} from 'react';
 import {
   AlertInline,
   CheckboxListItem,
   Label,
-  LinearProgress,
   NumberInput,
   Tag,
 } from '@aragon/ods-old';
-import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
-import React, {useCallback} from 'react';
+import {Progress} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -197,7 +197,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       />
 
                       <LinearProgressContainer>
-                        <LinearProgress max={100} value={value} />
+                        <Progress value={value} />
                         <ProgressBarTick />
                         <ProgressInfo1>
                           <p

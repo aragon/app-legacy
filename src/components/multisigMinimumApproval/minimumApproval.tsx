@@ -1,11 +1,11 @@
+import React from 'react';
 import {
   AlertInline,
   AlertInlineProps,
-  LinearProgress,
   NumberInput,
   NumberInputProps,
 } from '@aragon/ods-old';
-import React from 'react';
+import {Progress} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -35,7 +35,7 @@ const MinimumApproval: React.FC<Props> = ({max, min, ...rest}) => {
 
         <ProgressWrapper>
           <LinearProgressContainer>
-            <LinearProgress max={max} value={value <= max ? value : max} />
+            <Progress value={((value <= max ? value : max) / max) * 100} />
             <ProgressInfo>
               <ApprovalAddresses
                 style={{

@@ -1,11 +1,12 @@
 import React, {FC, useState, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods-old';
+import {AlertInline, Label, NumberInput} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {htmlIn} from 'utils/htmlIn';
 import {gTokenSymbol} from 'utils/tokens';
 import numeral from 'numeral';
+import {Progress} from '@aragon/ods';
 
 export const MinParticipation: FC = () => {
   const {t} = useTranslation();
@@ -163,9 +164,14 @@ export const MinParticipation: FC = () => {
                   </div>
 
                   <LinearProgressContainer>
-                    <LinearProgress
-                      max={govTokenTotalSupply}
-                      value={govTokenTotalSupply * (value / 100)}
+                    <Progress
+                      value={
+                        govTokenTotalSupply
+                          ? ((govTokenTotalSupply * (value / 100)) /
+                              govTokenTotalSupply) *
+                            100
+                          : 0
+                      }
                     />
 
                     <ProgressInfo2>

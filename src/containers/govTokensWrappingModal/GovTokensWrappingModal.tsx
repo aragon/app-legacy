@@ -5,10 +5,9 @@ import {
   ButtonText,
   CheckboxListItem,
   Label,
-  LinearProgress,
   ValueInput,
 } from '@aragon/ods-old';
-import {Icon, IconType, Spinner} from '@aragon/ods';
+import {Icon, IconType, Progress, Spinner} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -346,9 +345,12 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                     })}
                   </ProgressSteps>
                 </ProgressHeader>
-                <LinearProgress
-                  value={currentStep - 1}
-                  max={modeData.steps.length}
+                <Progress
+                  value={
+                    modeData.steps.length !== 0
+                      ? (currentStep - 1 / modeData.steps.length) * 100
+                      : 0
+                  }
                 />
                 <ProgressHelpText>
                   {modeData.steps[currentStep - 1].helpText}

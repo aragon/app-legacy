@@ -1,6 +1,6 @@
-import {LinearProgress} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {Progress} from '@aragon/ods';
 import styled from 'styled-components';
 
 import {TokenVotingOptions} from 'utils/proposals';
@@ -38,7 +38,11 @@ const BreakdownTab: React.FC<BreakdownProps> = ({
               </PercentageMultisig>
             </span>
           </HStack>
-          <LinearProgress max={memberCount} value={approvals.length} />
+          <Progress
+            value={
+              memberCount ? (Number(approvals.length) / memberCount) * 100 : 0
+            }
+          />
         </VStackNormal>
       </VStackRelaxed>
     );
@@ -87,7 +91,7 @@ const ResultRow: React.FC<{
         <ResultValue>{value}</ResultValue>
         <VotePercentage>{percentage}%</VotePercentage>
       </HStack>
-      <LinearProgress max={100} value={percentage} />
+      <Progress value={Number(percentage)} />
     </VStackNormal>
   );
 };
