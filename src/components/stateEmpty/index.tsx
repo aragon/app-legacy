@@ -1,13 +1,13 @@
+import {Button} from '@aragon/ods';
 import {
-  ButtonText,
-  ButtonTextProps,
   IlluHumanProps,
   IlluObject,
   IlluObjectProps,
   IllustrationHuman,
 } from '@aragon/ods-old';
+import {IButtonBaseProps} from '@aragon/ods/dist/types/src/components/button/button.api';
 import useScreen from 'hooks/useScreen';
-import React from 'react';
+import React, {ButtonHTMLAttributes} from 'react';
 import styled from 'styled-components';
 
 type BaseProps = {
@@ -15,9 +15,18 @@ type BaseProps = {
   title: string;
   description?: string;
   content?: JSX.Element;
-  primaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
-  secondaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
-  tertiaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
+  primaryButton?: Omit<
+    IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
+    'variant' | 'size'
+  >;
+  secondaryButton?: Omit<
+    IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
+    'variant' | 'size'
+  >;
+  tertiaryButton?: Omit<
+    IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
+    'variant' | 'size'
+  >;
   renderHtml?: boolean;
   actionsColumn?: boolean;
   customCardPaddingClassName?: string;
@@ -68,24 +77,23 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
         {(props.primaryButton || props.secondaryButton) && (
           <ActionContainer actionsColumn={props.actionsColumn}>
             {props.primaryButton && (
-              <ButtonText
+              <Button
                 {...props.primaryButton}
-                mode="primary"
-                size="large"
+                variant="primary"
+                size="lg"
                 {...(props.mode === 'inline' &&
                   (props.secondaryButton ? {} : {className: 'w-full'}))}
               />
             )}
             {props.secondaryButton && (
-              <ButtonText
+              <Button
                 {...props.secondaryButton}
-                mode="secondary"
-                size="large"
-                bgWhite={props.secondaryButton.bgWhite ?? true}
+                variant="secondary"
+                size="lg"
               />
             )}
             {props.tertiaryButton && (
-              <ButtonText {...props.tertiaryButton} mode="ghost" size="large" />
+              <Button {...props.tertiaryButton} variant="tertiary" size="lg" />
             )}
           </ActionContainer>
         )}

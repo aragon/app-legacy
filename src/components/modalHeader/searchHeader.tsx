@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Icon, IconType} from '@aragon/ods';
-import {ButtonIcon, IconChevronRight} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 type SearchHeader = {
   onClose?: () => void;
   selectedValue?: string;
   onSearch?: (search: string) => void;
-  buttonIcon?: React.FunctionComponentElement<IconType>;
+  buttonIcon?: IconType;
   searchPlaceholder: string;
   onHomeButtonClick?: () => void;
 };
@@ -16,13 +15,13 @@ const SearchHeader: React.FC<SearchHeader> = props => {
   return (
     <Container>
       <LeftContent>
-        <ButtonIcon
-          icon={props.buttonIcon || <Icon icon={IconType.HOME} />}
-          mode="secondary"
-          bgWhite
+        <Button
+          iconLeft={props.buttonIcon || IconType.HOME}
+          variant="secondary"
+          size="md"
           onClick={props.onHomeButtonClick}
         />
-        <IconChevronRight />
+        <Icon icon={IconType.CHEVRON_RIGHT} />
         {props.selectedValue && (
           <>
             <SelectedValue>{props.selectedValue}</SelectedValue>
@@ -36,11 +35,11 @@ const SearchHeader: React.FC<SearchHeader> = props => {
           onChange={e => props.onSearch?.(e.target.value)}
         />
       </LeftContent>
-      <ButtonIcon
-        mode="secondary"
-        icon={<Icon icon={IconType.CLOSE} />}
+      <Button
+        variant="secondary"
+        size="md"
+        iconLeft={IconType.CLOSE}
         onClick={props.onClose}
-        bgWhite
       />
     </Container>
   );
