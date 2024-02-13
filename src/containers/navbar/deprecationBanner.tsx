@@ -7,11 +7,13 @@ import {Icon, IconType} from '@aragon/ods';
 import {useNetwork} from 'context/network';
 import {featureFlags} from 'utils/featureFlags';
 import {GOERLI_BASED_NETWORKS} from 'utils/constants';
+import {useTranslation} from 'react-i18next';
 
 const DeprecationBanner: React.FC = () => {
   const [bannerHidden, setBannerHidden] = useState(false);
 
   const location = useLocation();
+  const {t} = useTranslation();
 
   const {network} = useNetwork();
 
@@ -34,21 +36,15 @@ const DeprecationBanner: React.FC = () => {
         <TextWrapper>
           <Icon icon={IconType.WARNING} className="text-warning-500" />
           <span className="font-semibold text-warning-800 ft-text-base">
-            This DAO will no longer be available once support for Goerli testnet
-            comes to an end during 2024.
+            {t('deprecation.banner.title')}
           </span>
         </TextWrapper>
         <ButtonText
-          label="Learn more"
+          label={t('deprecation.banner.ctaLabel')}
           size="small"
           bgWhite
           mode={'secondary'}
-          onClick={() =>
-            window.open(
-              'https://blog.ethereum.org/2023/11/30/goerli-lts-update',
-              '_blank'
-            )
-          }
+          onClick={() => window.open(t('deprecation.banner.ctaLink'), '_blank')}
         />
       </MessageWrapper>
       <Icon

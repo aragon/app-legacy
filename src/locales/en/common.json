@@ -1609,6 +1609,13 @@
       "false": "Follow"
     }
   },
+  "deprecation": {
+    "banner": {
+      "title": "This DAO will no longer be available once support for Goerli testnet comes to an end during 2024.",
+      "ctaLabel": "Learn more",
+      "ctaLink": "https://blog.ethereum.org/2023/11/30/goerli-lts-update"
+    }
+  },
   "update": {
     "banner": {
       "title": "Aragon OSx updates are available.",
