@@ -1,12 +1,11 @@
 import React, {useCallback} from 'react';
 import {
-  ButtonIcon,
   CardText,
   CardToken,
   CardTransfer,
   ListItemAction,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -65,11 +64,10 @@ const TransactionDetail: React.FC = () => {
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader>
         <Title>{t('transactionDetail.title')}</Title>
-        <ButtonIcon
-          mode="secondary"
-          size="small"
-          bgWhite
-          icon={<Icon icon={IconType.CLOSE} />}
+        <Button
+          variant="secondary"
+          size="sm"
+          iconLeft={IconType.CLOSE}
           onClick={onClose}
         />
       </ModalHeader>

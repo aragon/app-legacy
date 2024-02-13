@@ -3,11 +3,10 @@ import {styled} from 'styled-components';
 import {useScreen} from '../../hooks';
 import {shortenAddress, shortenDaoUrl} from '../../utils';
 import {AvatarDao} from '../avatar';
-import {ButtonText} from '../button';
+import {Button, IconType} from '@aragon/ods';
 import {Dropdown} from '../dropdown';
 import {
   IconBlock,
-  IconCheckmark,
   IconChevronDown,
   IconChevronUp,
   IconCommunity,
@@ -224,13 +223,13 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
               <Dropdown
                 align="start"
                 trigger={
-                  <ButtonText
-                    iconRight={<IconChevronDown />}
-                    label="All Links"
-                    mode="secondary"
-                    size="large"
-                    bgWhite
-                  />
+                  <Button
+                    iconRight={IconType.CHEVRON_DOWN}
+                    variant="secondary"
+                    size="lg"
+                  >
+                    All Links
+                  </Button>
                 }
                 sideOffset={8}
                 className="max-w-xs"
@@ -243,15 +242,14 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 }))}
               />
             )}
-            <ButtonText
+            <Button
               onClick={onFollowClick}
-              mode="secondary"
-              size="large"
-              bgWhite
-              {...(following
-                ? {iconLeft: <IconCheckmark />, label: labels.following}
-                : {label: labels.follow})}
-            />
+              variant="secondary"
+              size="lg"
+              iconLeft={following ? IconType.CHECKMARK : undefined}
+            >
+              {following ? labels.following : labels.follow}
+            </Button>
           </ActionContainer>
         </ActionWrapper>
       </DetailsWrapper>

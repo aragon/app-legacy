@@ -3,8 +3,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useForm, useWatch, Controller} from 'react-hook-form';
 import {saveAs} from 'file-saver';
-import {ButtonText, DateInput, Label} from '@aragon/ods-old';
-import {AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
+import {DateInput, Label} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 
 import {getCanonicalDate} from 'utils/date';
@@ -250,56 +250,49 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 
             <div className="space-y-4">
               {isCsvGenerationSuccess ? (
-                <ButtonText
-                  mode="primary"
-                  size="large"
-                  label={t('finance.modalExport.ctaLabelSave')}
+                <Button
+                  variant="primary"
+                  size="lg"
                   className="w-full"
                   onClick={downloadCsvFile}
-                />
+                >
+                  {t('finance.modalExport.ctaLabelSave')}
+                </Button>
               ) : isCsvGenerationError ? (
-                <ButtonText
-                  mode="primary"
-                  isActive={isCsvGenerationLoading}
+                <Button
+                  variant={isCsvGenerationLoading ? 'primary' : 'secondary'}
+                  state={isCsvGenerationLoading ? 'loading' : undefined}
                   iconLeft={
-                    isCsvGenerationLoading ? (
-                      <Spinner size="sm" variant="primary" />
-                    ) : (
-                      <Icon icon={IconType.RELOAD} />
-                    )
+                    isCsvGenerationLoading ? undefined : IconType.RELOAD
                   }
-                  size="large"
-                  label={
-                    isCsvGenerationLoading
-                      ? t('finance.modalExport.ctaLabelGenerating')
-                      : t('finance.modalExport.ctaLabelRetry')
-                  }
+                  size="lg"
                   className="w-full"
                   onClick={createCsvBlob}
-                />
+                >
+                  {isCsvGenerationLoading
+                    ? t('finance.modalExport.ctaLabelGenerating')
+                    : t('finance.modalExport.ctaLabelRetry')}
+                </Button>
               ) : (
                 <div className="flex flex-col items-center gap-4 xl:flex-row">
-                  <ButtonText
-                    mode="primary"
-                    isActive={isCsvGenerationLoading}
+                  <Button
+                    variant={isCsvGenerationLoading ? 'primary' : 'secondary'}
                     disabled={isCsvGenerationError}
-                    iconLeft={
-                      isCsvGenerationLoading ? (
-                        <Spinner size="sm" variant="primary" />
-                      ) : undefined
-                    }
-                    size="large"
-                    label={t('finance.modalExport.ctaLabelGenerateCSV')}
+                    state={isCsvGenerationLoading ? 'loading' : undefined}
+                    size="lg"
                     className="w-full"
                     onClick={createCsvBlob}
-                  />
-                  <ButtonText
-                    mode="secondary"
-                    size="large"
-                    label={t('labels.cancel')}
+                  >
+                    {t('finance.modalExport.ctaLabelGenerateCSV')}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="lg"
                     className="w-full"
                     onClick={handleClose}
-                  />
+                  >
+                    {t('labels.cancel')}
+                  </Button>
                 </div>
               )}
 

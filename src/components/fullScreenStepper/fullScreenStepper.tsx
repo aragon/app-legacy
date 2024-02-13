@@ -6,8 +6,8 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {Breadcrumb, ButtonText, Wizard} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Breadcrumb, Wizard} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -158,26 +158,29 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
             <>{customFooter}</>
           ) : (
             <FormFooter>
-              <ButtonText
-                mode="secondary"
-                size="large"
-                label={backButtonLabel || t('labels.back')}
+              <Button
+                variant="secondary"
+                size="lg"
                 onClick={() =>
                   onBackButtonClicked ? onBackButtonClicked() : prev()
                 }
                 disabled={currentStep === 1}
-                iconLeft={<Icon icon={IconType.CHEVRON_LEFT} />}
-              />
+                iconLeft={IconType.CHEVRON_LEFT}
+              >
+                {backButtonLabel || t('labels.back')}
+              </Button>
               <ButtonValidationTrigger onClick={onNextButtonDisabledClicked}>
-                <ButtonText
-                  label={nextButtonLabel || t('labels.next')}
-                  size="large"
+                <Button
+                  variant="primary"
+                  size="lg"
                   onClick={() =>
                     onNextButtonClicked ? onNextButtonClicked(next) : next()
                   }
                   disabled={isNextButtonDisabled}
-                  iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-                />
+                  iconRight={IconType.CHEVRON_RIGHT}
+                >
+                  {nextButtonLabel || t('labels.next')}
+                </Button>
               </ButtonValidationTrigger>
             </FormFooter>
           )}

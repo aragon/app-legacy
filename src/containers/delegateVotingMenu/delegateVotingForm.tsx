@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {CheckboxListItem, Label, ButtonText, InputValue} from '@aragon/ods-old';
-import {AlertCard, AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
+import {CheckboxListItem, Label, InputValue} from '@aragon/ods-old';
+import {Button, AlertCard, AlertInline, IconType} from '@aragon/ods';
 
 import {useWallet} from 'hooks/useWallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -103,12 +103,6 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
 
   const delegateLabel = getDelegateLabel(isReclaimMode, isLoading, isError);
 
-  const ctaIcon = isLoading ? (
-    <Spinner size="sm" variant="primary" />
-  ) : isError ? (
-    <Icon icon={IconType.RELOAD} />
-  ) : undefined;
-
   const alertLabel = isReclaimMode
     ? 'alertCriticalReclaim'
     : 'alertCriticalDelegate';
@@ -158,23 +152,25 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
         />
       </FormGroup>
       <FormGroup className="items-center">
-        <ButtonText
+        <Button
           className="w-full"
-          label={t(`modal.delegation.${delegateLabel}`)}
-          size="large"
+          size="lg"
           disabled={!isDelegateValid}
-          isActive={isLoading}
-          mode="primary"
-          iconLeft={ctaIcon}
+          state={isLoading ? 'loading' : undefined}
+          variant={isLoading ? 'primary' : 'secondary'}
+          iconLeft={isError ? IconType.RELOAD : undefined}
           onClick={onDelegateTokens}
-        />
-        <ButtonText
+        >
+          {t(`modal.delegation.${delegateLabel}`)}
+        </Button>
+        <Button
           className="w-full"
-          label={t('labels.cancel')}
-          size="large"
-          mode="secondary"
+          size="lg"
+          variant="secondary"
           onClick={handleCancel}
-        />
+        >
+          {t('labels.cancel')}
+        </Button>
         {isError && (
           <AlertInline
             message={t(`modal.delegation.${alertLabel}`)}

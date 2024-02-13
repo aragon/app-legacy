@@ -1,7 +1,13 @@
 import React, {ReactNode} from 'react';
 import styled from 'styled-components';
-import {ButtonText, Tag} from '@aragon/ods-old';
-import {Icon, IconType, Spinner, SpinnerVariant} from '@aragon/ods';
+import {
+  Icon,
+  IconType,
+  Spinner,
+  SpinnerVariant,
+  Button,
+  Tag,
+} from '@aragon/ods';
 
 export interface StatusProps {
   mode: 'loading' | 'success' | 'error';
@@ -64,20 +70,20 @@ export const Status: React.FC<StatusProps> = ({
         {mode === 'error' && (
           <div className="mb-3 flex flex-wrap gap-2">
             {ErrorList?.map((item, index) => (
-              <Tag key={index} label={item} colorScheme={'critical'} />
+              <Tag key={index} label={item} variant="critical" />
             ))}
           </div>
         )}
         {mode === 'error' && (
           <div>
-            <ButtonText
-              label={DetailsButtonLabel as string}
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
-              mode="secondary"
-              size="small"
-              bgWhite
+            <Button
+              iconRight={IconType.LINK_EXTERNAL}
+              variant="secondary"
+              size="sm"
               onClick={() => window.open(DetailsButtonSrc, '_blank')}
-            />
+            >
+              {DetailsButtonLabel}
+            </Button>
           </div>
         )}
       </Wrapper>

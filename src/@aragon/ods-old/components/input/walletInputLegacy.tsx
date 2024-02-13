@@ -1,6 +1,6 @@
 import React from 'react';
 import {styled} from 'styled-components';
-import {ButtonText} from '../button';
+import {Button} from '@aragon/ods';
 import {StyledInput} from './textInput';
 
 export type WalletInputLegacyProps =
@@ -47,14 +47,14 @@ export const WalletInputLegacy = React.forwardRef<
         }}
       />
       {adornmentText && (
-        <ButtonText
-          label={adornmentText}
-          size="small"
-          mode="secondary"
-          bgWhite={true}
+        <Button
+          size="sm"
+          variant="secondary"
           disabled={disabled}
           onClick={onAdornmentClick}
-        />
+        >
+          {adornmentText}
+        </Button>
       )}
     </Container>
   )

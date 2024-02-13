@@ -1,6 +1,6 @@
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
-import {AvatarDao, ButtonText, Dropdown, Link, Tag} from '@aragon/ods-old';
-import {AlertInline, Icon, IconType} from '@aragon/ods';
+import {AvatarDao, Dropdown, Link} from '@aragon/ods-old';
+import {AlertInline, Button, Icon, IconType, Tag} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -103,15 +103,15 @@ export const Settings: React.FC = () => {
         }`}
       >
         <div className="mt-2 space-y-4 xl:-mt-2">
-          <ButtonText
-            label={t('settings.edit')}
+          <Button
             className="w-full md:w-max"
-            size="large"
-            iconLeft={
-              !isDesktop ? <Icon icon={IconType.APP_GOVERNANCE} /> : undefined
-            }
+            size="lg"
+            variant="primary"
+            iconLeft={!isDesktop ? IconType.APP_GOVERNANCE : undefined}
             onClick={() => navigate('edit')}
-          />
+          >
+            {t('settings.edit')}
+          </Button>
           <AlertInline
             message={t('settings.proposeSettingsInfo')}
             variant="info"
@@ -193,7 +193,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
             <p className="shrink-0 ft-text-base xl:font-semibold">
               {chainLabel}
             </p>
-            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+            <Tag label={t('labels.notChangeable')} variant="neutral" />
           </div>
         </Definition>
       </DescriptionPair>
@@ -216,7 +216,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
               href={explorerLink}
               iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
             />
-            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+            <Tag label={t('labels.notChangeable')} variant="neutral" />
           </div>
         </Definition>
       </DescriptionPair>

@@ -1,9 +1,9 @@
 import React from 'react';
-import {Link, Tag} from '@aragon/ods-old';
+import {Link} from '@aragon/ods-old';
 import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Tag} from '@aragon/ods';
 
 import {Loading} from 'components/temporary';
 import {
@@ -116,9 +116,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
                 className="shrink-0"
               />
 
-              {canMintToken && (
-                <Tag label={t('labels.mintableByDao')} colorScheme="neutral" />
-              )}
+              {canMintToken && <Tag label={t('labels.mintableByDao')} />}
             </div>
           </Definition>
         </DescriptionPair>

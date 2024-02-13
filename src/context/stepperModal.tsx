@@ -1,8 +1,7 @@
 import React, {useMemo} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {AlertInline, Icon, IconType} from '@aragon/ods';
-import {ButtonText} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 
 import {CHAIN_METADATA} from 'utils/constants';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
@@ -168,23 +167,24 @@ const StepperModal = <TStepKey extends string>({
       {buttonLabels[globalState] !== undefined && (
         <>
           <ButtonContainer>
-            <ButtonText
+            <Button
+              size="md"
+              variant="primary"
               className="mt-3 w-full"
-              label={buttonLabels[globalState]!}
               iconLeft={
-                globalState === StepStatus.ERROR ? (
-                  <Icon icon={IconType.RELOAD} />
-                ) : undefined
+                globalState === StepStatus.ERROR ? IconType.RELOAD : undefined
               }
               iconRight={
                 globalState === StepStatus.WAITING ||
-                globalState === StepStatus.SUCCESS ? (
-                  <Icon icon={IconType.CHEVRON_RIGHT} />
-                ) : undefined
+                globalState === StepStatus.SUCCESS
+                  ? IconType.CHEVRON_RIGHT
+                  : undefined
               }
               disabled={gasEstimationError !== undefined}
               onClick={callback}
-            />
+            >
+              {buttonLabels[globalState]!}
+            </Button>
           </ButtonContainer>
         </>
       )}

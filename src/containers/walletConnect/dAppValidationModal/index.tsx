@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {ButtonText, Label, WalletInputLegacy} from '@aragon/ods-old';
-import {AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
+import {Label, WalletInputLegacy} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 import {
   Controller,
   useFormContext,
@@ -237,21 +237,22 @@ const WCdAppValidation: React.FC<Props> = props => {
             )}
           />
         </FormGroup>
-        <ButtonText
-          size="large"
-          label={ctaLabel}
+        <Button
+          size="lg"
+          variant="primary"
           disabled={disableCta}
           className="w-full"
-          {...(connectionStatus === ConnectionState.LOADING && {
-            iconLeft: <Spinner size="sm" variant="primary" />,
-            isActive: true,
-          })}
+          state={
+            connectionStatus === ConnectionState.LOADING ? 'loading' : undefined
+          }
           {...((connectionStatus === ConnectionState.ERROR ||
             connectionStatus === ConnectionState.INCORRECT_URI) && {
-            iconLeft: <Icon icon={IconType.RELOAD} />,
+            iconLeft: IconType.RELOAD,
           })}
           onClick={ctaHandler}
-        />
+        >
+          {ctaLabel}
+        </Button>
         {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline

@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonIcon, ButtonText} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 
@@ -23,30 +22,32 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
     >
       <ModalHeader>
         <Title>{t('cookiePreferences.title')}</Title>
-        <ButtonIcon
-          mode="secondary"
-          size="small"
-          icon={<Icon icon={IconType.CLOSE} />}
+        <Button
+          variant="secondary"
+          size="sm"
+          iconLeft={IconType.CLOSE}
           onClick={onClose}
-          bgWhite
         />
       </ModalHeader>
       <BottomSheetContentContainer>
         <Text>{t('cookiePreferences.content')}</Text>
         <div className="flex space-x-4">
-          <ButtonText
+          <Button
             className="flex-1"
-            label={t('cookiePreferences.accept')}
-            size="large"
+            variant="primary"
+            size="lg"
             onClick={onAccept}
-          />
-          <ButtonText
+          >
+            {t('cookiePreferences.accept')}
+          </Button>
+          <Button
             className="flex-1"
-            label={t('cookiePreferences.cancel')}
-            size="large"
-            mode="secondary"
+            size="lg"
+            variant="secondary"
             onClick={onClose}
-          />
+          >
+            {t('cookiePreferences.cancel')}
+          </Button>
         </div>
       </BottomSheetContentContainer>
     </ModalBottomSheetSwitcher>

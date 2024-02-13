@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect} from 'react';
 import {
-  ButtonIcon,
   Dropdown,
   InputValue,
   Label,
@@ -8,7 +7,7 @@ import {
   NumberInput,
   TextInput,
 } from '@aragon/ods-old';
-import {Icon, IconType, AlertInline} from '@aragon/ods';
+import {Button, IconType, AlertInline} from '@aragon/ods';
 import Big from 'big.js';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -212,11 +211,10 @@ const DropdownMenu: React.FC<DropdownProps> = ({
       disabled={disabled}
       align="start"
       trigger={
-        <ButtonIcon
-          mode="secondary"
-          size="large"
-          icon={<Icon icon={IconType.MENU_VERTICAL} />}
-          bgWhite
+        <Button
+          variant="secondary"
+          size="lg"
+          iconLeft={IconType.MENU_VERTICAL}
         />
       }
       sideOffset={8}

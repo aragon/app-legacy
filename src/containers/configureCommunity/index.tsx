@@ -4,7 +4,6 @@ import {
   Label,
   LinearProgress,
   NumberInput,
-  Tag,
 } from '@aragon/ods-old';
 import {AlertInline} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -22,6 +21,7 @@ import {
 } from 'utils/constants';
 import {getDaysHoursMins} from 'utils/date';
 import {ProposalCreation} from './proposalCreation';
+import {Tag} from '@aragon/ods';
 
 export type ConfigureCommunityProps = {
   isSettingPage?: boolean;
@@ -192,7 +192,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                     <div className="flex flex-1 items-center">
                       <Tag
                         label={t('labels.yes')}
-                        colorScheme="primary"
+                        variant="primary"
                         className="mr-3 w-12 justify-center"
                       />
 

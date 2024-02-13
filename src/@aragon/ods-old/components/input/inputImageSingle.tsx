@@ -1,8 +1,8 @@
 import React, {useCallback, useState} from 'react';
 import {useDropzone, type FileRejection} from 'react-dropzone';
 import {styled} from 'styled-components';
-import {ButtonIcon} from '../button';
-import {IconAdd, IconClose} from '../icons/interface';
+import {Button, IconType} from '@aragon/ods';
+import {IconAdd} from '../icons/interface';
 import {Spinner} from '../spinner';
 
 export type InputImageSingleProps = {
@@ -122,9 +122,9 @@ export const InputImageSingle: React.FC<InputImageSingleProps> = ({
     <ImageContainer>
       <Preview src={preview} />
       <StyledButton
-        icon={<IconClose />}
-        size="small"
-        mode="secondary"
+        iconLeft={IconType.CLOSE}
+        size="sm"
+        variant="secondary"
         onClick={() => {
           setPreview('');
           onChange(null);
@@ -169,7 +169,7 @@ const Preview = styled.img.attrs({
   className: 'rounded-xl bg-neutral-0 h-16 w-16',
 })``;
 
-const StyledButton = styled(ButtonIcon).attrs({
+const StyledButton = styled(Button).attrs({
   className: 'absolute -top-4 -right-3.5',
 })`
   box-shadow:

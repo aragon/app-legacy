@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {generatePath, Link, useParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 
 import {useNetwork} from 'context/network';
 import {AllTokens, AllTransfers} from 'utils/paths';
@@ -41,11 +40,13 @@ export const TokenSectionWrapper = ({title, children}: SectionWrapperProps) => {
       <SectionHeader title={title} />
       {children}
       <Link to={generatePath(AllTokens, {network, dao})}>
-        <ButtonText
-          mode="secondary"
-          label={t('labels.seeAllTokens')}
-          iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-        />
+        <Button
+          size="md"
+          variant="secondary"
+          iconRight={IconType.CHEVRON_RIGHT}
+        >
+          {t('labels.seeAllTokens')}
+        </Button>
       </Link>
     </>
   );
@@ -69,11 +70,9 @@ export const DaoListSectionWrapper = ({
       <SectionHeader title={title} />
       <div className="mt-4 space-y-3">
         {children}
-        <ButtonText
-          mode="secondary"
-          label={t('members.profile.labelViewMore')}
-          iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
-        />
+        <Button variant="secondary" size="md" iconRight={IconType.CHEVRON_DOWN}>
+          {t('members.profile.labelViewMore')}
+        </Button>
       </div>
     </>
   );
@@ -103,11 +102,13 @@ export const TransferSectionWrapper = ({
       {showButton && (
         <div>
           <Link to={generatePath(AllTransfers, {network, dao})}>
-            <ButtonText
-              mode="secondary"
-              label={t('labels.seeAllTransfers')}
-              iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-            />
+            <Button
+              variant="secondary"
+              size="md"
+              iconRight={IconType.CHEVRON_RIGHT}
+            >
+              {t('labels.seeAllTransfers')}
+            </Button>
           </Link>
         </div>
       )}

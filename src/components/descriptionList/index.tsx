@@ -2,13 +2,8 @@ import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {
-  ButtonText,
-  CheckboxListItem,
-  CheckboxListItemProps,
-  Tag,
-} from '@aragon/ods-old';
-import {AlertInline} from '@aragon/ods';
+import {CheckboxListItem, CheckboxListItemProps} from '@aragon/ods-old';
+import {Button, Tag, AlertInline} from '@aragon/ods';
 
 export type DescriptionListProps = {
   title: string;
@@ -47,18 +42,14 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
           <TitleText>{title}</TitleText>
           {badgeLabel && (
             <div>
-              <Tag label={badgeLabel || ''} colorScheme="info" />
+              <Tag label={badgeLabel || ''} variant="info" />
             </div>
           )}
         </TitleContainer>
         {onEditClick && (
-          <ButtonText
-            label={editLabel || t('labels.edit')}
-            mode="secondary"
-            size="large"
-            bgWhite
-            onClick={onEditClick}
-          />
+          <Button variant="secondary" size="lg" onClick={onEditClick}>
+            {editLabel || t('labels.edit')}
+          </Button>
         )}
       </HStack>
       <DlContainer>{children}</DlContainer>

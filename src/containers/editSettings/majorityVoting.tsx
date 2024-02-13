@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
-import {ButtonText, IconGovernance, ListItemAction} from '@aragon/ods-old';
-import {AlertInline} from '@aragon/ods';
+import {ListItemAction} from '@aragon/ods-old';
+import {Button, IconType, AlertInline} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -611,11 +611,11 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
             {/* Footer */}
             <Footer>
               <HStack>
-                <ButtonText
+                <Button
                   className="w-full md:w-max"
-                  label={t('settings.reviewProposal')}
-                  iconLeft={<IconGovernance />}
-                  size="large"
+                  iconLeft={IconType.APP_GOVERNANCE}
+                  variant="primary"
+                  size="lg"
                   disabled={settingsUnchanged || !isValid}
                   onClick={() =>
                     navigate(
@@ -627,15 +627,18 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                       })
                     )
                   }
-                />
-                <ButtonText
+                >
+                  {t('settings.reviewProposal')}
+                </Button>
+                <Button
                   className="w-full md:w-max"
-                  label={t('settings.resetChanges')}
-                  mode="secondary"
-                  size="large"
+                  variant="secondary"
+                  size="lg"
                   disabled={settingsUnchanged}
                   onClick={handleResetChanges}
-                />
+                >
+                  {t('settings.resetChanges')}
+                </Button>
               </HStack>
               <AlertInline
                 message={t('settings.proposeSettingsInfo')}

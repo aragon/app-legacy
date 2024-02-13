@@ -1,15 +1,9 @@
-import {
-  Breadcrumb,
-  ButtonText,
-  IlluObject,
-  IllustrationHuman,
-  Tag,
-} from '@aragon/ods-old';
+import {Breadcrumb, IlluObject, IllustrationHuman} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, IconType, Tag} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
@@ -182,10 +176,10 @@ export const Finance: React.FC = () => {
                   </TextContainer>
 
                   {/* Button */}
-                  <ButtonText
-                    size="large"
-                    label={t('TransferModal.newTransfer')}
-                    iconLeft={<Icon icon={IconType.ADD} />}
+                  <Button
+                    size="lg"
+                    variant="primary"
+                    iconLeft={IconType.ADD}
                     className="w-full md:w-auto"
                     onClick={() => {
                       trackEvent('finance_newTransferBtn_clicked', {
@@ -193,7 +187,9 @@ export const Finance: React.FC = () => {
                       });
                       open('transfer');
                     }}
-                  />
+                  >
+                    {t('TransferModal.newTransfer')}
+                  </Button>
                 </ContentContainer>
               </Header>
             </HeaderContainer>
@@ -317,10 +313,10 @@ export const Finance: React.FC = () => {
               </TextContainer>
 
               {/* Button */}
-              <ButtonText
-                size="large"
-                label={t('TransferModal.newTransfer')}
-                iconLeft={<Icon icon={IconType.ADD} />}
+              <Button
+                size="lg"
+                variant="primary"
+                iconLeft={IconType.ADD}
                 className="w-full md:w-auto"
                 onClick={() => {
                   trackEvent('finance_newTransferBtn_clicked', {
@@ -328,7 +324,9 @@ export const Finance: React.FC = () => {
                   });
                   open('transfer');
                 }}
-              />
+              >
+                {t('TransferModal.newTransfer')}
+              </Button>
             </ContentContainer>
           </Header>
         </HeaderContainer>

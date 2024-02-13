@@ -1,6 +1,6 @@
 import React from 'react';
-import {ButtonText, ListItemHeader, TransferListItem} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ListItemHeader, TransferListItem} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -76,15 +76,16 @@ const TreasurySnapshot: React.FC<Props> = ({
           }
         />
       ))}
-      <ButtonText
-        mode="secondary"
-        size="large"
-        iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-        label={t('labels.seeAll')}
+      <Button
+        variant="secondary"
+        size="lg"
+        iconRight={IconType.CHEVRON_RIGHT}
         onClick={() =>
           navigate(generatePath(AllTransfers, {network, dao: daoAddressOrEns}))
         }
-      />
+      >
+        {t('labels.seeAll')}
+      </Button>
     </Container>
   );
 };

@@ -2,14 +2,13 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {
   AlertInline,
   ButtonGroup,
-  ButtonText,
   CheckboxListItem,
   Option,
   SearchInput,
   VoterType,
   VotersTable,
 } from '@aragon/ods-old';
-import {AlertCard, Icon, IconType} from '@aragon/ods';
+import {Button, AlertCard, Icon, IconType} from '@aragon/ods';
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
@@ -357,22 +356,20 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
 
           <VoteContainer>
             <ButtonWrapper>
-              <ButtonText
-                label={t('votingTerminal.submit')}
-                size="large"
+              <Button
+                size="lg"
+                variant="primary"
                 disabled={!selectedVote}
                 onClick={() => {
                   if (selectedVote && onVoteSubmitClicked)
                     onVoteSubmitClicked(selectedVote);
                 }}
-              />
-              <ButtonText
-                label={t('votingTerminal.cancel')}
-                mode="secondary"
-                size="large"
-                bgWhite
-                onClick={onCancelClicked}
-              />
+              >
+                {t('votingTerminal.submit')}
+              </Button>
+              <Button variant="secondary" size="lg" onClick={onCancelClicked}>
+                {t('votingTerminal.cancel')}
+              </Button>
             </ButtonWrapper>
           </VoteContainer>
         </VotingContainer>
@@ -384,24 +381,27 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                 <div className="flex w-full flex-col gap-y-4">
                   <div className="flex w-full flex-col gap-x-4 gap-y-3 xl:flex-row">
                     {executableWithNextApproval && !voted && (
-                      <ButtonText
-                        label={t('transactionModal.multisig.ctaApproveExecute')}
-                        size="large"
+                      <Button
+                        size="lg"
+                        variant="primary"
                         onClick={() => onApprovalClicked?.(true)}
                         className="w-full md:w-max"
                         disabled={voteNowDisabled}
-                      />
+                      >
+                        {t('transactionModal.multisig.ctaApproveExecute')}
+                      </Button>
                     )}
-                    <ButtonText
-                      label={voteButtonLabel ?? ''}
-                      size="large"
+                    <Button
+                      size="lg"
                       onClick={() => onApprovalClicked?.(false)}
                       className="w-full md:w-max"
                       disabled={voteNowDisabled}
                       {...(executableWithNextApproval && !voted
-                        ? {mode: 'secondary', bgWhite: true}
-                        : {mode: 'primary'})}
-                    />
+                        ? {variant: 'secondary'}
+                        : {variant: 'primary'})}
+                    >
+                      {voteButtonLabel ?? ''}
+                    </Button>
                   </div>
                   {executableWithNextApproval && (
                     <AlertInline
@@ -417,13 +417,15 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                   )}
                 </div>
               ) : (
-                <ButtonText
-                  label={voteButtonLabel || t('votingTerminal.voteNow')}
-                  size="large"
+                <Button
+                  size="lg"
+                  variant="primary"
                   onClick={onVoteClicked}
                   className="w-full md:w-max"
                   disabled={voteNowDisabled}
-                />
+                >
+                  {voteButtonLabel || t('votingTerminal.voteNow')}
+                </Button>
               )}
             </VoteContainer>
 

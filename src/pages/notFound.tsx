@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText} from '@aragon/ods-old';
 
 import {Container, GridLayout} from 'components/layout';
 import Logo from 'public/logoBlue.svg';
@@ -10,6 +9,7 @@ import Logo404 from 'public/illu-custom.svg';
 import Green from 'public/circleGreenGradient.svg';
 import Purple from 'public/purpleGradient.svg';
 import {Landing} from 'utils/paths';
+import {Button} from '@aragon/ods';
 
 export const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -37,12 +37,14 @@ export const NotFound: React.FC = () => {
                 <br />
                 {t('cta.404.titleLine2')}
               </Title>
-              <ButtonText
-                label={t('cta.404.backToExplore')}
-                size="large"
+              <Button
+                size="lg"
+                variant="primary"
                 className="mt-10 hidden xl:block"
                 onClick={() => navigate(Landing)}
-              />
+              >
+                {t('cta.404.backToExplore')}
+              </Button>
             </div>
 
             <div className="relative mt-4 xl:mt-0 xl:w-1/2">
@@ -55,12 +57,14 @@ export const NotFound: React.FC = () => {
 
         <GridLayout>
           <div className="col-span-full">
-            <ButtonText
-              label={t('cta.404.backToExplore')}
-              size="large"
+            <Button
+              size="lg"
+              variant="primary"
               className="mt-28 block w-full xl:mt-0 xl:hidden"
               onClick={() => navigate(Landing)}
-            />
+            >
+              {t('cta.404.backToExplore')}
+            </Button>
           </div>
         </GridLayout>
       </div>

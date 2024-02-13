@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
-import {ButtonIcon, Dropdown, ListItemProps} from '@aragon/ods-old';
-import {AlertInline, Icon, IconType} from '@aragon/ods';
+import {Dropdown, ListItemProps} from '@aragon/ods-old';
+import {Button, AlertInline, Icon, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {shortenAddress} from 'utils/library';
 
@@ -108,19 +108,19 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                 listItems={dropdownItems}
                 disabled={dropdownItems.length === 0}
                 trigger={
-                  <ButtonIcon
-                    mode="ghost"
-                    size="medium"
-                    icon={<Icon icon={IconType.MENU_VERTICAL} />}
+                  <Button
+                    variant="tertiary"
+                    size="md"
+                    iconLeft={IconType.MENU_VERTICAL}
                   />
                 }
               />
             )}
             <Accordion.Trigger asChild>
               <AccordionButton
-                mode={type === 'action-builder' ? 'ghost' : 'secondary'}
-                size="medium"
-                icon={<Icon icon={IconType.CHEVRON_DOWN} />}
+                variant={type === 'action-builder' ? 'tertiary' : 'secondary'}
+                size="md"
+                iconLeft={IconType.CHEVRON_DOWN}
               />
             </Accordion.Trigger>
           </VStack>
@@ -158,7 +158,7 @@ const AccordionHeader = styled(Accordion.Header).attrs<{type: AccordionType}>(
   }
 `;
 
-const AccordionButton = styled(ButtonIcon)`
+const AccordionButton = styled(Button)`
   [data-state='open'] & {
     transform: rotate(180deg);
     background-color: #cbd2d9;

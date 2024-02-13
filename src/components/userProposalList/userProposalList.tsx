@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {ProposalBase} from '@aragon/sdk-client-common';
-import {ButtonText} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {Link, generatePath, useParams} from 'react-router-dom';
 import {NewProposal, Proposal} from 'utils/paths';
 import {useTranslation} from 'react-i18next';
@@ -103,13 +102,15 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
           ))}
         </div>
         {hasMore && (
-          <ButtonText
-            mode="secondary"
-            label={t('members.profile.labelViewMore')}
+          <Button
+            variant="secondary"
+            size="md"
             className="border-neutral-100"
-            iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
+            iconRight={IconType.CHEVRON_DOWN}
             onClick={() => setPage(current => current + 1)}
-          />
+          >
+            {t('members.profile.labelViewMore')}
+          </Button>
         )}
       </div>
     </MemberSection>

@@ -2,8 +2,8 @@ import React, {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
-import {ButtonText, Label} from '@aragon/ods-old';
-import {AlertInline, Icon, IconType} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import ActionBuilder from 'containers/actionBuilder';
@@ -88,15 +88,15 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
       {actions.length ? (
         <ActionsWrapper>
           <ActionBuilder allowEmpty={allowEmpty} />
-          <ButtonText
-            mode="ghost"
-            size="large"
-            bgWhite
-            label={addExtraActionLabel}
-            iconLeft={<Icon icon={IconType.ADD} />}
+          <Button
+            variant="tertiary"
+            size="lg"
+            iconLeft={IconType.ADD}
             onClick={handleExtraActionClick}
             className="mt-4 w-full md:w-max"
-          />
+          >
+            {addExtraActionLabel}
+          </Button>
         </ActionsWrapper>
       ) : (
         <>
@@ -111,7 +111,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
             secondaryButton={{
               label: addNewActionLabel,
               onClick: handleAddNewActionClick,
-              iconLeft: <Icon icon={IconType.ADD} />,
+              iconLeft: IconType.ADD,
             }}
           />
           {!hideAlert && (

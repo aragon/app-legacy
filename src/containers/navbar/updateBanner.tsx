@@ -1,4 +1,3 @@
-import {ButtonText} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -8,7 +7,7 @@ import {
   useParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -19,6 +18,7 @@ import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
 import {featureFlags} from 'utils/featureFlags';
 import {NewProposal} from 'utils/paths';
 import {ProposalTypes} from 'utils/types';
+import {GOERLI_BASED_NETWORKS} from 'utils/constants';
 
 const UpdateBanner: React.FC = () => {
   const [bannerHidden, setBannerHidden] = useState(false);
@@ -42,6 +42,8 @@ const UpdateBanner: React.FC = () => {
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
+  const isDeprecationAlertShown = GOERLI_BASED_NETWORKS.includes(network);
+
   const showBanner = !!(
     !bannerHidden &&
     isMember &&
@@ -53,7 +55,8 @@ const UpdateBanner: React.FC = () => {
     location.pathname.includes('new-proposal') ||
     location.pathname.includes('settings') ||
     location.pathname.includes('create') ||
-    showBanner === false
+    showBanner === false ||
+    isDeprecationAlertShown
   )
     return null;
 
@@ -67,11 +70,9 @@ const UpdateBanner: React.FC = () => {
             {t('update.banner.title')}
           </span>
         </TextWrapper>
-        <ButtonText
-          label="View updates"
-          size="small"
-          bgWhite
-          mode={'secondary'}
+        <Button
+          size="sm"
+          variant="secondary"
           onClick={() =>
             navigate(
               generatePath(NewProposal, {
@@ -81,7 +82,9 @@ const UpdateBanner: React.FC = () => {
               })
             )
           }
-        />
+        >
+          View updates
+        </Button>
       </MessageWrapper>
       <Icon
         icon={IconType.CLOSE}

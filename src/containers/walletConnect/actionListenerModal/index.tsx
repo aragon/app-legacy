@@ -1,4 +1,4 @@
-import {AvatarDao, ButtonText, Tag} from '@aragon/ods-old';
+import {AvatarDao} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -21,7 +21,7 @@ import {
 } from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
 import {AllowListDApp} from '../selectAppModal';
-import {Spinner} from '@aragon/ods';
+import {Button, Spinner, Tag} from '@aragon/ods';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -224,37 +224,42 @@ const ActionListenerModal: React.FC<Props> = ({
 
         <div className="space-y-3">
           {actionsReceived.length > 0 ? (
-            <ButtonText
-              label={t('modal.dappConnect.detaildApp.ctaLabel', {
+            <Button
+              onClick={handleAddActions}
+              variant="primary"
+              size="md"
+              className="w-full"
+            >
+              {t('modal.dappConnect.detaildApp.ctaLabel', {
                 amountActions: actionsReceived.length,
               })}
-              onClick={handleAddActions}
-              mode="primary"
-              className="w-full"
-            />
+            </Button>
           ) : null}
           {metadataURL && (
-            <ButtonText
-              label={t('modal.dappConnect.ctaOpenDapp', {
+            <Button
+              onClick={() => window.open(metadataURL, '_blank')}
+              variant="tertiary"
+              size="md"
+              className="w-full"
+            >
+              {t('modal.dappConnect.ctaOpenDapp', {
                 dappName: metadataName,
               })}
-              onClick={() => window.open(metadataURL, '_blank')}
-              mode="ghost"
-              bgWhite
-              className="w-full"
-            />
+            </Button>
           )}
-          <ButtonText
-            label={t('modal.dappConnect.ctaDisconnectDapp', {
-              dappName: metadataName,
-            })}
+          <Button
             onClick={async () => {
               await wcDisconnect(selectedSession.topic);
               onBackButtonClicked();
             }}
-            mode="ghost"
+            variant="tertiary"
+            size="md"
             className="w-full"
-          />
+          >
+            {t('modal.dappConnect.ctaDisconnectDapp', {
+              dappName: metadataName,
+            })}
+          </Button>
         </div>
       </Content>
     </ModalBottomSheetSwitcher>

@@ -1,6 +1,6 @@
 import React from 'react';
-import {ButtonText} from '@aragon/ods-old';
-import {AlertCard, AlertInline, Icon, IconType} from '@aragon/ods';
+
+import {Button, AlertCard, AlertInline, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -46,7 +46,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
             onAddAction && {
               label: t('governance.executionCard.addAction'),
               onClick: onAddAction,
-              iconLeft: <Icon icon={IconType.ADD} />,
+              iconLeft: IconType.ADD,
             }
           }
         />
@@ -111,10 +111,12 @@ const WidgetFooter: React.FC<FooterProps> = ({
       return (
         <Footer>
           <StyledButtonText
-            label={t('governance.proposals.buttons.execute')}
-            size="large"
+            variant="primary"
+            size="lg"
             onClick={onExecuteClicked}
-          />
+          >
+            {t('governance.proposals.buttons.execute')}
+          </StyledButtonText>
           <AlertInline
             message={t('governance.executionCard.status.succeeded')}
             variant="info"
@@ -125,19 +127,21 @@ const WidgetFooter: React.FC<FooterProps> = ({
       return (
         <Footer>
           <StyledButtonText
-            label={t('governance.proposals.buttons.execute')}
-            size="large"
+            variant="primary"
+            size="lg"
             onClick={onExecuteClicked}
-          />
+          >
+            {t('governance.proposals.buttons.execute')}
+          </StyledButtonText>
           {txhash && (
             <StyledButtonText
-              label={t('governance.executionCard.seeTransaction')}
-              mode="secondary"
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
-              size="large"
-              bgWhite
+              variant="secondary"
+              iconRight={IconType.LINK_EXTERNAL}
+              size="lg"
               onClick={handleTxViewButtonClick}
-            />
+            >
+              {t('governance.executionCard.seeTransaction')}
+            </StyledButtonText>
           )}
           <AlertInline
             message={t('governance.executionCard.status.failed')}
@@ -150,13 +154,13 @@ const WidgetFooter: React.FC<FooterProps> = ({
         <Footer>
           {txhash && (
             <StyledButtonText
-              label={t('governance.executionCard.seeTransaction')}
-              mode="secondary"
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
-              size="large"
-              bgWhite
+              variant="secondary"
+              iconRight={IconType.LINK_EXTERNAL}
+              size="lg"
               onClick={handleTxViewButtonClick}
-            />
+            >
+              {t('governance.executionCard.seeTransaction')}
+            </StyledButtonText>
           )}
 
           <AlertInline
@@ -195,6 +199,6 @@ const Footer = styled.div.attrs({
     'flex flex-col md:flex-row items-center gap-y-4 md:gap-y-0 md:gap-x-6',
 })``;
 
-const StyledButtonText = styled(ButtonText).attrs({
+const StyledButtonText = styled(Button).attrs({
   className: 'w-full md:w-max',
 })``;

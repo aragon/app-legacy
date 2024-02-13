@@ -5,8 +5,8 @@ import {useFormContext} from 'react-hook-form';
 // import {DAOFactory} from 'typechain';
 // TODO reintroduce this by adding back the postInstall script in packages.json
 // that executes the generate-abis-and-types command.
-import {Breadcrumb, ButtonText} from '@aragon/ods-old';
-import {AlertCard, Icon, IconType} from '@aragon/ods';
+import {Breadcrumb} from '@aragon/ods-old';
+import {Button, AlertCard, IconType} from '@aragon/ods';
 import {useNavigate} from 'react-router-dom';
 
 import Blockchain from './blockchain';
@@ -110,13 +110,15 @@ export const GoLiveFooter: React.FC = () => {
   return (
     <div className="flex justify-center pt-6">
       <div onClick={showInvalidFields}>
-        <ButtonText
-          size="large"
-          iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-          label={t('createDAO.review.title')}
+        <Button
+          size="lg"
+          variant="primary"
+          iconRight={IconType.CHEVRON_RIGHT}
           onClick={publishDao}
           disabled={IsButtonDisabled()}
-        />
+        >
+          {t('createDAO.review.title')}
+        </Button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
-import {ButtonIcon, ButtonText, ListItemDao} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ListItemDao} from '@aragon/ods-old';
+import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -50,11 +50,10 @@ const DaoSelectMenu: React.FC = () => {
     >
       <div className="flex h-full flex-col" style={{maxHeight: '75vh'}}>
         <ModalHeader>
-          <ButtonIcon
-            mode="secondary"
-            size="small"
-            bgWhite
-            icon={<Icon icon={IconType.CHEVRON_LEFT} />}
+          <Button
+            variant="secondary"
+            size="sm"
+            iconLeft={IconType.CHEVRON_LEFT}
             onClick={handleBackButtonClick}
           />
           <Title>{t('daoSwitcher.title')}</Title>
@@ -88,17 +87,18 @@ const DaoSelectMenu: React.FC = () => {
           </ListGroup>
         </ModalContentContainer>
         <div className="p-6">
-          <ButtonText
-            mode="secondary"
-            size="large"
-            label={t('daoSwitcher.subtitle')}
-            iconLeft={<Icon icon={IconType.LINK_EXTERNAL} />}
+          <Button
+            variant="secondary"
+            size="lg"
+            iconLeft={IconType.LINK_EXTERNAL}
             className="w-full"
             onClick={() => {
               navigate('/');
               close();
             }}
-          />
+          >
+            {t('daoSwitcher.subtitle')}
+          </Button>
         </div>
       </div>
     </ModalBottomSheetSwitcher>

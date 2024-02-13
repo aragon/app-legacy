@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IlluObject, Link} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {IlluObject, Link} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -127,19 +127,13 @@ export const DelegationGatingMenu: React.FC = () => {
           </p>
         </ContentGroup>
         <ContentGroup>
-          <ButtonText
-            label={t(ctaLabel)}
-            mode="primary"
-            size="large"
-            onClick={handleCtaClick}
-          />
+          <Button variant="primary" size="lg" onClick={handleCtaClick}>
+            {t(ctaLabel)}
+          </Button>
           {needsSelfDelegation && (
-            <ButtonText
-              label={t('modal.delegationActive.BtnSecondaryLabel')}
-              mode="secondary"
-              size="large"
-              onClick={() => close()}
-            />
+            <Button variant="secondary" size="lg" onClick={() => close()}>
+              {t('modal.delegationActive.BtnSecondaryLabel')}
+            </Button>
           )}
           <Link
             label={t('modal.delegation.NoVotingPower.Link')}

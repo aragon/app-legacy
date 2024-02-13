@@ -1,15 +1,9 @@
-import {
-  ButtonIcon,
-  Dropdown,
-  Label,
-  ListItemAction,
-  TextInput,
-} from '@aragon/ods-old';
+import {Dropdown, Label, ListItemAction, TextInput} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useFormState} from 'react-hook-form';
-import {AlertInline, Icon, IconType} from '@aragon/ods';
 
 import {
   EMAIL_PATTERN,
@@ -181,11 +175,10 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
           align="end"
           sideOffset={8}
           trigger={
-            <ButtonIcon
-              mode="ghost"
-              size="large"
-              bgWhite
-              icon={<Icon icon={IconType.MENU_VERTICAL} />}
+            <Button
+              variant="tertiary"
+              size="lg"
+              iconLeft={IconType.MENU_VERTICAL}
               data-testid="trigger"
             />
           }

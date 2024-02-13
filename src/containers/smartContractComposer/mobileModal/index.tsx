@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {ButtonIcon, ButtonText, Link} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Link} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -97,10 +97,9 @@ const MobileModal: React.FC<Props> = props => {
                 <SmartContractListGroup />
               )}
               <div>
-                <ButtonText
-                  mode="secondary"
-                  size="large"
-                  label={t('scc.labels.connect')}
+                <Button
+                  variant="secondary"
+                  size="lg"
                   onClick={() => {
                     trackEvent('newProposal_connectSmartContract_clicked', {
                       dao_address: daoAddressOrEns,
@@ -108,7 +107,9 @@ const MobileModal: React.FC<Props> = props => {
                     props.onConnectNew();
                   }}
                   className="w-full"
-                />
+                >
+                  {t('scc.labels.connect')}
+                </Button>
                 <Link
                   external
                   type="primary"
@@ -168,20 +169,14 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
   return (
     <Header>
       {selectedSC ? (
-        <ButtonIcon
-          mode="secondary"
-          size="small"
-          icon={<Icon icon={IconType.CHEVRON_LEFT} />}
-          bgWhite
+        <Button
+          variant="secondary"
+          size="sm"
+          iconLeft={IconType.CHEVRON_LEFT}
           onClick={props.onBackButtonClicked}
         />
       ) : (
-        <ButtonIcon
-          mode="secondary"
-          size="small"
-          icon={<Icon icon={IconType.HOME} />}
-          bgWhite
-        />
+        <Button variant="secondary" size="sm" iconLeft={IconType.HOME} />
       )}
 
       <ActionSearchInput
@@ -190,12 +185,11 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
         onChange={ev => props.onSearch(ev.target.value)}
       />
 
-      <ButtonIcon
-        mode="secondary"
-        size="small"
-        icon={<Icon icon={IconType.CLOSE} />}
+      <Button
+        variant="secondary"
+        size="sm"
+        iconLeft={IconType.CLOSE}
         onClick={props.onClose}
-        bgWhite
       />
     </Header>
   );

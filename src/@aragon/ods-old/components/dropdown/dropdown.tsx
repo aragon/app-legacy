@@ -59,11 +59,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 }: DropdownProps) => {
   return (
     <DropdownMenu.Root open={open} onOpenChange={onOpenChange}>
-      <DropdownMenu.Trigger
-        data-testid="dropdown-trigger"
-        asChild
-        disabled={disabled}
-      >
+      <DropdownMenu.Trigger data-testid="dropdown-trigger" disabled={disabled}>
         {trigger}
       </DropdownMenu.Trigger>
 

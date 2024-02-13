@@ -2,13 +2,12 @@ import React, {PropsWithChildren} from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 
 import styled from 'styled-components';
-import {AlertInline, Icon, IconType} from '@aragon/ods';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 
 import {
   AccordionMethodType,
   AccordionType,
 } from '../../components/accordionMethod';
-import {ButtonIcon} from '../../@aragon/ods-old';
 
 type AccordionCustomHeaderType = Pick<
   AccordionMethodType,
@@ -27,9 +26,9 @@ export const VotingTerminalAccordionItem: React.FC<
         </FlexContainer>
         <Accordion.Trigger asChild>
           <AccordionButton
-            mode={'ghost'}
-            size="medium"
-            icon={<Icon icon={IconType.CHEVRON_DOWN} />}
+            variant="tertiary"
+            size="md"
+            iconLeft={IconType.CHEVRON_DOWN}
           />
         </Accordion.Trigger>
       </HStack>
@@ -62,7 +61,7 @@ const AccordionHeader = styled(Accordion.Header).attrs(() => ({
   }
 `;
 
-const AccordionButton = styled(ButtonIcon)`
+const AccordionButton = styled(Button)`
   [data-state='open'] & {
     transform: rotate(180deg);
     background-color: #cbd2d9;

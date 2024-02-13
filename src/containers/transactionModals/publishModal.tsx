@@ -1,6 +1,5 @@
 import React, {useMemo} from 'react';
-import {ButtonText} from '@aragon/ods-old';
-import {AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
+import {Button, AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 
@@ -31,10 +30,10 @@ type PublishModalProps = {
 
 const icons = {
   [TransactionState.WAITING]: undefined,
-  [TransactionState.LOADING]: <Spinner size="sm" variant="primary" />,
+  [TransactionState.LOADING]: undefined,
   [TransactionState.SUCCESS]: undefined,
   [TransactionState.INCORRECT_URI]: undefined,
-  [TransactionState.ERROR]: <Icon icon={IconType.RELOAD} />,
+  [TransactionState.ERROR]: IconType.RELOAD,
 };
 
 const PublishModal: React.FC<PublishModalProps> = ({
@@ -134,14 +133,17 @@ const PublishModal: React.FC<PublishModalProps> = ({
         </GasTotalCostEthContainer>
       </GasCostTableContainer>
       <ButtonContainer>
-        <ButtonText
+        <Button
+          size="md"
+          variant="primary"
           className="mt-6 w-full"
-          label={labels[state]}
+          state={state === TransactionState.LOADING ? 'loading' : undefined}
           iconLeft={icons[state]}
-          isActive={state === TransactionState.LOADING}
           onClick={callback}
           disabled={disabledCallback}
-        />
+        >
+          {labels[state]}
+        </Button>
         {state === TransactionState.SUCCESS && (
           <AlertInlineContainer>
             <AlertInline

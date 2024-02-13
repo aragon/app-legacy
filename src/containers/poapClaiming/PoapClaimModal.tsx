@@ -1,7 +1,6 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {ButtonText} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {useGlobalModalContext} from 'context/globalModals';
 
@@ -26,17 +25,18 @@ const PoapClaimModal: React.FC = () => {
             />
           </PoapImgContainer>
 
-          <ButtonText
-            mode="primary"
-            size="large"
-            label={t('modal.claimPoap.ctaLabel')}
+          <Button
+            variant="primary"
+            size="lg"
             className="w-full"
-            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+            iconRight={IconType.LINK_EXTERNAL}
             onClick={() => {
               window.open(t('modal.claimPoap.ctaURL'), '_blank');
               close();
             }}
-          />
+          >
+            {t('modal.claimPoap.ctaLabel')}
+          </Button>
         </BodyWrapper>
       </Container>
     </ModalBottomSheetSwitcher>

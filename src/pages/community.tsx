@@ -4,10 +4,9 @@ import {
   SearchInput,
   IllustrationHuman,
   Dropdown,
-  ButtonText,
   ListItemAction,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -284,12 +283,13 @@ export const Community: React.FC = () => {
                 ]}
                 side="bottom"
                 trigger={
-                  <ButtonText
-                    mode="secondary"
-                    iconLeft={<Icon icon={IconType.SORT} />}
-                    size="large"
-                    label={sortLabel}
-                  />
+                  <Button
+                    variant="secondary"
+                    iconLeft={IconType.SORT}
+                    size="lg"
+                  >
+                    {sortLabel}
+                  </Button>
                 }
               />
             )}

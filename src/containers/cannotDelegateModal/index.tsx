@@ -1,4 +1,3 @@
-import {ButtonText} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -14,6 +13,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import WalletIcon from 'public/wallet.svg';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {Button} from '@aragon/ods';
 
 export const CannotDelegateModal: React.FC = () => {
   const {close, isOpen} = useGlobalModalContext('cannotDelegate');
@@ -47,11 +47,9 @@ export const CannotDelegateModal: React.FC = () => {
           </WarningDescription>
         </WarningContainer>
 
-        <ButtonText
-          label={t('alert.gatingUsers.buttonLabel')}
-          onClick={handleCloseMenu}
-          size="large"
-        />
+        <Button onClick={handleCloseMenu} size="lg" variant="primary">
+          {t('alert.gatingUsers.buttonLabel')}
+        </Button>
       </ModalBody>
     </ModalBottomSheetSwitcher>
   );

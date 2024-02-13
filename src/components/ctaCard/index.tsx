@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {ButtonText} from '@aragon/ods-old';
 import useScreen from 'hooks/useScreen';
+import {Button} from '@aragon/ods';
 
 type Props = {
   // temporary property, to be removed once all actions available
@@ -26,15 +26,15 @@ const CTACard: React.FC<Props> = props => {
         <Subtitle>{props.subtitle}</Subtitle>
       </Content>
 
-      <ButtonText
-        size="large"
-        label={props.actionLabel}
-        {...(props.actionAvailable
-          ? {mode: 'primary'}
-          : {mode: 'ghost', disabled: true})}
+      <Button
+        variant={props.actionAvailable ? 'primary' : 'tertiary'}
+        size="lg"
+        disabled={props.actionAvailable ? undefined : true}
         onClick={() => props.onClick(props.path)}
         className={`${!isDesktop && 'w-full'}`}
-      />
+      >
+        {props.actionLabel}
+      </Button>
     </CTACardWrapper>
   );
 };
