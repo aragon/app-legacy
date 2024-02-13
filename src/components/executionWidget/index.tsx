@@ -1,6 +1,6 @@
 import React from 'react';
 import {AlertCard, AlertInline} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -46,7 +46,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
             onAddAction && {
               label: t('governance.executionCard.addAction'),
               onClick: onAddAction,
-              iconLeft: <Icon icon={IconType.ADD} />,
+              iconLeft: IconType.ADD,
             }
           }
         />

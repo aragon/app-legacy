@@ -11,11 +11,11 @@ type PageEmptyStateProps = {
   primaryButton: Omit<
     IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
     'variant' | 'size'
-  >;
+  > & {label: string};
   secondaryButton?: Omit<
     IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
     'variant' | 'size'
-  >;
+  > & {label: string};
 };
 
 const PageEmptyState = ({

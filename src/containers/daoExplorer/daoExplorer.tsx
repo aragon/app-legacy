@@ -262,7 +262,7 @@ export const DaoExplorer = () => {
             contentWrapperClassName="lg:w-[560px]"
             secondaryButton={{
               label: t('explore.emptyStateSearch.ctaLabel'),
-              iconLeft: <Icon icon={IconType.RELOAD} />,
+              iconLeft: IconType.RELOAD,
               onClick: handleClearFilters,
               className: 'w-full',
             }}

@@ -87,7 +87,6 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               onClick: () => {
                 setStep(1);
               },
-              bgWhite: false,
             }}
             actionsColumn
           />

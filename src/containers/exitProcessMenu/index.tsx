@@ -44,7 +44,6 @@ const ExitProcessMenu: React.FC<Props> = ({
           secondaryButton={{
             label: t('modal.exitProcess.cancelLabel'),
             onClick: cancelCallback || onClose,
-            bgWhite: false,
           }}
         />
       </div>

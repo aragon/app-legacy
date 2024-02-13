@@ -18,15 +18,15 @@ type BaseProps = {
   primaryButton?: Omit<
     IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
     'variant' | 'size'
-  >;
+  > & {label: string};
   secondaryButton?: Omit<
     IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
     'variant' | 'size'
-  >;
+  > & {label: string};
   tertiaryButton?: Omit<
     IButtonBaseProps & ButtonHTMLAttributes<HTMLButtonElement>,
     'variant' | 'size'
-  >;
+  > & {label: string};
   renderHtml?: boolean;
   actionsColumn?: boolean;
   customCardPaddingClassName?: string;
