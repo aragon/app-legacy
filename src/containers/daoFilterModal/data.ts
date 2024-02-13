@@ -1,4 +1,11 @@
-import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  GOERLI_BASED_NETWORKS,
+  SupportedNetworks,
+} from 'utils/constants';
+
+const ShowGoerliBasedNetworks =
+  import.meta.env.VITE_FEATURE_FLAG_HIDE_GOERLIBASED_NETWORKS === 'false';
 
 type NetworkFilter = {
   label: string;
@@ -11,7 +18,9 @@ export const networkFilters: Array<NetworkFilter> = Object.entries(
 ).flatMap(([key, {name, isTestnet}]) => {
   const value: SupportedNetworks = key as SupportedNetworks;
 
-  // TODO: Remove this Goerli based network conditions
+  if (!ShowGoerliBasedNetworks && GOERLI_BASED_NETWORKS.includes(value))
+    return [];
+
   return value !== 'goerli' && value !== 'unsupported'
     ? ({label: name, value, testnet: isTestnet} as NetworkFilter)
     : [];

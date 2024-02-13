@@ -34,8 +34,8 @@ const DeprecationBanner: React.FC = () => {
         <TextWrapper>
           <Icon icon={IconType.WARNING} className="text-warning-500" />
           <span className="font-semibold text-warning-800 ft-text-base">
-            This DAO will no longer be available once the Goerli testnet is shut
-            down in early 2024.
+            This DAO will no longer be available once support for Goerli testnet
+            comes to an end during 2024.
           </span>
         </TextWrapper>
         <ButtonText

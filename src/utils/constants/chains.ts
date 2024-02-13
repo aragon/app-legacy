@@ -2,9 +2,6 @@
 
 import {i18n} from '../../../i18n.config';
 
-const ShowGoerliBasedNetworks =
-  import.meta.env.VITE_FEATURE_FLAG_HIDE_GOERLIBASED_NETWORKS === 'false';
-
 export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 8453, 80001, 84531, 42161, 421613, 11155111,
 ] as const;
@@ -17,31 +14,34 @@ export function isSupportedChainId(
   return SUPPORTED_CHAIN_ID.some(id => id === chainId);
 }
 
+// TODO: Remove this Goerli based network conditions
 export const ENS_SUPPORTED_NETWORKS: SupportedNetworks[] = [
   'ethereum',
-  ...(ShowGoerliBasedNetworks ? (['goerli'] as SupportedNetworks[]) : []),
+  'goerli',
 ];
 export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'arbitrum',
   'base',
   'polygon',
   'sepolia',
-  ...(ShowGoerliBasedNetworks
-    ? (['arbitrum-goerli', 'base-goerli', 'mumbai'] as SupportedNetworks[])
-    : []),
+  'arbitrum-goerli',
+  'base-goerli',
+  'mumbai',
 ];
 
 export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
 
+// TODO: Remove this Goerli based network conditions
 const SUPPORTED_NETWORKS = [
   'arbitrum',
   'base',
   'ethereum',
   'polygon',
   'sepolia',
-  ...(ShowGoerliBasedNetworks
-    ? ['goerli', 'arbitrum-goerli', 'base-goerli', 'mumbai']
-    : []),
+  'goerli',
+  'arbitrum-goerli',
+  'base-goerli',
+  'mumbai',
 ] as const;
 
 export const GOERLI_BASED_NETWORKS: SupportedNetworks[] = [
@@ -65,12 +65,10 @@ export const supportedNetworksToBackendMap = {
   ethereum: 'ethereum',
   sepolia: 'sepolia',
   polygon: 'polygon',
-  ...(ShowGoerliBasedNetworks && {
-    goerli: 'goerli',
-    mumbai: 'mumbai',
-    'base-goerli': 'baseGoerli',
-    'arbitrum-goerli': 'arbitrumGoerli',
-  }),
+  goerli: 'goerli',
+  mumbai: 'mumbai',
+  'base-goerli': 'baseGoerli',
+  'arbitrum-goerli': 'arbitrumGoerli',
   base: 'base',
   arbitrum: 'arbitrum',
 } as Record<SupportedNetworks, string>;
