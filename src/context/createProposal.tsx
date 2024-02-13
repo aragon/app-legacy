@@ -377,6 +377,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
         case 'modify_metadata': {
           const preparedAction = {...action};
 
+          if (preparedAction.inputs?.links)
+            preparedAction.inputs.links = preparedAction.inputs?.links.filter(
+              link => link.name !== '' && link.url !== ''
+            );
+
           if (
             preparedAction.inputs.avatar &&
             typeof preparedAction.inputs.avatar !== 'string'

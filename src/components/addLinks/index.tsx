@@ -64,7 +64,7 @@ const AddLinks: React.FC<AddLinks> = ({
 
       <ButtonText
         label={buttonLabel || t('labels.addLink')}
-        mode={bgWhite ? 'ghost' : 'secondary'}
+        mode={'secondary'}
         size="large"
         onClick={handleAddLink}
         {...(buttonPlusIcon ? {iconLeft: <Icon icon={IconType.ADD} />} : {})}
