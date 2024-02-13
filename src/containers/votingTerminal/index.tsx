@@ -7,7 +7,7 @@ import {
   VoterType,
   VotersTable,
 } from '@aragon/ods-old';
-import {Button, AlertCard, Icon, IconType, AlertInline} from '@aragon/ods';
+import {Button, AlertCard, AlertInline} from '@aragon/ods';
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
@@ -437,20 +437,6 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       )}
     </Container>
   );
-};
-
-type StatusProp = {
-  status?: ProposalStatus;
-};
-
-const StatusIcon: React.FC<StatusProp> = ({status}) => {
-  if (status === 'Pending' || status === 'Active') {
-    return <Icon icon={IconType.CLOCK} className="text-info-500" />;
-  } else if (status === 'Defeated') {
-    return <Icon icon={IconType.RADIO_CANCEL} className="text-critical-500" />;
-  } else {
-    return <Icon icon={IconType.INFO} className="text-info-500" />;
-  }
 };
 
 const Container = styled.div.attrs<{customClasses?: string}>(
