@@ -35,7 +35,7 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
     clearErrors(`actions.${actionIndex}`);
     resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}`, {
-      to: '',
+      to: {address: '', ensName: ''},
       amount: '',
       tokenAddress: '',
       tokenSymbol: '',
