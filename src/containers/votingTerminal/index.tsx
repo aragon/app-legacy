@@ -1,6 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {
-  AlertInline,
   ButtonGroup,
   CheckboxListItem,
   Option,
@@ -8,7 +7,7 @@ import {
   VoterType,
   VotersTable,
 } from '@aragon/ods-old';
-import {Button, AlertCard, Icon, IconType} from '@aragon/ods';
+import {Button, AlertCard, Icon, IconType, AlertInline} from '@aragon/ods';
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
@@ -214,9 +213,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           {title && <Heading1> {title}</Heading1>}
           {statusLabel && (
             <AlertInline
-              label={statusLabel}
-              mode={status === 'Defeated' ? 'critical' : 'neutral'}
-              icon={<StatusIcon status={status} />}
+              message={statusLabel}
+              variant={status === 'Defeated' ? 'critical' : 'info'}
             />
           )}
         </div>
@@ -405,14 +403,14 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                   </div>
                   {executableWithNextApproval && (
                     <AlertInline
-                      label={
+                      message={
                         approvals.length < minApproval
                           ? t('votingTerminal.approveAndExecute.infoAlert')
                           : t(
                               'votingTerminal.approveAndExecute.infoAlertApproved'
                             )
                       }
-                      mode={'neutral'}
+                      variant="info"
                     />
                   )}
                 </div>
