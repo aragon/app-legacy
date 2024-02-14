@@ -164,15 +164,7 @@ export const MinParticipation: FC = () => {
                   </div>
 
                   <LinearProgressContainer>
-                    <Progress
-                      value={
-                        govTokenTotalSupply
-                          ? ((govTokenTotalSupply * (value / 100)) /
-                              govTokenTotalSupply) *
-                            100
-                          : 0
-                      }
-                    />
+                    <Progress value={value / 100} />
 
                     <ProgressInfo2>
                       <p
