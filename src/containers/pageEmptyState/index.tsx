@@ -37,9 +37,13 @@ const PageEmptyState = ({
             dangerouslySetInnerHTML={{__html: subtitle || ''}}
           ></span>
           <ActionsContainer>
-            <Button {...primaryButton} variant="primary" size="lg" />
+            <Button {...primaryButton} variant="primary" size="lg">
+              {primaryButton.label}
+            </Button>
             {secondaryButton && (
-              <Button {...secondaryButton} variant="secondary" size="lg" />
+              <Button {...secondaryButton} variant="secondary" size="lg">
+                {secondaryButton.label}
+              </Button>
             )}
           </ActionsContainer>
         </EmptyStateContainer>

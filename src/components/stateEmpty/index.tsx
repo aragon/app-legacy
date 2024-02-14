@@ -83,17 +83,19 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
                 size="lg"
                 {...(props.mode === 'inline' &&
                   (props.secondaryButton ? {} : {className: 'w-full'}))}
-              />
+              >
+                {props.primaryButton.label}
+              </Button>
             )}
             {props.secondaryButton && (
-              <Button
-                {...props.secondaryButton}
-                variant="secondary"
-                size="lg"
-              />
+              <Button {...props.secondaryButton} variant="secondary" size="lg">
+                {props.secondaryButton.label}
+              </Button>
             )}
             {props.tertiaryButton && (
-              <Button {...props.tertiaryButton} variant="tertiary" size="lg" />
+              <Button {...props.tertiaryButton} variant="tertiary" size="lg">
+                {props.tertiaryButton.label}
+              </Button>
             )}
           </ActionContainer>
         )}
