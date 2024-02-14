@@ -204,15 +204,25 @@ export function proposal2CardProps(
   };
 
   if (isGaslessProposal(proposal)) {
+    let alertMessage;
+    if (proposal.status === ProposalStatus.SUCCEEDED) {
+      const preStr = t('labels.approvals');
+      alertMessage = `${preStr} ${translateProposalDate(
+        ProposalStatus.ACTIVE,
+        proposal.endDate,
+        proposal.tallyEndDate
+      )}`;
+    } else {
+      alertMessage = translateProposalDate(
+        proposal.status,
+        proposal.startDate,
+        proposal.endDate
+      );
+    }
     const specificProps = {
       voteTitle: t('governance.proposals.voteTitle'),
       stateLabel: PROPOSAL_STATE_LABELS,
-
-      alertMessage: translateProposalDate(
-        proposal.status,
-        proposal.startDate,
-        proposal.tallyEndDate
-      ),
+      alertMessage: alertMessage,
       title: proposal.metadata.title,
       description: proposal.metadata.description,
     };

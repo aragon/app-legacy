@@ -221,7 +221,19 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
     case 'executed':
       return <Tag label={stateLabel[3]} colorScheme="success" />;
     case 'succeeded':
-      return <Tag label={stateLabel[4]} colorScheme="success" />;
+      return (
+        <>
+          <Tag label={stateLabel[4]} colorScheme="success" />;
+          {alertMessage && (
+            <AlertInline
+              label={alertMessage}
+              icon={<IconClock className="text-info-500" />}
+              mode="neutral"
+            />
+          )}
+        </>
+      );
+
     case 'approved':
       return <Tag label={stateLabel[5]} colorScheme="success" />;
     case 'defeated':
