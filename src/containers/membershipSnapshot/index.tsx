@@ -103,7 +103,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
             <MembersList token={daoToken} members={displayedMembers} />
           </ListItemGrid>
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="lg"
             iconRight={IconType.CHEVRON_RIGHT}
             onClick={() =>
@@ -145,7 +145,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         isCompactMode={true}
       />
       <Button
-        variant="secondary"
+        variant="tertiary"
         size="lg"
         iconRight={IconType.CHEVRON_RIGHT}
         onClick={() =>

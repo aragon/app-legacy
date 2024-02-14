@@ -473,9 +473,9 @@ export const WalletInput = React.forwardRef<
             {!displayedValue && (
               <Button
                 size="sm"
-                variant="secondary"
+                variant="tertiary"
                 onClick={handlePasteFromClipboard}
-                disabled={disabled}
+                state={disabled ? 'disabled' : undefined}
               >
                 Paste
               </Button>
@@ -483,9 +483,9 @@ export const WalletInput = React.forwardRef<
             {displayedValue && isEditing && (
               <Button
                 size="sm"
-                variant="secondary"
+                variant="tertiary"
                 onMouseDown={handleClearInput}
-                disabled={disabled}
+                state={disabled ? 'disabled' : undefined}
               >
                 Clear
               </Button>
@@ -496,26 +496,26 @@ export const WalletInput = React.forwardRef<
                 {canToggle && (
                   <Button
                     size="sm"
-                    variant="secondary"
+                    variant="tertiary"
                     onClick={toggleDisplayMode}
-                    disabled={adornmentsDisabled}
+                    state={adornmentsDisabled ? 'disabled' : undefined}
                   >
                     {togglerLabel}
                   </Button>
                 )}
                 <Button
                   iconLeft={IconType.COPY}
-                  variant="secondary"
+                  variant="tertiary"
                   size="sm"
                   onClick={handleCopyToClipboard}
-                  disabled={adornmentsDisabled}
+                  state={adornmentsDisabled ? 'disabled' : undefined}
                 />
                 {showExternalButton && (
                   <Button
                     iconLeft={IconType.LINK_EXTERNAL}
-                    variant="secondary"
+                    variant="tertiary"
                     size="sm"
-                    disabled={adornmentsDisabled}
+                    state={adornmentsDisabled ? 'disabled' : undefined}
                     onClick={handleViewOnExplorer}
                   />
                 )}

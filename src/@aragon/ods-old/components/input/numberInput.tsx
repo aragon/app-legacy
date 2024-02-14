@@ -96,10 +96,10 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     <Container data-testid="number-input" {...{mode, disabled, width}}>
       <StyledIconButton
         name="down"
-        variant="secondary"
+        variant="tertiary"
         size="sm"
         iconLeft={IconType.REMOVE}
-        disabled={disabled ?? disableDecrement}
+        state={disabled ?? disableDecrement ? 'disabled' : undefined}
         onClick={() => handleStepperChange('down')}
       />
       <InputWrapper>
@@ -128,10 +128,10 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       </InputWrapper>
       <StyledIconButton
         name="up"
-        variant="secondary"
+        variant="tertiary"
         size="sm"
         iconLeft={IconType.ADD}
-        disabled={disabled ?? disableIncrement}
+        state={disabled ?? disableIncrement ? 'disabled' : undefined}
         onClick={() => handleStepperChange('up')}
       />
     </Container>

@@ -45,7 +45,7 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
           <Button
             className="w-full"
             size="lg"
-            variant="secondary"
+            variant="tertiary"
             iconRight={IconType.FEEDBACK}
             onClick={props.onFeedbackClick}
           >

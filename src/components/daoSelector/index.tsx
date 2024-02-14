@@ -29,7 +29,7 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
         </TextContainer>
       </LeftContent>
 
-      <Button iconLeft={IconType.CHEVRON_DOWN} variant="secondary" size="sm" />
+      <Button iconLeft={IconType.CHEVRON_DOWN} variant="tertiary" size="sm" />
     </Card>
   );
 };

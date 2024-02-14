@@ -456,7 +456,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
 
         <ButtonContainer>
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="lg"
             className="flex-1 md:flex-initial"
             onClick={handleAddWallet}

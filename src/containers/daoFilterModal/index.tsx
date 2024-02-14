@@ -80,16 +80,9 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
       </p>
       <Button
         iconLeft={IconType.CLOSE}
-        className="lg:hidden"
-        variant="secondary"
+        variant="tertiary"
         size="sm"
-        onClick={onClose}
-      />
-      <Button
-        iconLeft={IconType.CLOSE}
-        className="hidden lg:flex"
-        variant="secondary"
-        size="lg"
+        responsiveSize={{lg: 'lg'}}
         onClick={onClose}
       />
     </ModalHeader>

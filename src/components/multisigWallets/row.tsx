@@ -94,7 +94,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
               trigger={
                 <Button
                   size="lg"
-                  variant="secondary"
+                  variant="tertiary"
                   iconLeft={IconType.MENU_VERTICAL}
                   data-testid="trigger"
                 />

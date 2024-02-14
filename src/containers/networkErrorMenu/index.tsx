@@ -54,7 +54,7 @@ export const NetworkErrorMenu = () => {
           </AddressContainer>
         </AvatarAddressContainer>
         <Button
-          variant="secondary"
+          variant="tertiary"
           iconLeft={IconType.COPY}
           size="sm"
           onClick={() =>

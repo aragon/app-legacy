@@ -345,7 +345,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 iconLeft={IconType.APP_GOVERNANCE}
                 size="lg"
                 variant="primary"
-                disabled={settingsUnchanged || !isValid}
+                state={settingsUnchanged || !isValid ? 'disabled' : undefined}
                 onClick={() =>
                   navigate(
                     generatePath(ProposeNewSettings, {
@@ -363,7 +363,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 className="w-full md:w-max"
                 variant="secondary"
                 size="lg"
-                disabled={settingsUnchanged}
+                state={settingsUnchanged ? 'disabled' : undefined}
                 onClick={handleResetChanges}
               >
                 {t('settings.resetChanges')}

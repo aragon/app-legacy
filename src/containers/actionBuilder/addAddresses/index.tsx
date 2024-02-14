@@ -217,7 +217,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
         );
       })}
       <FormItem className="flex justify-between">
-        <Button variant="secondary" size="lg" onClick={handleAdd}>
+        <Button variant="tertiary" size="lg" onClick={handleAdd}>
           {t('labels.addWallet')}
         </Button>
 

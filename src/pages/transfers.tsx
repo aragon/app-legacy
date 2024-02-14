@@ -138,7 +138,7 @@ export const Transfers: React.FC = () => {
                   disabled={dropdownActions.length === 0}
                   trigger={
                     <Button
-                      variant="secondary"
+                      variant="tertiary"
                       size="md"
                       iconLeft={IconType.MENU_VERTICAL}
                     />

@@ -62,7 +62,7 @@ const AddLinks: React.FC<AddLinks> = ({
       )}
 
       <Button
-        variant={bgWhite ? 'tertiary' : 'secondary'}
+        variant="tertiary"
         size="lg"
         onClick={handleAddLink}
         {...(buttonPlusIcon ? {iconLeft: IconType.ADD} : {})}

@@ -137,10 +137,15 @@ const PublishModal: React.FC<PublishModalProps> = ({
           size="md"
           variant="primary"
           className="mt-6 w-full"
-          state={state === TransactionState.LOADING ? 'loading' : undefined}
+          state={
+            disabledCallback
+              ? 'disabled'
+              : state === TransactionState.LOADING
+              ? 'loading'
+              : undefined
+          }
           iconLeft={icons[state]}
           onClick={callback}
-          disabled={disabledCallback}
         >
           {labels[state]}
         </Button>

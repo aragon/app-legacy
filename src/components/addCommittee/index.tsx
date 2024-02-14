@@ -79,7 +79,7 @@ const AddCommittee: React.FC = () => {
         <Footer totalAddresses={fields.length || 0} />
       </ListGroup>
       <ActionsWrapper>
-        <Button variant="secondary" size="lg" onClick={handleAddWallet}>
+        <Button variant="tertiary" size="lg" onClick={handleAddWallet}>
           {t('labels.addWallet')}
         </Button>
         <Dropdown

@@ -51,7 +51,7 @@ const DaoSelectMenu: React.FC = () => {
       <div className="flex h-full flex-col" style={{maxHeight: '75vh'}}>
         <ModalHeader>
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="sm"
             iconLeft={IconType.CHEVRON_LEFT}
             onClick={handleBackButtonClick}
@@ -88,7 +88,7 @@ const DaoSelectMenu: React.FC = () => {
         </ModalContentContainer>
         <div className="p-6">
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="lg"
             iconLeft={IconType.LINK_EXTERNAL}
             className="w-full"

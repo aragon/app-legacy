@@ -164,10 +164,7 @@ const WCdAppValidation: React.FC<Props> = props => {
     }
   }, [connectionStatus, currentSession, resetConnectionState, selecteddApp]);
 
-  const disableCta =
-    uri == null ||
-    connectionStatus === ConnectionState.LOADING ||
-    Boolean(errors[WC_URI_INPUT_NAME]);
+  const disableCta = uri == null || Boolean(errors[WC_URI_INPUT_NAME]);
 
   const ctaHandler =
     connectionStatus === ConnectionState.SUCCESS
@@ -240,10 +237,13 @@ const WCdAppValidation: React.FC<Props> = props => {
         <Button
           size="lg"
           variant="primary"
-          disabled={disableCta}
           className="w-full"
           state={
-            connectionStatus === ConnectionState.LOADING ? 'loading' : undefined
+            disableCta
+              ? 'disabled'
+              : connectionStatus === ConnectionState.LOADING
+              ? 'loading'
+              : undefined
           }
           {...((connectionStatus === ConnectionState.ERROR ||
             connectionStatus === ConnectionState.INCORRECT_URI) && {

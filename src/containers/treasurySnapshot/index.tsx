@@ -77,7 +77,7 @@ const TreasurySnapshot: React.FC<Props> = ({
         />
       ))}
       <Button
-        variant="secondary"
+        variant="tertiary"
         size="lg"
         iconRight={IconType.CHEVRON_RIGHT}
         onClick={() =>

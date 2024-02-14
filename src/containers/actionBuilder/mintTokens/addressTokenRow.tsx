@@ -212,7 +212,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({
       align="start"
       trigger={
         <Button
-          variant="secondary"
+          variant="tertiary"
           size="lg"
           iconLeft={IconType.MENU_VERTICAL}
         />

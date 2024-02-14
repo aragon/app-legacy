@@ -119,7 +119,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
           <Button
             className="w-full md:w-max"
             size="lg"
-            variant="secondary"
+            variant="tertiary"
             iconRight={IconType.FEEDBACK}
             onClick={props.onFeedbackClick}
           >

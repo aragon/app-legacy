@@ -358,8 +358,13 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                 <>
                   <Button
                     variant="primary"
-                    disabled={!isUserInputValid || currentStep !== 1}
-                    state={isTokenApproveLoading ? 'loading' : undefined}
+                    state={
+                      !isUserInputValid || currentStep !== 1
+                        ? 'disabled'
+                        : isTokenApproveLoading
+                        ? 'loading'
+                        : undefined
+                    }
                     iconLeft={
                       isTokenApproveLoading
                         ? undefined
@@ -377,8 +382,13 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                   </Button>
                   <Button
                     variant="primary"
-                    disabled={!isUserInputValid || currentStep !== 2}
-                    state={isTokenWrapLoading ? 'loading' : undefined}
+                    state={
+                      !isUserInputValid || currentStep !== 2
+                        ? 'disabled'
+                        : isTokenWrapLoading
+                        ? 'loading'
+                        : undefined
+                    }
                     iconLeft={
                       isTokenWrapLoading
                         ? undefined
@@ -398,9 +408,14 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
               ) : (
                 <>
                   <Button
-                    disabled={!isUserInputValid}
                     variant="primary"
-                    state={isTokenUnwrapLoading ? 'loading' : undefined}
+                    state={
+                      !isUserInputValid
+                        ? 'disabled'
+                        : isTokenUnwrapLoading
+                        ? 'loading'
+                        : undefined
+                    }
                     iconLeft={
                       isTokenUnwrapLoading
                         ? undefined

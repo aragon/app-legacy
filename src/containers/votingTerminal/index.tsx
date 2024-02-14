@@ -357,7 +357,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               <Button
                 size="lg"
                 variant="primary"
-                disabled={!selectedVote}
+                state={!selectedVote ? 'disabled' : undefined}
                 onClick={() => {
                   if (selectedVote && onVoteSubmitClicked)
                     onVoteSubmitClicked(selectedVote);
@@ -384,7 +384,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                         variant="primary"
                         onClick={() => onApprovalClicked?.(true)}
                         className="w-full md:w-max"
-                        disabled={voteNowDisabled}
+                        state={voteNowDisabled ? 'disabled' : undefined}
                       >
                         {t('transactionModal.multisig.ctaApproveExecute')}
                       </Button>
@@ -393,7 +393,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                       size="lg"
                       onClick={() => onApprovalClicked?.(false)}
                       className="w-full md:w-max"
-                      disabled={voteNowDisabled}
+                      state={voteNowDisabled ? 'disabled' : undefined}
                       {...(executableWithNextApproval && !voted
                         ? {variant: 'secondary'}
                         : {variant: 'primary'})}
@@ -420,7 +420,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                   variant="primary"
                   onClick={onVoteClicked}
                   className="w-full md:w-max"
-                  disabled={voteNowDisabled}
+                  state={voteNowDisabled ? 'disabled' : undefined}
                 >
                   {voteButtonLabel || t('votingTerminal.voteNow')}
                 </Button>

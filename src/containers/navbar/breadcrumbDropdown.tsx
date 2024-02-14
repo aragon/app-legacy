@@ -16,7 +16,7 @@ export const NavlinksDropdown: React.FC = () => {
       align="start"
       trigger={
         <Button
-          variant="secondary"
+          variant="tertiary"
           size="lg"
           iconLeft={showCrumbMenu ? IconType.CLOSE : IconType.MENU_DEFAULT}
         />

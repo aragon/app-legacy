@@ -172,11 +172,10 @@ export const DaoExplorer = () => {
           <ButtonGroupContainer>
             <Button
               variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
-              size="lg"
+              size="md"
+              responsiveSize={{lg: 'lg'}}
               iconLeft={IconType.FILTER}
-              onClick={() => {
-                setShowAdvancedFilters(true);
-              }}
+              onClick={() => setShowAdvancedFilters(true)}
             >
               {filtersCount}
             </Button>
@@ -188,7 +187,8 @@ export const DaoExplorer = () => {
                 trigger={
                   <Button
                     variant={activeDropdown ? 'secondary' : 'tertiary'}
-                    size="lg"
+                    size="md"
+                    responsiveSize={{lg: 'lg'}}
                     iconLeft={IconType.SORT}
                   />
                 }
@@ -339,7 +339,7 @@ const FilterGroupContainer = styled.div.attrs({
 })``;
 
 const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex space-x-3',
+  className: 'flex space-x-3 items-start',
 })``;
 
 const CredentialsDropdownItem = styled.div.attrs<CredentialsDropdownItemPropType>(

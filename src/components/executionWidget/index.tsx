@@ -135,7 +135,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
           </StyledButtonText>
           {txhash && (
             <StyledButtonText
-              variant="secondary"
+              variant="tertiary"
               iconRight={IconType.LINK_EXTERNAL}
               size="lg"
               onClick={handleTxViewButtonClick}
@@ -154,7 +154,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
         <Footer>
           {txhash && (
             <StyledButtonText
-              variant="secondary"
+              variant="tertiary"
               iconRight={IconType.LINK_EXTERNAL}
               size="lg"
               onClick={handleTxViewButtonClick}
