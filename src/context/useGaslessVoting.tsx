@@ -177,7 +177,13 @@ export const useGaslessCommiteVotes = (
   })(proposal);
 
   const canBeExecuted = (proposal => {
-    if (!client || !proposal || proposal.status !== 'Active') return false;
+    if (
+      !client ||
+      !proposal ||
+      proposal.executed ||
+      proposal.status !== 'Active'
+    )
+      return false;
     return isProposalApproved && isApprovalPeriod;
   })(proposal);
 
