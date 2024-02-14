@@ -155,8 +155,14 @@ export const useGaslessCommiteVotes = (
   const client = usePluginClient(GaselessPluginName) as GaslessVotingClient;
   const {address} = useWallet();
 
+  const isExecutionPeriod = proposal.status === ProposalStatus.SUCCEEDED;
+
   const isApprovalPeriod = (proposal => {
-    if (!proposal || proposal.status !== 'Active') return false;
+    if (
+      !proposal ||
+      (proposal.status !== ProposalStatus.ACTIVE && !isExecutionPeriod)
+    )
+      return false;
     return (
       (proposal.endDate.valueOf() < new Date().valueOf() &&
         proposal.tallyEndDate.valueOf() > new Date().valueOf() &&
@@ -177,14 +183,8 @@ export const useGaslessCommiteVotes = (
   })(proposal);
 
   const canBeExecuted = (proposal => {
-    if (
-      !client ||
-      !proposal ||
-      proposal.executed ||
-      proposal.status !== 'Active'
-    )
-      return false;
-    return isProposalApproved && isApprovalPeriod;
+    if (!client || !proposal || proposal.executed) return false;
+    return isExecutionPeriod && isProposalApproved && isApprovalPeriod;
   })(proposal);
 
   const executed = proposal.executed;
