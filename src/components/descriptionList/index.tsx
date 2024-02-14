@@ -1,13 +1,9 @@
-import {Button} from '@aragon/ods';
-import {
-  AlertInline,
-  CheckboxListItem,
-  CheckboxListItemProps,
-  Tag,
-} from '@aragon/ods-old';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import {CheckboxListItem, CheckboxListItemProps} from '@aragon/ods-old';
+import {Button, Tag, AlertInline} from '@aragon/ods';
 
 export type DescriptionListProps = {
   title: string;
@@ -46,7 +42,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
           <TitleText>{title}</TitleText>
           {badgeLabel && (
             <div>
-              <Tag label={badgeLabel || ''} colorScheme="info" />
+              <Tag label={badgeLabel || ''} variant="info" />
             </div>
           )}
         </TitleContainer>
@@ -68,7 +64,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
             />
           </div>
           {checkedState === 'error' && checkBoxErrorMessage && (
-            <AlertInline label={checkBoxErrorMessage} mode="critical" />
+            <AlertInline message={checkBoxErrorMessage} variant="critical" />
           )}
         </div>
       )}

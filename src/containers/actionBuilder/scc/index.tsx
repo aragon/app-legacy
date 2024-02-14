@@ -1,7 +1,8 @@
-import {AlertInline, ListItemAction} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import {ListItemAction} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
@@ -92,8 +93,8 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
                 ))}
               {!isValid && (
                 <AlertInline
-                  label={t('newProposal.configureActions.alertCritical')}
-                  mode="critical"
+                  message={t('newProposal.configureActions.alertCritical')}
+                  variant="critical"
                 />
               )}{' '}
             </div>

@@ -1,13 +1,12 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-  AlertInline,
   IconRadioMulti,
   Link,
   TextareaSimple,
   shortenAddress,
   WalletInputLegacy,
 } from '@aragon/ods-old';
-import {Button, Icon, IconType, Spinner} from '@aragon/ods';
+import {Button, AlertInline, Icon, IconType, Spinner} from '@aragon/ods';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 
@@ -540,7 +539,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
               />
               <div className="mt-2">
                 {error?.message && (
-                  <AlertInline label={error.message} mode="critical" />
+                  <AlertInline message={error.message} variant="critical" />
                 )}
               </div>
             </>
@@ -720,8 +719,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
         {error?.message && (
           <div className="mt-4 flex justify-center">
             <AlertInline
-              label={error.message}
-              mode={
+              message={error.message}
+              variant={
                 ABIFlowState === ManualABIFlowState.ERROR
                   ? 'critical'
                   : 'warning'

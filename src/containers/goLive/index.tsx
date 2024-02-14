@@ -5,8 +5,8 @@ import {useFormContext} from 'react-hook-form';
 // import {DAOFactory} from 'typechain';
 // TODO reintroduce this by adding back the postInstall script in packages.json
 // that executes the generate-abis-and-types command.
-import {AlertCard, Breadcrumb} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Breadcrumb} from '@aragon/ods-old';
+import {Button, AlertCard, IconType} from '@aragon/ods';
 import {useNavigate} from 'react-router-dom';
 
 import Blockchain from './blockchain';
@@ -65,7 +65,7 @@ const GoLive: React.FC = () => {
       <Community />
       <Governance />
       {votingType === 'gasless' && <Committee />}
-      <AlertCard title={t('createDAO.review.daoUpdates')} />
+      <AlertCard message={t('createDAO.review.daoUpdates')} variant="info" />
     </Container>
   );
 };

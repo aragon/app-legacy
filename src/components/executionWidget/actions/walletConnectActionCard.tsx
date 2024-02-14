@@ -1,7 +1,8 @@
-import {AlertCard, Label} from '@aragon/ods-old';
+import {Label} from '@aragon/ods-old';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {AlertCard} from '@aragon/ods';
 
 import {AccordionMethod, AccordionMethodType} from 'components/accordionMethod';
 import {FormlessComponentForType} from 'containers/smartContractComposer/components/inputForm';
@@ -90,18 +91,22 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
         ) : null}
         {!action.decoded && (
           <AlertCard
-            title={t('newProposal.configureActions.actionAlertWarning.title')}
-            helpText={t('newProposal.configureActions.actionAlertWarning.desc')}
-            mode="warning"
+            variant="warning"
+            message={t('newProposal.configureActions.actionAlertWarning.title')}
+            description={t(
+              'newProposal.configureActions.actionAlertWarning.desc'
+            )}
           />
         )}
         {status !== 'executed' && showTimeSensitiveWarning && (
           <AlertCard
-            title={t('newProposal.configureActions.actionAlertCritical.title')}
-            helpText={t(
+            variant="critical"
+            message={t(
+              'newProposal.configureActions.actionAlertCritical.title'
+            )}
+            description={t(
               'newProposal.configureActions.actionAlertCritical.desc'
             )}
-            mode="critical"
           />
         )}
       </Content>

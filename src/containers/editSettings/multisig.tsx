@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
-import {AlertInline, ListItemAction} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {ListItemAction} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -369,7 +369,10 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 {t('settings.resetChanges')}
               </Button>
             </HStack>
-            <AlertInline label={t('settings.proposeSettingsInfo')} />
+            <AlertInline
+              message={t('settings.proposeSettingsInfo')}
+              variant="info"
+            />
           </Footer>
         </Layout>
       }

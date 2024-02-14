@@ -1,7 +1,7 @@
-import {AlertInline, Dropdown, Label, ListItemAction} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
+import {Dropdown, Label, ListItemAction} from '@aragon/ods-old';
+import {Button, IconType, AlertInline} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address, useEnsName} from 'wagmi';
@@ -186,8 +186,8 @@ export const MultisigWallets = () => {
         </SummaryContainer>
       </TableContainer>
       <AlertInline
-        label={t('createDAO.step3.multisigMembersWalletAlert')}
-        mode="neutral"
+        message={t('createDAO.step3.multisigMembersWalletAlert')}
+        variant="info"
       />
     </Container>
   );

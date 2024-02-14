@@ -1,11 +1,6 @@
 import React from 'react';
-import {
-  AlertInline,
-  AlertInlineProps,
-  NumberInput,
-  NumberInputProps,
-} from '@aragon/ods-old';
-import {Progress} from '@aragon/ods';
+import {NumberInput, NumberInputProps} from '@aragon/ods-old';
+import {Progress, AlertInline, IAlertInlineProps} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -13,7 +8,7 @@ type Props = NumberInputProps & {
   max: number;
   min: number;
   value: number | string;
-  error?: AlertInlineProps;
+  error?: IAlertInlineProps;
 };
 const MinimumApproval: React.FC<Props> = ({max, min, ...rest}) => {
   const {t} = useTranslation();

@@ -1,7 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {
-  AlertCard,
-  AlertInline,
   ButtonGroup,
   CheckboxListItem,
   Option,
@@ -9,7 +7,7 @@ import {
   VoterType,
   VotersTable,
 } from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Button, AlertCard, AlertInline} from '@aragon/ods';
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
@@ -215,9 +213,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           {title && <Heading1> {title}</Heading1>}
           {statusLabel && (
             <AlertInline
-              label={statusLabel}
-              mode={status === 'Defeated' ? 'critical' : 'neutral'}
-              icon={<StatusIcon status={status} />}
+              message={statusLabel}
+              variant={status === 'Defeated' ? 'critical' : 'info'}
             />
           )}
         </div>
@@ -406,14 +403,14 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                   </div>
                   {executableWithNextApproval && (
                     <AlertInline
-                      label={
+                      message={
                         approvals.length < minApproval
                           ? t('votingTerminal.approveAndExecute.infoAlert')
                           : t(
                               'votingTerminal.approveAndExecute.infoAlertApproved'
                             )
                       }
-                      mode={'neutral'}
+                      variant="info"
                     />
                   )}
                 </div>
@@ -432,7 +429,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
 
             {alertMessage && (
               <div className="pt-4 md:mt-6 md:pt-0">
-                <AlertCard title={alertMessage} mode="warning" />
+                <AlertCard message={alertMessage} variant="warning" />
               </div>
             )}
           </>
@@ -440,20 +437,6 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       )}
     </Container>
   );
-};
-
-type StatusProp = {
-  status?: ProposalStatus;
-};
-
-const StatusIcon: React.FC<StatusProp> = ({status}) => {
-  if (status === 'Pending' || status === 'Active') {
-    return <Icon icon={IconType.CLOCK} className="text-info-500" />;
-  } else if (status === 'Defeated') {
-    return <Icon icon={IconType.RADIO_CANCEL} className="text-critical-500" />;
-  } else {
-    return <Icon icon={IconType.INFO} className="text-info-500" />;
-  }
 };
 
 const Container = styled.div.attrs<{customClasses?: string}>(

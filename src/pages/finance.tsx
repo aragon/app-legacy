@@ -1,9 +1,9 @@
-import {Breadcrumb, IlluObject, IllustrationHuman, Tag} from '@aragon/ods-old';
+import {Breadcrumb, IlluObject, IllustrationHuman} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {Button, IconType} from '@aragon/ods';
+import {Button, IconType, Tag} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';

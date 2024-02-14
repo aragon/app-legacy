@@ -1,10 +1,10 @@
-import {Tag} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {VotingTerminalProps} from '.';
+import {Tag} from '@aragon/ods';
 
 const NumberFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
@@ -105,10 +105,7 @@ const InfoTab: React.FC<Props> = ({
               <Strong>{currentParticipation}</Strong>
               <div className="flex justify-end gap-x-2">
                 {minimumReached && (
-                  <Tag
-                    label={t('votingTerminal.reached')}
-                    colorScheme="success"
-                  />
+                  <Tag label={t('votingTerminal.reached')} variant="success" />
                 )}
                 <p className="text-right text-neutral-400 ft-text-sm">
                   {minimumReached
@@ -142,10 +139,7 @@ const InfoTab: React.FC<Props> = ({
               </Strong>
               <div className="flex justify-end gap-x-2">
                 {minimumReached && (
-                  <Tag
-                    label={t('votingTerminal.reached')}
-                    colorScheme="success"
-                  />
+                  <Tag label={t('votingTerminal.reached')} variant="success" />
                 )}
                 <p className="text-right text-neutral-400 ft-text-sm">
                   {minimumReached

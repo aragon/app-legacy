@@ -2,8 +2,8 @@ import React, {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
-import {AlertInline, Label} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import ActionBuilder from 'containers/actionBuilder';
@@ -116,7 +116,8 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
           />
           {!hideAlert && (
             <AlertInline
-              label={t('newProposal.configureActions.actionsInfo')}
+              message={t('newProposal.configureActions.actionsInfo')}
+              variant="info"
             />
           )}
         </>

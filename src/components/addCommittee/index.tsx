@@ -1,8 +1,9 @@
-import {AlertInline, Dropdown, ListItemAction} from '@aragon/ods-old';
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Dropdown, ListItemAction} from '@aragon/ods-old';
+import {IconType, Button, AlertInline} from '@aragon/ods';
 
 import {useAlertContext} from 'context/alert';
 import {useWallet} from 'hooks/useWallet';
@@ -12,7 +13,6 @@ import Row from './addCommitteeWallet';
 import {useNetwork} from '../../context/network';
 import {Address, useEnsName} from 'wagmi';
 import {CHAIN_METADATA} from '../../utils/constants';
-import {IconType, Button} from '@aragon/ods';
 
 const AddCommittee: React.FC = () => {
   const {t} = useTranslation();
@@ -107,8 +107,8 @@ const AddCommittee: React.FC = () => {
         />
       </ActionsWrapper>
       <AlertInline
-        label={t('createDAO.step3.distributionWalletAlertText') as string}
-        mode="neutral"
+        message={t('createDAO.step3.distributionWalletAlertText') as string}
+        variant="info"
       />
     </Container>
   );

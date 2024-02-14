@@ -1,6 +1,6 @@
 import React from 'react';
-import {AlertCard, AlertInline} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+
+import {Button, AlertCard, AlertInline, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -95,14 +95,14 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'defeated': {
       return pluginType === 'multisig.plugin.dao.eth' ? (
         <AlertCard
-          mode="info"
-          title={t('governance.executionCard.statusMultisig.expiredTitle')}
-          helpText={t('governance.executionCard.statusMultisig.expiredDesc')}
+          variant="info"
+          message={t('governance.executionCard.statusMultisig.expiredTitle')}
+          description={t('governance.executionCard.statusMultisig.expiredDesc')}
         />
       ) : (
         <AlertInline
-          label={t('governance.executionCard.status.defeated')}
-          mode={'warning'}
+          message={t('governance.executionCard.status.defeated')}
+          variant="warning"
         />
       );
     }
@@ -117,7 +117,10 @@ const WidgetFooter: React.FC<FooterProps> = ({
           >
             {t('governance.proposals.buttons.execute')}
           </StyledButtonText>
-          <AlertInline label={t('governance.executionCard.status.succeeded')} />
+          <AlertInline
+            message={t('governance.executionCard.status.succeeded')}
+            variant="info"
+          />
         </Footer>
       );
     case 'executable-failed':
@@ -141,8 +144,8 @@ const WidgetFooter: React.FC<FooterProps> = ({
             </StyledButtonText>
           )}
           <AlertInline
-            label={t('governance.executionCard.status.failed')}
-            mode="warning"
+            message={t('governance.executionCard.status.failed')}
+            variant="warning"
           />
         </Footer>
       );
@@ -161,8 +164,8 @@ const WidgetFooter: React.FC<FooterProps> = ({
           )}
 
           <AlertInline
-            label={t('governance.executionCard.status.executed')}
-            mode="success"
+            message={t('governance.executionCard.status.executed')}
+            variant="success"
           />
         </Footer>
       );

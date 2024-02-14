@@ -1,7 +1,13 @@
 import React, {ReactNode} from 'react';
 import styled from 'styled-components';
-import {Icon, IconType, Spinner, SpinnerVariant, Button} from '@aragon/ods';
-import {Tag} from '@aragon/ods-old';
+import {
+  Icon,
+  IconType,
+  Spinner,
+  SpinnerVariant,
+  Button,
+  Tag,
+} from '@aragon/ods';
 
 export interface StatusProps {
   mode: 'loading' | 'success' | 'error';
@@ -64,7 +70,7 @@ export const Status: React.FC<StatusProps> = ({
         {mode === 'error' && (
           <div className="mb-3 flex flex-wrap gap-2">
             {ErrorList?.map((item, index) => (
-              <Tag key={index} label={item} colorScheme={'critical'} />
+              <Tag key={index} label={item} variant="critical" />
             ))}
           </div>
         )}

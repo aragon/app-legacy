@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {useScreen, shortenAddress, Avatar, Tag} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {useScreen, shortenAddress, Avatar} from '@aragon/ods-old';
+import {Button, IconType, Tag} from '@aragon/ods';
 import {DaoMember} from 'utils/paths';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {useNetwork} from 'context/network';
@@ -95,7 +95,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
               {walletId && tagLabel && (
                 <Tag
                   label={tagLabel}
-                  colorScheme={walletId === 'you' ? 'neutral' : 'info'}
+                  variant={walletId === 'you' ? 'neutral' : 'info'}
                   className="-mt-1"
                 />
               )}

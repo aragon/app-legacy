@@ -1,10 +1,3 @@
-import {
-  AlertInline,
-  DropdownInput,
-  Label,
-  ValueInput,
-  InputValue as WalletInputValue,
-} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
 import {
   Controller,
@@ -14,6 +7,13 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {
+  DropdownInput,
+  Label,
+  ValueInput,
+  InputValue as WalletInputValue,
+} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
 
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useActionsContext} from 'context/actions';
@@ -190,7 +190,10 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
 
       if (Number(value) > Number(tokenBalance))
         return (
-          <AlertInline label={t('warnings.amountGtDaoToken')} mode="warning" />
+          <AlertInline
+            message={t('warnings.amountGtDaoToken')}
+            variant="warning"
+          />
         );
     },
     [tokenBalance, t]
@@ -342,7 +345,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 placeholder={t('placeHolders.selectToken')}
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </>
           )}
@@ -380,7 +383,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                   onAdornmentClick={() => handleAdornmentClick(value, onChange)}
                 />
                 {error?.message && (
-                  <AlertInline label={error.message} mode="critical" />
+                  <AlertInline message={error.message} variant="critical" />
                 )}
               </>
             )}
@@ -421,7 +424,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   {error?.message && (
-                    <AlertInline label={error.message} mode="critical" />
+                    <AlertInline message={error.message} variant="critical" />
                   )}
                   {renderWarning(value)}
                 </div>

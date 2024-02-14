@@ -1,5 +1,6 @@
-import {AlertCard, CheckboxListItem, Label} from '@aragon/ods-old';
 import React, {useCallback, useMemo, useState} from 'react';
+import {CheckboxListItem, Label} from '@aragon/ods-old';
+import {AlertCard} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -198,9 +199,9 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
           multiSelect={false}
         />
         <AlertCard
-          mode="info"
-          title={t('infos.newVotingTypes.title')}
-          helpText={t('infos.newVotingTypes.description')}
+          variant="info"
+          message={t('infos.newVotingTypes.title')}
+          description={t('infos.newVotingTypes.description')}
         />
       </FormSection>
 

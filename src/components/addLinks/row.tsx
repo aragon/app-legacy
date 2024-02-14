@@ -1,10 +1,5 @@
-import {
-  AlertInline,
-  Dropdown,
-  Label,
-  ListItemAction,
-  TextInput,
-} from '@aragon/ods-old';
+import {Dropdown, Label, ListItemAction, TextInput} from '@aragon/ods-old';
+import {Button, AlertInline, IconType} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
@@ -17,7 +12,6 @@ import {
 } from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {BgWhite} from './header';
-import {Button, IconType} from '@aragon/ods';
 
 type LinkRowProps = {
   index: number;
@@ -133,7 +127,7 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
               />
               {error?.message && (
                 <ErrorContainer>
-                  <AlertInline label={error.message} mode="critical" />
+                  <AlertInline message={error.message} variant="critical" />
                 </ErrorContainer>
               )}
             </>
@@ -167,7 +161,7 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
               />
               {error?.message && (
                 <ErrorContainer>
-                  <AlertInline label={error.message} mode="critical" />
+                  <AlertInline message={error.message} variant="critical" />
                 </ErrorContainer>
               )}
             </>

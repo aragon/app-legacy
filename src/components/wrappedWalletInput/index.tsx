@@ -1,10 +1,6 @@
-import {
-  AlertInline,
-  InputValue,
-  WalletInput,
-  WalletInputProps,
-} from '@aragon/ods-old';
 import React, {Ref, forwardRef, useCallback, useEffect, useState} from 'react';
+import {InputValue, WalletInput, WalletInputProps} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useAlertContext} from 'context/alert';
@@ -153,23 +149,23 @@ export const WrappedWalletInput = forwardRef(
         />
         {showResolvedLabels && !networkSupportsENS && isEnsAttemptedInput && (
           <AlertInline
-            label={t('inputWallet.ensAlertWarning')}
-            mode="warning"
+            message={t('inputWallet.ensAlertWarning')}
+            variant="warning"
           />
         )}
         {showResolvedLabels && !error && ensResolved && (
           <AlertInline
-            label={t('inputWallet.ensAlertSuccess')}
-            mode="success"
+            message={t('inputWallet.ensAlertSuccess')}
+            variant="success"
           />
         )}
         {showResolvedLabels && !error && addressValidated && (
           <AlertInline
-            label={t('inputWallet.addressAlertSuccess')}
-            mode="success"
+            message={t('inputWallet.addressAlertSuccess')}
+            variant="success"
           />
         )}
-        {error && <AlertInline label={error} mode="critical" />}
+        {error && <AlertInline message={error} variant="critical" />}
       </>
     );
   }

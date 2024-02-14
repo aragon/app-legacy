@@ -1,7 +1,8 @@
 import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertCard, shortenAddress} from '@aragon/ods-old';
+import {shortenAddress} from '@aragon/ods-old';
+import {AlertCard, Spinner} from '@aragon/ods';
 
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
@@ -9,7 +10,6 @@ import {gTokenSymbol} from 'utils/tokens';
 import {useNetwork} from 'context/network';
 import numeral from 'numeral';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
-import {Spinner} from '@aragon/ods';
 
 type TransferListProps = {
   tokenAddress: string;
@@ -55,11 +55,11 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
       case 'ERC-20':
         return (
           <AlertCard
-            mode="warning"
-            title={t(
+            variant="warning"
+            message={t(
               'createDAO.step3.existingToken.verificationAlertWarningTitle'
             )}
-            helpText={t(
+            description={t(
               'createDAO.step3.existingToken.verificationAlertWarningDescription',
               {
                 tokenSymbol,
@@ -71,11 +71,11 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
       case 'governance-ERC20':
         return (
           <AlertCard
-            mode="success"
-            title={t(
+            variant="success"
+            message={t(
               'createDAO.step3.existingToken.verificationAlertSuccessTitle'
             )}
-            helpText={t(
+            description={t(
               'createDAO.step3.existingToken.verificationAlertSuccessDescription'
             )}
           />
@@ -84,11 +84,11 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
       case 'ERC-721':
         return (
           <AlertCard
-            mode="critical"
-            title={t(
+            variant="critical"
+            message={t(
               'createDAO.step3.existingToken.verificationAlertCriticalTitle'
             )}
-            helpText={t(
+            description={t(
               'createDAO.step3.existingToken.verificationAlertCriticalDescription'
             )}
           />
@@ -96,11 +96,11 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
       case 'Unknown':
         return (
           <AlertCard
-            mode="critical"
-            title={t(
+            variant="critical"
+            message={t(
               'createDAO.step3.existingToken.verificationAlertCriticalTitle'
             )}
-            helpText={t(
+            description={t(
               'createDAO.step3.existingToken.verificationAlertCriticalDescription'
             )}
           />

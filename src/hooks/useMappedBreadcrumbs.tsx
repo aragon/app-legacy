@@ -1,6 +1,5 @@
 import React, {useMemo} from 'react';
-import {Tag, TagColorScheme, TagProps} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Tag, ITagProps} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useMatch} from 'react-router-dom';
 import useBreadcrumbs, {BreadcrumbData} from 'use-react-router-breadcrumbs';
@@ -14,12 +13,12 @@ type MappedBreadcrumbs = {
     path: string;
     label: string;
   }[];
-  tag?: React.FunctionComponentElement<TagProps>;
+  tag?: React.FunctionComponentElement<ITagProps>;
   icon: JSX.Element;
 };
 
 type ProposalStatusColorMap = {
-  [key in ProposalStatus]: TagColorScheme;
+  [key in ProposalStatus]: ITagProps['variant'];
 };
 
 const proposalStatusColorMap: ProposalStatusColorMap = {
@@ -90,7 +89,7 @@ export function useMappedBreadcrumbs(): MappedBreadcrumbs {
       <Tag
         label={proposalStatus}
         className="capitalize"
-        colorScheme={colorScheme}
+        variant={colorScheme}
       />
     );
   }

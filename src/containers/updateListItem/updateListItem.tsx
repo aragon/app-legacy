@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
-import {Link, Tag} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Link} from '@aragon/ods-old';
+import {Button, Icon, IconType, Tag} from '@aragon/ods';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {Markdown} from 'tiptap-markdown';
@@ -70,10 +70,8 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
           <HStack {...{disabled, type}}>
             <div className="flex space-x-2">
               <p className="font-semibold ft-text-base">{label}</p>
-              {tagLabelNatural && (
-                <Tag label={tagLabelNatural} colorScheme="neutral" />
-              )}
-              {tagLabelInfo && <Tag label={tagLabelInfo} colorScheme="info" />}
+              {tagLabelNatural && <Tag label={tagLabelNatural} />}
+              {tagLabelInfo && <Tag label={tagLabelInfo} variant="info" />}
             </div>
             {Icons[multiSelect ? 'multiSelect' : 'radio'][type]}
           </HStack>

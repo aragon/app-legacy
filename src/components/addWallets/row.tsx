@@ -1,5 +1,4 @@
 import {
-  AlertInline,
   Dropdown,
   Label,
   ListItemAction,
@@ -7,7 +6,7 @@ import {
   TextInput,
   InputValue as WalletInputValue,
 } from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button, IconType, AlertInline} from '@aragon/ods';
 import Big from 'big.js';
 import {constants} from 'ethers';
 import React, {useCallback, useState} from 'react';
@@ -203,7 +202,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
 
             {error?.message && (
               <ErrorContainer>
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               </ErrorContainer>
             )}
           </AmountsWrapper>

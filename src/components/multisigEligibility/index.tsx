@@ -1,9 +1,9 @@
 import React from 'react';
 import {CheckboxListItem, Label} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertInline} from '@aragon/ods-old';
 import useScreen from 'hooks/useScreen';
 
 export type MultisigProposerEligibility = 'multisig' | 'anyone';
@@ -61,8 +61,8 @@ export const MultisigEligibility = () => {
             </CheckboxItemsContainer>
             {value === 'anyone' && (
               <AlertInline
-                label={t('createDAO.step3.multisigEligibilityAlert')}
-                mode="critical"
+                message={t('createDAO.step3.multisigEligibilityAlert')}
+                variant="critical"
               />
             )}
           </CheckboxContainer>

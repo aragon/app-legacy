@@ -830,6 +830,7 @@ export function sleepFor(time = 600) {
  * @param sdkNetwork supported network returned by the SDK
  * @returns translated equivalent app supported network
  */
+// TODO: Remove this Goerli based network conditions
 export const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {

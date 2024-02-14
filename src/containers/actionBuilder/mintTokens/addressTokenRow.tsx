@@ -1,5 +1,5 @@
+import React, {useCallback, useEffect} from 'react';
 import {
-  AlertInline,
   Dropdown,
   InputValue,
   Label,
@@ -7,9 +7,8 @@ import {
   NumberInput,
   TextInput,
 } from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button, IconType, AlertInline} from '@aragon/ods';
 import Big from 'big.js';
-import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -186,7 +185,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
           />
           {error?.message && (
             <ErrorContainer>
-              <AlertInline label={error.message} mode="critical" />
+              <AlertInline message={error.message} variant="critical" />
             </ErrorContainer>
           )}
         </div>

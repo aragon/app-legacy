@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
-import {AlertInline, ListItemAction} from '@aragon/ods-old';
+import {ListItemAction} from '@aragon/ods-old';
+import {Button, IconType, AlertInline} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -39,7 +40,6 @@ import {
   ActionRemoveAddress,
   ManageMembersFormData,
 } from '../../utils/types';
-import {Button, IconType} from '@aragon/ods';
 
 type EditMvSettingsProps = {
   daoDetails: DaoDetails;
@@ -640,7 +640,10 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                   {t('settings.resetChanges')}
                 </Button>
               </HStack>
-              <AlertInline label={t('settings.proposeSettingsInfo')} />
+              <AlertInline
+                message={t('settings.proposeSettingsInfo')}
+                variant="info"
+              />
             </Footer>
           </Layout>
         }

@@ -1,6 +1,8 @@
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {AlertInline, Label, NumberInput} from '@aragon/ods-old';
+import {Label, NumberInput} from '@aragon/ods-old';
+import {AlertInline} from '@aragon/ods';
+
 import {
   COMMITTEE_EXECUTION_MAX_DURATION_DAYS,
   COMMITTEE_EXECUTION_MIN_DURATION_HOURS,
@@ -168,7 +170,7 @@ const ExecutionExpirationTime: React.FC = () => {
                 }
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </TimeLabelWrapper>
           )}
@@ -200,7 +202,7 @@ const ExecutionExpirationTime: React.FC = () => {
                 }
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </TimeLabelWrapper>
           )}
@@ -232,7 +234,7 @@ const ExecutionExpirationTime: React.FC = () => {
                 min="0"
               />
               {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
+                <AlertInline message={error.message} variant="critical" />
               )}
             </TimeLabelWrapper>
           )}
@@ -240,14 +242,14 @@ const ExecutionExpirationTime: React.FC = () => {
       </DurationContainer>
       {executionExpirationDays ===
       COMMITTEE_EXECUTION_MAX_DURATION_DAYS.toString() ? (
-        <AlertInline label={t('alert.maxDurationAlert')} mode="warning" />
+        <AlertInline message={t('alert.maxDurationAlert')} variant="warning" />
       ) : executionExpirationDays === '0' &&
         executionExpirationHours ===
           COMMITTEE_EXECUTION_MIN_DURATION_HOURS.toString() &&
         executionExpirationMinutes === '0' ? (
-        <AlertInline label={t('alert.minDurationAlert')} mode="warning" />
+        <AlertInline message={t('alert.minDurationAlert')} variant="warning" />
       ) : (
-        <AlertInline label={t('alert.durationAlert')} mode="neutral" />
+        <AlertInline message={t('alert.durationAlert')} variant="info" />
       )}
     </FormItem>
   );

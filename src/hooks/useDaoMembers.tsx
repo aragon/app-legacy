@@ -131,6 +131,7 @@ export const useDaoMembers = (
   const countOnly = opts?.countOnly || false;
   const enabled = opts?.enabled || true;
 
+  // TODO: Remove this Goerli based network conditions
   const covalentSupportedNetwork = !(
     network === 'goerli' ||
     network === 'mumbai' ||

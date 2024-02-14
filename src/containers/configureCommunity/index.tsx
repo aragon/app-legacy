@@ -1,18 +1,12 @@
-import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
 import React, {useCallback} from 'react';
-import {
-  AlertInline,
-  CheckboxListItem,
-  Label,
-  NumberInput,
-  Tag,
-} from '@aragon/ods-old';
-import {Progress} from '@aragon/ods';
+import {CheckboxListItem, Label, NumberInput} from '@aragon/ods-old';
+import {Progress, AlertInline} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {MinParticipation} from './minParticipation';
 
+import {MinParticipation} from './minParticipation';
+import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
 import {
   MAX_DURATION_DAYS,
   HOURS_IN_DAY,
@@ -22,6 +16,7 @@ import {
 } from 'utils/constants';
 import {getDaysHoursMins} from 'utils/date';
 import {ProposalCreation} from './proposalCreation';
+import {Tag} from '@aragon/ods';
 
 export type ConfigureCommunityProps = {
   isSettingPage?: boolean;
@@ -192,7 +187,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                     <div className="flex flex-1 items-center">
                       <Tag
                         label={t('labels.yes')}
-                        colorScheme="primary"
+                        variant="primary"
                         className="mr-3 w-12 justify-center"
                       />
 
@@ -218,17 +213,17 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                   </ApprovalContainer>
 
                   {error?.message && (
-                    <AlertInline label={error.message} mode="critical" />
+                    <AlertInline message={error.message} variant="critical" />
                   )}
                   {value < 50 ? (
                     <AlertInline
-                      label={t('createDAO.step4.alerts.minority')}
-                      mode="warning"
+                      message={t('createDAO.step4.alerts.minority')}
+                      variant="warning"
                     />
                   ) : (
                     <AlertInline
-                      label={t('createDAO.step4.alerts.majority')}
-                      mode="success"
+                      message={t('createDAO.step4.alerts.majority')}
+                      variant="success"
                     />
                   )}
                 </>
@@ -277,7 +272,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       disabled={durationDays === MAX_DURATION_DAYS.toString()}
                     />
                     {error?.message && (
-                      <AlertInline label={error.message} mode="critical" />
+                      <AlertInline message={error.message} variant="critical" />
                     )}
                   </TimeLabelWrapper>
                 )}
@@ -306,7 +301,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       disabled={durationDays === MAX_DURATION_DAYS.toString()}
                     />
                     {error?.message && (
-                      <AlertInline label={error.message} mode="critical" />
+                      <AlertInline message={error.message} variant="critical" />
                     )}
                   </TimeLabelWrapper>
                 )}
@@ -338,7 +333,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       min="0"
                     />
                     {error?.message && (
-                      <AlertInline label={error.message} mode="critical" />
+                      <AlertInline message={error.message} variant="critical" />
                     )}
                   </TimeLabelWrapper>
                 )}
@@ -346,20 +341,20 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
             </DurationContainer>
             {durationDays === MAX_DURATION_DAYS.toString() ? (
               <AlertInline
-                label={t('alert.maxDurationAlert') as string}
-                mode="warning"
+                message={t('alert.maxDurationAlert') as string}
+                variant="warning"
               />
             ) : durationDays === '0' &&
               durationHours === MIN_DURATION_HOURS.toString() &&
               durationMinutes === '0' ? (
               <AlertInline
-                label={t('alert.minDurationAlert') as string}
-                mode="warning"
+                message={t('alert.minDurationAlert') as string}
+                variant="warning"
               />
             ) : (
               <AlertInline
-                label={t('alert.durationAlert') as string}
-                mode="neutral"
+                message={t('alert.durationAlert') as string}
+                variant="info"
               />
             )}
           </FormItem>

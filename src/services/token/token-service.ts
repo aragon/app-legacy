@@ -130,6 +130,7 @@ class TokenService {
         },
       };
 
+      // TODO: Remove this Goerli based network conditions
       if (
         (network === 'base' || network === 'base-goerli') &&
         token.address === constants.AddressZero
@@ -237,6 +238,7 @@ class TokenService {
     network,
     assets,
   }: IFetchTokenTransfersParams) => {
+    // TODO: Remove this Goerli based network conditions
     return network === 'base' || network === 'base-goerli'
       ? this.fetchCovalentErc20Deposits(address, network, assets)
       : this.fetchAlchemyErc20Deposits(address, network);

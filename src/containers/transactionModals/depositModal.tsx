@@ -1,5 +1,5 @@
-import {AlertInline} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
+import {Button, AlertInline} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -13,7 +13,6 @@ import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {AllTransfers} from 'utils/paths';
-import {Button} from '@aragon/ods';
 
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
@@ -74,8 +73,8 @@ const DepositModal: React.FC = () => {
               <NetworkName>{CHAIN_METADATA[network].name}</NetworkName>
               {status === 'connected' && !isOnWrongNetwork ? (
                 <AlertInline
-                  label={t('modal.deposit.statusBlockchain')}
-                  mode="success"
+                  message={t('modal.deposit.statusBlockchain')}
+                  variant="success"
                 />
               ) : (
                 <ConnectButton onClick={handleConnectClick}>
