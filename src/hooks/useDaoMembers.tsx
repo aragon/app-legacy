@@ -212,7 +212,9 @@ export const useDaoMembers = (
   // token holders data gives us the total holders, so only need to call once
   // and return this number if countOnly === true
   if (countOnly) {
-    if (useSubgraph) {
+    if (nonWrappedCensusSize !== null) {
+      memberCount = nonWrappedCensusSize;
+    } else if (useSubgraph) {
       memberCount = parsedSubgraphData?.length || 0;
     } else {
       memberCount = graphqlData?.holders.totalHolders || 0;
