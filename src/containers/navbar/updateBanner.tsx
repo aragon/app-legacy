@@ -72,7 +72,7 @@ const UpdateBanner: React.FC = () => {
         </TextWrapper>
         <Button
           size="sm"
-          variant="secondary"
+          variant="tertiary"
           onClick={() =>
             navigate(
               generatePath(NewProposal, {

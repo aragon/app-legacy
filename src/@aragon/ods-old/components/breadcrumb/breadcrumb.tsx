@@ -78,7 +78,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
       <ProcessContainer data-testid="breadcrumbs">
         <ProcessCrumbContainer>
           <Button
-            variant="secondary"
+            variant="tertiary"
             iconLeft={IconType.CHEVRON_LEFT}
             onClick={() => onClick?.(crumbs.path)}
             size="md"

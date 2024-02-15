@@ -47,7 +47,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
           )}
         </TitleContainer>
         {onEditClick && (
-          <Button variant="secondary" size="lg" onClick={onEditClick}>
+          <Button variant="tertiary" size="lg" onClick={onEditClick}>
             {editLabel || t('labels.edit')}
           </Button>
         )}

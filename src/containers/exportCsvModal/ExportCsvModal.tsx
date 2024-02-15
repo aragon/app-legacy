@@ -291,7 +291,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                     {t('finance.modalExport.ctaLabelGenerateCSV')}
                   </Button>
                   <Button
-                    variant="secondary"
+                    variant="tertiary"
                     size="lg"
                     className="w-full"
                     onClick={handleClose}

@@ -88,7 +88,7 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
               </Button>
             )}
             {props.secondaryButton && (
-              <Button {...props.secondaryButton} variant="secondary" size="lg">
+              <Button {...props.secondaryButton} variant="tertiary" size="lg">
                 {props.secondaryButton.label}
               </Button>
             )}
