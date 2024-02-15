@@ -5,16 +5,14 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {useNetwork} from 'context/network';
-import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
-import {Button} from '@aragon/ods';
+import {Toggle, ToggleGroup} from '@aragon/ods';
 
 type NetworkType = 'main' | 'test';
 
 const SelectChainForm: React.FC = () => {
   const {t} = useTranslation();
-  const {isMobile} = useScreen();
   const {setNetwork, network} = useNetwork();
   const {control, resetField} = useFormContext();
 
@@ -31,26 +29,24 @@ const SelectChainForm: React.FC = () => {
       ) !== 'false'
   );
 
+  const handleNetworkTypeChange = (newNetwork?: string) => {
+    if (newNetwork) {
+      setNetworkType(newNetwork as NetworkType);
+    }
+  };
+
   return (
     <>
       <Header>
         <NetworkTypeSwitcher>
-          <Button
-            variant={networkType === 'main' ? 'secondary' : 'tertiary'}
-            size={isMobile ? 'sm' : 'md'}
-            onClick={() => {
-              setNetworkType('main');
-            }}
+          <ToggleGroup
+            isMultiSelect={false}
+            value={networkType}
+            onChange={handleNetworkTypeChange}
           >
-            {t('labels.mainNet')}
-          </Button>
-          <Button
-            variant={networkType === 'test' ? 'secondary' : 'tertiary'}
-            size={isMobile ? 'sm' : 'md'}
-            onClick={() => setNetworkType('test')}
-          >
-            {t('labels.testNet')}
-          </Button>
+            <Toggle value="main" label={t('labels.mainNet')} />
+            <Toggle value="test" label={t('labels.testNet')} />
+          </ToggleGroup>
         </NetworkTypeSwitcher>
       </Header>
       <FormItem>

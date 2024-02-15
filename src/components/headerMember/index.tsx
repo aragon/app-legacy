@@ -104,7 +104,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
                 trigger={
                   <Button
                     iconRight={IconType.CHEVRON_DOWN}
-                    variant="secondary"
+                    variant="tertiary"
                     size="md"
                     className="border border-neutral-100"
                   >
