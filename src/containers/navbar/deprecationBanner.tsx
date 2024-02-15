@@ -1,5 +1,5 @@
 import {ButtonText} from '@aragon/ods-old';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import styled from 'styled-components';
 import {Icon, IconType} from '@aragon/ods';
@@ -20,18 +20,20 @@ const DeprecationBanner: React.FC = () => {
   const daoDeprecationWarningEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_DEPRECATE_GOERLI') === 'true';
 
-  const showBanner = GOERLI_BASED_NETWORKS.includes(network) || !bannerHidden;
+  useEffect(() => {
+    if (GOERLI_BASED_NETWORKS.includes(network)) setBannerHidden(false);
+    else setBannerHidden(true);
+  }, [network]);
 
   if (
     location.pathname.includes('create') ||
-    showBanner === false ||
+    bannerHidden ||
     !daoDeprecationWarningEnabled
   )
     return null;
 
   return (
     <UpdateContainer>
-      <DummyElement />
       <MessageWrapper>
         <TextWrapper>
           <Icon icon={IconType.WARNING} className="text-warning-500" />
@@ -47,24 +49,13 @@ const DeprecationBanner: React.FC = () => {
           onClick={() => window.open(t('deprecation.banner.ctaLink'), '_blank')}
         />
       </MessageWrapper>
-      <Icon
-        icon={IconType.CLOSE}
-        className="cursor-pointer justify-self-end text-neutral-0"
-        onClick={() => {
-          setBannerHidden(true);
-        }}
-      />
     </UpdateContainer>
   );
 };
 
-const DummyElement = styled.div.attrs({
-  className: 'md:block hidden',
-})``;
-
 const UpdateContainer = styled.div.attrs({
   className:
-    'flex justify-between items-center py-2 px-6 bg-warning-100' as string,
+    'flex justify-center items-center py-2 px-6 bg-warning-100' as string,
 })``;
 
 const TextWrapper = styled.div.attrs({
