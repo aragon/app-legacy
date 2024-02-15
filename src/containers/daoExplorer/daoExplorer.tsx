@@ -173,6 +173,7 @@ export const DaoExplorer = () => {
             <Button
               variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
               size="md"
+              className="!min-w-fit"
               responsiveSize={{lg: 'lg'}}
               iconLeft={IconType.FILTER}
               onClick={() => setShowAdvancedFilters(true)}
