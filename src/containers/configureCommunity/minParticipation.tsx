@@ -165,7 +165,7 @@ export const MinParticipation: FC = () => {
                   </div>
 
                   <LinearProgressContainer>
-                    <Progress value={value / 100} />
+                    <Progress value={value} />
 
                     <ProgressInfo2>
                       <p
