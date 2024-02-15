@@ -491,7 +491,9 @@
       "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
       "walletTitle": "You can’t create a proposal",
       "walletDescription": "You are not a member. Creating proposals in {{daoName}} can only be done by addresses that have been added to its member list.",
-      "buttonLabel": "Ok, understood"
+      "buttonLabel": "Ok, understood",
+      "cannotDelegateTitle": "You can’t delegate",
+      "cannotDelegateDescription": "You don’t have the required token balance. Delegating in {{daoName}} requires holding {{tokenName}}."
     },
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
     "chip": {
