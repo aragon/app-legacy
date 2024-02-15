@@ -632,7 +632,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                 </Button>
                 <Button
                   className="w-full md:w-max"
-                  variant="secondary"
+                  variant="tertiary"
                   size="lg"
                   state={settingsUnchanged ? 'disabled' : undefined}
                   onClick={handleResetChanges}

@@ -27,14 +27,14 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
 
       <ButtonGroup>
         <Button
-          variant="secondary"
+          variant="tertiary"
           {...(isDesktop ? {size: 'md'} : {size: 'lg', className: 'w-full'})}
           onClick={props.onAcceptAll}
         >
           {t('privacyPolicy.acceptAllCookies')}
         </Button>
         <Button
-          variant="secondary"
+          variant="tertiary"
           {...(isDesktop ? {size: 'sm'} : {size: 'lg', className: 'w-full'})}
           onClick={props.onRejectAll}
         >

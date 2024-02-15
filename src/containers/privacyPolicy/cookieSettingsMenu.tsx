@@ -26,7 +26,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
       <div>
         <ModalHeader>
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="sm"
             iconLeft={IconType.CHEVRON_LEFT}
             onClick={props.onClose}
@@ -68,7 +68,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
             <Button
               className="flex-1"
               size="lg"
-              variant="secondary"
+              variant="tertiary"
               onClick={props.onRejectAllClick}
             >
               {t('privacyPolicy.rejectAllCookies')}

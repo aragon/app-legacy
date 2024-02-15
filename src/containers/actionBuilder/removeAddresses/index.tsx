@@ -188,7 +188,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
             ))}
             <FormItem className="flex justify-between">
               <Button
-                variant="secondary"
+                variant="tertiary"
                 size="lg"
                 onClick={() => open('manageWallet')}
               >

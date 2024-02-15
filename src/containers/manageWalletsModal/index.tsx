@@ -168,7 +168,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
         >
           {labels.button as string}
         </Button>
-        <Button variant="secondary" size="lg" onClick={handleClose}>
+        <Button variant="tertiary" size="lg" onClick={handleClose}>
           {t('labels.cancel')}
         </Button>
       </ButtonContainer>

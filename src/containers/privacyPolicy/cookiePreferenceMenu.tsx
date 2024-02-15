@@ -23,7 +23,7 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
       <ModalHeader>
         <Title>{t('cookiePreferences.title')}</Title>
         <Button
-          variant="secondary"
+          variant="tertiary"
           size="sm"
           iconLeft={IconType.CLOSE}
           onClick={onClose}
@@ -43,7 +43,7 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
           <Button
             className="flex-1"
             size="lg"
-            variant="secondary"
+            variant="tertiary"
             onClick={onClose}
           >
             {t('cookiePreferences.cancel')}

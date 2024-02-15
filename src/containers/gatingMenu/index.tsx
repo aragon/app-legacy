@@ -132,7 +132,7 @@ export const GatingMenu: React.FC = () => {
             <Button onClick={handleWrapTokens} size="lg" variant="primary">
               {t('modalAlert.wrapToken.ctaLabel')}
             </Button>
-            <Button variant="secondary" onClick={handleCloseMenu} size="lg">
+            <Button variant="tertiary" onClick={handleCloseMenu} size="lg">
               {t('modalAlert.wrapToken.cancleLabel')}
             </Button>
           </div>

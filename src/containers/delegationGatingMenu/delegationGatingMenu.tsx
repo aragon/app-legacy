@@ -131,7 +131,7 @@ export const DelegationGatingMenu: React.FC = () => {
             {t(ctaLabel)}
           </Button>
           {needsSelfDelegation && (
-            <Button variant="secondary" size="lg" onClick={() => close()}>
+            <Button variant="tertiary" size="lg" onClick={() => close()}>
               {t('modal.delegationActive.BtnSecondaryLabel')}
             </Button>
           )}

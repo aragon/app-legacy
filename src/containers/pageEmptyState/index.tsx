@@ -41,7 +41,7 @@ const PageEmptyState = ({
               {primaryButton.label}
             </Button>
             {secondaryButton && (
-              <Button {...secondaryButton} variant="secondary" size="lg">
+              <Button {...secondaryButton} variant="tertiary" size="lg">
                 {secondaryButton.label}
               </Button>
             )}

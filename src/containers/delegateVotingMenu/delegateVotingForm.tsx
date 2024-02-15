@@ -167,7 +167,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
         <Button
           className="w-full"
           size="lg"
-          variant="secondary"
+          variant="tertiary"
           onClick={handleCancel}
         >
           {t('labels.cancel')}

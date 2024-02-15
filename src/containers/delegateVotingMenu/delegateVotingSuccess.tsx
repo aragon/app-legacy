@@ -90,7 +90,7 @@ export const DelegateVotingSuccess: React.FC<
           {t('modal.delegation.successCtaLabel')}
         </Button>
         <Button
-          variant="secondary"
+          variant="tertiary"
           size="lg"
           iconRight={IconType.LINK_EXTERNAL}
           onClick={handleTransactionClick}

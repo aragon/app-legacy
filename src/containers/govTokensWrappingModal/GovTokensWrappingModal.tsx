@@ -432,7 +432,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       : t('modal.wrapToken.footerWrappedCtaLabel')}
                   </Button>
                   <Button
-                    variant="secondary"
+                    variant="tertiary"
                     size="lg"
                     className="w-full"
                     onClick={() => onClose()}

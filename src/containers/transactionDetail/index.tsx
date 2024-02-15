@@ -65,7 +65,7 @@ const TransactionDetail: React.FC = () => {
       <ModalHeader>
         <Title>{t('transactionDetail.title')}</Title>
         <Button
-          variant="secondary"
+          variant="tertiary"
           size="sm"
           iconLeft={IconType.CLOSE}
           onClick={onClose}

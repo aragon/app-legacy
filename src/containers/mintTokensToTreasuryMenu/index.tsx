@@ -95,7 +95,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
         <>
           <ModalHeader>
             <Button
-              variant="secondary"
+              variant="tertiary"
               size="sm"
               iconLeft={IconType.CHEVRON_LEFT}
               onClick={() => {
@@ -154,7 +154,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                       {t('modal.mintTokensToTreasury.step2CtaLabel')}
                     </Button>
                     <Button
-                      variant="secondary"
+                      variant="tertiary"
                       size="lg"
                       onClick={() => {
                         resetField('mintTokensToTreasury');

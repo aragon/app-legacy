@@ -365,7 +365,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               >
                 {t('votingTerminal.submit')}
               </Button>
-              <Button variant="secondary" size="lg" onClick={onCancelClicked}>
+              <Button variant="tertiary" size="lg" onClick={onCancelClicked}>
                 {t('votingTerminal.cancel')}
               </Button>
             </ButtonWrapper>

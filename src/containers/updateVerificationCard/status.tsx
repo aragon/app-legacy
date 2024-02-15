@@ -78,7 +78,7 @@ export const Status: React.FC<StatusProps> = ({
           <div>
             <Button
               iconRight={IconType.LINK_EXTERNAL}
-              variant="secondary"
+              variant="tertiary"
               size="sm"
               onClick={() => window.open(DetailsButtonSrc, '_blank')}
             >

@@ -96,7 +96,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
               <SmartContractListGroup />
               <div>
                 <Button
-                  variant="secondary"
+                  variant="tertiary"
                   size="lg"
                   onClick={() => {
                     trackEvent('newProposal_connectSmartContract_clicked', {

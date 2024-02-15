@@ -17,7 +17,7 @@ const SearchHeader: React.FC<SearchHeader> = props => {
       <LeftContent>
         <Button
           iconLeft={props.buttonIcon || IconType.HOME}
-          variant="secondary"
+          variant="tertiary"
           size="md"
           onClick={props.onHomeButtonClick}
         />
@@ -36,7 +36,7 @@ const SearchHeader: React.FC<SearchHeader> = props => {
         />
       </LeftContent>
       <Button
-        variant="secondary"
+        variant="tertiary"
         size="md"
         iconLeft={IconType.CLOSE}
         onClick={props.onClose}

@@ -156,7 +156,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
           <RenderTokens />
         </TokensWrapper>
         <WideButton
-          variant="secondary"
+          variant="tertiary"
           size="lg"
           iconLeft={IconType.ADD}
           onClick={() => {

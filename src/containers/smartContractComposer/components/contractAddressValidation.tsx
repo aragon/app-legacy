@@ -632,7 +632,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             }}
             size="lg"
             className="mt-6 w-full"
-            variant="secondary"
+            variant="tertiary"
           >
             {t('scc.validation.cancelLabel')}
           </Button>
@@ -716,7 +716,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             }}
             size="lg"
             className="mt-4 w-full"
-            variant="secondary"
+            variant="tertiary"
           >
             {t('scc.validation.cancelLabel')}
           </Button>

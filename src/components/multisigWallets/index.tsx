@@ -130,7 +130,7 @@ export const MultisigWallets = () => {
         <Divider />
         <ActionsContainer>
           <TextButtonsContainer>
-            <Button variant="secondary" size="lg" onClick={handleAdd}>
+            <Button variant="tertiary" size="lg" onClick={handleAdd}>
               {t('labels.whitelistWallets.addAddress')}
             </Button>
             {/*

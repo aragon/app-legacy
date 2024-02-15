@@ -98,7 +98,7 @@ const MobileModal: React.FC<Props> = props => {
               )}
               <div>
                 <Button
-                  variant="secondary"
+                  variant="tertiary"
                   size="lg"
                   onClick={() => {
                     trackEvent('newProposal_connectSmartContract_clicked', {
@@ -170,13 +170,13 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
     <Header>
       {selectedSC ? (
         <Button
-          variant="secondary"
+          variant="tertiary"
           size="sm"
           iconLeft={IconType.CHEVRON_LEFT}
           onClick={props.onBackButtonClicked}
         />
       ) : (
-        <Button variant="secondary" size="sm" iconLeft={IconType.HOME} />
+        <Button variant="tertiary" size="sm" iconLeft={IconType.HOME} />
       )}
 
       <ActionSearchInput
@@ -186,7 +186,7 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
       />
 
       <Button
-        variant="secondary"
+        variant="tertiary"
         size="sm"
         iconLeft={IconType.CLOSE}
         onClick={props.onClose}

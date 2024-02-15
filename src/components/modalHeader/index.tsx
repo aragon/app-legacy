@@ -31,7 +31,7 @@ const ModalHeader: React.FC<Props> = props => {
       <ButtonWrapper className="h-8 w-8">
         {showBackButton && (
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="sm"
             iconLeft={IconType.CHEVRON_LEFT}
             onClick={onBackButtonClicked}
@@ -46,7 +46,7 @@ const ModalHeader: React.FC<Props> = props => {
       <ButtonWrapper className="h-8 w-8">
         {showCloseButton && (
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="sm"
             iconLeft={IconType.CLOSE}
             onClick={onClose}

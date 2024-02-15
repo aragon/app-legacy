@@ -104,7 +104,7 @@ const DepositModal: React.FC = () => {
           <Button variant="primary" size="lg" onClick={handleCtaClicked}>
             {t('modal.deposit.ctaLabel')}
           </Button>
-          <Button variant="secondary" size="lg" onClick={() => close()}>
+          <Button variant="tertiary" size="lg" onClick={() => close()}>
             {t('modal.deposit.cancelLabel')}
           </Button>
         </HStack>

@@ -225,7 +225,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 trigger={
                   <Button
                     iconRight={IconType.CHEVRON_DOWN}
-                    variant="secondary"
+                    variant="tertiary"
                     size="lg"
                   >
                     All Links
@@ -244,7 +244,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             )}
             <Button
               onClick={onFollowClick}
-              variant="secondary"
+              variant="tertiary"
               size="lg"
               iconLeft={following ? IconType.CHECKMARK : undefined}
             >

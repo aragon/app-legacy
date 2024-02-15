@@ -828,7 +828,7 @@ export const Proposal: React.FC = () => {
           <Button
             className="w-full md:w-max"
             size="lg"
-            variant="secondary"
+            variant="tertiary"
             iconRight={IconType.CHEVRON_DOWN}
             onClick={() => setExpandedProposal(true)}
           >
@@ -844,7 +844,7 @@ export const Proposal: React.FC = () => {
               <StyledEditorContent editor={editor} />
               <Button
                 className="mt-6 w-full md:w-max"
-                variant="secondary"
+                variant="tertiary"
                 size="md"
                 iconRight={IconType.CHEVRON_UP}
                 onClick={() => setExpandedProposal(false)}

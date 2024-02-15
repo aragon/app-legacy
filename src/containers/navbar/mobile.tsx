@@ -31,7 +31,7 @@ const MobileNav: React.FC<MobileNavProps> = props => {
           <FlexOne>
             {isMobile ? (
               <Button
-                variant="secondary"
+                variant="tertiary"
                 size="lg"
                 iconLeft={IconType.MENU_DEFAULT}
                 onClick={() => open('mobileMenu')}
@@ -39,7 +39,7 @@ const MobileNav: React.FC<MobileNavProps> = props => {
             ) : (
               <Button
                 size="lg"
-                variant="secondary"
+                variant="tertiary"
                 iconLeft={IconType.MENU_DEFAULT}
                 onClick={() => open('mobileMenu')}
               >
