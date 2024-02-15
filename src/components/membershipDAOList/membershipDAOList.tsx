@@ -58,7 +58,7 @@ export const MembershipDAOList: React.FC<IMembershipDAOListProps> = ({
         </div>
         {hasMore && (
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="md"
             className="border-neutral-100"
             iconRight={IconType.CHEVRON_DOWN}

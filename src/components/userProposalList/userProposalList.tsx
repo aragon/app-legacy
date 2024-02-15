@@ -103,7 +103,7 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
         </div>
         {hasMore && (
           <Button
-            variant="secondary"
+            variant="tertiary"
             size="md"
             className="border-neutral-100"
             iconRight={IconType.CHEVRON_DOWN}

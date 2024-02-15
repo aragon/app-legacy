@@ -66,7 +66,7 @@ export const DaoListSectionWrapper = ({
       <SectionHeader title={title} />
       <div className="mt-4 space-y-3">
         {children}
-        <Button variant="secondary" size="md" iconRight={IconType.CHEVRON_DOWN}>
+        <Button variant="tertiary" size="md" iconRight={IconType.CHEVRON_DOWN}>
           {t('members.profile.labelViewMore')}
         </Button>
       </div>
