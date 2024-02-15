@@ -124,7 +124,7 @@ export const InputImageSingle: React.FC<InputImageSingleProps> = ({
       <StyledButton
         iconLeft={IconType.CLOSE}
         size="sm"
-        variant="secondary"
+        variant="tertiary"
         onClick={() => {
           setPreview('');
           onChange(null);
