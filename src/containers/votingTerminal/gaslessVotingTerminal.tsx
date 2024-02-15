@@ -205,26 +205,6 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     ? t('votingTerminal.status.ineligibleWhitelist')
     : undefined;
 
-  const ApprovalVotingTerminal = () => {
-    return (
-      <VotingTerminal
-        status={proposal.status}
-        pluginType={pluginType}
-        selectedTab={terminalTab}
-        alertMessage={alertMessage}
-        onTabSelected={setTerminalTab}
-        onApprovalClicked={handleApprovalClick}
-        voteButtonLabel={buttonLabel}
-        voteNowDisabled={voteNowDisabled}
-        executableWithNextApproval={executableWithNextApproval}
-        className={
-          'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
-        }
-        {...mappedProps}
-      />
-    );
-  };
-
   // proposal execution status
   const executionStatus = useMemo(() => {
     return getProposalExecutionStatus(
@@ -262,7 +242,21 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
             methodName={t('votingTerminal.vocdoni.titleActionsApproval')}
             alertLabel={approvalStatus}
           >
-            <ApprovalVotingTerminal />
+            <VotingTerminal
+              status={proposal.status}
+              pluginType={pluginType}
+              selectedTab={terminalTab}
+              alertMessage={alertMessage}
+              onTabSelected={setTerminalTab}
+              onApprovalClicked={handleApprovalClick}
+              voteButtonLabel={buttonLabel}
+              voteNowDisabled={voteNowDisabled}
+              executableWithNextApproval={executableWithNextApproval}
+              className={
+                'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
+              }
+              {...mappedProps}
+            />
           </VotingTerminalAccordionItem>
         </AccordionMultiple>
       </Container>
