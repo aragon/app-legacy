@@ -228,7 +228,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
           trigger={
             <Button
               size="lg"
-              variant="secondary"
+              variant="tertiary"
               iconLeft={IconType.MENU_VERTICAL}
               data-testid="trigger"
             />

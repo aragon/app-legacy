@@ -40,11 +40,7 @@ export const TokenSectionWrapper = ({title, children}: SectionWrapperProps) => {
       <SectionHeader title={title} />
       {children}
       <Link to={generatePath(AllTokens, {network, dao})}>
-        <Button
-          size="md"
-          variant="secondary"
-          iconRight={IconType.CHEVRON_RIGHT}
-        >
+        <Button size="md" variant="tertiary" iconRight={IconType.CHEVRON_RIGHT}>
           {t('labels.seeAllTokens')}
         </Button>
       </Link>
@@ -103,7 +99,7 @@ export const TransferSectionWrapper = ({
         <div>
           <Link to={generatePath(AllTransfers, {network, dao})}>
             <Button
-              variant="secondary"
+              variant="tertiary"
               size="md"
               iconRight={IconType.CHEVRON_RIGHT}
             >
