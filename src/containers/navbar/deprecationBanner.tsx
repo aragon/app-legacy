@@ -10,7 +10,7 @@ import {GOERLI_BASED_NETWORKS} from 'utils/constants';
 import {useTranslation} from 'react-i18next';
 
 const DeprecationBanner: React.FC = () => {
-  const [bannerHidden, setBannerHidden] = useState(false);
+  const [bannerHidden, setBannerHidden] = useState(true);
 
   const location = useLocation();
   const {t} = useTranslation();
