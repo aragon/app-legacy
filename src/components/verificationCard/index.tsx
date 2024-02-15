@@ -58,11 +58,11 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
         if (votingType === 'gasless') {
           return (
             <AlertCard
-              mode="success"
-              title={t(
+              variant="success"
+              message={t(
                 'createDAO.step3.existingToken.verificationAlertSuccessTitle'
               )}
-              helpText={
+              description={
                 'DEV The ERC20 token selected is compatible for voting on the Vocdoni system'
               }
             />
