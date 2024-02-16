@@ -62,9 +62,9 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
               message={t(
                 'createDAO.step3.existingToken.verificationAlertSuccessTitle'
               )}
-              description={
-                'DEV The ERC20 token selected is compatible for voting on the Vocdoni system'
-              }
+              description={t(
+                'createDAO.step3.existingToken.vocdoni.verificationAlertSuccessDescription'
+              )}
             />
           );
         }

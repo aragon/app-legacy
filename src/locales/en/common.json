@@ -247,7 +247,9 @@
     "Arbiscan": "Arbiscan",
     "polygonscan": "Polygonscan",
     "updateExecutionMultisigAction": "Update Execution Multisig",
-    "updateExecutionMultisigActionDescription": "Change addresses that can participate in the multisig"
+    "updateExecutionMultisigActionDescription": "Change addresses that can participate in the multisig",
+    "activeMembers": "DEV - {{count}} Active members",
+    "governanceEnabled": "DEV - Governance enabled"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -489,11 +491,11 @@
     "gatingUsers": {
       "tokenTitle": "You can’t create a proposal",
       "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
-      "cannotDelegateTitle": "You can’t delegate",
-      "cannotDelegateDescription": "You don’t have the required token balance. Delegating in {{daoName}} requires holding {{tokenName}}.",
       "walletTitle": "You can’t create a proposal",
       "walletDescription": "You are not a member. Creating proposals in {{daoName}} can only be done by addresses that have been added to its member list.",
-      "buttonLabel": "Ok, understood"
+      "buttonLabel": "Ok, understood",
+      "cannotDelegateTitle": "You can’t delegate",
+      "cannotDelegateDescription": "You don’t have the required token balance. Delegating in {{daoName}} requires holding {{tokenName}}."
     },
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
     "chip": {
@@ -729,7 +731,10 @@
         "descriptionLinkURL": "https://aragon.org/how-to/import-existing-tokens",
         "verificationLabelBlockchain": "Blockchain",
         "verificationAlertCriticalBlockchainTitle": "Incorrect blockchain",
-        "verificationAlertCriticalBlockchainDescription": "This token is deployed on a different blockchain than the one you chose for your DAO. Use a token deployed on {{blockchainName}}."
+        "verificationAlertCriticalBlockchainDescription": "This token is deployed on a different blockchain than the one you chose for your DAO. Use a token deployed on {{blockchainName}}.",
+        "vocdoni": {
+          "verificationAlertSuccessDescription": "DEV - The ERC20 token selected is compatible for voting on the Vocdoni system"
+        }
       },
       "existingTokenSubtitle": "Yes, we already have a token.",
       "tokenMembership": "Token holders",
@@ -1609,13 +1614,6 @@
       "false": "Follow"
     }
   },
-  "deprecation": {
-    "banner": {
-      "title": "This DAO will no longer be available once support for Goerli testnet comes to an end during 2024.",
-      "ctaLabel": "Learn more",
-      "ctaLink": "https://blog.ethereum.org/2023/11/30/goerli-lts-update"
-    }
-  },
   "update": {
     "banner": {
       "title": "Aragon OSx updates are available.",
@@ -1811,6 +1809,13 @@
       "labelViewMore": "View more",
       "votingApprove": "Approve",
       "labelDaysAgo": "days ago"
+    }
+  },
+  "deprecation": {
+    "banner": {
+      "title": "This DAO will no longer be available once support for Goerli and related testnets ends in 2024.",
+      "ctaLabel": "Learn more",
+      "ctaLink": "https://blog.ethereum.org/2023/11/30/goerli-lts-update"
     }
   }
 }

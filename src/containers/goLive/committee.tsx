@@ -129,7 +129,7 @@ export const ReviewExecutionMultisig: React.FC<
         </Dd>
       </Dl>
       <Dl>
-        <Dt>{'DEV Gobernance enabled'}</Dt>
+        <Dt>{t('labels.governanceEnabled')}</Dt>
         <Dd>
           {tokenType === 'governance-ERC20'
             ? t('labels.review.yes')

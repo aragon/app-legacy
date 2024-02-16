@@ -177,7 +177,7 @@ export const Community: React.FC = () => {
     isGasless && !isDAOTokenWrapped && !isTokenMintable;
 
   const pageTitle = isGaslessNonWrappedDao
-    ? `DEV ${totalMemberCount} Active Members`
+    ? t('labels.activeMembers', {count: totalMemberCount})
     : `${totalMemberCount} ${t('labels.members')}`;
 
   return (
