@@ -14,10 +14,11 @@ import {translateToNetworkishName} from './library';
 
 class AragonGateway {
   private rpcVersion = '1.0';
+  private ipfsVersion = '1.0';
   private baseUrl = import.meta.env.VITE_GATEWAY_URL;
 
   public backendUrl = `${this.baseUrl}/graphql`;
-  public ipfsUrl = `${this.baseUrl}/ipfs`;
+  public ipfsUrl = `${this.baseUrl}/v${this.ipfsVersion}/ipfs`;
 
   getRpcProvider = (
     chainIdOrNetwork: number | SupportedNetworks
