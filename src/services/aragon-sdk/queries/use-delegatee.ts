@@ -25,15 +25,9 @@ const fetchDelegatee = async (
 
 export const useDelegatee = (
   params: IFetchDelegateeParams,
-  daoDetails: DaoDetails | null | undefined,
+  pluginType: PluginTypes,
   options: UseQueryOptions<string | null> = {}
 ) => {
-  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginType,
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-  });
-
   const client = usePluginClient(
     pluginType === GaselessPluginName
       ? GaselessPluginName
@@ -64,10 +58,6 @@ export const useDelegatee = (
   return useQuery(
     aragonSdkQueryKeys.delegatee(baseParams, params),
     () => {
-      // If is gasless and governance is not enabled, return
-      if (pluginType === GaselessPluginName && !isGovernanceEnabled) {
-        return null;
-      }
       return fetchDelegatee(params, client);
     },
     options
