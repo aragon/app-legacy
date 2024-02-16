@@ -34,9 +34,11 @@ const Community: React.FC = () => {
     reviewCheckError,
     eligibilityType,
     eligibilityTokenAmount,
+    votingType,
   } = getValues();
 
-  const isGovTokenRequiresWrapping = !isCustomToken && tokenType === 'ERC-20';
+  const isGovTokenRequiresWrapping =
+    !isCustomToken && tokenType === 'ERC-20' && votingType !== 'gasless';
 
   const govTokenSymbol = isGovTokenRequiresWrapping
     ? gTokenSymbol(tokenSymbol)
