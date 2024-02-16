@@ -11,7 +11,7 @@ import {SupportedNetworks} from 'utils/constants';
 import {DaoDetails, TokenVotingClient} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
-import {useGaslessGovernanceEnabled} from '../../../hooks/useGaslessGovernanceEnabled';
+import {useGaslessGovernanceEnabled} from 'hooks/useGaslessGovernanceEnabled';
 
 const fetchDelegatee = async (
   params: IFetchDelegateeParams,
@@ -29,7 +29,10 @@ export const useDelegatee = (
   daoDetails: DaoDetails | null | undefined
 ) => {
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({daoDetails});
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
+    pluginType,
+    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
+  });
 
   const client = usePluginClient(
     pluginType === GaselessPluginName

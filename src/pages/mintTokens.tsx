@@ -38,11 +38,16 @@ import {useGaslessGovernanceEnabled} from '../hooks/useGaslessGovernanceEnabled'
 
 export const MintToken: React.FC = () => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins[0].instanceAddress as string;
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
   const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-    pluginType: daoDetails?.plugins[0].id as PluginTypes,
+    pluginAddress,
+    pluginType,
   });
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({daoDetails});
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
+    pluginAddress,
+    pluginType,
+  });
 
   const {t} = useTranslation();
   const {network} = useNetwork();
