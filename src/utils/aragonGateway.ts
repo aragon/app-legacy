@@ -18,7 +18,6 @@ class AragonGateway {
   private baseUrl = import.meta.env.VITE_GATEWAY_URL;
 
   public backendUrl = `${this.baseUrl}/graphql`;
-  public ipfsUrl = `${this.baseUrl}/v${this.ipfsVersion}/ipfs`;
 
   getRpcProvider = (
     chainIdOrNetwork: number | SupportedNetworks
@@ -62,6 +61,22 @@ class AragonGateway {
     const rpcUrl = `${this.baseUrl}/v${this.rpcVersion}/rpc/${gatewayNetwork}/${gatewayKey}`;
 
     return rpcUrl;
+  };
+
+  buildIpfsUrl = (
+    chainIdOrNetwork: number | SupportedNetworks
+  ): string | null => {
+    const network = this.parseNetwork(chainIdOrNetwork);
+
+    if (network == null || network === 'unsupported') {
+      return null;
+    }
+
+    const {isTestnet} = CHAIN_METADATA[network];
+    const ipfsEnv = isTestnet ? 'test' : 'prod';
+    const ipfsUrl = `${this.baseUrl}/v${this.ipfsVersion}/ipfs/${ipfsEnv}/api/v0`;
+
+    return ipfsUrl;
   };
 
   private parseNetwork = (

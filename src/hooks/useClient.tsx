@@ -61,7 +61,7 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
 
     const ipfsNodes = [
       {
-        url: aragonGateway.ipfsUrl,
+        url: aragonGateway.buildIpfsUrl(network)!,
         headers: {'X-API-KEY': import.meta.env.VITE_GATEWAY_IPFS_API_KEY},
       },
     ];
