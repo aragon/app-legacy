@@ -142,7 +142,7 @@ export const ReviewExecutionMultisig: React.FC<
             if (typeof w === 'string') {
               return {
                 address: w,
-              } as MultisigWalletField;
+              };
             }
             return w;
           }) as MultisigWalletField[]

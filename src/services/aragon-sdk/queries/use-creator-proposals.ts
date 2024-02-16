@@ -10,7 +10,11 @@ import {
 import {invariant} from 'utils/invariant';
 import {useNetwork} from 'context/network';
 import {ProposalBase, SortDirection} from '@aragon/sdk-client-common';
-import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginClient,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {
   GaslessVotingClient,
   GaslessVotingProposal,
@@ -65,7 +69,7 @@ const fetchCreatorGaslessProposals = async (
   ).methods.getMemberProposals(
     pluginAddress,
     address,
-    blockNumber ? blockNumber : 0,
+    blockNumber ?? 0,
     SortDirection.DESC,
     ProposalSortBy.CREATED_AT
   );
@@ -147,8 +151,7 @@ export const useCreatorProposals = (
   return useQuery(
     aragonSdkQueryKeys.getCreatorProposals(baseParams, params),
     () =>
-      params.pluginType ===
-      'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth'
+      params.pluginType === GaselessPluginName
         ? fetchCreatorGaslessProposals(params, client)
         : fetchCreatorProposals(params, client),
     options

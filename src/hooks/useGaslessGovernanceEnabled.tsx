@@ -9,14 +9,12 @@ export const useGaslessGovernanceEnabled = ({
   pluginType?: PluginTypes;
   pluginAddress?: string;
 }) => {
-  const pType = pluginType;
-  const pAddress = pluginAddress;
   const {data: votingSettings} = useVotingSettings({
-    pluginAddress: pAddress,
-    pluginType: pType,
+    pluginAddress: pluginAddress,
+    pluginType: pluginType,
   });
 
-  const isGasless = pType === GaselessPluginName;
+  const isGasless = pluginType === GaselessPluginName;
   let isGovernanceEnabled = true;
 
   if (isGasless) {

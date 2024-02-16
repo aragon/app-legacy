@@ -222,7 +222,7 @@ export function proposal2CardProps(
     const specificProps = {
       voteTitle: t('governance.proposals.voteTitle'),
       stateLabel: PROPOSAL_STATE_LABELS,
-      alertMessage: alertMessage,
+      alertMessage,
       title: proposal.metadata.title,
       description: proposal.metadata.description,
     };

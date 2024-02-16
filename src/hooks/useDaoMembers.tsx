@@ -166,7 +166,7 @@ export const useDaoMembers = (
     sdkToDaoMember(member, daoToken?.decimals)
   );
 
-  const {members: nonGovernanceMemebers} = useNonWrappedDaoMemberBalance({
+  const {members: nonGovernanceMembers} = useNonWrappedDaoMemberBalance({
     isGovernanceEnabled,
     subgraphMembers: parsedSubgraphData as TokenDaoMember[],
     censusId,
@@ -266,7 +266,7 @@ export const useDaoMembers = (
         ];
       } else {
         if (!isGovernanceEnabled) {
-          return nonGovernanceMemebers;
+          return nonGovernanceMembers;
         }
         return parsedSubgraphData;
       }
@@ -279,11 +279,9 @@ export const useDaoMembers = (
     ? [...getCombinedData()].sort(sortDaoMembers(opts.sort, address))
     : getCombinedData();
   memberCount =
-    nonWrappedCensusSize !== null
-      ? nonWrappedCensusSize
-      : useSubgraph
+    nonWrappedCensusSize ?? useSubgraph
       ? sortedData.length
-      : graphqlData?.holders.totalHolders || sortedData.length;
+      : graphqlData?.holders.totalHolders ?? sortedData.length;
   const searchTerm = opts?.searchTerm;
   const filteredData = !searchTerm
     ? sortedData
