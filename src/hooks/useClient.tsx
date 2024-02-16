@@ -14,11 +14,7 @@ import React, {
   useState,
 } from 'react';
 
-import {
-  CHAIN_METADATA,
-  SUBGRAPH_API_URL,
-  SupportedNetworks,
-} from 'utils/constants';
+import {SUBGRAPH_API_URL, SupportedNetworks} from 'utils/constants';
 import {translateToAppNetwork, translateToNetworkishName} from 'utils/library';
 import {useWallet} from './useWallet';
 import {aragonGateway} from 'utils/aragonGateway';
@@ -65,10 +61,8 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
 
     const ipfsNodes = [
       {
-        url: `${CHAIN_METADATA[network].ipfs}/api/v0`,
-        headers: {
-          'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
-        },
+        url: aragonGateway.ipfsUrl,
+        headers: {'X-API-KEY': import.meta.env.VITE_GATEWAY_IPFS_API_KEY},
       },
     ];
 

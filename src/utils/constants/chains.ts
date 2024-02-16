@@ -122,7 +122,6 @@ export type ChainData = {
   coingecko?: ApiMetadata;
   alchemyApi: string;
   supportsEns: boolean;
-  ipfs?: string;
 };
 
 const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
@@ -157,7 +156,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
-    ipfs: 'https://prod.ipfs.aragon.network',
   },
   polygon: {
     id: 137,
@@ -186,7 +184,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
-    ipfs: 'https://prod.ipfs.aragon.network',
   },
 
   arbitrum: {
@@ -215,7 +212,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
     supportsEns: false,
-    ipfs: 'https://prod.ipfs.aragon.network',
   },
   base: {
     id: 8453,
@@ -240,7 +236,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     alchemyApi: '',
     supportsEns: false,
-    ipfs: 'https://prod.ipfs.aragon.network',
   },
   sepolia: {
     id: 11155111,
@@ -266,7 +261,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     alchemyApi: 'https://eth-sepolia.g.alchemy.com/v2',
     supportsEns: false,
-    ipfs: 'https://test.ipfs.aragon.network',
   },
   unsupported: {
     id: 1,
@@ -286,7 +280,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     etherscanApi: '',
     alchemyApi: '',
     supportsEns: false,
-    ipfs: '',
   },
   goerli: {
     id: 5,
@@ -312,7 +305,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
     supportsEns: true,
-    ipfs: 'https://test.ipfs.aragon.network',
   },
   mumbai: {
     id: 80001,
@@ -338,7 +330,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
     supportsEns: false,
-    ipfs: 'https://test.ipfs.aragon.network',
   },
   'arbitrum-goerli': {
     id: 421613,
@@ -363,7 +354,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
     supportsEns: false,
-    ipfs: 'https://test.ipfs.aragon.network',
   },
   'base-goerli': {
     id: 84531,
@@ -389,7 +379,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     alchemyApi: '',
     supportsEns: false,
-    ipfs: 'https://prod.ipfs.aragon.network',
   },
 };
 
