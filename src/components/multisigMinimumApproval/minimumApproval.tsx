@@ -13,7 +13,6 @@ type Props = NumberInputProps & {
 const MinimumApproval: React.FC<Props> = ({max, min, ...rest}) => {
   const {t} = useTranslation();
 
-  if (!rest.value) return;
   const value = Number(rest.value);
 
   return (
