@@ -83,8 +83,8 @@ export const DelegateVotingMenu: React.FC = () => {
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
-    {enabled: daoToken != null && !isOnWrongNetwork},
-    daoDetails
+    daoDetails,
+    {enabled: daoToken != null && !isOnWrongNetwork}
   );
 
   // The useDelegatee hook returns null when current delegate is connected address

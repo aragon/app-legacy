@@ -75,8 +75,8 @@ export const DelegationGatingMenu: React.FC = () => {
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
-    {enabled: daoToken != null},
-    daoDetails
+    daoDetails,
+    {enabled: daoToken != null}
   );
 
   // The useDelegatee hook returns null when current delegate is connected address

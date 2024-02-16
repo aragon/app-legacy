@@ -25,8 +25,8 @@ const fetchDelegatee = async (
 
 export const useDelegatee = (
   params: IFetchDelegateeParams,
-  options: UseQueryOptions<string | null> = {},
-  daoDetails: DaoDetails | null | undefined
+  daoDetails: DaoDetails | null | undefined,
+  options: UseQueryOptions<string | null> = {}
 ) => {
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
   const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
