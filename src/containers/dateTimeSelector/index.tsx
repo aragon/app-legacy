@@ -1,5 +1,6 @@
 import {DateInput, DropdownInput} from '@aragon/ods-old';
 import {toDate} from 'date-fns-tz';
+import format from 'date-fns/format';
 import React, {useCallback, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -147,9 +148,9 @@ const DateTimeSelector: React.FC<Props> = ({
 
       validationTimeout = setTimeout(() => {
         // automatically correct the end date to minimum
-        // setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
-        // setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
-        // setValue('endUtc', currTimezone);
+        setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
+        setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
+        setValue('endUtc', currTimezone);
       }, CORRECTION_DELAY);
     }
 
@@ -157,9 +158,9 @@ const DateTimeSelector: React.FC<Props> = ({
     if (maxDurationMills !== 0 && endMills > maxEndDateTimeMills) {
       validationTimeout = setTimeout(() => {
         // automatically correct the end date to maximum
-        // setValue('endDate', format(maxEndDateTimeMills, 'yyyy-MM-dd'));
-        // setValue('endTime', format(maxEndDateTimeMills, 'HH:mm'));
-        // setValue('endUtc', currTimezone);
+        setValue('endDate', format(maxEndDateTimeMills, 'yyyy-MM-dd'));
+        setValue('endTime', format(maxEndDateTimeMills, 'HH:mm'));
+        setValue('endUtc', currTimezone);
       }, CORRECTION_DELAY);
     }
 
