@@ -18,7 +18,7 @@ import {
   IDelegateVotingFormValues,
 } from './delegateVotingUtils';
 import {useGaslessGovernanceEnabled} from '../../hooks/useGaslessGovernanceEnabled';
-import {GaselessPluginName, PluginTypes} from '../../hooks/usePluginClient';
+import {PluginTypes} from '../../hooks/usePluginClient';
 
 export interface IDelegateVotingFormProps {
   initialMode?: 'delegate' | 'reclaim';

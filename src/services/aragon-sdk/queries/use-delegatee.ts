@@ -8,10 +8,9 @@ import {
 } from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {SupportedNetworks} from 'utils/constants';
-import {DaoDetails, TokenVotingClient} from '@aragon/sdk-client';
+import {TokenVotingClient} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
-import {useGaslessGovernanceEnabled} from 'hooks/useGaslessGovernanceEnabled';
 
 const fetchDelegatee = async (
   params: IFetchDelegateeParams,
