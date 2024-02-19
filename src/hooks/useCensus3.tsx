@@ -94,7 +94,11 @@ export const useGaslessCensusId = ({
 
   let censusId: string | null = null;
   let censusSize: number | null = null;
-  if (_enable && proposalData) {
+  if (
+    _enable &&
+    proposalData &&
+    (proposalData as GaslessVotingProposal).vochain
+  ) {
     const census = (proposalData as GaslessVotingProposal).vochain.metadata
       .census;
     censusId = census.censusId;
