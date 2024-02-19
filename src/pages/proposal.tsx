@@ -37,7 +37,7 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -112,7 +112,7 @@ export const Proposal: React.FC = () => {
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
   const isMultisigPlugin = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingPlugin = pluginType === 'token-voting.plugin.dao.eth';
-  const isGaslessVotingPlugin = pluginType === GaselessPluginName;
+  const isGaslessVotingPlugin = pluginType === GaslessPluginName;
 
   const {data: daoToken} = useDaoToken(pluginAddress);
 

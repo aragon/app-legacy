@@ -24,7 +24,7 @@ import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voti
 import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
-import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {DaoMember} from 'utils/paths';
 import {useNetwork} from 'context/network';
@@ -124,7 +124,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
 
   const isMultisigProposal =
     (pluginType === 'multisig.plugin.dao.eth' ||
-      pluginType === GaselessPluginName) && // If is gasless and have approvals or min approvals act as multisig voting terminal
+      pluginType === GaslessPluginName) && // If is gasless and have approvals or min approvals act as multisig voting terminal
     !!approvals &&
     !!minApproval;
 

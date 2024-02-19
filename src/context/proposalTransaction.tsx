@@ -26,7 +26,7 @@ import {BigNumber} from 'ethers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   isGaslessVotingClient,
   isMultisigClient,
@@ -386,7 +386,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (!address) return;
 
       let voteToPersist;
-      if (pluginType === GaselessPluginName) {
+      if (pluginType === GaslessPluginName) {
         if (vote && voteTokenAddress != null) {
           const weight = await fetchVotingPower({
             tokenAddress: voteTokenAddress,
@@ -482,7 +482,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
     if (pluginType === 'multisig.plugin.dao.eth' && approvalParams) {
       handleMultisigApproval(approvalParams);
-    } else if (pluginType === GaselessPluginName && approvalParams) {
+    } else if (pluginType === GaslessPluginName && approvalParams) {
       handleExecutionMultisigApproval(approvalParams);
     } else if (pluginType === 'token-voting.plugin.dao.eth' && voteParams) {
       handleTokenVotingVote(voteParams);
@@ -707,7 +707,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   if (
     (isVotingContext && pluginType === 'multisig.plugin.dao.eth') ||
-    (isVotingContext && pluginType === GaselessPluginName)
+    (isVotingContext && pluginType === GaslessPluginName)
   ) {
     title = t('transactionModal.multisig.title.approveProposal');
     labels.WAITING = t('transactionModal.multisig.ctaApprove');

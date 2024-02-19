@@ -27,7 +27,7 @@ import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -348,7 +348,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
     if (!state.daoUpdateData) return;
-    if (state.showModal.type === 'plugin' && pluginType !== GaselessPluginName)
+    if (state.showModal.type === 'plugin' && pluginType !== GaslessPluginName)
       return (
         pluginClient as MultisigClient | TokenVotingClient
       )?.estimation.prepareUpdate(state.daoUpdateData);

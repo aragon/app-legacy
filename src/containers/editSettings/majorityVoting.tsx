@@ -24,7 +24,7 @@ import ConfigureCommunity from 'containers/configureCommunity';
 import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
@@ -57,7 +57,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType: PluginTypes = daoDetails?.plugins?.[0]?.id as PluginTypes;
-  const isGasless = pluginType === GaselessPluginName;
+  const isGasless = pluginType === GaslessPluginName;
 
   const {data: daoToken, isLoading: tokensAreLoading} =
     useDaoToken(pluginAddress);
@@ -350,7 +350,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     setValue(
       'membership',
       daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth' ||
-        daoDetails?.plugins[0].id === GaselessPluginName
+        daoDetails?.plugins[0].id === GaslessPluginName
         ? 'token'
         : 'wallet'
     );

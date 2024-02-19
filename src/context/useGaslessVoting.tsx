@@ -16,7 +16,7 @@ import {
 } from '@vocdoni/gasless-voting';
 import {DetailedProposal} from '../utils/types';
 import {isGaslessProposal} from '../utils/proposals';
-import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
+import {GaslessPluginName, usePluginClient} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
 import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
 import {ProposalStatus} from '@aragon/sdk-client-common';
@@ -31,7 +31,7 @@ export type GaslessVotingSteps = StepsMap<GaslessVotingStepId>;
 const useGaslessVoting = () => {
   const {client: vocdoniClient} = useVocdoniClient();
   const pluginClient = usePluginClient(
-    GaselessPluginName
+    GaslessPluginName
   ) as GaslessVotingClient;
   const {data: daoDetails} = useDaoDetailsQuery();
 
@@ -152,7 +152,7 @@ export const useGaslessCommiteVotes = (
   proposal: GaslessVotingProposal
 ) => {
   const [canApprove, setCanApprove] = useState(false);
-  const client = usePluginClient(GaselessPluginName) as GaslessVotingClient;
+  const client = usePluginClient(GaslessPluginName) as GaslessVotingClient;
   const {address} = useWallet();
 
   const isExecutionPeriod = proposal.status === ProposalStatus.SUCCEEDED;

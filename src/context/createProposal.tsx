@@ -49,7 +49,7 @@ import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   isGaslessVotingClient,
   isTokenVotingClient,
   PluginTypes,
@@ -144,7 +144,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
-  const gasless = pluginType === GaselessPluginName;
+  const gasless = pluginType === GaslessPluginName;
 
   const {
     days: minDays,

@@ -8,10 +8,9 @@ import {useEffect, useState} from 'react';
 import {useClient} from './useClient';
 import {VocdoniEnv} from './useVocdoniSdk';
 
-// todo(kon): fix typo
-export const GaselessPluginName =
+export const GaslessPluginName =
   'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth';
-export type GaselessPluginType = typeof GaselessPluginName;
+export type GaselessPluginType = typeof GaslessPluginName;
 
 export type PluginTypes =
   | 'token-voting.plugin.dao.eth'
@@ -79,7 +78,7 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
         case 'token-voting.plugin.dao.eth':
           setPluginClient(new TokenVotingClient(context));
           break;
-        case GaselessPluginName:
+        case GaslessPluginName:
           setPluginClient(
             new GaslessVotingClient(
               new GaslessVotingContext(context),

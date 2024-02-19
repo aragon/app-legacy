@@ -3,7 +3,7 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 import {gql} from 'graphql-request';
 
-import {GaselessPluginName, usePluginClient} from 'hooks/usePluginClient';
+import {GaslessPluginName, usePluginClient} from 'hooks/usePluginClient';
 import {invariant} from 'utils/invariant';
 import {IFetchTotalProposalCountParams} from '../aragon-subgraph-service.api';
 import {aragonSubgraphQueryKeys} from '../query-keys';
@@ -99,7 +99,7 @@ const fetchTotalProposalCount = async (
       return await fetchMultisigProposalCount(params, client.graphql);
     case 'token-voting.plugin.dao.eth':
       return await fetchTokenVotingProposalCount(params, client.graphql);
-    case GaselessPluginName:
+    case GaslessPluginName:
       return await fetchGaslessVotingProposalCount(params, client.graphql);
     default:
       throw new Error('Invalid pluginType');

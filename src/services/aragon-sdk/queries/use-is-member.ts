@@ -7,7 +7,7 @@ import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {TokenDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -41,7 +41,7 @@ export const useIsMember = (
   const fetchVotingPower = useVotingPowerAsync();
 
   const isTokenVoting = params.pluginType === 'token-voting.plugin.dao.eth';
-  const isGaslessVoting = params.pluginType === GaselessPluginName;
+  const isGaslessVoting = params.pluginType === GaslessPluginName;
 
   // fetch voting settings
   const {data: votingSettings, isLoading: settingsAreLoading} =
