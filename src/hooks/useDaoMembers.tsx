@@ -10,7 +10,12 @@ import {Address, useBalance} from 'wagmi';
 import {useDaoToken} from './useDaoToken';
 import {useWallet} from './useWallet';
 import {useGaslessGovernanceEnabled} from './useGaslessGovernanceEnabled';
-import {useGaslessCensusId, useNonWrappedDaoMemberBalance} from './useCensus3';
+import {
+  useCensus3Token,
+  useGaslessCensusId,
+  useNonWrappedDaoMemberBalance,
+} from './useCensus3';
+import {useParams} from 'react-router-dom';
 
 export type MultisigDaoMember = {
   address: string;
@@ -132,6 +137,14 @@ export const useDaoMembers = (
     pluginType,
     enable: !isGovernanceEnabled,
   });
+  const {id: proposalId} = useParams();
+  // If is not a wrapped token and not on a proposal context we can still get the token holders amount
+  const enableCensus3Token = !isGovernanceEnabled && !proposalId;
+  const {token: census3Token} = useCensus3Token({
+    pluginType,
+    daoToken,
+    enable: enableCensus3Token,
+  });
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const opts = options ? options : {};
@@ -209,7 +222,9 @@ export const useDaoMembers = (
   // token holders data gives us the total holders, so only need to call once
   // and return this number if countOnly === true
   if (countOnly) {
-    if (nonWrappedCensusSize !== null) {
+    if (enableCensus3Token && census3Token !== null) {
+      memberCount = census3Token?.size ?? 0;
+    } else if (nonWrappedCensusSize !== null) {
       memberCount = nonWrappedCensusSize;
     } else if (useSubgraph) {
       memberCount = parsedSubgraphData?.length || 0;
@@ -276,7 +291,7 @@ export const useDaoMembers = (
     ? [...getCombinedData()].sort(sortDaoMembers(opts.sort, address))
     : getCombinedData();
   memberCount =
-    nonWrappedCensusSize ?? useSubgraph
+    census3Token?.size ?? nonWrappedCensusSize ?? useSubgraph
       ? sortedData.length
       : graphqlData?.holders.totalHolders ?? sortedData.length;
   const searchTerm = opts?.searchTerm;
