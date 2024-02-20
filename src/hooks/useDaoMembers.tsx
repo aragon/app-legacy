@@ -3,7 +3,7 @@ import {useNetwork} from 'context/network';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
-import {GaslessPluginName, PluginTypes} from './usePluginClient';
+import {PluginTypes} from './usePluginClient';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
 import {Address, useBalance} from 'wagmi';
@@ -133,10 +133,7 @@ export const useDaoMembers = (
     enable: !isGovernanceEnabled,
   });
 
-  const isTokenBased =
-    pluginType === 'token-voting.plugin.dao.eth' ||
-    pluginType === GaslessPluginName;
-
+  const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const opts = options ? options : {};
   let memberCount = 0;
   const countOnly = opts?.countOnly || false;

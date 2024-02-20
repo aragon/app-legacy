@@ -4945,7 +4945,7 @@
   dependencies:
     ethers "^5.6.2"
 
-"@vocdoni/gasless-voting@^0.0.1-rc24":
+"@vocdoni/gasless-voting@0.0.1-rc24":
   version "0.0.1-rc24"
   resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc24.tgz#b7c54074fdbb4bdad7eaae2e335c11c21cfbd40e"
   integrity sha512-3tfiuku08JXDX7qI14TTrHrg0F7tBddqXZ3RkWgtcGJgrqjav9bxUSuJyrjhc8iXkzxvLA8GoVtjU2VzNmsSng==
@@ -4979,10 +4979,10 @@
   resolved "https://registry.yarnpkg.com/@vocdoni/react-providers/-/react-providers-0.3.1.tgz#c4e4416926871d4f1ead7b022ffd1592b298115a"
   integrity sha512-Q7Op4wf4Ig/Mf5ceDDxmyHShEhVuioQShW9GOwAcsIiUl7ijeuAuO89uLq6u/PlVuwGJkppHG07O5oUNlxe6UQ==
 
-"@vocdoni/sdk@0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.7.1.tgz#99504b04222c521a65e5bd352bfc04379fb5b568"
-  integrity sha512-qgHZoFsaJBkwWsrJeu1EZM5iMqqB2DlvQKjtncwAR8PZK/7ueVvavBMoig1Zx5REBhEhY1MKWs1d253lMHjIpw==
+"@vocdoni/sdk@0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.7.5.tgz#31a0f2e208475205facc5aca22d8f2f064e0e29c"
+  integrity sha512-jzrQkkz36B0DFd72QffzqC0chve710xedZbOtiUwBIfbZRyx3W8PHoV2Ej91ldB+Y9tmVVS1wkFdFG3ErzgOhA==
   dependencies:
     "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/address" "^5.7.0"
