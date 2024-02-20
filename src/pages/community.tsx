@@ -302,7 +302,11 @@ export const Community: React.FC = () => {
                 ]}
                 side="bottom"
                 trigger={
-                  <Button variant="tertiary" iconLeft={IconType.SORT_ASC} size="lg">
+                  <Button
+                    variant="tertiary"
+                    iconLeft={IconType.SORT_ASC}
+                    size="lg"
+                  >
                     {sortLabel}
                   </Button>
                 }

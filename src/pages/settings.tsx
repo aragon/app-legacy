@@ -334,9 +334,7 @@ const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
       title={t('labels.daoSettings')}
       primaryBtnProps={{
         label: t('settings.edit'),
-        iconLeft: isMobile ? (
-          <Icon icon={IconType.APP_PROPOSALS} />
-        ) : undefined,
+        iconLeft: isMobile ? <Icon icon={IconType.APP_PROPOSALS} /> : undefined,
         onClick: () => navigate(generatePath(EditSettings, {network, dao})),
       }}
       customBody={<>{children}</>}

@@ -52,7 +52,10 @@ export const DaoCard = (props: IDaoCardProps) => {
       </DaoDataWrapper>
       <DaoMetadataWrapper>
         <IconWrapper>
-          <Icon icon={IconType.BLOCKCHAIN_BLOCKCHAIN} className="text-neutral-600" />
+          <Icon
+            icon={IconType.BLOCKCHAIN_BLOCKCHAIN}
+            className="text-neutral-600"
+          />
           <IconLabel>{CHAIN_METADATA[network].name}</IconLabel>
         </IconWrapper>
         <IconWrapper>
