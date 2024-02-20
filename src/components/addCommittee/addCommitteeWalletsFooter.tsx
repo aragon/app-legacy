@@ -17,14 +17,11 @@ const AddCommitteeWalletsFooter: React.FC<WalletsFooterProps> = ({
       <FooterItem1>
         <Label label={t('labels.summary')} />
       </FooterItem1>
-      <FooterRow>
-        <FooterItem1>
-          <StyledLabel>{t('labels.whitelistWallets.totalWallets')}</StyledLabel>
-        </FooterItem1>
-        <FooterItem2>
-          <StyledLabel>{totalAddresses}</StyledLabel>
-        </FooterItem2>
-      </FooterRow>
+      <FooterItem1>
+        <StyledLabel>
+          {t('labels.whitelistWallets.totalWallets')} {totalAddresses}
+        </StyledLabel>
+      </FooterItem1>
     </Container>
   );
 };
@@ -32,21 +29,13 @@ const AddCommitteeWalletsFooter: React.FC<WalletsFooterProps> = ({
 export default AddCommitteeWalletsFooter;
 
 const Container = styled.div.attrs({
-  className: 'hidden tablet:flex tablet:flex-col p-2 bg-ui-0',
+  className: 'hidden md:flex p-4 space-x-4 bg-neutral-0',
 })``;
 
-const FooterRow = styled.div.attrs({
-  className: 'flex',
-})``;
-
-export const FooterItem1 = styled.div.attrs({
+const FooterItem1 = styled.div.attrs({
   className: 'flex-1',
 })``;
 
-const FooterItem2 = styled.div.attrs({
-  className: 'w-8 text-right',
-})``;
-
 const StyledLabel = styled.p.attrs({
-  className: 'text-ui-800',
+  className: 'font-semibold text-neutral-800 text-right',
 })``;
