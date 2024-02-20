@@ -98,7 +98,7 @@ export const WalletMenu = () => {
         <StyledButtonText
           size="lg"
           variant="tertiary"
-          iconLeft={IconType.BLOCKCHAIN_TRANSACTION}
+          iconLeft={IconType.APP_TRANSACTIONS}
           onClick={handleViewTransactions}
         >
           {t('labels.viewTransactions')}

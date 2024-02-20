@@ -99,7 +99,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
               : t('scc.writeProxy.dropdownDontWriteLabel')
           }
-          iconRight={<Icon icon={IconType.BLOCKCHAIN_TRANSACTION} />}
+          iconRight={<Icon icon={IconType.APP_TRANSACTIONS} />}
           className="my-2 w-full justify-between px-4"
         />
       ),
