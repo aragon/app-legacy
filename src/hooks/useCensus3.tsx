@@ -10,7 +10,10 @@ import {useParams} from 'react-router-dom';
 import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {DaoMember, TokenDaoMember} from './useDaoMembers';
-import {getCensus3VotingPower} from '../utils/tokens';
+import {
+  getCensus3VotingPowerByCensusId,
+  getCensus3VotingPowerByTokenAddress,
+} from '../utils/tokens';
 import {Erc20TokenDetails, Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 import {useWallet} from './useWallet';
 
@@ -110,30 +113,51 @@ export const useGaslessCensusId = ({
   return {censusId, censusSize};
 };
 
+/**
+ * Get member balance from vocdoni census3. It accepts a census id or a token id to retrieve the voting power
+ * @param holders list of members to get the balance
+ * @param isGovernanceEnabled
+ * @param censusId
+ * @param tokenId
+ */
 export const useNonWrappedDaoMemberBalance = ({
+  holders,
   isGovernanceEnabled,
   censusId,
-  subgraphMembers,
+  tokenId,
 }: {
+  holders: TokenDaoMember[];
   isGovernanceEnabled: boolean;
-  censusId: string | null;
-  subgraphMembers: TokenDaoMember[];
+  censusId?: string | null;
+  tokenId?: string;
 }) => {
   // State to store DaoMembers[]
-  const [members, setMembers] = useState<DaoMember[]>(subgraphMembers);
+  const [members, setMembers] = useState<DaoMember[]>(holders);
   const {client: vocdoniClient} = useClient();
+  const census3 = useCensus3Client();
+  const {chainId} = useWallet();
 
-  // UseEffect to calculate the vocdoni client fetchProof function
+  // todo(kon): use a query
   useEffect(() => {
-    if (vocdoniClient && isGovernanceEnabled && censusId) {
+    if (vocdoniClient && isGovernanceEnabled && (censusId || tokenId)) {
       (async () => {
         const members = await Promise.all(
-          subgraphMembers.map(async member => {
-            const votingPower = await getCensus3VotingPower(
-              member.address,
-              censusId,
-              vocdoniClient
-            );
+          holders.map(async member => {
+            let votingPower: string | bigint = '0';
+            if (censusId) {
+              votingPower = await getCensus3VotingPowerByCensusId(
+                vocdoniClient,
+                member.address,
+                censusId
+              );
+            } else if (tokenId) {
+              votingPower = await getCensus3VotingPowerByTokenAddress(
+                census3,
+                tokenId,
+                chainId,
+                member.address
+              );
+            }
             member.balance = Number(votingPower);
             member.votingPower = Number(votingPower);
             return member;
@@ -142,7 +166,16 @@ export const useNonWrappedDaoMemberBalance = ({
         setMembers(members);
       })();
     }
-  }, [censusId, isGovernanceEnabled, subgraphMembers, vocdoniClient]);
+  }, [
+    census3,
+    censusId,
+    chainId,
+    holders,
+    isGovernanceEnabled,
+    members,
+    tokenId,
+    vocdoniClient,
+  ]);
 
   return {members};
 };

@@ -23,7 +23,7 @@ import {erc1155TokenABI} from 'abis/erc1155TokenABI';
 import {erc721TokenABI} from 'abis/erc721TokenABI';
 import {aragonTokenABI} from 'abis/aragonTokenABI';
 import {queryClient} from 'index';
-import {VocdoniSDKClient} from '@vocdoni/sdk';
+import {VocdoniCensus3Client, VocdoniSDKClient} from '@vocdoni/sdk';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -127,15 +127,28 @@ export async function getPastVotingPower(
 }
 
 /**
- * Returns the voting power for the specified address at specified gasless census id.
- * This is the way to get the voting power for gasless processes.
+ * Returns the voting power for the specified address at specified vocdoni census id.
+ * This is the way to get the voting power for vocdoni processes.
  */
-export async function getCensus3VotingPower(
-  address: string,
-  censusId: string,
-  vocdoniClient: VocdoniSDKClient
+export async function getCensus3VotingPowerByCensusId(
+  vocdoniClient: VocdoniSDKClient,
+  holderAddress: string,
+  censusId: string
 ) {
-  return (await vocdoniClient.fetchProof(censusId, address)).weight;
+  return (await vocdoniClient.fetchProof(censusId, holderAddress)).weight;
+}
+
+/**
+ * Returns the voting power for the specified address using vocdoni census3 service.
+ * It returns the last known holder balance for a specific token.
+ */
+export async function getCensus3VotingPowerByTokenAddress(
+  census3Client: VocdoniCensus3Client,
+  tokenId: string,
+  chainId: number,
+  holderId: string
+) {
+  return await census3Client.tokenHolderBalance(tokenId, chainId, holderId);
 }
 
 /**

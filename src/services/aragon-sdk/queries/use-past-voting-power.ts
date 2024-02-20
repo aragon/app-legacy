@@ -4,7 +4,10 @@ import {useCallback} from 'react';
 
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {getCensus3VotingPower, getPastVotingPower} from 'utils/tokens';
+import {
+  getCensus3VotingPowerByCensusId,
+  getPastVotingPower,
+} from 'utils/tokens';
 import type {IFetchPastVotingPowerParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {useGaslessCensusId} from 'hooks/useCensus3';
@@ -12,6 +15,10 @@ import {useDaoDetailsQuery} from '../../../hooks/useDaoDetails';
 import {GaslessPluginName, PluginTypes} from '../../../hooks/usePluginClient';
 import {useClient} from '@vocdoni/react-providers';
 
+/**
+ * Get voting power at specific census id. This means that is the voting power of a holder
+ * at specific block number.
+ */
 const useGaslessPastVotingPower = () => {
   const {data: daoDetails} = useDaoDetailsQuery();
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
@@ -23,10 +30,10 @@ const useGaslessPastVotingPower = () => {
   const getGaslessPastVotingPower = useCallback(
     async (address: string) => {
       if (!censusId) return BigNumber.from(0);
-      const votingPower = await getCensus3VotingPower(
+      const votingPower = await getCensus3VotingPowerByCensusId(
+        vocdoniClient,
         address,
-        censusId,
-        vocdoniClient
+        censusId
       );
       return BigNumber.from(votingPower);
     },

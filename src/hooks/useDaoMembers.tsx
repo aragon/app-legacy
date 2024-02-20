@@ -178,8 +178,9 @@ export const useDaoMembers = (
 
   const {members: nonGovernanceMembers} = useNonWrappedDaoMemberBalance({
     isGovernanceEnabled,
-    subgraphMembers: parsedSubgraphData as TokenDaoMember[],
+    holders: parsedSubgraphData as TokenDaoMember[],
     censusId,
+    tokenId: daoToken?.address,
   });
 
   const {data: userBalance} = useBalance({
