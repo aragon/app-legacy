@@ -1221,6 +1221,11 @@ export const getModifyMetadataAction = async (
   daoAddress: string,
   client: Client
 ) => {
+  if (preparedAction.inputs?.links)
+    preparedAction.inputs.links = preparedAction.inputs?.links.filter(
+      link => link.name !== '' && link.url !== ''
+    );
+
   if (
     preparedAction.inputs.avatar &&
     typeof preparedAction.inputs.avatar !== 'string'
