@@ -23,7 +23,7 @@ export const SettingsUpdateCard: React.FC = () => {
         <div className="flex items-start gap-x-12">
           <div className="flex-1 space-y-2">
             <Head>
-              <Icon icon={IconType.UPDATE} />
+              <Icon icon={IconType.RELOAD} />
               <Title>{t('update.alert.title')}</Title>
             </Head>
             <ContentWrapper className="space-y-0">
@@ -53,7 +53,7 @@ export const SettingsUpdateCard: React.FC = () => {
   return (
     <Container>
       <Head>
-        <Icon icon={IconType.UPDATE} />
+        <Icon icon={IconType.RELOAD} />
         <Title>{t('update.alert.title')}</Title>
       </Head>
       <ContentWrapper>

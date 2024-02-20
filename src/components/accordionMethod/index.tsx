@@ -84,7 +84,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                   </p>
                 )}
                 {verified ? (
-                  <Icon icon={IconType.RADIO_CHECK} />
+                  <Icon icon={IconType.SUCCESS} />
                 ) : (
                   <Icon icon={IconType.WARNING} />
                 )}
@@ -111,7 +111,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                   <Button
                     variant="tertiary"
                     size="md"
-                    iconLeft={IconType.MENU_VERTICAL}
+                    iconLeft={IconType.DOTS_VERTICAL}
                   />
                 }
               />

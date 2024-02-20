@@ -98,7 +98,7 @@ export const WalletMenu = () => {
         <StyledButtonText
           size="lg"
           variant="tertiary"
-          iconLeft={IconType.SWITCH}
+          iconLeft={IconType.BLOCKCHAIN_TRANSACTION}
           onClick={handleViewTransactions}
         >
           {t('labels.viewTransactions')}
@@ -106,7 +106,7 @@ export const WalletMenu = () => {
         <StyledButtonText
           size="lg"
           variant="tertiary"
-          iconLeft={IconType.TURN_OFF}
+          iconLeft={IconType.LOGOUT}
           onClick={handleDisconnect}
         >
           {t('labels.disconnectWallet')}

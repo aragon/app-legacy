@@ -103,7 +103,7 @@ export const Transfers: React.FC = () => {
         description={`${totalTransfers} Total Volume`}
         primaryBtnProps={{
           label: t('TransferModal.newTransfer'),
-          iconLeft: <Icon icon={IconType.ADD} />,
+          iconLeft: <Icon icon={IconType.PLUS} />,
           onClick: () => open('transfer'),
         }}
       >
@@ -140,7 +140,7 @@ export const Transfers: React.FC = () => {
                     <Button
                       variant="tertiary"
                       size="md"
-                      iconLeft={IconType.MENU_VERTICAL}
+                      iconLeft={IconType.DOTS_VERTICAL}
                     />
                   }
                 />

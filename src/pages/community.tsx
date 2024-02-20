@@ -196,7 +196,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <Icon icon={IconType.TX_FAILURE} />,
+              iconLeft: <Icon icon={IconType.CRITICAL} />,
               onClick: () => open('delegateVoting'),
             },
             secondaryBtnProps: {
@@ -214,12 +214,12 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <Icon icon={IconType.TX_FAILURE} />,
+              iconLeft: <Icon icon={IconType.CRITICAL} />,
               onClick: handlePrimaryClick,
             },
             secondaryBtnProps: {
               label: t('labels.mintTokens'),
-              iconLeft: <Icon icon={IconType.ADD} />,
+              iconLeft: <Icon icon={IconType.PLUS} />,
               onClick: handleSecondaryButtonClick,
             },
             tertiaryBtnProps: {
@@ -241,7 +241,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <Icon icon={IconType.TX_FAILURE} />,
+              iconLeft: <Icon icon={IconType.CRITICAL} />,
               onClick: () => open('delegateVoting'),
             },
             secondaryBtnProps: {
@@ -302,7 +302,7 @@ export const Community: React.FC = () => {
                 ]}
                 side="bottom"
                 trigger={
-                  <Button variant="tertiary" iconLeft={IconType.SORT} size="lg">
+                  <Button variant="tertiary" iconLeft={IconType.SORT_ASC} size="lg">
                     {sortLabel}
                   </Button>
                 }

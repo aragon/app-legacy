@@ -33,14 +33,14 @@ const MobileNav: React.FC<MobileNavProps> = props => {
               <Button
                 variant="tertiary"
                 size="lg"
-                iconLeft={IconType.MENU_DEFAULT}
+                iconLeft={IconType.MENU}
                 onClick={() => open('mobileMenu')}
               />
             ) : (
               <Button
                 size="lg"
                 variant="tertiary"
-                iconLeft={IconType.MENU_DEFAULT}
+                iconLeft={IconType.MENU}
                 onClick={() => open('mobileMenu')}
               >
                 {t('menu')}

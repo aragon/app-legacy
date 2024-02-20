@@ -167,7 +167,7 @@ const InputForm: React.FC<InputFormProps> = ({
           <p className="text-sm font-semibold leading-normal text-primary-500">
             {selectedSC.name}
           </p>
-          <Icon icon={IconType.RADIO_CHECK} />
+          <Icon icon={IconType.SUCCESS} />
         </div>
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
@@ -175,7 +175,7 @@ const InputForm: React.FC<InputFormProps> = ({
         <p className="text-sm font-semibold leading-normal text-primary-500">
           {selectedSC.name}
         </p>
-        <Icon icon={IconType.RADIO_CHECK} />
+        <Icon icon={IconType.SUCCESS} />
       </div>
       {actionInputs.length > 0 ? (
         <div className="mt-10 space-y-4 rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral xl:bg-neutral-50">

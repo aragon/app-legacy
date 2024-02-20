@@ -801,7 +801,7 @@ export const Proposal: React.FC = () => {
               )
             }
             crumbs={breadcrumbs}
-            icon={<Icon icon={IconType.APP_GOVERNANCE} />}
+            icon={<Icon icon={IconType.APP_PROPOSALS} />}
             tag={tag}
           />
         )}

@@ -41,9 +41,9 @@ const StatusIcon: React.FC<{mode: StatusProps['mode']}> = ({mode}) => {
     case 'loading':
       return <Spinner size="sm" variant={spinnerColors[mode]} />;
     case 'error':
-      return <Icon icon={IconType.RADIO_CANCEL} className={iconColors[mode]} />;
+      return <Icon icon={IconType.REMOVE} className={iconColors[mode]} />;
     default:
-      return <Icon icon={IconType.RADIO_CHECK} className={iconColors[mode]} />;
+      return <Icon icon={IconType.SUCCESS} className={iconColors[mode]} />;
   }
 };
 

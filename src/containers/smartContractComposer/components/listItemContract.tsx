@@ -24,7 +24,7 @@ export const ListItemContract: React.FC<Props> = ({
         align="start"
         trigger={
           <button>
-            <Icon icon={IconType.MENU_VERTICAL} />
+            <Icon icon={IconType.DOTS_VERTICAL} />
           </button>
         }
         sideOffset={8}

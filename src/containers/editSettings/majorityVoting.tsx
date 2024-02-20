@@ -613,7 +613,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
               <HStack>
                 <Button
                   className="w-full md:w-max"
-                  iconLeft={IconType.APP_GOVERNANCE}
+                  iconLeft={IconType.APP_PROPOSALS}
                   variant="primary"
                   size="lg"
                   state={settingsUnchanged || !isValid ? 'disabled' : undefined}

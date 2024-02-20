@@ -46,7 +46,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
             onAddAction && {
               label: t('governance.executionCard.addAction'),
               onClick: onAddAction,
-              iconLeft: IconType.ADD,
+              iconLeft: IconType.PLUS,
             }
           }
         />

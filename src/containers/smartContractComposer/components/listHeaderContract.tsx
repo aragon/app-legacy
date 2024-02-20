@@ -99,7 +99,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
               : t('scc.writeProxy.dropdownDontWriteLabel')
           }
-          iconRight={<Icon icon={IconType.SWITCH} />}
+          iconRight={<Icon icon={IconType.BLOCKCHAIN_TRANSACTION} />}
           className="my-2 w-full justify-between px-4"
         />
       ),
@@ -139,7 +139,7 @@ export const ListHeaderContract: React.FC<Props> = ({
       align="start"
       trigger={
         <button>
-          <Icon icon={IconType.MENU_VERTICAL} />
+          <Icon icon={IconType.DOTS_VERTICAL} />
         </button>
       }
       sideOffset={8}

@@ -98,7 +98,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         name="down"
         variant="tertiary"
         size="sm"
-        iconLeft={IconType.REMOVE}
+        iconLeft={IconType.MINUS}
         state={disabled ?? disableDecrement ? 'disabled' : undefined}
         onClick={() => handleStepperChange('down')}
       />
@@ -130,7 +130,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         name="up"
         variant="tertiary"
         size="sm"
-        iconLeft={IconType.ADD}
+        iconLeft={IconType.PLUS}
         state={disabled ?? disableIncrement ? 'disabled' : undefined}
         onClick={() => handleStepperChange('up')}
       />

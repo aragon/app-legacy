@@ -18,7 +18,7 @@ export const NavlinksDropdown: React.FC = () => {
         <Button
           variant="tertiary"
           size="lg"
-          iconLeft={showCrumbMenu ? IconType.CLOSE : IconType.MENU_DEFAULT}
+          iconLeft={showCrumbMenu ? IconType.CLOSE : IconType.MENU}
         />
       }
       sideOffset={8}

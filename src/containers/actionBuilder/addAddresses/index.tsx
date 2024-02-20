@@ -229,7 +229,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
             <Button
               size="lg"
               variant="tertiary"
-              iconLeft={IconType.MENU_VERTICAL}
+              iconLeft={IconType.DOTS_VERTICAL}
               data-testid="trigger"
             />
           }

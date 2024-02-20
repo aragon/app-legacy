@@ -391,7 +391,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       if (sourcifyFullData) {
         return (
           <div className="flex space-x-2">
-            <Icon icon={IconType.RADIO_CHECK} className="text-success-500" />
+            <Icon icon={IconType.SUCCESS} className="text-success-500" />
             <VerificationStatus colorClassName="text-success-800">
               {t('scc.validation.sourcifyStatusSuccess')}
             </VerificationStatus>
@@ -409,7 +409,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       } else {
         return (
           <div className="flex space-x-2">
-            <Icon icon={IconType.RADIO_CANCEL} className="text-critical-500" />
+            <Icon icon={IconType.REMOVE} className="text-critical-500" />
             <VerificationStatus colorClassName="text-critical-800">
               {t('scc.validation.sourcifyStatusCritical')}
             </VerificationStatus>
@@ -444,7 +444,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       ) {
         return (
           <div className="flex space-x-2">
-            <Icon icon={IconType.RADIO_CHECK} className="text-success-500" />
+            <Icon icon={IconType.SUCCESS} className="text-success-500" />
             <VerificationStatus colorClassName="text-success-800">
               {t('scc.validation.etherscanStatusSuccess', {
                 blockExplorerName: CHAIN_METADATA[network].explorerName,
@@ -455,7 +455,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       } else {
         return (
           <div className="flex space-x-2">
-            <Icon icon={IconType.RADIO_CANCEL} className="text-critical-500" />
+            <Icon icon={IconType.REMOVE} className="text-critical-500" />
             <VerificationStatus colorClassName="text-critical-800">
               {t('scc.validation.etherscanStatusCritical', {
                 blockExplorerName: CHAIN_METADATA[network].explorerName,

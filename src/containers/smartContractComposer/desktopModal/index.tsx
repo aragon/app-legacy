@@ -163,7 +163,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
             className="mx-auto mt-6"
             size="md"
             variant="primary"
-            iconLeft={IconType.SWITCH}
+            iconLeft={IconType.BLOCKCHAIN_TRANSACTION}
             onClick={() => {
               setValue(
                 'selectedSC',
