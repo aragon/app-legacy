@@ -55,6 +55,10 @@ export const ModifyGaslessSettingsCard: React.FC<{
     >
       <ActionCardDlContainer>
         <Dl>
+          <Dt>{t('labels.supportThreshold')}</Dt>
+          <Dd>&gt;{Math.round(inputs.supportThreshold * 100)}%</Dd>
+        </Dl>
+        <Dl>
           <Dt>{t('labels.minimumParticipation')}</Dt>
           <Dd>{minParticipation}</Dd>
         </Dl>
