@@ -51,6 +51,7 @@ import {
   GaslessPluginVotingSettings,
 } from '@vocdoni/gasless-voting';
 import {useCensus3CreateToken} from '../hooks/useCensus3';
+import {retry} from 'utils/retry';
 
 const DEFAULT_TOKEN_DECIMALS = 18;
 
@@ -83,17 +84,15 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     daoCreationData !== undefined &&
     creationProcessState === TransactionState.WAITING;
 
-  const disableActionButton =
-    !daoCreationData && creationProcessState !== TransactionState.SUCCESS;
-
   /*************************************************
    *                   Handlers                    *
    *************************************************/
   const handlePublishDao = async () => {
-    setCreationProcessState(TransactionState.WAITING);
+    setCreationProcessState(TransactionState.LOADING);
     setShowModal(true);
     const creationParams = await getDaoSettings();
     setDaoCreationData(creationParams);
+    setCreationProcessState(TransactionState.WAITING);
   };
 
   // Handler for modal button click
@@ -376,8 +375,10 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     if (daoLogo) {
       try {
         const daoLogoBuffer = await readFile(daoLogo as Blob);
-        const logoCID = await client?.ipfs.add(new Uint8Array(daoLogoBuffer));
-        await client?.ipfs.pin(logoCID!);
+        const logoCID = await retry(
+          () => client?.ipfs.add(new Uint8Array(daoLogoBuffer))
+        );
+        await retry(() => client?.ipfs.pin(logoCID!));
         metadata.avatar = `ipfs://${logoCID}`;
       } catch (e) {
         metadata.avatar = undefined;
@@ -385,7 +386,11 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
 
     try {
-      const ipfsUri = await client?.methods.pinMetadata(metadata);
+      // TODO: to be removed
+      await new Promise(resolve => {
+        setTimeout(() => resolve(true), 1000);
+      });
+      const ipfsUri = await retry(() => client?.methods.pinMetadata(metadata));
       return {
         metadataUri: ipfsUri || '',
         // TODO: We're using dao name without spaces for ens, We need to add alert
@@ -393,8 +398,10 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
         ensSubdomain: daoEnsName || '',
         plugins: [...plugins],
       };
-    } catch {
-      throw Error('Could not pin metadata on IPFS');
+    } catch (error: unknown) {
+      setCreationProcessState(TransactionState.ERROR);
+      console.error('Could not pin metadata on IPFS', error);
+      throw error;
     }
   }, [
     client?.ipfs,
@@ -539,6 +546,10 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     [TransactionState.SUCCESS]: t('TransactionModal.launchDaoDashboard'),
     [TransactionState.WAITING]: t('TransactionModal.publishDaoButtonLabel'),
   };
+
+  const dialogAction =
+    daoCreationData == null ? handlePublishDao : handleExecuteCreation;
+
   return (
     <CreateDaoContext.Provider value={{handlePublishDao}}>
       {children}
@@ -548,13 +559,12 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
         state={creationProcessState || TransactionState.WAITING}
         isOpen={showModal}
         onClose={handleCloseModal}
-        callback={handleExecuteCreation}
+        callback={dialogAction}
         closeOnDrag={creationProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}
         gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
-        disabledCallback={disableActionButton}
       />
     </CreateDaoContext.Provider>
   );
