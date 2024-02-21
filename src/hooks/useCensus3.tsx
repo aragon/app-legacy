@@ -9,11 +9,6 @@ import {Token, ErrTokenAlreadyExists} from '@vocdoni/sdk';
 import {useParams} from 'react-router-dom';
 import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {DaoMember, TokenDaoMember} from './useDaoMembers';
-import {
-  getCensus3VotingPowerByCensusId,
-  getCensus3VotingPowerByTokenAddress,
-} from '../utils/tokens';
 import {Erc20TokenDetails, Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 import {useWallet} from './useWallet';
 
@@ -87,7 +82,11 @@ export const useGaslessCensusId = ({
   const isGasless = pluginType === GaslessPluginName;
   const _enable: boolean = enable && !!dao && !!proposalId && isGasless;
 
-  const {data: proposalData} = useProposal(
+  const {
+    data: proposalData,
+    isLoading,
+    isError,
+  } = useProposal(
     {
       pluginType: pluginType,
       id: proposalId ?? '',
@@ -110,74 +109,7 @@ export const useGaslessCensusId = ({
     censusSize = census.size;
   }
 
-  return {censusId, censusSize};
-};
-
-/**
- * Get member balance from vocdoni census3. It accepts a census id or a token id to retrieve the voting power
- * @param holders list of members to get the balance
- * @param isGovernanceEnabled
- * @param censusId
- * @param tokenId
- */
-export const useNonWrappedDaoMemberBalance = ({
-  holders,
-  isGovernanceEnabled,
-  censusId,
-  tokenId,
-}: {
-  holders: TokenDaoMember[];
-  isGovernanceEnabled: boolean;
-  censusId?: string | null;
-  tokenId?: string;
-}) => {
-  // State to store DaoMembers[]
-  const [members, setMembers] = useState<DaoMember[]>(holders);
-  const {client: vocdoniClient} = useClient();
-  const census3 = useCensus3Client();
-  const {chainId} = useWallet();
-
-  // todo(kon): use a query
-  useEffect(() => {
-    if (vocdoniClient && isGovernanceEnabled && (censusId || tokenId)) {
-      (async () => {
-        const members = await Promise.all(
-          holders.map(async member => {
-            let votingPower: string | bigint = '0';
-            if (censusId) {
-              votingPower = await getCensus3VotingPowerByCensusId(
-                vocdoniClient,
-                member.address,
-                censusId
-              );
-            } else if (tokenId) {
-              votingPower = await getCensus3VotingPowerByTokenAddress(
-                census3,
-                tokenId,
-                chainId,
-                member.address
-              );
-            }
-            member.balance = Number(votingPower);
-            member.votingPower = Number(votingPower);
-            return member;
-          })
-        );
-        setMembers(members);
-      })();
-    }
-  }, [
-    census3,
-    censusId,
-    chainId,
-    holders,
-    isGovernanceEnabled,
-    members,
-    tokenId,
-    vocdoniClient,
-  ]);
-
-  return {members};
+  return {censusId, censusSize, isLoading, isError};
 };
 
 /**
