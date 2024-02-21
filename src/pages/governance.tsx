@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {ButtonGroup, IllustrationHuman, Option} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {ButtonGroup, Option} from '@aragon/ods-old';
+import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -97,16 +97,11 @@ export const Governance: React.FC = () => {
         subtitle={htmlIn(t)('governance.emptyState.subtitle')}
         Illustration={
           <IllustrationHuman
-            {...{
-              body: 'voting',
-              expression: 'smile',
-              hair: 'middle',
-              accessory: 'earrings_rhombus',
-              sunglass: 'big_rounded',
-            }}
-            {...(isMobile
-              ? {height: 165, width: 295}
-              : {height: 225, width: 400})}
+            body="VOTING"
+            expression="SMILE"
+            hairs="MIDDLE"
+            accessory="EARRINGS_RHOMBUS"
+            sunglasses="BIG_ROUNDED"
           />
         }
         primaryButton={{

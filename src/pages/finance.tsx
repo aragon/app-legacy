@@ -1,9 +1,9 @@
-import {Breadcrumb, IlluObject, IllustrationHuman} from '@aragon/ods-old';
+import {Breadcrumb, IlluObject} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {Button, IconType, Tag} from '@aragon/ods';
+import {Button, IconType, Tag, IllustrationHuman} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
@@ -78,14 +78,9 @@ export const Finance: React.FC = () => {
           Illustration={
             <div className="flex">
               <IllustrationHuman
-                {...{
-                  body: 'chart',
-                  expression: 'excited',
-                  hair: 'bun',
-                }}
-                {...(isMobile
-                  ? {height: 165, width: 295}
-                  : {height: 225, width: 400})}
+                body="CHART"
+                expression="EXCITED"
+                hairs="BUN"
               />
               <IlluObject object={'wallet'} className="-ml-36" />
             </div>
@@ -201,14 +196,9 @@ export const Finance: React.FC = () => {
             Illustration={
               <div className="flex">
                 <IllustrationHuman
-                  {...{
-                    body: 'chart',
-                    expression: 'excited',
-                    hair: 'bun',
-                  }}
-                  {...(isMobile
-                    ? {height: 165, width: 295}
-                    : {height: 225, width: 400})}
+                  body="CHART"
+                  expression="EXCITED"
+                  hairs="BUN"
                 />
                 <IlluObject object={'wallet'} className="-ml-32" />
               </div>

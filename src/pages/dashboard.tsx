@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {HeaderDao, IlluObject, IllustrationHuman} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {HeaderDao, IlluObject} from '@aragon/ods-old';
+import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
 
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -227,13 +227,10 @@ export const Dashboard: React.FC = () => {
       <Container>
         <EmptyStateContainer>
           <IllustrationHuman
-            body="blocks"
-            expression="casual"
-            sunglass="big_rounded"
-            hair="short"
-            {...(isMobile
-              ? {height: 165, width: 295}
-              : {height: 225, width: 400})}
+            body="BLOCKS"
+            expression="CASUAL"
+            sunglasses="BIG_ROUNDED"
+            hairs="SHORT"
           />
           <div className="absolute -translate-x-2/3">
             <IlluObject
