@@ -167,7 +167,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
           state={
             !isDelegateValid ? 'disabled' : isLoading ? 'loading' : undefined
           }
-          variant={isLoading ? 'primary' : 'secondary'}
+          variant="primary"
           iconLeft={isError ? IconType.RELOAD : undefined}
           onClick={onDelegateTokens}
         >
