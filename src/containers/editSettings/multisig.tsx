@@ -342,7 +342,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
             <HStack>
               <Button
                 className="w-full md:w-max"
-                iconLeft={IconType.APP_GOVERNANCE}
+                iconLeft={IconType.APP_PROPOSALS}
                 size="lg"
                 variant="primary"
                 state={settingsUnchanged || !isValid ? 'disabled' : undefined}

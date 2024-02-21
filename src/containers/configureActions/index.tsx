@@ -91,7 +91,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
           <Button
             variant="tertiary"
             size="lg"
-            iconLeft={IconType.ADD}
+            iconLeft={IconType.PLUS}
             onClick={handleExtraActionClick}
             className="mt-4 w-full md:w-max"
           >
@@ -111,7 +111,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
             secondaryButton={{
               label: addNewActionLabel,
               onClick: handleAddNewActionClick,
-              iconLeft: IconType.ADD,
+              iconLeft: IconType.PLUS,
             }}
           />
           {!hideAlert && (

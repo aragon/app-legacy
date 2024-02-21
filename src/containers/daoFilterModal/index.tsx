@@ -179,7 +179,7 @@ const ModalContent: React.FC<ContentProps> = ({
       <FilterSection>
         <TitleWrapper>
           <Title>
-            <Icon icon={IconType.BLOCKCHAIN} />
+            <Icon icon={IconType.BLOCKCHAIN_BLOCKCHAIN} />
             <TitleLabel>
               {t('explore.modal.filterDAOs.label.blockchains')}
             </TitleLabel>
@@ -202,7 +202,7 @@ const ModalContent: React.FC<ContentProps> = ({
       <FilterSection>
         <TitleWrapper>
           <Title>
-            <Icon icon={IconType.APP_GOVERNANCE} />
+            <Icon icon={IconType.APP_PROPOSALS} />
             <TitleLabel>
               {t('explore.modal.filterDAOs.label.governanceType')}
             </TitleLabel>

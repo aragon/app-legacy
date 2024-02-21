@@ -38,10 +38,10 @@ const routes = Object.values(Paths).map(path => {
 
 function basePathIcons(path: string) {
   if (path.includes('dashboard')) return <Icon icon={IconType.APP_DASHBOARD} />;
-  if (path.includes('community')) return <Icon icon={IconType.APP_COMMUNITY} />;
-  if (path.includes('finance')) return <Icon icon={IconType.APP_FINANCE} />;
+  if (path.includes('community')) return <Icon icon={IconType.APP_MEMBERS} />;
+  if (path.includes('finance')) return <Icon icon={IconType.APP_ASSETS} />;
   if (path.includes('settings')) return <Icon icon={IconType.SETTINGS} />;
-  else return <Icon icon={IconType.APP_GOVERNANCE} />;
+  else return <Icon icon={IconType.APP_PROPOSALS} />;
 }
 
 export function useMappedBreadcrumbs(): MappedBreadcrumbs {

@@ -107,7 +107,7 @@ export const Settings: React.FC = () => {
             className="w-full md:w-max"
             size="lg"
             variant="primary"
-            iconLeft={!isDesktop ? IconType.APP_GOVERNANCE : undefined}
+            iconLeft={!isDesktop ? IconType.APP_PROPOSALS : undefined}
             onClick={() => navigate('edit')}
           >
             {t('settings.edit')}
@@ -334,9 +334,7 @@ const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
       title={t('labels.daoSettings')}
       primaryBtnProps={{
         label: t('settings.edit'),
-        iconLeft: isMobile ? (
-          <Icon icon={IconType.APP_GOVERNANCE} />
-        ) : undefined,
+        iconLeft: isMobile ? <Icon icon={IconType.APP_PROPOSALS} /> : undefined,
         onClick: () => navigate(generatePath(EditSettings, {network, dao})),
       }}
       customBody={<>{children}</>}

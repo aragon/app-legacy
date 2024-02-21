@@ -88,7 +88,7 @@ const AddCommittee: React.FC = () => {
             <Button
               variant="tertiary"
               size="lg"
-              iconLeft={IconType.MENU_VERTICAL}
+              iconLeft={IconType.DOTS_VERTICAL}
               data-testid="trigger"
             />
           }

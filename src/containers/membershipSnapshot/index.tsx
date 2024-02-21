@@ -78,7 +78,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
       <div className="flex space-x-6">
         <div className="w-1/3">
           <ListItemHeader
-            icon={<Icon icon={IconType.APP_COMMUNITY} />}
+            icon={<Icon icon={IconType.APP_MEMBERS} />}
             value={`${totalMemberCount} ${t('labels.members')}`}
             label={
               walletBased
@@ -120,7 +120,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
   return (
     <VerticalContainer>
       <ListItemHeader
-        icon={<Icon icon={IconType.APP_COMMUNITY} />}
+        icon={<Icon icon={IconType.APP_MEMBERS} />}
         value={`${totalMemberCount} ${t('labels.members')}`}
         label={
           walletBased

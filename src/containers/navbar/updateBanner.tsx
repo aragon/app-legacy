@@ -65,7 +65,7 @@ const UpdateBanner: React.FC = () => {
       <DummyElement />
       <MessageWrapper>
         <TextWrapper>
-          <Icon icon={IconType.UPDATE} className="text-neutral-0" />
+          <Icon icon={IconType.RELOAD} className="text-neutral-0" />
           <span className="font-semibold text-neutral-0 ft-text-base">
             {t('update.banner.title')}
           </span>

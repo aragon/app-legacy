@@ -214,7 +214,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({
         <Button
           variant="tertiary"
           size="lg"
-          iconLeft={IconType.MENU_VERTICAL}
+          iconLeft={IconType.DOTS_VERTICAL}
         />
       }
       sideOffset={8}

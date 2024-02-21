@@ -34,7 +34,7 @@ export const Tokens: React.FC = () => {
       }
       primaryBtnProps={{
         label: t('TransferModal.newTransfer'),
-        iconLeft: <Icon icon={IconType.ADD} />,
+        iconLeft: <Icon icon={IconType.PLUS} />,
         onClick: () => open('transfer'),
       }}
     >

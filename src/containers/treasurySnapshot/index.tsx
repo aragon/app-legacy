@@ -55,7 +55,7 @@ const TreasurySnapshot: React.FC<Props> = ({
   return (
     <Container>
       <ListItemHeader
-        icon={<Icon icon={IconType.APP_FINANCE} />}
+        icon={<Icon icon={IconType.APP_ASSETS} />}
         value={new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: 'USD',

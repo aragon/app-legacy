@@ -11,13 +11,13 @@ import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
 export const Icons = {
   multiSelect: {
     active: <Icon icon={IconType.CHECKBOX_SELECTED} />,
-    default: <Icon icon={IconType.CHECKBOX_DEFAULT} />,
-    error: <Icon icon={IconType.CHECKBOX_DEFAULT} />,
+    default: <Icon icon={IconType.CHECKBOX} />,
+    error: <Icon icon={IconType.CHECKBOX} />,
   },
   radio: {
     active: <Icon icon={IconType.RADIO_SELECTED} />,
-    default: <Icon icon={IconType.RADIO_DEFAULT} />,
-    error: <Icon icon={IconType.RADIO_DEFAULT} />,
+    default: <Icon icon={IconType.RADIO} />,
+    error: <Icon icon={IconType.RADIO} />,
   },
 };
 

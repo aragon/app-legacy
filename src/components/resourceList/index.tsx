@@ -43,7 +43,7 @@ const ResourceList: React.FC<ResourceListProps> = ({
             ? {
                 label: t('labels.addResource'),
                 onClick: emptyStateButtonClick,
-                iconLeft: IconType.ADD,
+                iconLeft: IconType.PLUS,
               }
             : undefined
         }

@@ -174,7 +174,7 @@ export const Finance: React.FC = () => {
                   <Button
                     size="lg"
                     variant="primary"
-                    iconLeft={IconType.ADD}
+                    iconLeft={IconType.PLUS}
                     className="w-full md:w-auto"
                     onClick={() => {
                       trackEvent('finance_newTransferBtn_clicked', {
@@ -306,7 +306,7 @@ export const Finance: React.FC = () => {
               <Button
                 size="lg"
                 variant="primary"
-                iconLeft={IconType.ADD}
+                iconLeft={IconType.PLUS}
                 className="w-full md:w-auto"
                 onClick={() => {
                   trackEvent('finance_newTransferBtn_clicked', {

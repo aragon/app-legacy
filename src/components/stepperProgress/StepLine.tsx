@@ -6,14 +6,14 @@ import {StepData, StepStatus} from '../../hooks/useFunctionStepper';
 
 const icons = {
   [StepStatus.WAITING]: (
-    <Icon icon={IconType.RADIO_DEFAULT} className="text-neutral-200" />
+    <Icon icon={IconType.RADIO} className="text-neutral-200" />
   ),
   [StepStatus.LOADING]: <Spinner size="sm" variant="primary" />,
   [StepStatus.SUCCESS]: (
-    <Icon icon={IconType.RADIO_CHECK} className="text-success-500" />
+    <Icon icon={IconType.SUCCESS} className="text-success-500" />
   ),
   [StepStatus.ERROR]: (
-    <Icon icon={IconType.RADIO_CANCEL} className="text-critical-700" />
+    <Icon icon={IconType.REMOVE} className="text-critical-700" />
   ),
 };
 

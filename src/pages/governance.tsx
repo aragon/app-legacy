@@ -126,7 +126,7 @@ export const Governance: React.FC = () => {
         title={'Proposals'}
         primaryBtnProps={{
           label: t('governance.action'),
-          iconLeft: <Icon icon={IconType.ADD} />,
+          iconLeft: <Icon icon={IconType.PLUS} />,
           onClick: handleNewProposalClick,
         }}
         secondaryBtnProps={

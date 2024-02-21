@@ -135,7 +135,7 @@ const ProposalSnapshot: React.FC<Props> = ({
   return (
     <Container>
       <ListItemHeader
-        icon={<Icon icon={IconType.APP_GOVERNANCE} />}
+        icon={<Icon icon={IconType.APP_PROPOSALS} />}
         value={displayedCount?.toString() ?? '0'}
         label={t('dashboard.proposalsTitle')}
         buttonText={t('newProposal.title')}

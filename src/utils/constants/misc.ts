@@ -43,17 +43,17 @@ export const NAV_LINKS_DATA: NavLinkData[] = [
   {
     label: i18n.t('navLinks.governance'),
     path: Governance,
-    icon: IconType.APP_GOVERNANCE,
+    icon: IconType.APP_PROPOSALS,
   },
   {
     label: i18n.t('navLinks.finance'),
     path: Finance,
-    icon: IconType.APP_FINANCE,
+    icon: IconType.APP_ASSETS,
   },
   {
     label: i18n.t('navLinks.members'),
     path: Community,
-    icon: IconType.APP_COMMUNITY,
+    icon: IconType.APP_MEMBERS,
   },
   {
     label: i18n.t('navLinks.settings'),

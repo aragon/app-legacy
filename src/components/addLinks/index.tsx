@@ -65,7 +65,7 @@ const AddLinks: React.FC<AddLinks> = ({
         variant="tertiary"
         size="lg"
         onClick={handleAddLink}
-        {...(buttonPlusIcon ? {iconLeft: IconType.ADD} : {})}
+        {...(buttonPlusIcon ? {iconLeft: IconType.PLUS} : {})}
       >
         {buttonLabel || t('labels.addLink')}
       </Button>

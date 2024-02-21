@@ -158,7 +158,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
         <WideButton
           variant="tertiary"
           size="lg"
-          iconLeft={IconType.ADD}
+          iconLeft={IconType.PLUS}
           onClick={() => {
             onTokenSelect({...customToken, symbol: searchValue});
             close();
