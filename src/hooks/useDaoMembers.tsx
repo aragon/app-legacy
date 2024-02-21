@@ -10,12 +10,7 @@ import {Address, useBalance} from 'wagmi';
 import {useDaoToken} from './useDaoToken';
 import {useWallet} from './useWallet';
 import {useGaslessGovernanceEnabled} from './useGaslessGovernanceEnabled';
-import {
-  useCensus3Token,
-  useGaslessCensusId,
-  useNonWrappedDaoMemberBalance,
-} from './useCensus3';
-import {useParams} from 'react-router-dom';
+import {useCensus3DaoMembers} from './useCensus3DaoMembers';
 
 export type MultisigDaoMember = {
   address: string;
@@ -45,7 +40,7 @@ const compareAddresses = (addressA?: string | null, addressB?: string | null) =>
 export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
   'balance' in member;
 
-const sortDaoMembers =
+export const sortDaoMembers =
   (sort?: DaoMemberSort, userAddress?: string | null) =>
   (a: DaoMember, b: DaoMember) => {
     const isConnectedUserA = compareAddresses(a.address, userAddress);
@@ -133,18 +128,6 @@ export const useDaoMembers = (
     pluginAddress,
     pluginType,
   });
-  const {censusId, censusSize: nonWrappedCensusSize} = useGaslessCensusId({
-    pluginType,
-    enable: !isGovernanceEnabled,
-  });
-  const {id: proposalId} = useParams();
-  // If is not a wrapped token and not on a proposal context we can still get the token holders amount
-  const enableCensus3Token = !isGovernanceEnabled && !proposalId;
-  const {token: census3Token} = useCensus3Token({
-    pluginType,
-    daoToken,
-    enable: enableCensus3Token,
-  });
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const opts = options ? options : {};
@@ -176,11 +159,16 @@ export const useDaoMembers = (
     sdkToDaoMember(member, daoToken?.decimals)
   );
 
-  const {members: nonGovernanceMembers} = useNonWrappedDaoMemberBalance({
-    isGovernanceEnabled,
+  const enableCensus3 = enabled && !isGovernanceEnabled;
+  const census3Data = useCensus3DaoMembers({
     holders: parsedSubgraphData as TokenDaoMember[],
-    censusId,
-    tokenId: daoToken?.address,
+    pluginAddress,
+    pluginType,
+    options: {
+      ...options,
+      countOnly,
+      enabled: enableCensus3,
+    },
   });
 
   const {data: userBalance} = useBalance({
@@ -220,14 +208,12 @@ export const useDaoMembers = (
       isError: false,
     };
 
+  if (enableCensus3) return census3Data;
+
   // token holders data gives us the total holders, so only need to call once
   // and return this number if countOnly === true
   if (countOnly) {
-    if (enableCensus3Token && census3Token !== null) {
-      memberCount = census3Token?.size ?? 0;
-    } else if (nonWrappedCensusSize !== null) {
-      memberCount = nonWrappedCensusSize;
-    } else if (useSubgraph) {
+    if (useSubgraph) {
       memberCount = parsedSubgraphData?.length || 0;
     } else {
       memberCount = graphqlData?.holders.totalHolders || 0;
@@ -278,9 +264,6 @@ export const useDaoMembers = (
           },
         ];
       } else {
-        if (!isGovernanceEnabled) {
-          return nonGovernanceMembers;
-        }
         return parsedSubgraphData;
       }
     } else {
@@ -291,10 +274,9 @@ export const useDaoMembers = (
   const sortedData = opts?.sort
     ? [...getCombinedData()].sort(sortDaoMembers(opts.sort, address))
     : getCombinedData();
-  memberCount =
-    census3Token?.size ?? nonWrappedCensusSize ?? useSubgraph
-      ? sortedData.length
-      : graphqlData?.holders.totalHolders ?? sortedData.length;
+  memberCount = useSubgraph
+    ? sortedData.length
+    : graphqlData?.holders.totalHolders ?? sortedData.length;
   const searchTerm = opts?.searchTerm;
   const filteredData = !searchTerm
     ? sortedData
