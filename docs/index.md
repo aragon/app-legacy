@@ -4,6 +4,9 @@ This guide provides information on various topics related to developing with Ara
 
 ## Contents
 
+- [Third Party API use](./apis.md)
+  We are using APISIX as API Gateway.
+
 - [Feature Flags](./featureFlags.md)
   Feature flags in the Aragon App allow developers to enable or disable certain features depending on the environment.
 
