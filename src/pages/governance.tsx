@@ -126,67 +126,65 @@ export const Governance: React.FC = () => {
   }
 
   return (
-    <>
-      <PageWrapper
-        title={'Proposals'}
-        primaryBtnProps={{
-          label: t('governance.action'),
-          iconLeft: <Icon icon={IconType.PLUS} />,
-          onClick: handleNewProposalClick,
-        }}
-        secondaryBtnProps={
-          enableDelegation
-            ? {
-                label: t('governance.actionSecondary'),
-                onClick: () => open('delegateVoting'),
-              }
-            : undefined
-        }
-      >
-        <ButtonGroupContainer>
-          <ButtonGroup
-            bgWhite
-            defaultValue={filter}
-            onChange={(selected: string) => {
-              setFilter(selected as ProposalStatus | 'All');
-            }}
-          >
-            <Option value="All" label="All" />
-            <Option value="Pending" label="Pending" />
-            <Option value="Active" label="Active" />
-            <Option value="Succeeded" label="Succeeded" />
-            <Option value="Executed" label="Executed" />
-            <Option value="Defeated" label="Defeated" />
-          </ButtonGroup>
-        </ButtonGroupContainer>
-        <ListWrapper>
-          <ProposalList
-            daoAddressOrEns={
-              toDisplayEns(daoDetails?.ensDomain) ||
-              (daoDetails?.address as string)
+    <PageWrapper
+      title={'Proposals'}
+      primaryBtnProps={{
+        label: t('governance.action'),
+        iconLeft: <Icon icon={IconType.PLUS} />,
+        onClick: handleNewProposalClick,
+      }}
+      secondaryBtnProps={
+        enableDelegation
+          ? {
+              label: t('governance.actionSecondary'),
+              onClick: () => open('delegateVoting'),
             }
-            proposals={data?.pages.flat() ?? []}
-            pluginAddress={pluginAddress as string}
-            pluginType={pluginType as PluginTypes}
-            isLoading={proposalsLoading}
-          />
-        </ListWrapper>
+          : undefined
+      }
+    >
+      <ButtonGroupContainer>
+        <ButtonGroup
+          bgWhite
+          defaultValue={filter}
+          onChange={(selected: string) => {
+            setFilter(selected as ProposalStatus | 'All');
+          }}
+        >
+          <Option value="All" label="All" />
+          <Option value="Pending" label="Pending" />
+          <Option value="Active" label="Active" />
+          <Option value="Succeeded" label="Succeeded" />
+          <Option value="Executed" label="Executed" />
+          <Option value="Defeated" label="Defeated" />
+        </ButtonGroup>
+      </ButtonGroupContainer>
+      <ListWrapper>
+        <ProposalList
+          daoAddressOrEns={
+            toDisplayEns(daoDetails?.ensDomain) ||
+            (daoDetails?.address as string)
+          }
+          proposals={data?.pages.flat() ?? []}
+          pluginAddress={pluginAddress as string}
+          pluginType={pluginType as PluginTypes}
+          isLoading={proposalsLoading}
+        />
+      </ListWrapper>
 
-        {hasNextPage && (
-          <div className="mt-6">
-            <Button
-              state={isFetchingNextPage ? 'loading' : undefined}
-              iconRight={isFetchingNextPage ? undefined : IconType.CHEVRON_DOWN}
-              variant="tertiary"
-              size="md"
-              onClick={handleShowMoreClick}
-            >
-              {t('explore.explorer.showMore')}
-            </Button>
-          </div>
-        )}
-      </PageWrapper>
-    </>
+      {hasNextPage && (
+        <div className="mt-6">
+          <Button
+            state={isFetchingNextPage ? 'loading' : undefined}
+            iconRight={isFetchingNextPage ? undefined : IconType.CHEVRON_DOWN}
+            variant="tertiary"
+            size="md"
+            onClick={handleShowMoreClick}
+          >
+            {t('explore.explorer.showMore')}
+          </Button>
+        </div>
+      )}
+    </PageWrapper>
   );
 };
 

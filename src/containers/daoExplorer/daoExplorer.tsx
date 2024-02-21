@@ -190,7 +190,7 @@ export const DaoExplorer = () => {
                     variant={activeDropdown ? 'secondary' : 'tertiary'}
                     size="md"
                     responsiveSize={{lg: 'lg'}}
-                    iconLeft={IconType.SORT_ASC}
+                    iconLeft={IconType.SORT_DESC}
                   />
                 }
                 onOpenChange={e => {

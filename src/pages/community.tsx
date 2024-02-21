@@ -196,7 +196,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <Icon icon={IconType.CRITICAL} />,
+              iconLeft: <Icon icon={IconType.APP_PROPOSALS} />,
               onClick: () => open('delegateVoting'),
             },
             secondaryBtnProps: {
