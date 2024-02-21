@@ -21,7 +21,7 @@ import {useNetwork} from 'context/network';
 
 type RemoveAddressesProps = ActionIndex &
   CustomHeaderProps &
-  CurrentDaoMembers & {allowRemove?: boolean};
+  CurrentDaoMembers & {allowRemove?: boolean; isEditSettingsPage?: boolean};
 
 // README: when uploading CSV be sure to check for duplicates
 
@@ -30,6 +30,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   useCustomHeader = false,
   currentDaoMembers,
   allowRemove = true,
+  isEditSettingsPage,
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
@@ -145,6 +146,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
             className={`py-6 ${
               useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
             }`}
+            hideBorder={isEditSettingsPage}
           >
             <StateEmpty
               type="Object"
@@ -163,6 +165,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
               className={`hidden xl:block ${
                 useCustomHeader ? 'rounded-t-xl border-t pb-3 pt-6' : 'py-3'
               }`}
+              hideBorder={isEditSettingsPage}
             >
               <Label label={t('labels.whitelistWallets.address')} />
             </FormItem>
@@ -173,6 +176,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                   fieldIndex === 0 &&
                   'rounded-t-xl border-t xl:rounded-[0px] xl:border-t-0'
                 }`}
+                hideBorder={isEditSettingsPage}
               >
                 <div className="mb-1 xl:mb-0 xl:hidden">
                   <Label label={t('labels.whitelistWallets.address')} />
@@ -186,7 +190,10 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                 />
               </FormItem>
             ))}
-            <FormItem className="flex justify-between">
+            <FormItem
+              className="flex justify-between"
+              hideBorder={isEditSettingsPage}
+            >
               <Button
                 variant="tertiary"
                 size="lg"

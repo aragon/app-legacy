@@ -82,11 +82,13 @@ export const ManageExecutionMultisig: React.FC<
         useCustomHeader
         currentDaoMembers={members}
         customRowValidator={customRowValidator}
+        isEditSettingsPage={true}
       />
       <RemoveAddresses
         actionIndex={1}
         useCustomHeader
         currentDaoMembers={members}
+        isEditSettingsPage={true}
       />
       <UpdateMinimumApproval
         actionIndex={2}
@@ -95,7 +97,7 @@ export const ManageExecutionMultisig: React.FC<
         currentMinimumApproval={minTallyApprovals}
         isGasless={true}
       />
-      <ExecutionExpirationTime />
+      <ExecutionExpirationTime isEditSettingsPage={true} />
     </>
   );
 };

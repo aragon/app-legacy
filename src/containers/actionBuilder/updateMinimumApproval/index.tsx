@@ -175,12 +175,15 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         additionalInfo={t('labels.minimumApprovalAdditionalInfo')}
       >
         {useCustomHeader && (
-          <FormItem className={'rounded-t-xl border-t pb-3 pt-6 xl:block'}>
+          <FormItem
+            className={'rounded-t-xl border-t pb-3 pt-6 xl:block'}
+            hideBorder={isGasless}
+          >
             <Label label={t('labels.approvals')} />
           </FormItem>
         )}
 
-        <FormItem>
+        <FormItem hideBorder={isGasless}>
           <Controller
             name={minimumApprovalKey}
             defaultValue={minimumApproval}
@@ -202,7 +205,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
           />
         </FormItem>
         {/* Summary */}
-        <SummaryContainer>
+        <SummaryContainer className={isGasless ? 'border-0' : ''}>
           <p className={'font-semibold text-neutral-800'}>
             {t('labels.summary')}
           </p>
