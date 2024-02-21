@@ -733,7 +733,7 @@
         "verificationAlertCriticalBlockchainTitle": "Incorrect blockchain",
         "verificationAlertCriticalBlockchainDescription": "This token is deployed on a different blockchain than the one you chose for your DAO. Use a token deployed on {{blockchainName}}.",
         "vocdoni": {
-          "verificationAlertSuccessDescription": "DEV - The ERC20 token selected is compatible for voting on the Vocdoni system"
+          "verificationAlertSuccessDescription": "This token can be used to participate in your DAO's governance because it follows the ERC-20 standard and is supported by Vocdoni."
         }
       },
       "existingTokenSubtitle": "Yes, we already have a token.",
@@ -1719,7 +1719,9 @@
       "membersLabel": "Execution multisig members",
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig.",
       "executionTitle": "Execution expiration time",
-      "executionDesc": "Execution expiration time is the window available for the execution multisig to enact a passed community-backed proposal before it becomes ineligible for execution.\n"
+      "executionDesc": "Execution expiration time is the window available for the execution multisig to enact a passed community-backed proposal before it becomes ineligible for execution.\n",
+      "descLinkURL": "https://aragon.org/how-to/gasless-voting-plugin",
+      "descLinkLabel": "in our guide"
     }
   },
   "modalTransaction": {
