@@ -248,8 +248,7 @@
     "polygonscan": "Polygonscan",
     "updateExecutionMultisigAction": "Update Execution Multisig",
     "updateExecutionMultisigActionDescription": "Change addresses that can participate in the multisig",
-    "activeMembers": "DEV - {{count}} Active members",
-    "governanceEnabled": "DEV - Governance enabled"
+    "activeMembers": "Members"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
