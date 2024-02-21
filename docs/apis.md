@@ -50,4 +50,4 @@ CHAIN_METADATA[network].coingecko -> fetchCoingeckoToken -> fetchToken
 
 Metadata
 
-VITE_IPFS_API_KEY -> CHAIN_METADATA[network].ipfs -> via SDK Client
+VITE_GATEWAY_IPFS_API_KEY -> via SDK Client
