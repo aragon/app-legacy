@@ -1,6 +1,12 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {HeaderDao, IlluObject} from '@aragon/ods-old';
-import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
+import {HeaderDao} from '@aragon/ods-old';
+import {
+  Button,
+  Icon,
+  IconType,
+  IllustrationHuman,
+  IllustrationObject,
+} from '@aragon/ods';
 
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -44,7 +50,7 @@ enum DaoCreationState {
 export const Dashboard: React.FC = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const {isDesktop, isMobile} = useScreen();
+  const {isDesktop} = useScreen();
 
   const navigate = useNavigate();
   const {network} = useNetwork();
@@ -233,12 +239,7 @@ export const Dashboard: React.FC = () => {
             hairs="SHORT"
           />
           <div className="absolute -translate-x-2/3">
-            <IlluObject
-              object="build"
-              {...(isMobile
-                ? {height: 120, width: 120}
-                : {height: 160, width: 160})}
-            />
+            <IllustrationObject object="BUILD" />
           </div>
 
           <EmptyStateHeading>

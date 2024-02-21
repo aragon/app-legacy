@@ -1,11 +1,14 @@
-import {Button} from '@aragon/ods';
-import {IlluObject, IlluObjectProps} from '@aragon/ods-old';
+import {
+  Button,
+  IIllustrationObjectProps,
+  IllustrationObject,
+} from '@aragon/ods';
 import React from 'react';
 import {useHref} from 'react-router-dom';
 
 export interface IEmptyMemberSectionProps {
   title: string;
-  illustration: IlluObjectProps['object'];
+  illustration: IIllustrationObjectProps['object'];
   link?: {label: string; href: string};
 }
 
@@ -32,7 +35,7 @@ export const EmptyMemberSection: React.FC<IEmptyMemberSectionProps> = props => {
         )}
       </div>
       <div className="rounded-full bg-neutral-50 p-2">
-        <IlluObject
+        <IllustrationObject
           object={illustration}
           className="h-16 w-16 md:h-20 md:w-20"
         />

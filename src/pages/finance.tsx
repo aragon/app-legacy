@@ -1,9 +1,15 @@
-import {Breadcrumb, IlluObject} from '@aragon/ods-old';
+import {Breadcrumb} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {Button, IconType, Tag, IllustrationHuman} from '@aragon/ods';
+import {
+  Button,
+  IconType,
+  Tag,
+  IllustrationHuman,
+  IllustrationObject,
+} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
@@ -82,7 +88,7 @@ export const Finance: React.FC = () => {
                 expression="EXCITED"
                 hairs="BUN"
               />
-              <IlluObject object={'wallet'} className="-ml-36" />
+              <IllustrationObject object="WALLET" className="-ml-36" />
             </div>
           }
           primaryButton={{
@@ -200,7 +206,7 @@ export const Finance: React.FC = () => {
                   expression="EXCITED"
                   hairs="BUN"
                 />
-                <IlluObject object={'wallet'} className="-ml-32" />
+                <IllustrationObject object="WALLET" className="-ml-32" />
               </div>
             }
             primaryButton={{

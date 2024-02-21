@@ -13,7 +13,6 @@ import PageEmptyState from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 import {featureFlags} from 'utils/featureFlags';
@@ -26,7 +25,6 @@ import {ProposalTypes} from 'utils/types';
 export const Governance: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {isMobile} = useScreen();
   const {open} = useGlobalModalContext();
   const {network} = useNetwork();
 
