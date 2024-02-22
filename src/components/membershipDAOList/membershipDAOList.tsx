@@ -32,7 +32,7 @@ export const MembershipDAOList: React.FC<IMembershipDAOListProps> = ({
     return (
       <EmptyMemberSection
         title={t('members.profile.emptyState.Memberships')}
-        illustration="users"
+        illustration="USERS"
       />
     );
   }
