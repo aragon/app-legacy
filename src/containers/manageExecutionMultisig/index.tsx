@@ -81,13 +81,13 @@ export const ManageExecutionMultisig: React.FC<
         useCustomHeader
         currentDaoMembers={members}
         customRowValidator={customRowValidator}
-        isEditSettingsPage={true}
+        borderless={true}
       />
       <RemoveAddresses
         actionIndex={1}
         useCustomHeader
         currentDaoMembers={members}
-        isEditSettingsPage={true}
+        borderless={true}
       />
       <UpdateMinimumApproval
         actionIndex={2}

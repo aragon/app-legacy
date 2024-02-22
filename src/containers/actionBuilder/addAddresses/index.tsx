@@ -29,7 +29,7 @@ type AddAddressesProps = ActionIndex &
   CurrentDaoMembers & {
     allowRemove?: boolean;
     customRowValidator?: CustomRowValidator;
-    isEditSettingsPage?: boolean;
+    borderless?: boolean;
   };
 
 const AddAddresses: React.FC<AddAddressesProps> = ({
@@ -38,7 +38,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
   currentDaoMembers,
   allowRemove = true,
   customRowValidator,
-  isEditSettingsPage,
+  borderless,
 }) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
@@ -191,7 +191,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
         className={`hidden xl:block ${
           useCustomHeader ? 'rounded-t-xl border-t pb-3 pt-6' : 'py-3'
         }`}
-        hideBorder={isEditSettingsPage}
+        hideBorder={borderless}
       >
         <Label label={t('labels.whitelistWallets.address')} />
       </FormItem>
@@ -203,7 +203,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
               fieldIndex === 0 &&
               'rounded-t-xl border-t xl:rounded-[0px] xl:border-t-0'
             }`}
-            hideBorder={isEditSettingsPage}
+            hideBorder={borderless}
           >
             <div className="mb-1 xl:mb-0 xl:hidden">
               <Label label={t('labels.whitelistWallets.address')} />
@@ -220,10 +220,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
           </FormItem>
         );
       })}
-      <FormItem
-        className="flex justify-between"
-        hideBorder={isEditSettingsPage}
-      >
+      <FormItem className="flex justify-between" hideBorder={borderless}>
         <Button variant="tertiary" size="lg" onClick={handleAdd}>
           {t('labels.addWallet')}
         </Button>
@@ -264,7 +261,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
       </FormItem>
       <AccordionSummary
         total={controlledWallets.filter(wallet => wallet.address).length}
-        borderless={isEditSettingsPage}
+        borderless={borderless}
       />
     </AccordionMethod>
   );
