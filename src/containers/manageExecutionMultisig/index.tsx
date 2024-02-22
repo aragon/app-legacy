@@ -13,7 +13,6 @@ import {ValidateResult} from 'react-hook-form';
 type ManageExecutionMultisigProps = {
   members: MultisigDaoMember[] | undefined;
   minTallyApprovals: number;
-  daoAddress: string;
 };
 
 export const ManageExecutionMultisig: React.FC<

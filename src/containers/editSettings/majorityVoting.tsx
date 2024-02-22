@@ -601,7 +601,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                           (votingSettings as GaslessPluginVotingSettings)
                             .minTallyApprovals
                         }
-                        daoAddress={daoDetails.address}
                       />
                     </AccordionContent>
                   </AccordionItem>
