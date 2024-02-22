@@ -15,8 +15,8 @@ import {useTranslation} from 'react-i18next';
 import {getDaysHoursMins} from '../../utils/date';
 import {FormItem} from '../../containers/actionBuilder/addAddresses';
 
-const ExecutionExpirationTime: React.FC<{isEditSettingsPage?: boolean}> = ({
-  isEditSettingsPage,
+const ExecutionExpirationTime: React.FC<{borderless?: boolean}> = ({
+  borderless,
 }) => {
   const {control, setValue, trigger, getValues} = useFormContext();
   const {t} = useTranslation();
@@ -134,7 +134,7 @@ const ExecutionExpirationTime: React.FC<{isEditSettingsPage?: boolean}> = ({
   );
 
   return (
-    <FormItem hideBorder={isEditSettingsPage}>
+    <FormItem hideBorder={borderless}>
       <Label
         label={t('createDao.executionMultisig.executionTitle')}
         helpText={t('createDao.executionMultisig.executionDesc')}
