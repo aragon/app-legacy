@@ -264,7 +264,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
       </FormItem>
       <AccordionSummary
         total={controlledWallets.filter(wallet => wallet.address).length}
-        isEditSettingsPage={isEditSettingsPage}
+        borderless={isEditSettingsPage}
       />
     </AccordionMethod>
   );

@@ -96,7 +96,7 @@ export const ManageExecutionMultisig: React.FC<
         currentMinimumApproval={minTallyApprovals}
         isGasless={true}
       />
-      <ExecutionExpirationTime isEditSettingsPage={true} />
+      <ExecutionExpirationTime borderless={true} />
     </>
   );
 };
