@@ -23,7 +23,6 @@ import {erc1155TokenABI} from 'abis/erc1155TokenABI';
 import {erc721TokenABI} from 'abis/erc721TokenABI';
 import {aragonTokenABI} from 'abis/aragonTokenABI';
 import {queryClient} from 'index';
-import {VocdoniCensus3Client, VocdoniSDKClient} from '@vocdoni/sdk';
 
 /**
  * This method sorts a list of array information. It is applicable to any field

@@ -5,12 +5,10 @@ import {
   PluginTypes,
   usePluginClient,
 } from './usePluginClient';
-import {Token, ErrTokenAlreadyExists} from '@vocdoni/sdk';
+import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 import {useParams} from 'react-router-dom';
 import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {Erc20TokenDetails, Erc20WrapperTokenDetails} from '@aragon/sdk-client';
-import {useWallet} from './useWallet';
 
 const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
 
@@ -110,33 +108,4 @@ export const useGaslessCensusId = ({
   }
 
   return {censusId, censusSize, isLoading, isError};
-};
-
-/**
- * Hook to fetch token information using census3.getToken function
- */
-export const useCensus3Token = ({
-  pluginType,
-  daoToken,
-  enable,
-}: {
-  pluginType: PluginTypes;
-  daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
-  enable?: boolean;
-}) => {
-  const census3 = useCensus3Client();
-  const {chainId} = useWallet();
-  const [token, setToken] = useState<Token>();
-  const isGasless = pluginType === GaselessPluginName;
-
-  useEffect(() => {
-    (async () => {
-      if (enable && isGasless && daoToken) {
-        const token = await census3.getToken(daoToken.address, chainId);
-        setToken(token);
-      }
-    })();
-  }, [census3, daoToken, chainId, enable, isGasless]);
-
-  return {token};
 };

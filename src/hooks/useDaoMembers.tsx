@@ -129,7 +129,9 @@ export const useDaoMembers = (
     pluginType,
   });
 
+  const isGasless = pluginType === GaselessPluginName;
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
+
   const opts = options ? options : {};
   let memberCount = 0;
   const countOnly = opts?.countOnly || false;
@@ -146,7 +148,9 @@ export const useDaoMembers = (
   );
 
   const useSubgraph =
-    (pluginType != null && !isTokenBased) || !covalentSupportedNetwork;
+    (pluginType != null && !isTokenBased) ||
+    (isGasless && isGovernanceEnabled) ||
+    !covalentSupportedNetwork;
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
@@ -168,6 +172,7 @@ export const useDaoMembers = (
       ...options,
       countOnly,
       enabled: enableCensus3,
+      page: opts?.page,
     },
   });
 

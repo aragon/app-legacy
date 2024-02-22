@@ -1,4 +1,4 @@
-import {useQueries, UseQueryOptions} from '@tanstack/react-query';
+import {useQueries, useQuery, UseQueryOptions} from '@tanstack/react-query';
 import {useCallback} from 'react';
 import {TokenDaoMember} from '../../hooks/useDaoMembers';
 import {Census3QueryKeys} from './query-keys';
@@ -9,6 +9,7 @@ import {
   getCensus3VotingPowerByCensusId,
   getCensus3VotingPowerByTokenAddress,
 } from './census3-service';
+import {StrategyHolders, Token} from '@vocdoni/sdk';
 
 /**
  * Get member balance from vocdoni census3. It accepts a census id or a token id to retrieve the voting power
@@ -60,4 +61,57 @@ export const useCensus3VotingPower = (
   }));
 
   return useQueries({queries});
+};
+
+interface useCensus3VotingPowerProps {
+  page?: number;
+  // censusId?: string | null;
+  tokenId?: string;
+  options?: UseQueryOptions<StrategyHolders>;
+}
+
+export const useCensus3Members = ({
+  tokenId,
+  page,
+  options,
+}: useCensus3VotingPowerProps) => {
+  const hookEnabled = options?.enabled ?? false;
+  const enableCensus3Token = hookEnabled && !!tokenId;
+
+  const {data: census3Token} = useCensus3Token(tokenId ?? '', {
+    enabled: enableCensus3Token,
+  });
+
+  const census3 = useCensus3Client();
+
+  let strategyId: number | undefined;
+  if (enableCensus3Token && census3Token) {
+    strategyId = census3Token.defaultStrategy;
+  }
+
+  const getHolders = useCallback(async () => {
+    return await census3.getStrategyHolders(strategyId!);
+  }, [census3, strategyId]);
+
+  return useQuery(
+    Census3QueryKeys.holdersList(strategyId ?? 0, page ?? 0),
+    getHolders,
+    {...options, enabled: hookEnabled && !!strategyId}
+  );
+};
+
+/**
+ * Hook to fetch token information using census3.getToken function
+ */
+export const useCensus3Token = (
+  tokenAddress: string,
+  options?: UseQueryOptions<Token>
+) => {
+  const census3 = useCensus3Client();
+  const {chainId} = useWallet();
+  return useQuery(
+    Census3QueryKeys.token(tokenAddress),
+    async () => await census3.getToken(tokenAddress, chainId),
+    options
+  );
 };
