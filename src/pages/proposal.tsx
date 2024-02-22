@@ -749,28 +749,27 @@ export const Proposal: React.FC = () => {
       ? t('votingTerminal.title')
       : undefined, // Title will be shown on the GaslessVotingTerminal
     status: proposalStatus,
-    pluginType: pluginType,
-    daoToken: daoToken,
+    pluginType,
+    daoToken,
     blockNumber: proposal.creationBlockNumber,
-    statusLabel: isGaslessProposal(proposal) ? undefined : voteStatus, // Status will be shown on the GaslessVotingTermina,
+    statusLabel: isGaslessProposal(proposal) ? undefined : voteStatus, // Status will be shown on the GaslessVotingTerminal,
     selectedTab: terminalTab,
-    alertMessage: alertMessage,
+    alertMessage,
     onTabSelected: setTerminalTab,
     onVoteClicked: handleVoteClick,
     onApprovalClicked: handleApprovalClick,
     onCancelClicked: () => setVotingInProcess(false),
-    voteButtonLabel: voteButtonLabel,
+    voteButtonLabel,
     voteNowDisabled: votingDisabled,
-    votingInProcess: votingInProcess,
+    votingInProcess,
     voted: voted,
-    executableWithNextApproval: executableWithNextApproval,
+    executableWithNextApproval,
     onVoteSubmitClicked: vote =>
       isGaslessProposal(proposal)
         ? handleGaslessVoting({
             vote,
             votingPower: pastVotingPower,
-            voteTokenAddress: (proposal as GaslessVotingProposal).token
-              ?.address,
+            voteTokenAddress: proposal.token?.address,
           })
         : handlePrepareVote({
             vote,
