@@ -44,7 +44,7 @@ export const useCensus3DaoMembers = ({
 
   // Get members from censusId
   // Enabled if no holders are provided and not countOnly
-  const enableGetMembers = enable && !holders && !countOnly;
+  const enableGetMembers = enable && !holders?.length && !countOnly;
   const {
     data: cenus3Members,
     isLoading: census3MembersIsLoading,
@@ -124,14 +124,15 @@ export const useCensus3DaoMembers = ({
   const searchTerm = options?.searchTerm;
   const filteredMembers = !searchTerm
     ? sortedData
-    : sortedData?.filter(member =>
-        member.address.toLowerCase().includes(searchTerm.toLowerCase())
+    : sortedData?.filter(
+        member =>
+          member?.address.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
   let memberCount = 0;
-  if (enableCensus3Token && census3Token !== null) {
+  if (enableCensus3Token && census3Token) {
     memberCount = census3Token!.size;
-  } else if (nonWrappedCensusSize !== null) {
+  } else if (nonWrappedCensusSize) {
     memberCount = nonWrappedCensusSize;
   }
 
