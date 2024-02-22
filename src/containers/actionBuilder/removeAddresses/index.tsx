@@ -125,82 +125,81 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
    *                    Render                    *
    *************************************************/
   return (
-    <>
-      <AccordionMethod
-        verified
-        type="action-builder"
-        methodName={t('labels.removeWallets')}
-        smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
-        smartContractAddress={daoDetails?.plugins[0].instanceAddress}
-        blockExplorerLink={
-          daoDetails?.plugins[0].instanceAddress
-            ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
-            : undefined
-        }
-        methodDescription={t('labels.removeWalletsDescription')}
-        dropdownItems={methodActions}
-        customHeader={useCustomHeader && <CustomHeader />}
-      >
-        {!memberWallets || memberWallets.length === 0 ? (
+    <AccordionMethod
+      verified
+      type="action-builder"
+      methodName={t('labels.removeWallets')}
+      smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+      smartContractAddress={daoDetails?.plugins[0].instanceAddress}
+      blockExplorerLink={
+        daoDetails?.plugins[0].instanceAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+          : undefined
+      }
+      methodDescription={t('labels.removeWalletsDescription')}
+      dropdownItems={methodActions}
+      customHeader={useCustomHeader && <CustomHeader />}
+    >
+      {!memberWallets || memberWallets.length === 0 ? (
+        <FormItem
+          className={`py-6 ${
+            useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
+          }`}
+          hideBorder={isEditSettingsPage}
+        >
+          <StateEmpty
+            type="Object"
+            mode="inline"
+            object="wallet"
+            title={t('labels.whitelistWallets.noWallets')}
+            secondaryButton={{
+              label: t('labels.selectWallet'),
+              onClick: () => open('manageWallet'),
+            }}
+          />
+        </FormItem>
+      ) : (
+        <>
           <FormItem
-            className={`py-6 ${
-              useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
+            className={`hidden xl:block ${
+              useCustomHeader ? 'rounded-t-xl border-t pb-3 pt-6' : 'py-3'
             }`}
             hideBorder={isEditSettingsPage}
           >
-            <StateEmpty
-              type="Object"
-              mode="inline"
-              object="wallet"
-              title={t('labels.whitelistWallets.noWallets')}
-              secondaryButton={{
-                label: t('labels.selectWallet'),
-                onClick: () => open('manageWallet'),
-              }}
-            />
+            <Label label={t('labels.whitelistWallets.address')} />
           </FormItem>
-        ) : (
-          <>
+          {controlledWallets.map((field, fieldIndex) => (
             <FormItem
-              className={`hidden xl:block ${
-                useCustomHeader ? 'rounded-t-xl border-t pb-3 pt-6' : 'py-3'
+              key={field.id}
+              className={`${
+                fieldIndex === 0 &&
+                'rounded-t-xl border-t xl:rounded-[0px] xl:border-t-0'
               }`}
               hideBorder={isEditSettingsPage}
             >
-              <Label label={t('labels.whitelistWallets.address')} />
-            </FormItem>
-            {controlledWallets.map((field, fieldIndex) => (
-              <FormItem
+              <div className="mb-1 xl:mb-0 xl:hidden">
+                <Label label={t('labels.whitelistWallets.address')} />
+              </div>
+              <AddressRow
+                isRemove
                 key={field.id}
-                className={`${
-                  fieldIndex === 0 &&
-                  'rounded-t-xl border-t xl:rounded-[0px] xl:border-t-0'
-                }`}
-                hideBorder={isEditSettingsPage}
-              >
-                <div className="mb-1 xl:mb-0 xl:hidden">
-                  <Label label={t('labels.whitelistWallets.address')} />
-                </div>
-                <AddressRow
-                  isRemove
-                  key={field.id}
-                  actionIndex={actionIndex}
-                  fieldIndex={fieldIndex}
-                  dropdownItems={rowActions}
-                />
-              </FormItem>
-            ))}
-            <FormItem
-              className="flex justify-between"
-              hideBorder={isEditSettingsPage}
+                actionIndex={actionIndex}
+                fieldIndex={fieldIndex}
+                dropdownItems={rowActions}
+              />
+            </FormItem>
+          ))}
+          <FormItem
+            className="flex justify-between"
+            hideBorder={isEditSettingsPage}
+          >
+            <Button
+              variant="tertiary"
+              size="lg"
+              onClick={() => open('manageWallet')}
             >
-              <Button
-                variant="tertiary"
-                size="lg"
-                onClick={() => open('manageWallet')}
-              >
-                {t('labels.selectWallet')}
-              </Button>
+              {t('labels.selectWallet')}
+            </Button>
 
               <Dropdown
                 side="bottom"
@@ -231,13 +230,12 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
           </>
         )}
 
-        <ManageWalletsModal
-          addWalletCallback={handleAddSelectedWallets}
-          wallets={currentDaoMembers?.map(member => member.address) || []}
-          initialSelections={controlledWallets.map(field => field.address)}
-        />
-      </AccordionMethod>
-    </>
+      <ManageWalletsModal
+        addWalletCallback={handleAddSelectedWallets}
+        wallets={currentDaoMembers?.map(member => member.address) || []}
+        initialSelections={controlledWallets.map(field => field.address)}
+      />
+    </AccordionMethod>
   );
 };
 

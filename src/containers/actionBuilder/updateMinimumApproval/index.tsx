@@ -158,72 +158,70 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
    *                    Render                    *
    *************************************************/
   return (
-    <>
-      <AccordionMethod
-        verified
-        type={'action-builder'}
-        methodName={t('labels.minimumApproval')}
-        smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
-        smartContractAddress={daoDetails?.plugins[0].instanceAddress}
-        blockExplorerLink={
-          daoDetails?.plugins[0].instanceAddress
-            ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
-            : undefined
-        }
-        customHeader={useCustomHeader && <CustomHeader />}
-        methodDescription={t('labels.minimumApprovalDescription')}
-        additionalInfo={t('labels.minimumApprovalAdditionalInfo')}
-      >
-        {useCustomHeader && (
-          <FormItem
-            className={'rounded-t-xl border-t pb-3 pt-6 xl:block'}
-            hideBorder={isGasless}
-          >
-            <Label label={t('labels.approvals')} />
-          </FormItem>
-        )}
-
-        <FormItem hideBorder={isGasless}>
-          <Controller
-            name={minimumApprovalKey}
-            defaultValue={minimumApproval}
-            control={control}
-            rules={{
-              required: t('errors.minimumApproval.required') as string,
-              validate: value => validateMinimalApprovalInput(value),
-            }}
-            render={({field: {onChange, value}, fieldState: {error}}) => (
-              <MinimumApproval
-                disabled={totalMembers === 0}
-                min={1}
-                max={totalMembers}
-                value={value}
-                onChange={e => handleApprovalChanged(e, onChange)}
-                error={generateAlert(value, totalMembers, t, error)}
-              />
-            )}
-          />
+    <AccordionMethod
+      verified
+      type={'action-builder'}
+      methodName={t('labels.minimumApproval')}
+      smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+      smartContractAddress={daoDetails?.plugins[0].instanceAddress}
+      blockExplorerLink={
+        daoDetails?.plugins[0].instanceAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+          : undefined
+      }
+      customHeader={useCustomHeader && <CustomHeader />}
+      methodDescription={t('labels.minimumApprovalDescription')}
+      additionalInfo={t('labels.minimumApprovalAdditionalInfo')}
+    >
+      {useCustomHeader && (
+        <FormItem
+          className={'rounded-t-xl border-t pb-3 pt-6 xl:block'}
+          hideBorder={isGasless}
+        >
+          <Label label={t('labels.approvals')} />
         </FormItem>
-        {/* Summary */}
-        <SummaryContainer className={isGasless ? 'border-0' : ''}>
-          <p className={'font-semibold text-neutral-800'}>
-            {t('labels.summary')}
-          </p>
-          <HStack>
-            <SummaryLabel>{t('labels.addedMembers')}</SummaryLabel>
-            <p>{addActionCount}</p>
-          </HStack>
-          <HStack>
-            <SummaryLabel>{t('labels.removedMembers')}</SummaryLabel>
-            <p>{removeActionCount}</p>
-          </HStack>
-          <HStack>
-            <SummaryLabel>{t('labels.totalMembers')}</SummaryLabel>
-            <p>{totalMembers}</p>
-          </HStack>
-        </SummaryContainer>
-      </AccordionMethod>
-    </>
+      )}
+
+      <FormItem hideBorder={isGasless}>
+        <Controller
+          name={minimumApprovalKey}
+          defaultValue={minimumApproval}
+          control={control}
+          rules={{
+            required: t('errors.minimumApproval.required') as string,
+            validate: value => validateMinimalApprovalInput(value),
+          }}
+          render={({field: {onChange, value}, fieldState: {error}}) => (
+            <MinimumApproval
+              disabled={totalMembers === 0}
+              min={1}
+              max={totalMembers}
+              value={value}
+              onChange={e => handleApprovalChanged(e, onChange)}
+              error={generateAlert(value, totalMembers, t, error)}
+            />
+          )}
+        />
+      </FormItem>
+      {/* Summary */}
+      <SummaryContainer className={isGasless ? 'border-0' : ''}>
+        <p className={'font-semibold text-neutral-800'}>
+          {t('labels.summary')}
+        </p>
+        <HStack>
+          <SummaryLabel>{t('labels.addedMembers')}</SummaryLabel>
+          <p>{addActionCount}</p>
+        </HStack>
+        <HStack>
+          <SummaryLabel>{t('labels.removedMembers')}</SummaryLabel>
+          <p>{removeActionCount}</p>
+        </HStack>
+        <HStack>
+          <SummaryLabel>{t('labels.totalMembers')}</SummaryLabel>
+          <p>{totalMembers}</p>
+        </HStack>
+      </SummaryContainer>
+    </AccordionMethod>
   );
 };
 
