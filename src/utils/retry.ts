@@ -11,6 +11,9 @@ export interface IRetryOptions {
   timeout: number;
 }
 
+/**
+ * Note: functionality introduced as a quick fix to retry the IPFS actions, to be removed with APP-2919
+ */
 export const retry = async <TReturn>(
   request: () => TReturn,
   options?: IRetryOptions
