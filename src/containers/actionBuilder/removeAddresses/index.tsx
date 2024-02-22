@@ -198,34 +198,34 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
               {t('labels.selectWallet')}
             </Button>
 
-              <Dropdown
-                side="bottom"
-                align="start"
-                sideOffset={4}
-                trigger={
-                  <Button
-                    size="lg"
-                    variant="tertiary"
-                    iconLeft={IconType.DOTS_VERTICAL}
-                    data-testid="trigger"
-                  />
-                }
-                listItems={[
-                  {
-                    component: (
-                      <ListItemAction
-                        title={t('labels.whitelistWallets.deleteAllEntries')}
-                        bgWhite
-                      />
-                    ),
-                    callback: handleDeleteAll,
-                  },
-                ]}
-              />
-            </FormItem>
-            <AccordionSummary total={controlledWallets.length} />
-          </>
-        )}
+            <Dropdown
+              side="bottom"
+              align="start"
+              sideOffset={4}
+              trigger={
+                <Button
+                  size="lg"
+                  variant="tertiary"
+                  iconLeft={IconType.DOTS_VERTICAL}
+                  data-testid="trigger"
+                />
+              }
+              listItems={[
+                {
+                  component: (
+                    <ListItemAction
+                      title={t('labels.whitelistWallets.deleteAllEntries')}
+                      bgWhite
+                    />
+                  ),
+                  callback: handleDeleteAll,
+                },
+              ]}
+            />
+          </FormItem>
+          <AccordionSummary total={controlledWallets.length} />
+        </>
+      )}
 
       <ManageWalletsModal
         addWalletCallback={handleAddSelectedWallets}

@@ -4938,17 +4938,17 @@
     "@babel/plugin-transform-react-jsx-source" "^7.22.5"
     react-refresh "^0.14.0"
 
-"@vocdoni/gasless-voting-ethers@0.0.1-rc2":
-  version "0.0.1-rc2"
-  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting-ethers/-/gasless-voting-ethers-0.0.1-rc2.tgz#ce2d3f0457f2504df0f38fa2cb82c555d58512f2"
-  integrity sha512-n9MpaUwpKyykwaZnMPsm6B298AsCdSGdn8T7PTHMDVesBkKtX9z3/nDcmWyZAgk+bm8odSm0Xze6or4epb0JqA==
+"@vocdoni/gasless-voting-ethers@0.0.1-rc3":
+  version "0.0.1-rc3"
+  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting-ethers/-/gasless-voting-ethers-0.0.1-rc3.tgz#fe499bf0f0f9046d8b1223ccfaa0649df9f34037"
+  integrity sha512-VdzwAr8MAa3jQCx58v/lRBSlmgiljS3Ud7ySwwqpma5TW1Ve20cYBbXEk3CLPuPpKic+Tfq2uMNJvYCVuikheg==
   dependencies:
     ethers "^5.6.2"
 
-"@vocdoni/gasless-voting@^0.0.1-rc22-erc20-1":
-  version "0.0.1-rc22-erc20-1"
-  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc22-erc20-1.tgz#9e333f3494fe77abc135083254cd7d42771a9e73"
-  integrity sha512-OxFZK6CjlFVurXx7pDOb1O+nYc2Mxerm8PWsBZBK8K3UsgSwJnHSqcVreyP9f+ngtaNS8QiSJvLLodspB80O2A==
+"@vocdoni/gasless-voting@^0.0.1-rc24":
+  version "0.0.1-rc24"
+  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc24.tgz#b7c54074fdbb4bdad7eaae2e335c11c21cfbd40e"
+  integrity sha512-3tfiuku08JXDX7qI14TTrHrg0F7tBddqXZ3RkWgtcGJgrqjav9bxUSuJyrjhc8iXkzxvLA8GoVtjU2VzNmsSng==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0.3"
     "@aragon/sdk-client" "1.22.1"
@@ -4960,8 +4960,8 @@
     "@ethersproject/providers" "^5.7.2"
     "@ethersproject/wallet" "^5.7.0"
     "@types/big.js" "^6.1.5"
-    "@vocdoni/gasless-voting-ethers" "0.0.1-rc2"
-    "@vocdoni/sdk" "0.7.1"
+    "@vocdoni/gasless-voting-ethers" "0.0.1-rc3"
+    "@vocdoni/sdk" "0.7.5"
     axios "0.27.2"
     graphql "^16.6.0"
     graphql-request "4.3.0"
@@ -4983,6 +4983,35 @@
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.7.1.tgz#99504b04222c521a65e5bd352bfc04379fb5b568"
   integrity sha512-qgHZoFsaJBkwWsrJeu1EZM5iMqqB2DlvQKjtncwAR8PZK/7ueVvavBMoig1Zx5REBhEhY1MKWs1d253lMHjIpw==
+  dependencies:
+    "@ethersproject/abstract-signer" "^5.7.0"
+    "@ethersproject/address" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/bytes" "^5.7.0"
+    "@ethersproject/keccak256" "^5.7.0"
+    "@ethersproject/providers" "^5.7.1"
+    "@ethersproject/signing-key" "^5.7.0"
+    "@ethersproject/strings" "^5.7.0"
+    "@ethersproject/units" "^5.7.0"
+    "@ethersproject/wallet" "^5.7.0"
+    "@size-limit/file" "^8.2.4"
+    "@vocdoni/proto" "1.15.4"
+    axios "0.27.2"
+    blake2b "^2.1.4"
+    iso-language-codes "^1.1.0"
+    js-sha256 "^0.10.1"
+    readable-stream "^4.4.2"
+    tiny-invariant "^1.3.1"
+    tweetnacl "^1.0.3"
+    wasmbuilder "^0.0.16"
+    wasmcurves "0.2.1"
+    web-worker "^1.2.0"
+    yup "^0.32.11"
+
+"@vocdoni/sdk@0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.7.5.tgz#31a0f2e208475205facc5aca22d8f2f064e0e29c"
+  integrity sha512-jzrQkkz36B0DFd72QffzqC0chve710xedZbOtiUwBIfbZRyx3W8PHoV2Ej91ldB+Y9tmVVS1wkFdFG3ErzgOhA==
   dependencies:
     "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/address" "^5.7.0"
