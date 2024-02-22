@@ -103,7 +103,6 @@ import {useCreateGaslessProposal} from './createGaslessProposal';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-import {retry} from 'utils/retry';
 
 type Props = {
   showTxModal: boolean;
@@ -167,6 +166,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
       proposalCreationData !== undefined,
     [creationProcessState, proposalCreationData]
   );
+
+  const disableActionButton =
+    !proposalCreationData && creationProcessState !== TransactionState.SUCCESS;
 
   const {
     steps: gaslessProposalSteps,
@@ -389,10 +391,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
                 preparedAction.inputs.avatar as unknown as Blob
               );
 
-              const logoCID = await retry(() =>
-                client.ipfs.add(new Uint8Array(daoLogoBuffer))
+              const logoCID = await client.ipfs.add(
+                new Uint8Array(daoLogoBuffer)
               );
-              await retry(() => client.ipfs.pin(logoCID));
+              await client.ipfs.pin(logoCID);
               preparedAction.inputs.avatar = `ipfs://${logoCID}`;
             } catch (e) {
               preparedAction.inputs.avatar = undefined;
@@ -400,8 +402,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
           }
 
           try {
-            const ipfsUri = await retry(() =>
-              client.methods.pinMetadata(preparedAction.inputs)
+            const ipfsUri = await client.methods.pinMetadata(
+              preparedAction.inputs
             );
 
             actions.push(
@@ -503,8 +505,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
     let ipfsUri;
     // Gasless voting store metadata using Vocdoni support
     if (!gasless) {
-      ipfsUri = await retry(
-        () => (pluginClient as TokenVotingClient)?.methods.pinMetadata(metadata)
+      ipfsUri = await (pluginClient as TokenVotingClient)?.methods.pinMetadata(
+        metadata
       );
     }
 
@@ -1092,6 +1094,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           tokenPrice={tokenPrice}
           title={t('TransactionModal.createProposal')}
           buttonStateLabels={buttonLabels}
+          disabledCallback={disableActionButton}
         />
       )}
     </>

@@ -386,6 +386,10 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
 
     try {
+      // TODO: to be removed
+      await new Promise(resolve => {
+        setTimeout(() => resolve(true), 1000);
+      });
       const ipfsUri = await retry(() => client?.methods.pinMetadata(metadata));
       return {
         metadataUri: ipfsUri || '',
