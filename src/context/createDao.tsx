@@ -544,7 +544,9 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   };
 
   const dialogAction =
-    daoCreationData == null ? handlePublishDao : handleExecuteCreation;
+    daoCreationData == null && creationProcessState !== TransactionState.SUCCESS
+      ? handlePublishDao
+      : handleExecuteCreation;
 
   return (
     <CreateDaoContext.Provider value={{handlePublishDao}}>
