@@ -25,7 +25,7 @@ export const retry = async <TReturn>(
 
   const wait = (millis: number) =>
     new Promise(resolve => {
-      setTimeout(() => resolve(true), millis);
+      setTimeout(resolve, millis);
     });
 
   while (attempts < times) {
@@ -35,9 +35,9 @@ export const retry = async <TReturn>(
       const result = await request();
 
       return result;
-    } catch (error: unknown) {
+    } catch (error) {
       lastError = error;
-      attempts = attempts + 1;
+      attempts++;
     }
   }
 
