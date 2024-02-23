@@ -44,9 +44,9 @@ export const useCensus3DaoMembers = ({
 
   // Get members from censusId
   // Enabled if no holders are provided and not countOnly
-  const enableGetMembers = enable && !holders?.length && !countOnly;
+  const enableGetMembers = enable && !countOnly;
   const {
-    data: cenus3Members,
+    data: census3Members,
     isLoading: census3MembersIsLoading,
     isError: census3MembersIsError,
   } = useCensus3Members({
@@ -66,7 +66,7 @@ export const useCensus3DaoMembers = ({
     isError: isCensusIdError,
   } = useGaslessCensusId({
     pluginType,
-    enable: enable,
+    enable: enable && !!proposalId,
   });
 
   const enableVotingPoweredMembersQueries =
@@ -94,8 +94,8 @@ export const useCensus3DaoMembers = ({
   );
 
   const holdersWithBalance = useMemo(() => {
-    if (enableGetMembers && cenus3Members) {
-      return cenus3Members.holders.map(member => {
+    if (enableGetMembers && census3Members) {
+      return census3Members.holders.map(member => {
         return {
           address: member.holder,
           balance: Number(member.weight),
@@ -110,7 +110,7 @@ export const useCensus3DaoMembers = ({
     }
     return holders ?? [];
   }, [
-    cenus3Members,
+    census3Members,
     enableGetMembers,
     enableVotingPoweredMembersQueries,
     holders,
@@ -137,7 +137,9 @@ export const useCensus3DaoMembers = ({
   }
 
   const isLoading =
-    isCensusIdLoading || votingPowerIsLoading || census3MembersIsLoading;
+    (isCensusIdLoading && !!proposalId) ||
+    (votingPowerIsLoading && enableVotingPoweredMembersQueries) ||
+    (census3MembersIsLoading && enableGetMembers);
   const isError =
     isCensusIdError || votingPowerIsError || census3MembersIsError;
 

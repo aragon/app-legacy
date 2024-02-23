@@ -3,13 +3,12 @@ import {useNetwork} from 'context/network';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
-import {PluginTypes} from './usePluginClient';
+import {GaslessPluginName, PluginTypes} from './usePluginClient';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
 import {Address, useBalance} from 'wagmi';
 import {useDaoToken} from './useDaoToken';
 import {useWallet} from './useWallet';
-import {useGaslessGovernanceEnabled} from './useGaslessGovernanceEnabled';
 import {useCensus3DaoMembers} from './useCensus3DaoMembers';
 
 export type MultisigDaoMember = {
@@ -124,12 +123,7 @@ export const useDaoMembers = (
   const {address} = useWallet();
   const {data: daoToken} = useDaoToken(pluginAddress);
 
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginAddress,
-    pluginType,
-  });
-
-  const isGasless = pluginType === GaselessPluginName;
+  const isGaslessBased = pluginType === GaslessPluginName;
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
 
   const opts = options ? options : {};
@@ -148,9 +142,7 @@ export const useDaoMembers = (
   );
 
   const useSubgraph =
-    (pluginType != null && !isTokenBased) ||
-    (isGasless && isGovernanceEnabled) ||
-    !covalentSupportedNetwork;
+    (pluginType != null && !isTokenBased) || !covalentSupportedNetwork;
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
@@ -163,7 +155,7 @@ export const useDaoMembers = (
     sdkToDaoMember(member, daoToken?.decimals)
   );
 
-  const enableCensus3 = enabled && !isGovernanceEnabled;
+  const enableCensus3 = enabled && isGaslessBased;
   const census3Data = useCensus3DaoMembers({
     holders: parsedSubgraphData as TokenDaoMember[],
     pluginAddress,
@@ -180,14 +172,23 @@ export const useDaoMembers = (
     address: address as Address,
     token: daoToken?.address as Address,
     chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled: address != null && daoToken != null && !countOnly && enabled,
+    enabled:
+      address != null &&
+      daoToken != null &&
+      !countOnly &&
+      enabled &&
+      !enableCensus3,
   });
   const userBalanceNumber = Number(
     formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
   );
 
   const useGraphql =
-    !useSubgraph && pluginType != null && daoToken != null && enabled;
+    !useSubgraph &&
+    pluginType != null &&
+    daoToken != null &&
+    enabled &&
+    !enableCensus3;
 
   const {
     data: graphqlData,
