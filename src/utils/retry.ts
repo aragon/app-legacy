@@ -22,6 +22,7 @@ export const retry = async <TReturn>(
 
   let attempts = 0;
   let lastError: unknown;
+  let errorTimeout: NodeJS.Timeout | undefined;
 
   const wait = (millis: number) =>
     new Promise(resolve => {
@@ -32,12 +33,18 @@ export const retry = async <TReturn>(
     await wait(attempts * timeout);
 
     try {
+      errorTimeout = setTimeout(() => {
+        throw new Error('request timeout');
+      }, 6_000);
+
       const result = await request();
 
       return result;
     } catch (error) {
       lastError = error;
       attempts++;
+    } finally {
+      clearTimeout(errorTimeout);
     }
   }
 
