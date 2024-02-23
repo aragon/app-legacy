@@ -87,8 +87,9 @@ export const Finance: React.FC = () => {
                 body="CHART"
                 expression="EXCITED"
                 hairs="BUN"
+                object="WALLET"
+                objectPosition="right"
               />
-              <IllustrationObject object="WALLET" className="-ml-36" />
             </div>
           }
           primaryButton={{
