@@ -90,8 +90,10 @@ export const useCensus3Members = ({
   }
 
   const getHolders = useCallback(async () => {
-    return await census3.getStrategyHolders(strategyId!);
-  }, [census3, strategyId]);
+    return await census3.getStrategyHolders(strategyId!, {
+      pageSize: page || -1,
+    });
+  }, [census3, page, strategyId]);
 
   return useQuery(
     Census3QueryKeys.holdersList(strategyId ?? 0, page ?? 0),
