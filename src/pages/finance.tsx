@@ -3,13 +3,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  Button,
-  IconType,
-  Tag,
-  IllustrationHuman,
-  IllustrationObject,
-} from '@aragon/ods';
+import {Button, IconType, Tag, IllustrationHuman} from '@aragon/ods';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
@@ -201,14 +195,13 @@ export const Finance: React.FC = () => {
             title={t('finance.emptyState.title')}
             subtitle={htmlIn(t)('finance.emptyState.description')}
             Illustration={
-              <div className="flex">
-                <IllustrationHuman
-                  body="CHART"
-                  expression="EXCITED"
-                  hairs="BUN"
-                />
-                <IllustrationObject object="WALLET" className="-ml-32" />
-              </div>
+              <IllustrationHuman
+                body="CHART"
+                expression="EXCITED"
+                hairs="BUN"
+                object="WALLET"
+                objectPosition="right"
+              />
             }
             primaryButton={{
               label: t('finance.emptyState.buttonLabel'),
