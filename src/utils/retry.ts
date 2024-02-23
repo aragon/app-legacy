@@ -22,7 +22,6 @@ export const retry = async <TReturn>(
 
   let attempts = 0;
   let lastError: unknown;
-  let errorTimeout: NodeJS.Timeout | undefined;
 
   const wait = (millis: number) =>
     new Promise(resolve => {
@@ -33,18 +32,17 @@ export const retry = async <TReturn>(
     await wait(attempts * timeout);
 
     try {
-      errorTimeout = setTimeout(() => {
-        throw new Error('request timeout');
-      }, 6_000);
+      const result = await Promise.race([
+        request,
+        new Promise((_resolve, reject) =>
+          setTimeout(() => reject(new Error('request timeout')), 6_000)
+        ),
+      ]);
 
-      const result = await request();
-
-      return result;
+      return result as TReturn;
     } catch (error) {
       lastError = error;
       attempts++;
-    } finally {
-      clearTimeout(errorTimeout);
     }
   }
 
