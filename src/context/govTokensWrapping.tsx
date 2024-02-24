@@ -368,8 +368,6 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
           ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
         );
 
-        console.log({underlyingToken, userAddress, wrappedDaoToken});
-
         const currentAllowance = await getAllowance(
           underlyingToken?.address,
           userAddress,
