@@ -206,6 +206,21 @@ export async function isERC721(
   }
 }
 
+export async function getAllowance(
+  address: string,
+  owner: string,
+  spender: string,
+  provider: EthersProviders.Provider
+): Promise<BigNumber> {
+  const contract = new ethers.Contract(address, erc20TokenABI, provider);
+  try {
+    const allowance = await contract.allowance(owner, spender);
+    return allowance;
+  } catch (err) {
+    return BigNumber.from(0);
+  }
+}
+
 /**
  * This Validation function checks if the existing token contract
  * is ERC1155 or not
