@@ -29,7 +29,7 @@ import {generatePath, useLocation, useNavigate} from 'react-router-dom';
 import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
-import {fetchBalance} from 'utils/tokens';
+import {fetchBalance, getAllowance} from 'utils/tokens';
 import {TokensWrappingFormData} from 'utils/types';
 import {useQueryClient} from 'wagmi';
 
@@ -356,6 +356,46 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     setIsTxError(false);
     form.resetField('amount');
   }, [form, mode]);
+
+  useEffect(() => {
+    const checkAllowance = async () => {
+      if (wrappedDaoToken == null || userAddress == null || amount === '') {
+        return;
+      }
+
+      try {
+        const parsedAmount = BigInt(
+          ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
+        );
+
+        console.log({underlyingToken, userAddress, wrappedDaoToken});
+
+        const currentAllowance = await getAllowance(
+          underlyingToken?.address,
+          userAddress,
+          wrappedDaoToken.address,
+          provider
+        );
+
+        if (currentAllowance.gte(parsedAmount)) {
+          setCurrentStep(2);
+        } else {
+          setCurrentStep(1);
+        }
+      } catch (error) {
+        console.log('error checking allowance', error);
+      }
+    };
+
+    checkAllowance();
+  }, [
+    amount,
+    userAddress,
+    provider,
+    underlyingToken,
+    wrappedDaoToken,
+    currentStep,
+  ]);
 
   /*************************************************
    *                   Render                      *
