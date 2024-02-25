@@ -283,7 +283,7 @@ export const DaoExplorer = () => {
           {hasNextPage && (
             <Button
               className="self-start"
-              state={isFetchingNextPage ? 'loading' : undefined}
+              isLoading={isFetchingNextPage}
               iconRight={
                 !isFetchingNextPage ? IconType.CHEVRON_DOWN : undefined
               }

@@ -475,7 +475,7 @@ export const WalletInput = React.forwardRef<
                 size="sm"
                 variant="tertiary"
                 onClick={handlePasteFromClipboard}
-                state={disabled ? 'disabled' : undefined}
+                disabled={disabled}
               >
                 Paste
               </Button>
@@ -485,7 +485,7 @@ export const WalletInput = React.forwardRef<
                 size="sm"
                 variant="tertiary"
                 onMouseDown={handleClearInput}
-                state={disabled ? 'disabled' : undefined}
+                disabled={disabled}
               >
                 Clear
               </Button>
@@ -498,7 +498,7 @@ export const WalletInput = React.forwardRef<
                     size="sm"
                     variant="tertiary"
                     onClick={toggleDisplayMode}
-                    state={adornmentsDisabled ? 'disabled' : undefined}
+                    disabled={adornmentsDisabled}
                   >
                     {togglerLabel}
                   </Button>
@@ -508,14 +508,14 @@ export const WalletInput = React.forwardRef<
                   variant="tertiary"
                   size="sm"
                   onClick={handleCopyToClipboard}
-                  state={adornmentsDisabled ? 'disabled' : undefined}
+                  disabled={adornmentsDisabled}
                 />
                 {showExternalButton && (
                   <Button
                     iconLeft={IconType.LINK_EXTERNAL}
                     variant="tertiary"
                     size="sm"
-                    state={adornmentsDisabled ? 'disabled' : undefined}
+                    disabled={adornmentsDisabled}
                     onClick={handleViewOnExplorer}
                   />
                 )}

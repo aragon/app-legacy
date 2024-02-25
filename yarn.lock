@@ -48,10 +48,10 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
-"@aragon/ods@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.14.tgz#58b155dbd61fa43d9688b45f3f6d3246edc3354c"
-  integrity sha512-ZsM9gZydXeZqJ5k2qDkfsdK+Zywgn67Gd0NV28iYAQ+9nYb+niEy6y9EsYPP1PzyqKmccJK5byL8LE7weD0R6Q==
+"@aragon/ods@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.15.tgz#0f1e12ecae807eccd3741e36cf11fe5d8508d93c"
+  integrity sha512-ZZ1u6nkyiroXjzv9d5Z7pq2t96AubG7Mj5zBq+zaC0nfTLQhM8uSYrIoGULDTKh1omI2Qm+6hmuONG9opGAM7Q==
   dependencies:
     "@radix-ui/react-avatar" "^1.0.0"
     "@radix-ui/react-checkbox" "^1.0.0"
@@ -4978,35 +4978,6 @@
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@vocdoni/react-providers/-/react-providers-0.3.1.tgz#c4e4416926871d4f1ead7b022ffd1592b298115a"
   integrity sha512-Q7Op4wf4Ig/Mf5ceDDxmyHShEhVuioQShW9GOwAcsIiUl7ijeuAuO89uLq6u/PlVuwGJkppHG07O5oUNlxe6UQ==
-
-"@vocdoni/sdk@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.7.5.tgz#31a0f2e208475205facc5aca22d8f2f064e0e29c"
-  integrity sha512-jzrQkkz36B0DFd72QffzqC0chve710xedZbOtiUwBIfbZRyx3W8PHoV2Ej91ldB+Y9tmVVS1wkFdFG3ErzgOhA==
-  dependencies:
-    "@ethersproject/abstract-signer" "^5.7.0"
-    "@ethersproject/address" "^5.7.0"
-    "@ethersproject/bignumber" "^5.7.0"
-    "@ethersproject/bytes" "^5.7.0"
-    "@ethersproject/keccak256" "^5.7.0"
-    "@ethersproject/providers" "^5.7.1"
-    "@ethersproject/signing-key" "^5.7.0"
-    "@ethersproject/strings" "^5.7.0"
-    "@ethersproject/units" "^5.7.0"
-    "@ethersproject/wallet" "^5.7.0"
-    "@size-limit/file" "^8.2.4"
-    "@vocdoni/proto" "1.15.4"
-    axios "0.27.2"
-    blake2b "^2.1.4"
-    iso-language-codes "^1.1.0"
-    js-sha256 "^0.10.1"
-    readable-stream "^4.4.2"
-    tiny-invariant "^1.3.1"
-    tweetnacl "^1.0.3"
-    wasmbuilder "^0.0.16"
-    wasmcurves "0.2.1"
-    web-worker "^1.2.0"
-    yup "^0.32.11"
 
 "@vocdoni/sdk@0.7.5":
   version "0.7.5"

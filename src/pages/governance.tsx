@@ -174,7 +174,7 @@ export const Governance: React.FC = () => {
       {hasNextPage && (
         <div className="mt-6">
           <Button
-            state={isFetchingNextPage ? 'loading' : undefined}
+            isLoading={isFetchingNextPage}
             iconRight={isFetchingNextPage ? undefined : IconType.CHEVRON_DOWN}
             variant="tertiary"
             size="md"

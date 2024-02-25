@@ -358,13 +358,8 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                 <>
                   <Button
                     variant="primary"
-                    state={
-                      !isUserInputValid || currentStep !== 1
-                        ? 'disabled'
-                        : isTokenApproveLoading
-                        ? 'loading'
-                        : undefined
-                    }
+                    disabled={!isUserInputValid || currentStep !== 1}
+                    isLoading={isTokenApproveLoading}
                     iconLeft={
                       isTokenApproveLoading
                         ? undefined
@@ -382,13 +377,8 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                   </Button>
                   <Button
                     variant="primary"
-                    state={
-                      !isUserInputValid || currentStep !== 2
-                        ? 'disabled'
-                        : isTokenWrapLoading
-                        ? 'loading'
-                        : undefined
-                    }
+                    disabled={!isUserInputValid || currentStep !== 2}
+                    isLoading={isTokenWrapLoading}
                     iconLeft={
                       isTokenWrapLoading
                         ? undefined
@@ -409,13 +399,8 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                 <>
                   <Button
                     variant="primary"
-                    state={
-                      !isUserInputValid
-                        ? 'disabled'
-                        : isTokenUnwrapLoading
-                        ? 'loading'
-                        : undefined
-                    }
+                    disabled={!isUserInputValid}
+                    isLoading={isTokenUnwrapLoading}
                     iconLeft={
                       isTokenUnwrapLoading
                         ? undefined

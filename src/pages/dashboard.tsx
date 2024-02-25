@@ -253,11 +253,7 @@ export const Dashboard: React.FC = () => {
           <Button
             size="lg"
             variant="primary"
-            state={
-              daoCreationState === DaoCreationState.ASSEMBLING_DAO
-                ? 'loading'
-                : undefined
-            }
+            isLoading={daoCreationState === DaoCreationState.ASSEMBLING_DAO}
             iconLeft={buttonIcon[daoCreationState]}
             className={`mt-8 ${daoCreationState === 0 && 'bg-primary-800'}`}
             onClick={handleOpenYourDaoClick}

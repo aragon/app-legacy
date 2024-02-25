@@ -40,7 +40,7 @@ export const ValueInput = React.forwardRef<HTMLInputElement, ValueInputProps>(
         <Button
           size="sm"
           variant="tertiary"
-          state={disabled ? 'disabled' : undefined}
+          disabled={disabled}
           onClick={onAdornmentClick}
         >
           {adornmentText}
