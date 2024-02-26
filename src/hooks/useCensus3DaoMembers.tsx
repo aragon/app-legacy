@@ -9,14 +9,12 @@ import {HookData} from '../utils/types';
 import {useParams} from 'react-router-dom';
 import {PluginTypes} from './usePluginClient';
 import {useDaoToken} from './useDaoToken';
-import {
-  useCensus3Members,
-  useCensus3Token,
-  useCensus3VotingPower,
-} from '../services/vocdoni-census3/census3-queries';
 import {useMemo} from 'react';
 import {useWallet} from './useWallet';
 import {formatUnits} from 'ethers/lib/utils';
+import {useCensus3Members} from 'services/vocdoni-census3/queries/use-census3-members';
+import {useCensus3Token} from 'services/vocdoni-census3/queries/use-census3-token';
+import {useCensus3VotingPower} from 'services/vocdoni-census3/queries/use-census3-voting-power';
 
 interface UseCensus3DaoMembersProps {
   holders?: TokenDaoMember[];
@@ -112,6 +110,7 @@ export const useCensus3DaoMembers = ({
     return holders ?? [];
   }, [
     census3Members,
+    daoToken?.decimals,
     enableGetMembers,
     enableVotingPoweredMembersQueries,
     holders,

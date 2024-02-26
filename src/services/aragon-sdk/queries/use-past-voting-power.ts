@@ -11,7 +11,7 @@ import {useGaslessCensusId} from 'hooks/useCensus3';
 import {useDaoDetailsQuery} from '../../../hooks/useDaoDetails';
 import {GaslessPluginName, PluginTypes} from '../../../hooks/usePluginClient';
 import {useClient} from '@vocdoni/react-providers';
-import {getCensus3VotingPowerByCensusId} from '../../vocdoni-census3/census3-service';
+import {fetchVotingPowerByCensusId} from '../../vocdoni-census3/census3-service';
 
 /**
  * Get voting power at specific census id. This means that is the voting power of a holder
@@ -28,12 +28,12 @@ const useGaslessPastVotingPower = () => {
   const getGaslessPastVotingPower = useCallback(
     async (address: string) => {
       if (!censusId) return BigNumber.from(0);
-      const votingPower = await getCensus3VotingPowerByCensusId(
+      const votingPower = await fetchVotingPowerByCensusId({
         // todo(kon): use query
         vocdoniClient,
-        address,
-        censusId
-      );
+        holderAddress: address,
+        censusId,
+      });
       return BigNumber.from(votingPower);
     },
     [censusId, vocdoniClient]
