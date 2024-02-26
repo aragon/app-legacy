@@ -36,7 +36,7 @@ const ResourceList: React.FC<ResourceListProps> = ({
       <StateEmpty
         type="Object"
         mode="inline"
-        object="archive"
+        object="ARCHIVE"
         title={t('labels.noResources')}
         secondaryButton={
           emptyStateButtonClick

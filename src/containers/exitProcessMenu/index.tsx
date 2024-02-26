@@ -29,7 +29,7 @@ const ExitProcessMenu: React.FC<Props> = ({
       <div className="px-4 py-6">
         <StateEmpty
           type="Object"
-          object="warning"
+          object="WARNING"
           mode="inline"
           title={
             processType === 'DaoCreation'

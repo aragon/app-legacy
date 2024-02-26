@@ -102,11 +102,11 @@ export const Finance: React.FC = () => {
             <StateEmpty
               type="Human"
               mode="card"
-              body="blocks"
-              expression="surprised"
-              sunglass="small_intellectual"
-              hair="long"
-              accessory="flushed"
+              body="BLOCKS"
+              expression="SURPRISED"
+              sunglasses="SMALL_INTELLECTUAL"
+              hairs="LONG"
+              accessory="FLUSHED"
               title={t('finance.treasuryEmptyState.title')}
               description={htmlIn(t)('finance.treasuryEmptyState.desc')}
               renderHtml
@@ -228,11 +228,11 @@ export const Finance: React.FC = () => {
                 <StateEmpty
                   type="Human"
                   mode="inline"
-                  body="blocks"
-                  expression="surprised"
-                  sunglass="small_intellectual"
-                  hair="long"
-                  accessory="flushed"
+                  body="BLOCKS"
+                  expression="SURPRISED"
+                  sunglasses="SMALL_INTELLECTUAL"
+                  hairs="LONG"
+                  accessory="FLUSHED"
                   title={t('finance.treasuryEmptyState.title')}
                   description={htmlIn(t)('finance.treasuryEmptyState.desc')}
                   renderHtml

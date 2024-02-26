@@ -37,10 +37,10 @@ const TreasurySnapshot: React.FC<Props> = ({
       <StateEmpty
         type="both"
         mode="card"
-        body={'chart'}
-        expression={'excited'}
-        hair={'bun'}
-        object={'wallet'}
+        body="CHART"
+        expression="EXCITED"
+        hairs="BUN"
+        object="WALLET"
         title={t('finance.emptyState.title')}
         description={htmlIn(t)('finance.emptyState.description')}
         secondaryButton={{

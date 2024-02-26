@@ -34,7 +34,7 @@ const EmptyState: React.FC<Props> = props => {
         <StateEmpty
           mode="inline"
           type="Object"
-          object="smart_contract"
+          object="SMART_CONTRACT"
           title={t('scc.emptyState.title')}
           description={htmlIn(t)('scc.emptyState.description')}
           renderHtml
