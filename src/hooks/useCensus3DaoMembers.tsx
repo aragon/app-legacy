@@ -40,7 +40,7 @@ export const useCensus3DaoMembers = ({
   const {data: census3Token} = useCensus3Token(
     {tokenAddress: daoToken?.address ?? ''},
     {
-      enabled: enable && !!(daoToken?.address ?? false) && enableCensus3Token,
+      enabled: enable && !!daoToken?.address && enableCensus3Token,
     }
   );
 
