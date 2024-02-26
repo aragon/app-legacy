@@ -9,6 +9,7 @@ import {
   fetchVotingPowerByCensusId,
   fetchVotingPowerByTokenAddress,
 } from '../census3-service';
+import {IFetchCensus3VotingPowerParams} from '../census3-service.api';
 
 /**
  * Get member balance from vocdoni census3. It accepts a census id or a token id to retrieve the voting power
@@ -17,9 +18,7 @@ import {
  * @param tokenId
  */
 export const useCensus3VotingPower = (
-  holders: TokenDaoMember[],
-  censusId?: string | null,
-  tokenId?: string,
+  {holders, censusId, tokenId}: IFetchCensus3VotingPowerParams,
   options?: UseQueryOptions<TokenDaoMember>
 ) => {
   const {chainId} = useWallet();

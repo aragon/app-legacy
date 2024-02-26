@@ -37,9 +37,12 @@ export const useCensus3DaoMembers = ({
 
   // If is not a wrapped token and not on a proposal context we can still get the token holders amount
   const enableCensus3Token = enable && !proposalId;
-  const {data: census3Token} = useCensus3Token(daoToken?.address ?? '', {
-    enabled: enable && !!(daoToken?.address ?? false) && enableCensus3Token,
-  });
+  const {data: census3Token} = useCensus3Token(
+    {tokenAddress: daoToken?.address ?? ''},
+    {
+      enabled: enable && !!(daoToken?.address ?? false) && enableCensus3Token,
+    }
+  );
 
   // Get members from censusId
   // Enabled if no holders are provided and not countOnly
@@ -48,14 +51,16 @@ export const useCensus3DaoMembers = ({
     data: census3Members,
     isLoading: census3MembersIsLoading,
     isError: census3MembersIsError,
-  } = useCensus3Members({
-    tokenId: daoToken?.address,
-    page: options?.page,
-    options: {
+  } = useCensus3Members(
+    {
+      tokenId: daoToken?.address,
+      page: options?.page,
+    },
+    {
       ...options,
       enabled: enable && enableGetMembers,
-    },
-  });
+    }
+  );
 
   // Get Census id
   const {
@@ -75,9 +80,7 @@ export const useCensus3DaoMembers = ({
     !countOnly &&
     (!!censusId || !!daoToken?.address);
   const votingPoweredMembersQueries = useCensus3VotingPower(
-    holders ?? [],
-    censusId,
-    daoToken?.address,
+    {holders: holders ?? [], censusId, tokenId: daoToken?.address},
     {
       enabled: enableVotingPoweredMembersQueries,
     }
