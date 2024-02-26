@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {ButtonGroup, IllustrationHuman, Option} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {ButtonGroup, Option} from '@aragon/ods-old';
+import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -13,7 +13,6 @@ import PageEmptyState from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 import {featureFlags} from 'utils/featureFlags';
@@ -26,7 +25,6 @@ import {ProposalTypes} from 'utils/types';
 export const Governance: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {isMobile} = useScreen();
   const {open} = useGlobalModalContext();
   const {network} = useNetwork();
 
@@ -97,16 +95,11 @@ export const Governance: React.FC = () => {
         subtitle={htmlIn(t)('governance.emptyState.subtitle')}
         Illustration={
           <IllustrationHuman
-            {...{
-              body: 'voting',
-              expression: 'smile',
-              hair: 'middle',
-              accessory: 'earrings_rhombus',
-              sunglass: 'big_rounded',
-            }}
-            {...(isMobile
-              ? {height: 165, width: 295}
-              : {height: 225, width: 400})}
+            body="VOTING"
+            expression="SMILE"
+            hairs="MIDDLE"
+            accessory="EARRINGS_RHOMBUS"
+            sunglasses="BIG_ROUNDED"
           />
         }
         primaryButton={{

@@ -52,7 +52,7 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
     return (
       <EmptyMemberSection
         title={t('members.profile.emptyState.ProposalsCreated')}
-        illustration="not_found"
+        illustration="NOT_FOUND"
         link={{
           label: t('members.profile.emptyState.CTACreateProposal'),
           href: generatePath(NewProposal, {

@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
-import {IlluObject, Link} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Link} from '@aragon/ods-old';
+import {Button, IconType, IllustrationObject} from '@aragon/ods';
 
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -124,7 +124,7 @@ export const DelegationGatingMenu: React.FC = () => {
     <ModalBottomSheetSwitcher onClose={close} isOpen={isOpen}>
       <div className="flex flex-col gap-6 px-4 py-6 text-center">
         <ContentGroup className="items-center">
-          <IlluObject object="warning" />
+          <IllustrationObject object="WARNING" />
           <p className="text-2xl leading-tight text-neutral-800">
             {t(`modal.delegation.CantVote.title`)}
           </p>
