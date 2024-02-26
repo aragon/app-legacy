@@ -65,7 +65,6 @@ export const useCensus3VotingPower = (
 
 interface useCensus3VotingPowerProps {
   page?: number;
-  // censusId?: string | null;
   tokenId?: string;
   options?: UseQueryOptions<StrategyHolders>;
 }
