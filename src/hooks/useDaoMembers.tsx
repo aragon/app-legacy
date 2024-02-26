@@ -39,6 +39,11 @@ const compareAddresses = (addressA?: string | null, addressB?: string | null) =>
 export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
   'balance' in member;
 
+/**
+ * Sorts DAO members by voting power or delegations, moving the connected user at the top position.
+ * @param sort by delegations or votingPower by default
+ * @param userAddress
+ */
 export const sortDaoMembers =
   (sort?: DaoMemberSort, userAddress?: string | null) =>
   (a: DaoMember, b: DaoMember) => {
