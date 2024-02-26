@@ -134,7 +134,7 @@ export const useCensus3DaoMembers = ({
 
   let memberCount = 0;
   if (enableCensus3Token && census3Token) {
-    memberCount = census3Token!.size;
+    memberCount = census3Token.size;
   } else if (nonWrappedCensusSize) {
     memberCount = nonWrappedCensusSize;
   }
