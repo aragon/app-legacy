@@ -29,8 +29,8 @@ export const useCensus3DaoMembers = ({
   pluginType,
   options,
 }: UseCensus3DaoMembersProps): HookData<DaoMembersData> => {
-  const enable = options?.enabled || false;
-  const countOnly = options?.countOnly || false;
+  const enable = options?.enabled ?? false;
+  const countOnly = options?.countOnly ?? false;
   const {id: proposalId} = useParams();
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {address} = useWallet();
