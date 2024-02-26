@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {Icon, IconType, Tag, ITagProps} from '@aragon/ods';
+import {IconType, Tag, ITagProps} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useMatch} from 'react-router-dom';
 import useBreadcrumbs, {BreadcrumbData} from 'use-react-router-breadcrumbs';
@@ -14,7 +14,7 @@ type MappedBreadcrumbs = {
     label: string;
   }[];
   tag?: React.FunctionComponentElement<ITagProps>;
-  icon: JSX.Element;
+  icon: IconType;
 };
 
 type ProposalStatusColorMap = {
@@ -37,11 +37,11 @@ const routes = Object.values(Paths).map(path => {
 });
 
 function basePathIcons(path: string) {
-  if (path.includes('dashboard')) return <Icon icon={IconType.APP_DASHBOARD} />;
-  if (path.includes('community')) return <Icon icon={IconType.APP_MEMBERS} />;
-  if (path.includes('finance')) return <Icon icon={IconType.APP_ASSETS} />;
-  if (path.includes('settings')) return <Icon icon={IconType.SETTINGS} />;
-  else return <Icon icon={IconType.APP_PROPOSALS} />;
+  if (path.includes('dashboard')) return IconType.APP_DASHBOARD;
+  if (path.includes('community')) return IconType.APP_MEMBERS;
+  if (path.includes('finance')) return IconType.APP_ASSETS;
+  if (path.includes('settings')) return IconType.SETTINGS;
+  else return IconType.APP_PROPOSALS;
 }
 
 export function useMappedBreadcrumbs(): MappedBreadcrumbs {

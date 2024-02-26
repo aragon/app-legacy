@@ -1,8 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {
   Dropdown,
-  IconLinkExternal,
-  IllustrationHuman,
   ListItemAction,
   Pagination,
   SearchInput,
@@ -233,7 +231,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
-              iconLeft: <IconLinkExternal />,
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
               onClick: handleSecondaryButtonClick,
             },
           }

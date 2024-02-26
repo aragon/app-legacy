@@ -1,13 +1,13 @@
 import React from 'react';
 import {styled} from 'styled-components';
 
-import {type IconType} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 export type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   disabled?: boolean;
   /** Indicates whether the link should open in a new tab */
   external?: boolean;
-  iconRight?: React.FunctionComponentElement<IconType>;
+  iconRight?: IconType;
   /** Label for the link */
   label: string;
   /** Optional description */
@@ -51,7 +51,12 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       >
         <div className="mr-1 flex items-center gap-x-2">
           <Label>{label}</Label>
-          {iconRight && <div>{iconRight}</div>}
+          {iconRight && (
+            <Icon
+              icon={iconRight}
+              size={iconRight === IconType.CHEVRON_RIGHT ? 'sm' : undefined}
+            />
+          )}
         </div>
         {description && <Description>{description}</Description>}
       </StyledLink>

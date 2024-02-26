@@ -1,29 +1,56 @@
 import React from 'react';
 import {styled} from 'styled-components';
-
-import {IconInfo, IconSuccess, IconWarning} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 const styles = {
   info: {
-    icon: <IconInfo className="text-info-500" height={20} width={20} />,
+    icon: (
+      <Icon
+        icon={IconType.INFO}
+        className="text-info-500"
+        height={20}
+        width={20}
+      />
+    ),
     color: 'text-info-800',
     borderColor: 'border-info-400',
     bgColor: 'bg-info-100',
   },
   success: {
-    icon: <IconSuccess className="text-success-500" height={20} width={20} />,
+    icon: (
+      <Icon
+        icon={IconType.SUCCESS}
+        className="text-success-500"
+        height={20}
+        width={20}
+      />
+    ),
     color: 'text-success-800',
     borderColor: 'border-success-400',
     bgColor: 'bg-success-100',
   },
   warning: {
-    icon: <IconWarning className="text-warning-500" height={20} width={20} />,
+    icon: (
+      <Icon
+        icon={IconType.WARNING}
+        className="text-warning-500"
+        height={20}
+        width={20}
+      />
+    ),
     color: 'text-warning-800',
     borderColor: 'border-warning-400',
     bgColor: 'bg-warning-100',
   },
   critical: {
-    icon: <IconWarning className="text-critical-500" height={20} width={20} />,
+    icon: (
+      <Icon
+        icon={IconType.CRITICAL}
+        className="text-critical-500"
+        height={20}
+        width={20}
+      />
+    ),
     color: 'text-critical-800',
     borderColor: 'border-critical-400',
     bgColor: 'bg-critical-100',

@@ -1,13 +1,12 @@
-import React, {type ReactComponentElement} from 'react';
+import React from 'react';
 import {css, styled} from 'styled-components';
-
-import {IconCheckmark, type IconType} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 export type AlertChipProps = {
   /** Chip Label */
   label: string;
   /** Icon component */
-  icon?: ReactComponentElement<IconType>;
+  icon?: IconType;
   /** control Icon visibility */
   showIcon?: boolean;
   /** Is chip visible */
@@ -16,19 +15,14 @@ export type AlertChipProps = {
 
 export const AlertChip: React.FC<AlertChipProps> = ({
   label,
-  icon = <IconCheckmark />,
+  icon = <Icon icon={IconType.CHECKMARK} />,
   showIcon = false,
   isShown = false,
 }) => {
   return (
     <Wrapper data-testid="alertChip" {...{isShown}}>
       <BadgeContainer>
-        {showIcon &&
-          React.cloneElement(icon, {
-            height: 12,
-            width: 12,
-            className: 'text-neutral-300',
-          })}
+        {showIcon && icon}
         <Label>{label}</Label>
       </BadgeContainer>
     </Wrapper>

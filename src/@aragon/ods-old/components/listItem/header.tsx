@@ -1,8 +1,8 @@
 import React from 'react';
 import {styled} from 'styled-components';
-import {Button} from '@aragon/ods';
+import {Button, Icon} from '@aragon/ods';
 
-import {type IconType} from '../icons';
+import {IconType} from '@aragon/ods';
 
 export type ListItemHeaderProps = {
   /** Action title */
@@ -10,7 +10,7 @@ export type ListItemHeaderProps = {
   /** Action state */
   disabled?: boolean;
   /** Icon to display */
-  icon: React.FunctionComponentElement<IconType>;
+  icon: IconType;
   /** Label to display */
   label: string;
   /** Card orientation */
@@ -29,7 +29,9 @@ export const ListItemHeader: React.FC<ListItemHeaderProps> = ({
 
   return (
     <Container horizontal={horizontal} data-testid="listItem-header">
-      <IconWrapper>{props.icon}</IconWrapper>
+      <IconWrapper>
+        <Icon icon={props.icon} />
+      </IconWrapper>
 
       <ButtonWrapper horizontal={horizontal}>
         <Button

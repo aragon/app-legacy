@@ -1,6 +1,6 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
-import {IconAdd} from '../icons';
+import {IconType} from '@aragon/ods';
 import {Breadcrumb} from './breadcrumb';
 
 const crumbs = [
@@ -10,7 +10,7 @@ const crumbs = [
 
 describe('Breadcrumb', () => {
   test('should render default crumbs without crashing', () => {
-    render(<Breadcrumb crumbs={crumbs} icon={<IconAdd />} />);
+    render(<Breadcrumb crumbs={crumbs} icon={IconType.PLUS} />);
 
     const element = screen.getByTestId(/breadcrumbs/i);
     expect(element).toBeInTheDocument;
@@ -24,7 +24,7 @@ describe('Breadcrumb', () => {
   });
 
   test('should display the breadcrumbs with given labels', () => {
-    render(<Breadcrumb crumbs={crumbs} icon={<IconAdd />} />);
+    render(<Breadcrumb crumbs={crumbs} icon={IconType.PLUS} />);
     const breadcrumbs = screen.getAllByRole('button');
 
     breadcrumbs.forEach((crumb, index) =>
@@ -36,7 +36,7 @@ describe('Breadcrumb', () => {
     const mockHandler = jest.fn();
 
     render(
-      <Breadcrumb crumbs={crumbs} onClick={mockHandler} icon={<IconAdd />} />
+      <Breadcrumb crumbs={crumbs} onClick={mockHandler} icon={IconType.PLUS} />
     );
     fireEvent.click(screen.getAllByRole('button')[0]);
 
@@ -48,7 +48,7 @@ describe('Breadcrumb', () => {
     const mockHandler = jest.fn();
 
     render(
-      <Breadcrumb crumbs={crumbs} onClick={mockHandler} icon={<IconAdd />} />
+      <Breadcrumb crumbs={crumbs} onClick={mockHandler} icon={IconType.PLUS} />
     );
     const breadcrumbs = screen.getAllByRole('button');
     fireEvent.click(breadcrumbs[breadcrumbs.length - 1]);

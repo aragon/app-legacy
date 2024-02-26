@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
 import {IlluObject, Link} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -149,7 +149,7 @@ export const DelegationGatingMenu: React.FC = () => {
             href={t('modal.delegation.NoVotingPower.LinkURL')}
             target="_blank"
             className="my-3 self-center"
-            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+            iconRight={IconType.LINK_EXTERNAL}
           />
         </ContentGroup>
       </div>

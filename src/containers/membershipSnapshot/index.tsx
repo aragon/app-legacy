@@ -1,6 +1,6 @@
 import React from 'react';
 import {ListItemHeader} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -78,7 +78,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
       <div className="flex space-x-6">
         <div className="w-1/3">
           <ListItemHeader
-            icon={<Icon icon={IconType.APP_MEMBERS} />}
+            icon={IconType.APP_MEMBERS}
             value={`${totalMemberCount} ${t('labels.members')}`}
             label={
               walletBased
@@ -120,7 +120,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
   return (
     <VerticalContainer>
       <ListItemHeader
-        icon={<Icon icon={IconType.APP_MEMBERS} />}
+        icon={IconType.APP_MEMBERS}
         value={`${totalMemberCount} ${t('labels.members')}`}
         label={
           walletBased

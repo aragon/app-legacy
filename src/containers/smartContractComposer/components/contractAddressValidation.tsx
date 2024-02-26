@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-  IconRadioMulti,
   Link,
   TextareaSimple,
   shortenAddress,
@@ -400,7 +399,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
       } else if (sourcifyPartialData) {
         return (
           <div className="flex space-x-2">
-            <IconRadioMulti className="text-warning-500" />
+            <Icon icon={IconType.WARNING} />
             <VerificationStatus colorClassName="text-warning-800">
               {t('scc.validation.sourcifyStatusWarning')}
             </VerificationStatus>
@@ -560,7 +559,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
+                    iconRight={IconType.LINK_EXTERNAL}
                     href={`https://sourcify.dev/#/lookup/${addressField}`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"
@@ -573,7 +572,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
+                    iconRight={IconType.LINK_EXTERNAL}
                     href={`${CHAIN_METADATA[network].explorer}address/${addressField}#code`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"

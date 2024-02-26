@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {HeaderDao, IlluObject, IllustrationHuman} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -65,7 +65,7 @@ export const Dashboard: React.FC = () => {
 
   const removeFollowedDaoMutation = useRemoveFollowedDaoMutation({
     onMutate: () => {
-      alert(t('alert.chip.unfavorite'), <Icon icon={IconType.CLOSE} />);
+      alert(t('alert.chip.unfavorite'), IconType.CLOSE);
     },
   });
 

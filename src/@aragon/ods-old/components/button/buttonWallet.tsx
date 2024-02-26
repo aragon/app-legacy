@@ -3,8 +3,8 @@ import {styled} from 'styled-components';
 
 import {shortenAddress} from '../../utils/addresses';
 import {AvatarWallet} from '../avatar';
-import {IconPerson} from '../icons';
 import {Spinner} from '../spinner';
+import {Icon, IconType} from '@aragon/ods';
 
 export type ButtonWalletProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /**
@@ -44,7 +44,7 @@ type AvatarProps = Pick<ButtonWalletProps, 'isLoading' | 'isConnected' | 'src'>;
 
 const Avatar: FC<AvatarProps> = ({isConnected, isLoading, src}) => {
   if (!isConnected) {
-    return <IconPerson className="h-5 w-5" />;
+    return <Icon icon={IconType.PERSON} className="h-5 w-5" />;
   }
   if (isLoading) {
     return <Spinner size="small" />;

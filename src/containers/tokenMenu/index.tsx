@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {AssetBalance} from '@aragon/sdk-client';
-import {IconStorage, SearchInput} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {SearchInput} from '@aragon/ods-old';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -88,7 +88,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
         <>
           <NoTokenContainer>
             <IconWrapper>
-              <IconStorage size="lg" />
+              <Icon icon={IconType.APP_ASSETS} size="lg" />
             </IconWrapper>
             <TokenTitle>{t('TokenModal.tokenNotAvailable')}</TokenTitle>
             <TokenDescription>
