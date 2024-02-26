@@ -7,7 +7,6 @@ export * from './cards';
 export * from './checkbox';
 export * from './dropdown';
 export * from './headers';
-export * from './illustrations';
 export * from './input';
 export * from './label';
 export * from './link';
