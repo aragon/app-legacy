@@ -8,17 +8,17 @@ export default class CreateDAO {
     // Fills out the Select Chain form and proceeds to the next page
     cy.get('button').contains('Testnet').click();
     cy.get('p')
-      .contains(/^Goerli$/)
+      .contains(/^Ethereum Sepolia$/)
       .click();
     cy.get('button').contains('Next').click();
 
     // Fills out mandatory fields on the Define DAO metadata page and proceeds to the next page
     cy.get('input[name="daoName"]').type('Tunesia Offsite DAO');
-    cy.get('input[name="daoEnsName"]').type(Date.now().toString());
+    // cy.get('input[name="daoEnsName"]').type(Date.now().toString());
     cy.get('textarea[name="daoSummary"]').type(
       'DAO to come to democratic group decisions during our offsite'
     );
-    cy.get('button[mode="primary"]')
+    cy.get('button')
       .contains('Next')
       .parent()
       .should('not.be.disabled')
@@ -28,14 +28,14 @@ export default class CreateDAO {
     cy.get('p')
       .contains(/^Multisig members$/)
       .click();
-    cy.get('button[mode="primary"]')
+    cy.get('button')
       .contains('Next')
       .parent()
       .should('not.be.disabled')
       .click();
 
     // Proceeds to next step with minimum approval automatically set as 1
-    cy.get('button[mode="primary"]')
+    cy.get('button')
       .contains('Next')
       .parent()
       .should('not.be.disabled')
@@ -45,14 +45,14 @@ export default class CreateDAO {
     cy.get('p')
       .should('contain', 'These values are correct')
       .each(el => el.trigger('click'));
-    cy.get('button[mode="primary"]')
+    cy.get('button')
       .contains('Deploy your DAO')
       .parent()
       .should('not.be.disabled')
       .click();
 
     // Approve the tx from the modal
-    cy.get('button[mode="primary"]')
+    cy.get('button')
       .contains('Approve transaction')
       .parent()
       .should('not.be.disabled')
@@ -63,7 +63,7 @@ export default class CreateDAO {
     cy.switchToCypressWindow();
 
     // Waits till the tx completes by checking the state of the primary button the tx modal and continues to DAO Dashboard
-    cy.get('button[mode="primary"]').contains('Launch DAO Dashboard').click();
+    cy.get('button').contains('Launch DAO Dashboard').click();
     cy.wait(5000);
   }
 }
