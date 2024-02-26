@@ -16,6 +16,7 @@ import {
 } from '../services/vocdoni-census3/census3-queries';
 import {useMemo} from 'react';
 import {useWallet} from './useWallet';
+import {formatUnits} from 'ethers/lib/utils';
 
 interface UseCensus3DaoMembersProps {
   holders?: TokenDaoMember[];
@@ -98,8 +99,8 @@ export const useCensus3DaoMembers = ({
       return census3Members.holders.map(member => {
         return {
           address: member.holder,
-          balance: Number(member.weight),
-          votingPower: Number(member.weight),
+          balance: Number(formatUnits(member.weight, daoToken?.decimals)),
+          votingPower: Number(formatUnits(member.weight, daoToken?.decimals)),
           delegatee: '',
           delegators: [],
         } as TokenDaoMember;
