@@ -154,7 +154,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
         <StateEmpty
           mode="inline"
           type="Object"
-          object="smart_contract"
+          object="SMART_CONTRACT"
           title={t('scc.writeContractEmptyState.title')}
           description={t('scc.writeContractEmptyState.desc')}
         />
@@ -196,7 +196,7 @@ const DesktopModalEmptyState: React.FC = () => {
       <StateEmpty
         mode="inline"
         type="Object"
-        object="smart_contract"
+        object="SMART_CONTRACT"
         title={t('scc.selectionEmptyState.title')}
         description={t('scc.selectionEmptyState.description')}
       />

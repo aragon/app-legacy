@@ -1,10 +1,9 @@
-import {Button} from '@aragon/ods';
 import {
-  IlluHumanProps,
-  IlluObject,
-  IlluObjectProps,
-  IllustrationHuman,
-} from '@aragon/ods-old';
+  Button,
+  IIllustrationHumanProps,
+  IIllustrationObjectProps,
+} from '@aragon/ods';
+import {IllustrationObject, IllustrationHuman} from '@aragon/ods';
 import {IButtonBaseProps} from '@aragon/ods/dist/types/src/components/button/button.api';
 import useScreen from 'hooks/useScreen';
 import React, {ButtonHTMLAttributes} from 'react';
@@ -34,16 +33,16 @@ type BaseProps = {
 };
 
 type StateEmptyProps =
-  | (IlluHumanProps &
+  | (IIllustrationHumanProps &
       BaseProps & {
         type: 'Human';
       })
-  | (IlluObjectProps &
+  | (IIllustrationObjectProps &
       BaseProps & {
         type: 'Object';
       })
-  | (IlluObjectProps &
-      IlluHumanProps &
+  | (IIllustrationObjectProps &
+      IIllustrationHumanProps &
       BaseProps & {
         type: 'both';
       })
@@ -122,9 +121,11 @@ const RenderIllustration: React.FC<StateEmptyProps> = props => {
           {...{
             body: props.body,
             expression: props.expression,
-            hair: props.hair,
-            sunglass: props.sunglass,
+            hairs: props.hairs,
+            sunglass: props.sunglasses,
             accessory: props.accessory,
+            object: props.object,
+            objectPosition: props.objectPosition,
           }}
           {...(isMobile
             ? {height: 165, width: 295}
@@ -132,7 +133,7 @@ const RenderIllustration: React.FC<StateEmptyProps> = props => {
         />
       )}
       {props.type !== 'Human' && (
-        <IlluObject
+        <IllustrationObject
           object={props.object}
           className={props.type === 'both' ? '-ml-32 xl:-ml-36' : ''}
         />

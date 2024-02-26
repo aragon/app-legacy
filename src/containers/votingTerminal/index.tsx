@@ -289,7 +289,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             <StateEmpty
               type="Object"
               mode="inline"
-              object="magnifying_glass"
+              object="MAGNIFYING_GLASS"
               title={t(
                 query === ''
                   ? 'votingTerminal.emptyState.title'

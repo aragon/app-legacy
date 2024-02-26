@@ -144,7 +144,7 @@ const MobileModalEmptyState: React.FC = () => {
       <StateEmpty
         mode="inline"
         type="Object"
-        object="smart_contract"
+        object="SMART_CONTRACT"
         title={t('scc.selectionEmptyState.title')}
         description={t('scc.selectionEmptyState.description')}
       />

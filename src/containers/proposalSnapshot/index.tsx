@@ -105,11 +105,11 @@ const ProposalSnapshot: React.FC<Props> = ({
       <StateEmpty
         type="Human"
         mode="card"
-        body={'voting'}
-        expression={'smile'}
-        hair={'middle'}
-        accessory={'earrings_rhombus'}
-        sunglass={'big_rounded'}
+        body="VOTING"
+        expression="SMILE"
+        hairs="MIDDLE"
+        accessory="EARRINGS_RHOMBUS"
+        sunglasses="BIG_ROUNDED"
         title={t('governance.emptyState.title')}
         description={htmlIn(t)('governance.emptyState.description')}
         primaryButton={{

@@ -316,7 +316,7 @@ export const Community: React.FC = () => {
                 <StateEmpty
                   type="Object"
                   mode="inline"
-                  object="magnifying_glass"
+                  object="MAGNIFYING_GLASS"
                   title={t('labels.noResults')}
                   description={t('labels.noResultsSubtitle')}
                 />
