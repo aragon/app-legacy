@@ -35,12 +35,13 @@ const TreasurySnapshot: React.FC<Props> = ({
   if (transfers.length === 0) {
     return (
       <StateEmpty
-        type="both"
+        type="Human"
         mode="card"
-        body={'chart'}
-        expression={'excited'}
-        hair={'bun'}
-        object={'wallet'}
+        body="CHART"
+        expression="EXCITED"
+        hairs="BUN"
+        object="WALLET"
+        objectPosition="right"
         title={t('finance.emptyState.title')}
         description={htmlIn(t)('finance.emptyState.description')}
         secondaryButton={{

@@ -62,7 +62,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
         <div className="px-4 pb-6">
           <StateEmpty
             type="Object"
-            object="warning"
+            object="WARNING"
             mode="inline"
             title={t('modal.mintTokensToTreasury.title')}
             description={t('modal.mintTokensToTreasury.description')}

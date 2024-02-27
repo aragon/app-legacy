@@ -258,7 +258,7 @@ export const DaoExplorer = () => {
           <StateEmpty
             type="Object"
             mode="card"
-            object="magnifying_glass"
+            object="MAGNIFYING_GLASS"
             title={t('explore.emptyStateSearch.title')}
             description={t('explore.emptyStateSearch.description')}
             contentWrapperClassName="lg:w-[560px]"

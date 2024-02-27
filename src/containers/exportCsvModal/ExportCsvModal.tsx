@@ -186,7 +186,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
         <StateEmpty
           customCardPaddingClassName="p-6"
           type="Object"
-          object="success"
+          object="SUCCESS"
           mode="card"
           title={t('finance.modalExport.feedback.title')}
           description={t('finance.modalExport.feedback.desc')}

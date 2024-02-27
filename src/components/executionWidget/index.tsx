@@ -40,7 +40,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
         <StateEmpty
           mode="inline"
           type="Object"
-          object="smart_contract"
+          object="SMART_CONTRACT"
           title="No actions were added"
           secondaryButton={
             onAddAction && {

@@ -103,7 +103,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
           <StateEmpty
             type="Object"
             mode="card"
-            object="smart_contract"
+            object="SMART_CONTRACT"
             title={t('newProposal.configureActions.addFirstAction')}
             description={t(
               'newProposal.configureActions.addFirstActionSubtitle'

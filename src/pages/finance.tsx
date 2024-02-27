@@ -76,15 +76,13 @@ export const Finance: React.FC = () => {
           title={t('finance.emptyState.title')}
           subtitle={htmlIn(t)('finance.emptyState.description')}
           Illustration={
-            <div className="flex">
-              <IllustrationHuman
-                body="CHART"
-                expression="EXCITED"
-                hairs="BUN"
-                object="WALLET"
-                objectPosition="right"
-              />
-            </div>
+            <IllustrationHuman
+              body="CHART"
+              expression="EXCITED"
+              hairs="BUN"
+              object="WALLET"
+              objectPosition="right"
+            />
           }
           primaryButton={{
             label: t('finance.emptyState.buttonLabel'),
@@ -102,11 +100,11 @@ export const Finance: React.FC = () => {
             <StateEmpty
               type="Human"
               mode="card"
-              body="blocks"
-              expression="surprised"
-              sunglass="small_intellectual"
-              hair="long"
-              accessory="flushed"
+              body="BLOCKS"
+              expression="SURPRISED"
+              sunglasses="SMALL_INTELLECTUAL"
+              hairs="LONG"
+              accessory="FLUSHED"
               title={t('finance.treasuryEmptyState.title')}
               description={htmlIn(t)('finance.treasuryEmptyState.desc')}
               renderHtml
@@ -228,11 +226,11 @@ export const Finance: React.FC = () => {
                 <StateEmpty
                   type="Human"
                   mode="inline"
-                  body="blocks"
-                  expression="surprised"
-                  sunglass="small_intellectual"
-                  hair="long"
-                  accessory="flushed"
+                  body="BLOCKS"
+                  expression="SURPRISED"
+                  sunglasses="SMALL_INTELLECTUAL"
+                  hairs="LONG"
+                  accessory="FLUSHED"
                   title={t('finance.treasuryEmptyState.title')}
                   description={htmlIn(t)('finance.treasuryEmptyState.desc')}
                   renderHtml
