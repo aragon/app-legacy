@@ -2,8 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {Dropdown, ListItemAction} from '@aragon/ods-old';
-import {IconType, Button, AlertInline} from '@aragon/ods';
+import {Button, AlertInline, Dropdown} from '@aragon/ods';
 
 import {useAlertContext} from 'context/alert';
 import {useWallet} from 'hooks/useWallet';
@@ -82,29 +81,11 @@ const AddCommittee: React.FC = () => {
         <Button variant="tertiary" size="lg" onClick={handleAddWallet}>
           {t('labels.addWallet')}
         </Button>
-        <Dropdown
-          align="start"
-          trigger={
-            <Button
-              variant="tertiary"
-              size="lg"
-              iconLeft={IconType.DOTS_VERTICAL}
-              data-testid="trigger"
-            />
-          }
-          sideOffset={8}
-          listItems={[
-            {
-              component: (
-                <ListItemAction
-                  title={t('labels.deleteAllAddresses')}
-                  bgWhite
-                />
-              ),
-              callback: handleDeleteAll,
-            },
-          ]}
-        />
+        <Dropdown.Container>
+          <Dropdown.Item onClick={handleDeleteAll}>
+            {t('labels.deleteAllAddresses')}
+          </Dropdown.Item>
+        </Dropdown.Container>
       </ActionsWrapper>
       <AlertInline
         message={t('createDAO.step3.distributionWalletAlertText') as string}

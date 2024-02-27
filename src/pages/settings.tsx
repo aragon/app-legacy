@@ -1,6 +1,6 @@
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
-import {AvatarDao, Dropdown, Link} from '@aragon/ods-old';
-import {AlertInline, Button, Icon, IconType, Tag} from '@aragon/ods';
+import {AvatarDao, Link} from '@aragon/ods-old';
+import {AlertInline, Button, Icon, IconType, Tag, Dropdown} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -261,28 +261,19 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                 />
               ))}
               {daoDetails.metadata.links.length > 3 && (
-                <Dropdown
-                  trigger={
-                    <Link
-                      label={t('settings.dao.links.allLinks')}
-                      type="primary"
-                      iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
-                    />
-                  }
-                  listItems={daoDetails.metadata.links.map(({name, url}) => ({
-                    component: (
-                      <div className="mb-3">
-                        <Link
-                          label={name}
-                          description={url}
-                          type="primary"
-                          href={url}
-                          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
-                        />
-                      </div>
-                    ),
-                  }))}
-                />
+                <Dropdown.Container label={t('settings.dao.links.allLinks')}>
+                  {daoDetails.metadata.links.map(({name, url}, index) => (
+                    <Dropdown.Item key={index}>
+                      <Link
+                        label={name}
+                        description={url}
+                        type="primary"
+                        href={url}
+                        iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+                      />
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Container>
               )}
             </div>
           </Definition>

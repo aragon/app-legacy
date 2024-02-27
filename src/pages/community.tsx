@@ -1,13 +1,11 @@
 import React, {useCallback, useState} from 'react';
 import {
-  Dropdown,
   IconLinkExternal,
   IllustrationHuman,
-  ListItemAction,
   Pagination,
   SearchInput,
 } from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Dropdown, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -263,54 +261,24 @@ export const Community: React.FC = () => {
               />
             )}
             {!walletBased && enableSearchSort && enableDelegation && (
-              <Dropdown
-                align="end"
-                className="p-2"
-                style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
-                sideOffset={8}
-                listItems={[
-                  {
-                    callback: () => setSort('votingPower'),
-                    component: (
-                      <ListItemAction
-                        title={t('community.sortByVotingPower.default')}
-                        bgWhite={true}
-                        mode={sort === 'votingPower' ? 'selected' : 'default'}
-                        iconRight={
-                          sort === 'votingPower' ? (
-                            <Icon icon={IconType.CHECKMARK} />
-                          ) : undefined
-                        }
-                      />
-                    ),
-                  },
-                  {
-                    callback: () => setSort('delegations'),
-                    component: (
-                      <ListItemAction
-                        title={t('community.sortByDelegations.default')}
-                        bgWhite={true}
-                        mode={sort === 'delegations' ? 'selected' : 'default'}
-                        iconRight={
-                          sort === 'delegations' ? (
-                            <Icon icon={IconType.CHECKMARK} />
-                          ) : undefined
-                        }
-                      />
-                    ),
-                  },
-                ]}
-                side="bottom"
-                trigger={
-                  <Button
-                    variant="tertiary"
-                    iconLeft={IconType.SORT_ASC}
-                    size="lg"
-                  >
-                    {sortLabel}
-                  </Button>
-                }
-              />
+              <Dropdown.Container label={sortLabel}>
+                <Dropdown.Item
+                  icon={sort === 'votingPower' ? IconType.CHECKMARK : undefined}
+                  iconPosition="right"
+                  selected={sort === 'votingPower'}
+                  onClick={() => setSort('votingPower')}
+                >
+                  {t('community.sortByVotingPower.default')}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  icon={sort === 'delegations' ? IconType.CHECKMARK : undefined}
+                  iconPosition="right"
+                  selected={sort === 'delegations'}
+                  onClick={() => setSort('delegations')}
+                >
+                  {t('community.sortByDelegations.default')}
+                </Dropdown.Item>
+              </Dropdown.Container>
             )}
           </div>
 
