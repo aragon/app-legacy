@@ -5,7 +5,6 @@ import {
 } from '@aragon/ods';
 import {IllustrationObject, IllustrationHuman} from '@aragon/ods';
 import {IButtonBaseProps} from '@aragon/ods/dist/types/src/components/button/button.api';
-import useScreen from 'hooks/useScreen';
 import React, {ButtonHTMLAttributes} from 'react';
 import styled from 'styled-components';
 
@@ -40,16 +39,7 @@ type StateEmptyProps =
   | (IIllustrationObjectProps &
       BaseProps & {
         type: 'Object';
-      })
-  | (IIllustrationObjectProps &
-      IIllustrationHumanProps &
-      BaseProps & {
-        type: 'both';
-      })
-  | (BaseProps & {
-      type: 'custom';
-      src: string;
-    });
+      });
 
 export const StateEmpty: React.FC<StateEmptyProps> = props => {
   return (
@@ -58,9 +48,7 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
       type={props.type}
       customCardPaddingClassName={props.customCardPaddingClassName}
     >
-      <div className="flex">
-        <RenderIllustration {...props} />
-      </div>
+      <RenderIllustration {...props} />
       <ContentWrapper className={props.contentWrapperClassName}>
         <TextWrapper>
           <Title>{props.title}</Title>
@@ -104,39 +92,21 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
 };
 
 const RenderIllustration: React.FC<StateEmptyProps> = props => {
-  const {isMobile} = useScreen();
-
-  if (props.type === 'custom') {
-    return (
-      <ImageWrapper>
-        <img src={props.src} />
-      </ImageWrapper>
-    );
-  }
-
   return (
     <>
       {props.type !== 'Object' && (
         <IllustrationHuman
-          {...{
-            body: props.body,
-            expression: props.expression,
-            hairs: props.hairs,
-            sunglass: props.sunglasses,
-            accessory: props.accessory,
-            object: props.object,
-            objectPosition: props.objectPosition,
-          }}
-          {...(isMobile
-            ? {height: 165, width: 295}
-            : {height: 225, width: 400})}
+          body={props.body}
+          expression={props.expression}
+          hairs={props.hairs}
+          sunglasses={props.sunglasses}
+          accessory={props.accessory}
+          object={props.object}
+          objectPosition={props.objectPosition}
         />
       )}
       {props.type !== 'Human' && (
-        <IllustrationObject
-          object={props.object}
-          className={props.type === 'both' ? '-ml-32 xl:-ml-36' : ''}
-        />
+        <IllustrationObject object={props.object} className={props.type} />
       )}
     </>
   );
@@ -154,7 +124,7 @@ const Card = styled.div.attrs<
     if (type === 'Object') className += 'gap-y-2 ';
   }
 
-  if (type === 'Human' || type === 'both') className += 'gap-y-6 ';
+  if (type === 'Human') className += 'gap-y-6 ';
   return {className};
 })<Pick<StateEmptyProps, 'mode' | 'type' | 'customCardPaddingClassName'>>``;
 
@@ -183,7 +153,3 @@ const Description = styled.p.attrs({
     color: #003bf5;
     font-weight: 700;
 `;
-
-const ImageWrapper = styled.div.attrs({
-  className: 'flex justify-center pt-8 xl:pt-12 pb-8 xl:pb-16',
-})``;

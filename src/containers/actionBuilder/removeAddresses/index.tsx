@@ -176,6 +176,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                 onClick: () => open('manageWallet'),
               }}
             />
+            <Label label={t('labels.whitelistWallets.address')} />
           </FormItem>
           {controlledWallets.map((field, fieldIndex) => (
             <FormItem

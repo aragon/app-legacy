@@ -32,9 +32,14 @@ export const retry = async <TReturn>(
     await wait(attempts * timeout);
 
     try {
-      const result = await request();
+      const result = await Promise.race([
+        request(),
+        new Promise((_resolve, reject) =>
+          setTimeout(() => reject(new Error('request timeout')), 6_000)
+        ),
+      ]);
 
-      return result;
+      return result as TReturn;
     } catch (error) {
       lastError = error;
       attempts++;
