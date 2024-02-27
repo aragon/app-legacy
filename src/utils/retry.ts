@@ -9,6 +9,11 @@ export interface IRetryOptions {
    * @default 1000
    */
   timeout: number;
+  /**
+   * The request will be marked as failed after the specified timeout in milliseconds.
+   * @default 12_000
+   */
+  requestTimeout?: number;
 }
 
 /**
@@ -18,7 +23,7 @@ export const retry = async <TReturn>(
   request: () => TReturn,
   options?: IRetryOptions
 ) => {
-  const {times = 3, timeout = 1_000} = options ?? {};
+  const {times = 3, timeout = 1_000, requestTimeout = 12_000} = options ?? {};
 
   let attempts = 0;
   let lastError: unknown;
@@ -35,7 +40,7 @@ export const retry = async <TReturn>(
       const result = await Promise.race([
         request(),
         new Promise((_resolve, reject) =>
-          setTimeout(() => reject(new Error('request timeout')), 6_000)
+          setTimeout(() => reject(new Error('request timeout')), requestTimeout)
         ),
       ]);
 
