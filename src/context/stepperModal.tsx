@@ -165,28 +165,26 @@ const StepperModal = <TStepKey extends string>({
         </StepsContainer>
       )}
       {buttonLabels[globalState] !== undefined && (
-        <>
-          <ButtonContainer>
-            <Button
-              size="md"
-              variant="primary"
-              className="mt-3 w-full"
-              iconLeft={
-                globalState === StepStatus.ERROR ? IconType.RELOAD : undefined
-              }
-              iconRight={
-                globalState === StepStatus.WAITING ||
-                globalState === StepStatus.SUCCESS
-                  ? IconType.CHEVRON_RIGHT
-                  : undefined
-              }
-              state={gasEstimationError !== undefined ? 'disabled' : undefined}
-              onClick={callback}
-            >
-              {buttonLabels[globalState]!}
-            </Button>
-          </ButtonContainer>
-        </>
+        <ButtonContainer>
+          <Button
+            size="md"
+            variant="primary"
+            className="mt-3 w-full"
+            iconLeft={
+              globalState === StepStatus.ERROR ? IconType.RELOAD : undefined
+            }
+            iconRight={
+              globalState === StepStatus.WAITING ||
+              globalState === StepStatus.SUCCESS
+                ? IconType.CHEVRON_RIGHT
+                : undefined
+            }
+            disabled={gasEstimationError !== undefined}
+            onClick={callback}
+          >
+            {buttonLabels[globalState]!}
+          </Button>
+        </ButtonContainer>
       )}
     </ModalBottomSheetSwitcher>
   );

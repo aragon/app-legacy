@@ -91,7 +91,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
             {buttonSecondaryLabel && (
               <Button
                 variant="tertiary"
-                state={disabled ? 'disabled' : undefined}
+                disabled={disabled}
                 size="md"
                 onClick={onClickActionSecondary}
               >
@@ -101,7 +101,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
             {buttonPrimaryLabel && (
               <Button
                 variant="primary"
-                state={disabled ? 'disabled' : undefined}
+                disabled={disabled}
                 size="md"
                 onClick={onClickActionPrimary}
               >

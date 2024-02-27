@@ -449,81 +449,79 @@ export const WalletInput = React.forwardRef<
      *                    Render                     *
      *************************************************/
     return (
-      <>
-        <Container
-          data-testid="input-wallet"
-          state={state}
-          disabled={disabled}
-          onBlur={handleContainerBlur}
-        >
-          <InputWrapper>
-            <StyledInput
-              {...props}
-              ref={textareaRef}
-              rows={1}
-              value={displayedValue}
-              onFocus={handleFocus}
-              onWheel={handleOnWheel}
-              onChange={handleChange}
+      <Container
+        data-testid="input-wallet"
+        state={state}
+        disabled={disabled}
+        onBlur={handleContainerBlur}
+      >
+        <InputWrapper>
+          <StyledInput
+            {...props}
+            ref={textareaRef}
+            rows={1}
+            value={displayedValue}
+            onFocus={handleFocus}
+            onWheel={handleOnWheel}
+            onChange={handleChange}
+            disabled={disabled}
+          />
+        </InputWrapper>
+
+        <div>
+          {!displayedValue && (
+            <Button
+              size="sm"
+              variant="tertiary"
+              onClick={handlePasteFromClipboard}
               disabled={disabled}
-            />
-          </InputWrapper>
+            >
+              Paste
+            </Button>
+          )}
+          {displayedValue && isEditing && (
+            <Button
+              size="sm"
+              variant="tertiary"
+              onMouseDown={handleClearInput}
+              disabled={disabled}
+            >
+              Clear
+            </Button>
+          )}
 
-          <div>
-            {!displayedValue && (
-              <Button
-                size="sm"
-                variant="tertiary"
-                onClick={handlePasteFromClipboard}
-                state={disabled ? 'disabled' : undefined}
-              >
-                Paste
-              </Button>
-            )}
-            {displayedValue && isEditing && (
-              <Button
-                size="sm"
-                variant="tertiary"
-                onMouseDown={handleClearInput}
-                state={disabled ? 'disabled' : undefined}
-              >
-                Clear
-              </Button>
-            )}
-
-            {displayedValue && !isEditing && (
-              <AdornmentWrapper>
-                {canToggle && (
-                  <Button
-                    size="sm"
-                    variant="tertiary"
-                    onClick={toggleDisplayMode}
-                    state={adornmentsDisabled ? 'disabled' : undefined}
-                  >
-                    {togglerLabel}
-                  </Button>
-                )}
+          {displayedValue && !isEditing && (
+            <AdornmentWrapper>
+              {canToggle && (
                 <Button
-                  iconLeft={IconType.COPY}
+                  size="sm"
+                  variant="tertiary"
+                  onClick={toggleDisplayMode}
+                  disabled={adornmentsDisabled}
+                >
+                  {togglerLabel}
+                </Button>
+              )}
+              <Button
+                iconLeft={IconType.COPY}
+                variant="tertiary"
+                size="sm"
+                onClick={handleCopyToClipboard}
+                disabled={adornmentsDisabled}
+              />
+              {showExternalButton && (
+                <Button
+                  iconLeft={IconType.LINK_EXTERNAL}
                   variant="tertiary"
                   size="sm"
-                  onClick={handleCopyToClipboard}
-                  state={adornmentsDisabled ? 'disabled' : undefined}
+                  disabled={adornmentsDisabled}
+                  onClick={handleViewOnExplorer}
                 />
-                {showExternalButton && (
-                  <Button
-                    iconLeft={IconType.LINK_EXTERNAL}
-                    variant="tertiary"
-                    size="sm"
-                    state={adornmentsDisabled ? 'disabled' : undefined}
-                    onClick={handleViewOnExplorer}
-                  />
-                )}
-              </AdornmentWrapper>
-            )}
-          </div>
-        </Container>
-      </>
+              )}
+            </AdornmentWrapper>
+          )}
+        </div>
+      </Container>
     );
   }
 );

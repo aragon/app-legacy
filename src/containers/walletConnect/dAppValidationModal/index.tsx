@@ -238,13 +238,8 @@ const WCdAppValidation: React.FC<Props> = props => {
           size="lg"
           variant="primary"
           className="w-full"
-          state={
-            disableCta
-              ? 'disabled'
-              : connectionStatus === ConnectionState.LOADING
-              ? 'loading'
-              : undefined
-          }
+          disabled={disableCta}
+          isLoading={connectionStatus === ConnectionState.LOADING}
           {...((connectionStatus === ConnectionState.ERROR ||
             connectionStatus === ConnectionState.INCORRECT_URI) && {
             iconLeft: IconType.RELOAD,

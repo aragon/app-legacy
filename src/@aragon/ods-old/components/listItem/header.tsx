@@ -34,7 +34,7 @@ export const ListItemHeader: React.FC<ListItemHeaderProps> = ({
       <ButtonWrapper horizontal={horizontal}>
         <Button
           onClick={props.onClick}
-          state={disabled ? 'disabled' : undefined}
+          disabled={disabled}
           variant="primary"
           size="md"
         >

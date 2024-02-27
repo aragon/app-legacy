@@ -261,7 +261,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
               ) : isCsvGenerationError ? (
                 <Button
                   variant="primary"
-                  state={isCsvGenerationLoading ? 'loading' : undefined}
+                  isLoading={isCsvGenerationLoading}
                   iconLeft={
                     isCsvGenerationLoading ? undefined : IconType.RELOAD
                   }
@@ -277,13 +277,8 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                 <div className="flex flex-col items-center gap-4 xl:flex-row">
                   <Button
                     variant="primary"
-                    state={
-                      isCsvGenerationError
-                        ? 'disabled'
-                        : isCsvGenerationLoading
-                        ? 'loading'
-                        : undefined
-                    }
+                    disabled={isCsvGenerationError}
+                    isLoading={isCsvGenerationLoading}
                     size="lg"
                     className="w-full"
                     onClick={createCsvBlob}

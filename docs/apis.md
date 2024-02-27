@@ -1,5 +1,13 @@
 # Third party API use
 
+We are using APISIX as API Gateway to:
+
+1. Mediate traffic.
+2. Build a Data-Plane.
+3. Introduce Architecture Design Patterns to make flexible, scalable and secure Web3 software.
+
+For more technical information about Aragon Gateway, please check the [Gateway Documentation](https://github.com/aragon/gw-mediation-logic)
+
 ## Aragon Gateway
 
 RPC Providers

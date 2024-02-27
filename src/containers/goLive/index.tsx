@@ -115,7 +115,7 @@ export const GoLiveFooter: React.FC = () => {
           variant="primary"
           iconRight={IconType.CHEVRON_RIGHT}
           onClick={publishDao}
-          state={IsButtonDisabled() ? 'disabled' : undefined}
+          disabled={IsButtonDisabled()}
         >
           {t('createDAO.review.title')}
         </Button>

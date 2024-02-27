@@ -149,7 +149,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                         onClose();
                         setStep(0);
                       }}
-                      state={!isActionEnabled ? 'disabled' : undefined}
+                      disabled={!isActionEnabled}
                     >
                       {t('modal.mintTokensToTreasury.step2CtaLabel')}
                     </Button>
