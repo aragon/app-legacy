@@ -1,11 +1,11 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
 import {ListItemHeader} from './header';
-import {Icon, IconType} from '@aragon/ods';
+import {IconType} from '@aragon/ods';
 
 const DefaultProps = {
   buttonText: 'New Transfer',
-  icon: <Icon icon={IconType.APP_ASSETS} />,
+  icon: IconType.APP_ASSETS,
   label: 'Treasury Volume',
   value: '$1,000,000.00',
 };
