@@ -2,6 +2,9 @@ export default class CreateDAO {
   goToCreateDAOPage() {
     cy.visit('/#/create');
 
+    // Accept all cookies
+    cy.get('button').contains('Accept all').click();
+
     // Clicks Build your DAO on DAO Overview page
     cy.get('button').contains('Build your DAO').click();
 
