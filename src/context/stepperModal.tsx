@@ -180,7 +180,7 @@ const StepperModal = <TStepKey extends string>({
                   ? IconType.CHEVRON_RIGHT
                   : undefined
               }
-              state={gasEstimationError !== undefined ? 'disabled' : undefined}
+              disabled={gasEstimationError !== undefined}
               onClick={callback}
             >
               {buttonLabels[globalState]!}

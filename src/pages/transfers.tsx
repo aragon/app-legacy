@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {ButtonGroup, Option} from '@aragon/ods-old';
-import {Dropdown, Icon, IconType} from '@aragon/ods';
+import {Button, Dropdown, Icon, IconType} from '@aragon/ods';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import {useTranslation} from 'react-i18next';
@@ -119,7 +119,15 @@ export const Transfers: React.FC = () => {
               </ButtonGroup>
 
               {!noTransfers && (
-                <Dropdown.Container>
+                <Dropdown.Container
+                  customTrigger={
+                    <Button
+                      variant="tertiary"
+                      size="md"
+                      iconLeft={IconType.DOTS_VERTICAL}
+                    />
+                  }
+                >
                   <Dropdown.Item
                     onClick={() => {
                       // Otherwise modal doesn't open property on desktop

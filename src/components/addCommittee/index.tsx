@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {Button, AlertInline, Dropdown} from '@aragon/ods';
+import {Button, AlertInline, Dropdown, IconType} from '@aragon/ods';
 
 import {useAlertContext} from 'context/alert';
 import {useWallet} from 'hooks/useWallet';
@@ -81,7 +81,17 @@ const AddCommittee: React.FC = () => {
         <Button variant="tertiary" size="lg" onClick={handleAddWallet}>
           {t('labels.addWallet')}
         </Button>
-        <Dropdown.Container>
+        <Dropdown.Container
+          align="start"
+          customTrigger={
+            <Button
+              variant="tertiary"
+              size="lg"
+              iconLeft={IconType.DOTS_VERTICAL}
+              data-testid="trigger"
+            />
+          }
+        >
           <Dropdown.Item onClick={handleDeleteAll}>
             {t('labels.deleteAllAddresses')}
           </Dropdown.Item>

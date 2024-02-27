@@ -261,7 +261,15 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                 />
               ))}
               {daoDetails.metadata.links.length > 3 && (
-                <Dropdown.Container label={t('settings.dao.links.allLinks')}>
+                <Dropdown.Container
+                  customTrigger={
+                    <Link
+                      label={t('settings.dao.links.allLinks')}
+                      type="primary"
+                      iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
+                    />
+                  }
+                >
                   {daoDetails.metadata.links.map(({name, url}, index) => (
                     <Dropdown.Item key={index}>
                       <Link

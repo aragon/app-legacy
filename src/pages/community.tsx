@@ -5,7 +5,7 @@ import {
   Pagination,
   SearchInput,
 } from '@aragon/ods-old';
-import {Dropdown, Icon, IconType} from '@aragon/ods';
+import {Button, Dropdown, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -261,7 +261,18 @@ export const Community: React.FC = () => {
               />
             )}
             {!walletBased && enableSearchSort && enableDelegation && (
-              <Dropdown.Container label={sortLabel}>
+              <Dropdown.Container
+                customTrigger={
+                  <Button
+                    variant="tertiary"
+                    iconLeft={IconType.SORT_ASC}
+                    size="lg"
+                  >
+                    {sortLabel}
+                  </Button>
+                }
+                align="end"
+              >
                 <Dropdown.Item
                   icon={sort === 'votingPower' ? IconType.CHECKMARK : undefined}
                   iconPosition="right"
