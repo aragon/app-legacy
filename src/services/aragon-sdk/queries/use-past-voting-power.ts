@@ -9,7 +9,7 @@ import type {IFetchPastVotingPowerParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {useGaslessCensusId} from 'hooks/useCensus3';
 import {useDaoDetailsQuery} from '../../../hooks/useDaoDetails';
-import {GaselessPluginName, PluginTypes} from '../../../hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from '../../../hooks/usePluginClient';
 import {useClient} from '@vocdoni/react-providers';
 
 const useGaslessPastVotingPower = () => {
@@ -18,7 +18,7 @@ const useGaslessPastVotingPower = () => {
   const {client: vocdoniClient} = useClient();
   const {censusId} = useGaslessCensusId({
     pluginType,
-    enable: pluginType === GaselessPluginName,
+    enable: pluginType === GaslessPluginName,
   });
   const getGaslessPastVotingPower = useCallback(
     async (address: string) => {

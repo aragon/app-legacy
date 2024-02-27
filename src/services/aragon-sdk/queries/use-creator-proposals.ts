@@ -11,7 +11,7 @@ import {invariant} from 'utils/invariant';
 import {useNetwork} from 'context/network';
 import {ProposalBase, SortDirection} from '@aragon/sdk-client-common';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginClient,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -151,7 +151,7 @@ export const useCreatorProposals = (
   return useQuery(
     aragonSdkQueryKeys.getCreatorProposals(baseParams, params),
     () =>
-      params.pluginType === GaselessPluginName
+      params.pluginType === GaslessPluginName
         ? fetchCreatorGaslessProposals(params, client)
         : fetchCreatorProposals(params, client),
     options

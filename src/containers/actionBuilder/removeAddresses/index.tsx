@@ -21,7 +21,7 @@ import {useNetwork} from 'context/network';
 
 type RemoveAddressesProps = ActionIndex &
   CustomHeaderProps &
-  CurrentDaoMembers & {allowRemove?: boolean};
+  CurrentDaoMembers & {allowRemove?: boolean; borderless?: boolean};
 
 // README: when uploading CSV be sure to check for duplicates
 
@@ -30,6 +30,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   useCustomHeader = false,
   currentDaoMembers,
   allowRemove = true,
+  borderless,
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
@@ -124,27 +125,46 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
    *                    Render                    *
    *************************************************/
   return (
-    <>
-      <AccordionMethod
-        verified
-        type="action-builder"
-        methodName={t('labels.removeWallets')}
-        smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
-        smartContractAddress={daoDetails?.plugins[0].instanceAddress}
-        blockExplorerLink={
-          daoDetails?.plugins[0].instanceAddress
-            ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
-            : undefined
-        }
-        methodDescription={t('labels.removeWalletsDescription')}
-        dropdownItems={methodActions}
-        customHeader={useCustomHeader && <CustomHeader />}
-      >
-        {!memberWallets || memberWallets.length === 0 ? (
+    <AccordionMethod
+      verified
+      type="action-builder"
+      methodName={t('labels.removeWallets')}
+      smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+      smartContractAddress={daoDetails?.plugins[0].instanceAddress}
+      blockExplorerLink={
+        daoDetails?.plugins[0].instanceAddress
+          ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+          : undefined
+      }
+      methodDescription={t('labels.removeWalletsDescription')}
+      dropdownItems={methodActions}
+      customHeader={useCustomHeader && <CustomHeader />}
+    >
+      {!memberWallets || memberWallets.length === 0 ? (
+        <FormItem
+          className={`py-6 ${
+            useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
+          }`}
+          hideBorder={borderless}
+        >
+          <StateEmpty
+            type="Object"
+            mode="inline"
+            object="WALLET"
+            title={t('labels.whitelistWallets.noWallets')}
+            secondaryButton={{
+              label: t('labels.selectWallet'),
+              onClick: () => open('manageWallet'),
+            }}
+          />
+        </FormItem>
+      ) : (
+        <>
           <FormItem
-            className={`py-6 ${
-              useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
+            className={`hidden xl:block ${
+              useCustomHeader ? 'rounded-t-xl border-t pb-3 pt-6' : 'py-3'
             }`}
+            hideBorder={borderless}
           >
             <StateEmpty
               type="Object"
@@ -156,81 +176,73 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                 onClick: () => open('manageWallet'),
               }}
             />
+            <Label label={t('labels.whitelistWallets.address')} />
           </FormItem>
-        ) : (
-          <>
+          {controlledWallets.map((field, fieldIndex) => (
             <FormItem
-              className={`hidden xl:block ${
-                useCustomHeader ? 'rounded-t-xl border-t pb-3 pt-6' : 'py-3'
+              key={field.id}
+              className={`${
+                fieldIndex === 0 &&
+                'rounded-t-xl border-t xl:rounded-[0px] xl:border-t-0'
               }`}
+              hideBorder={borderless}
             >
-              <Label label={t('labels.whitelistWallets.address')} />
-            </FormItem>
-            {controlledWallets.map((field, fieldIndex) => (
-              <FormItem
+              <div className="mb-1 xl:mb-0 xl:hidden">
+                <Label label={t('labels.whitelistWallets.address')} />
+              </div>
+              <AddressRow
+                isRemove
                 key={field.id}
-                className={`${
-                  fieldIndex === 0 &&
-                  'rounded-t-xl border-t xl:rounded-[0px] xl:border-t-0'
-                }`}
-              >
-                <div className="mb-1 xl:mb-0 xl:hidden">
-                  <Label label={t('labels.whitelistWallets.address')} />
-                </div>
-                <AddressRow
-                  isRemove
-                  key={field.id}
-                  actionIndex={actionIndex}
-                  fieldIndex={fieldIndex}
-                  dropdownItems={rowActions}
-                />
-              </FormItem>
-            ))}
-            <FormItem className="flex justify-between">
-              <Button
-                variant="tertiary"
-                size="lg"
-                onClick={() => open('manageWallet')}
-              >
-                {t('labels.selectWallet')}
-              </Button>
-
-              <Dropdown
-                side="bottom"
-                align="start"
-                sideOffset={4}
-                trigger={
-                  <Button
-                    size="lg"
-                    variant="tertiary"
-                    iconLeft={IconType.DOTS_VERTICAL}
-                    data-testid="trigger"
-                  />
-                }
-                listItems={[
-                  {
-                    component: (
-                      <ListItemAction
-                        title={t('labels.whitelistWallets.deleteAllEntries')}
-                        bgWhite
-                      />
-                    ),
-                    callback: handleDeleteAll,
-                  },
-                ]}
+                actionIndex={actionIndex}
+                fieldIndex={fieldIndex}
+                dropdownItems={rowActions}
               />
             </FormItem>
-            <AccordionSummary total={controlledWallets.length} />
-          </>
-        )}
+          ))}
+          <FormItem className="flex justify-between" hideBorder={borderless}>
+            <Button
+              variant="tertiary"
+              size="lg"
+              onClick={() => open('manageWallet')}
+            >
+              {t('labels.selectWallet')}
+            </Button>
 
-        <ManageWalletsModal
-          addWalletCallback={handleAddSelectedWallets}
-          wallets={currentDaoMembers?.map(member => member.address) || []}
-          initialSelections={controlledWallets.map(field => field.address)}
-        />
-      </AccordionMethod>
-    </>
+            <Dropdown
+              side="bottom"
+              align="start"
+              sideOffset={4}
+              trigger={
+                <Button
+                  size="lg"
+                  variant="tertiary"
+                  iconLeft={IconType.DOTS_VERTICAL}
+                  data-testid="trigger"
+                />
+              }
+              listItems={[
+                {
+                  component: (
+                    <ListItemAction
+                      title={t('labels.whitelistWallets.deleteAllEntries')}
+                      bgWhite
+                    />
+                  ),
+                  callback: handleDeleteAll,
+                },
+              ]}
+            />
+          </FormItem>
+          <AccordionSummary total={controlledWallets.length} />
+        </>
+      )}
+
+      <ManageWalletsModal
+        addWalletCallback={handleAddSelectedWallets}
+        wallets={currentDaoMembers?.map(member => member.address) || []}
+        initialSelections={controlledWallets.map(field => field.address)}
+      />
+    </AccordionMethod>
   );
 };
 

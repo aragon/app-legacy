@@ -21,7 +21,11 @@ import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
+import {
+  TerminalTabs,
+  VotingTerminal,
+  VotingTerminalProps,
+} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
@@ -33,7 +37,7 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -108,7 +112,7 @@ export const Proposal: React.FC = () => {
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
   const isMultisigPlugin = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingPlugin = pluginType === 'token-voting.plugin.dao.eth';
-  const isGaslessVotingPlugin = pluginType === GaselessPluginName;
+  const isGaslessVotingPlugin = pluginType === GaslessPluginName;
 
   const {data: daoToken} = useDaoToken(pluginAddress);
 
@@ -736,56 +740,44 @@ export const Proposal: React.FC = () => {
     return null;
   }
 
-  // Store the terminal to pass it to GaslessVotingTerminal if needed
-  const VTerminal = () => (
-    <VotingTerminal
-      title={
-        isMultisigProposal(proposal)
-          ? t('votingTerminal.multisig.title')
-          : isTokenVotingPlugin
-          ? t('votingTerminal.title')
-          : undefined // Title will be shown on the GaslessVotingTerminal
-      }
-      status={proposalStatus}
-      pluginType={pluginType}
-      daoToken={daoToken}
-      blockNumber={proposal.creationBlockNumber}
-      statusLabel={isGaslessProposal(proposal) ? undefined : voteStatus} // Status will be shown on the GaslessVotingTerminal
-      selectedTab={terminalTab}
-      alertMessage={alertMessage}
-      onTabSelected={setTerminalTab}
-      onVoteClicked={handleVoteClick}
-      onApprovalClicked={handleApprovalClick}
-      onCancelClicked={() => setVotingInProcess(false)}
-      voteButtonLabel={voteButtonLabel}
-      voteNowDisabled={votingDisabled}
-      votingInProcess={votingInProcess}
-      voted={voted}
-      executableWithNextApproval={executableWithNextApproval}
-      onVoteSubmitClicked={vote =>
-        isGaslessProposal(proposal)
-          ? handleGaslessVoting({
-              vote,
-              votingPower: pastVotingPower,
-              voteTokenAddress: (proposal as GaslessVotingProposal).token
-                ?.address,
-            })
-          : handlePrepareVote({
-              vote,
-              replacement: voted || voteOrApprovalSubmitted,
-              votingPower: pastVotingPower,
-              voteTokenAddress: (proposal as TokenVotingProposal).token
-                ?.address,
-            })
-      }
-      className={
-        isGaslessProposal(proposal)
-          ? 'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
-          : undefined
-      }
-      {...mappedProps}
-    />
-  );
+  // Store voting terminal props
+  const votingTerminalProps: VotingTerminalProps = {
+    ...mappedProps,
+    title: isMultisigProposal(proposal)
+      ? t('votingTerminal.multisig.title')
+      : isTokenVotingPlugin
+      ? t('votingTerminal.title')
+      : undefined, // Title will be shown on the GaslessVotingTerminal
+    status: proposalStatus,
+    pluginType,
+    daoToken,
+    blockNumber: proposal.creationBlockNumber,
+    statusLabel: isGaslessProposal(proposal) ? undefined : voteStatus, // Status will be shown on the GaslessVotingTerminal,
+    selectedTab: terminalTab,
+    alertMessage,
+    onTabSelected: setTerminalTab,
+    onVoteClicked: handleVoteClick,
+    onApprovalClicked: handleApprovalClick,
+    onCancelClicked: () => setVotingInProcess(false),
+    voteButtonLabel,
+    voteNowDisabled: votingDisabled,
+    votingInProcess,
+    voted: voted,
+    executableWithNextApproval,
+    onVoteSubmitClicked: vote =>
+      isGaslessProposal(proposal)
+        ? handleGaslessVoting({
+            vote,
+            votingPower: pastVotingPower,
+            voteTokenAddress: proposal.token?.address,
+          })
+        : handlePrepareVote({
+            vote,
+            replacement: voted || voteOrApprovalSubmitted,
+            votingPower: pastVotingPower,
+            voteTokenAddress: (proposal as TokenVotingProposal).token?.address,
+          }),
+  };
 
   return (
     <Container>
@@ -870,12 +862,17 @@ export const Proposal: React.FC = () => {
               connectedToRightNetwork={connectedToRightNetwork}
               pluginType={pluginType}
             >
-              <VTerminal />
+              <VotingTerminal
+                {...votingTerminalProps}
+                className={
+                  'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
+                }
+              />
             </GaslessVotingTerminal>
           ) : (
-            votingSettings && ( // todo(kon): fix this conditions
+            votingSettings && (
               <>
-                <VTerminal />
+                <VotingTerminal {...votingTerminalProps} />
                 <ExecutionWidget
                   pluginType={pluginType}
                   actions={decodedActions}

@@ -19,7 +19,7 @@ import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
-import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import PageEmptyState from 'containers/pageEmptyState';
 import {htmlIn} from 'utils/htmlIn';
@@ -86,7 +86,7 @@ export const Community: React.FC = () => {
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
   const isGasless =
-    (daoDetails?.plugins[0].id as PluginTypes) === GaselessPluginName;
+    (daoDetails?.plugins[0].id as PluginTypes) === GaslessPluginName;
   const enableSearchSort = totalMemberCount <= 1000;
   const enableDelegation =
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
@@ -208,7 +208,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <Icon icon={IconType.CRITICAL} />,
+              iconLeft: <Icon icon={IconType.APP_PROPOSALS} />,
               onClick: handlePrimaryClick,
             },
             secondaryBtnProps: {
@@ -235,7 +235,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
-              iconLeft: <Icon icon={IconType.CRITICAL} />,
+              iconLeft: <Icon icon={IconType.APP_PROPOSALS} />,
               onClick: () => open('delegateVoting'),
             },
             secondaryBtnProps: {

@@ -13,12 +13,14 @@ type AccordionSummaryPropsType = {
   type?: AccordionMethodType['type'];
   total: number;
   IsRemove?: boolean;
+  borderless?: boolean;
 };
 
 const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
   total,
   type = 'action-builder',
   IsRemove = false,
+  borderless,
 }) => {
   const {t} = useTranslation();
   const {dao} = useParams();
@@ -34,7 +36,7 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
   );
 
   return (
-    <Footer {...{type}}>
+    <Footer {...{type}} className={borderless ? 'border-0' : ''}>
       <BoldedText>{t('labels.summary')}</BoldedText>
       {type === 'action-builder' ? (
         <div className="flex justify-between">

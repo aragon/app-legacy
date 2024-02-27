@@ -1,4 +1,4 @@
-import {GaselessPluginName, PluginTypes} from './usePluginClient';
+import {GaslessPluginName, PluginTypes} from './usePluginClient';
 import {useVotingSettings} from '../services/aragon-sdk/queries/use-voting-settings';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 
@@ -14,7 +14,7 @@ export const useGaslessGovernanceEnabled = ({
     pluginType: pluginType,
   });
 
-  const isGasless = pluginType === GaselessPluginName;
+  const isGasless = pluginType === GaslessPluginName;
   let isGovernanceEnabled = true;
 
   if (isGasless) {

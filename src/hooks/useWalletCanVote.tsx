@@ -7,7 +7,7 @@ import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   usePluginClient,
 } from './usePluginClient';
@@ -39,7 +39,7 @@ export const useWalletCanVote = (
 
   const isMultisigClient = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingClient = pluginType === 'token-voting.plugin.dao.eth';
-  const isGaslessVoting = pluginType === GaselessPluginName;
+  const isGaslessVoting = pluginType === GaslessPluginName;
 
   const client = usePluginClient(pluginType);
   const {client: vocdoniClient, signer} = useVocdoniClient();

@@ -2,7 +2,7 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchDelegateeParams} from '../aragon-sdk-service.api';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -28,8 +28,8 @@ export const useDelegatee = (
   options: UseQueryOptions<string | null> = {}
 ) => {
   const client = usePluginClient(
-    pluginType === GaselessPluginName
-      ? GaselessPluginName
+    pluginType === GaslessPluginName
+      ? GaslessPluginName
       : 'token-voting.plugin.dao.eth'
   );
   const {address, network} = useWallet();

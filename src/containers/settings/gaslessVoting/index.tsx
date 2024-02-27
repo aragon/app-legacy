@@ -82,7 +82,7 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             })}
           </Definition>
         </DescriptionPair>
-        <DescriptionPair>
+        <DescriptionPair className="border-none">
           <Term>{t('labels.governanceEnabled')}</Term>
           <Definition>
             {votingSettings.hasGovernanceEnabled

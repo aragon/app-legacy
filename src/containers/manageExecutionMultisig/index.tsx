@@ -13,7 +13,6 @@ import {ValidateResult} from 'react-hook-form';
 type ManageExecutionMultisigProps = {
   members: MultisigDaoMember[] | undefined;
   minTallyApprovals: number;
-  daoAddress: string;
 };
 
 export const ManageExecutionMultisig: React.FC<
@@ -82,11 +81,13 @@ export const ManageExecutionMultisig: React.FC<
         useCustomHeader
         currentDaoMembers={members}
         customRowValidator={customRowValidator}
+        borderless={true}
       />
       <RemoveAddresses
         actionIndex={1}
         useCustomHeader
         currentDaoMembers={members}
+        borderless={true}
       />
       <UpdateMinimumApproval
         actionIndex={2}
@@ -95,7 +96,7 @@ export const ManageExecutionMultisig: React.FC<
         currentMinimumApproval={minTallyApprovals}
         isGasless={true}
       />
-      <ExecutionExpirationTime />
+      <ExecutionExpirationTime borderless={true} />
     </>
   );
 };
