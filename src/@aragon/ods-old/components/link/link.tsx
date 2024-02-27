@@ -51,12 +51,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       >
         <div className="mr-1 flex items-center gap-x-2">
           <Label>{label}</Label>
-          {iconRight && (
-            <Icon
-              icon={iconRight}
-              size={iconRight === IconType.CHEVRON_RIGHT ? 'sm' : undefined}
-            />
-          )}
+          {iconRight && <Icon icon={iconRight} size="sm" />}
         </div>
         {description && <Description>{description}</Description>}
       </StyledLink>

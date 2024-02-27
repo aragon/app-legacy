@@ -44,7 +44,7 @@ type AvatarProps = Pick<ButtonWalletProps, 'isLoading' | 'isConnected' | 'src'>;
 
 const Avatar: FC<AvatarProps> = ({isConnected, isLoading, src}) => {
   if (!isConnected) {
-    return <Icon icon={IconType.PERSON} className="h-5 w-5" />;
+    return <Icon icon={IconType.PERSON} />;
   }
   if (isLoading) {
     return <Spinner size="small" />;
