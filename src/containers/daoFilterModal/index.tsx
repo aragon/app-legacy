@@ -265,8 +265,8 @@ const ModalFooter: React.FC<FooterProps> = props => {
       <Button
         size="lg"
         variant="primary"
-        {...(props.isLoading ? {isLoading: true} : {})}
-        {...(noDaosFound ? {disabled: true} : {})}
+       isLoading={props.isLoading}
+       disabled={noDaosFound}
         onClick={handleSeeResultsClick}
       >
         {label}
