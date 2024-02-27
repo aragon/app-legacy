@@ -1,11 +1,6 @@
 import React, {useCallback, useState} from 'react';
-import {
-  IconLinkExternal,
-  IllustrationHuman,
-  Pagination,
-  SearchInput,
-} from '@aragon/ods-old';
-import {Button, Dropdown, Icon, IconType} from '@aragon/ods';
+import {IconLinkExternal, Pagination, SearchInput} from '@aragon/ods-old';
+import {Button, Dropdown, Icon, IconType, IllustrationHuman} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -150,16 +145,11 @@ export const Community: React.FC = () => {
         Illustration={
           <div className="flex">
             <IllustrationHuman
-              {...{
-                body: 'elevating',
-                expression: 'smile_wink',
-                hair: 'middle',
-                sunglass: 'big_rounded',
-                accessory: 'buddha',
-              }}
-              {...(isMobile
-                ? {height: 165, width: 295}
-                : {height: 225, width: 400})}
+              body="ELEVATING"
+              expression="SMILE_WINK"
+              hairs="MIDDLE"
+              sunglasses="BIG_ROUNDED"
+              accessory="BUDDHA"
             />
           </div>
         }
@@ -302,7 +292,7 @@ export const Community: React.FC = () => {
                 <StateEmpty
                   type="Object"
                   mode="inline"
-                  object="magnifying_glass"
+                  object="MAGNIFYING_GLASS"
                   title={t('labels.noResults')}
                   description={t('labels.noResultsSubtitle')}
                 />

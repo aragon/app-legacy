@@ -289,7 +289,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             <StateEmpty
               type="Object"
               mode="inline"
-              object="magnifying_glass"
+              object="MAGNIFYING_GLASS"
               title={t(
                 query === ''
                   ? 'votingTerminal.emptyState.title'
@@ -357,7 +357,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               <Button
                 size="lg"
                 variant="primary"
-                state={!selectedVote ? 'disabled' : undefined}
+                disabled={!selectedVote}
                 onClick={() => {
                   if (selectedVote && onVoteSubmitClicked)
                     onVoteSubmitClicked(selectedVote);
@@ -384,7 +384,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                         variant="primary"
                         onClick={() => onApprovalClicked?.(true)}
                         className="w-full md:w-max"
-                        state={voteNowDisabled ? 'disabled' : undefined}
+                        disabled={voteNowDisabled}
                       >
                         {t('transactionModal.multisig.ctaApproveExecute')}
                       </Button>
@@ -393,7 +393,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                       size="lg"
                       onClick={() => onApprovalClicked?.(false)}
                       className="w-full md:w-max"
-                      state={voteNowDisabled ? 'disabled' : undefined}
+                      disabled={voteNowDisabled}
                       {...(executableWithNextApproval && !voted
                         ? {variant: 'secondary'}
                         : {variant: 'primary'})}
@@ -420,7 +420,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                   variant="primary"
                   onClick={onVoteClicked}
                   className="w-full md:w-max"
-                  state={voteNowDisabled ? 'disabled' : undefined}
+                  disabled={voteNowDisabled}
                 >
                   {voteButtonLabel || t('votingTerminal.voteNow')}
                 </Button>

@@ -150,7 +150,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
           <StateEmpty
             type="Object"
             mode="inline"
-            object="wallet"
+            object="WALLET"
             title={t('labels.whitelistWallets.noWallets')}
             secondaryButton={{
               label: t('labels.selectWallet'),
@@ -166,6 +166,16 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
             }`}
             hideBorder={borderless}
           >
+            <StateEmpty
+              type="Object"
+              mode="inline"
+              object="WALLET"
+              title={t('labels.whitelistWallets.noWallets')}
+              secondaryButton={{
+                label: t('labels.selectWallet'),
+                onClick: () => open('manageWallet'),
+              }}
+            />
             <Label label={t('labels.whitelistWallets.address')} />
           </FormItem>
           {controlledWallets.map((field, fieldIndex) => (

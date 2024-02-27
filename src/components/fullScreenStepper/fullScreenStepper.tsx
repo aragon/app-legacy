@@ -164,7 +164,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
                 onClick={() =>
                   onBackButtonClicked ? onBackButtonClicked() : prev()
                 }
-                state={currentStep === 1 ? 'disabled' : undefined}
+                disabled={currentStep === 1}
                 iconLeft={IconType.CHEVRON_LEFT}
               >
                 {backButtonLabel || t('labels.back')}
@@ -176,7 +176,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
                   onClick={() =>
                     onNextButtonClicked ? onNextButtonClicked(next) : next()
                   }
-                  state={isNextButtonDisabled ? 'disabled' : undefined}
+                  disabled={isNextButtonDisabled}
                   iconRight={IconType.CHEVRON_RIGHT}
                 >
                   {nextButtonLabel || t('labels.next')}

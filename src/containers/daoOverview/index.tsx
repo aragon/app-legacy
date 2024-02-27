@@ -1,4 +1,4 @@
-import {Breadcrumb, IlluObject} from '@aragon/ods-old';
+import {Breadcrumb} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import {ActiveIndicator, Indicator, StyledCarousel} from 'containers/carousel';
 import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {i18n} from '../../../i18n.config';
-import {Button, IconType} from '@aragon/ods';
+import {Button, IconType, IllustrationObject} from '@aragon/ods';
 
 type OverviewDAOHeaderProps = {
   navLabel: string;
@@ -77,25 +77,25 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
 const OverviewCards = [
   <CardWithImage
     key="SelectBlockchain"
-    imgSrc={<IlluObject object="chain" />}
+    imgSrc={<IllustrationObject object="CHAIN" />}
     caption={i18n.t('createDAO.step1.label')}
     title={i18n.t('createDAO.step1.title')}
   />,
   <CardWithImage
     key="DefineMetadata"
-    imgSrc={<IlluObject object="labels" />}
+    imgSrc={<IllustrationObject object="LABELS" />}
     caption={i18n.t('createDAO.step2.label')}
     title={i18n.t('createDAO.step2.title')}
   />,
   <CardWithImage
     key="SetupCommunity"
-    imgSrc={<IlluObject object="users" />}
+    imgSrc={<IllustrationObject object="USERS" />}
     caption={i18n.t('createDAO.step3.label')}
     title={i18n.t('createDAO.step3.title')}
   />,
   <CardWithImage
     key="ConfigureGovernance"
-    imgSrc={<IlluObject object="settings" />}
+    imgSrc={<IllustrationObject object="SETTINGS" />}
     caption={i18n.t('createDAO.step4.label')}
     title={i18n.t('createDAO.step4.shortTitle')}
   />,

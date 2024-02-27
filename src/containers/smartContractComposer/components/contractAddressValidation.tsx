@@ -689,13 +689,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   setABIFlowState(ManualABIFlowState.NOT_STARTED);
                 }
               }}
-              state={
-                isButtonDisabled
-                  ? 'disabled'
-                  : isTransactionLoading
-                  ? 'loading'
-                  : undefined
-              }
+              disabled={isButtonDisabled}
+              isLoading={isTransactionLoading}
               iconRight={icons[verificationState]}
               size="lg"
               variant="primary"

@@ -29,7 +29,7 @@ const CTACard: React.FC<Props> = props => {
       <Button
         variant={props.actionAvailable ? 'primary' : 'tertiary'}
         size="lg"
-        state={props.actionAvailable ? undefined : 'disabled'}
+        disabled={!props.actionAvailable}
         onClick={() => props.onClick(props.path)}
         className={`${!isDesktop && 'w-full'}`}
       >

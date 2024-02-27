@@ -1,6 +1,5 @@
-import {IllustrationHuman, InputValue, shortenAddress} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
-
+import {InputValue, shortenAddress} from '@aragon/ods-old';
+import {Button, IconType, IllustrationHuman} from '@aragon/ods';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -67,12 +66,10 @@ export const DelegateVotingSuccess: React.FC<
     <div className="flex flex-col gap-6 text-center">
       <FormGroup>
         <IllustrationHuman
-          width={343}
-          height={193}
-          body="elevating"
-          expression="excited"
-          hair="curly"
-          accessory="piercings_tattoo"
+          body="ELEVATING"
+          expression="EXCITED"
+          hairs="CURLY"
+          accessory="PIERCINGS_TATTOO"
         />
         <p className="text-2xl leading-tight text-neutral-800">
           {t(`modal.delegation.${title}`)}
