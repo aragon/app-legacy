@@ -1,8 +1,6 @@
 import React from 'react';
 import {styled} from 'styled-components';
-import {Button, Icon} from '@aragon/ods';
-
-import {IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 
 export type ListItemHeaderProps = {
   /** Action title */

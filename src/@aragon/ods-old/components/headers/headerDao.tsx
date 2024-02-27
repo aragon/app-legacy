@@ -150,7 +150,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             trigger={
               <CredentialsDropdownTrigger
                 label={daoEnsName ? daoEnsName : shortenAddress(daoAddress)}
-                iconRight={IconType.CHEVRON_DOWN} // Fix: Pass the IconType directly
+                iconRight={IconType.CHEVRON_DOWN}
               />
             }
             sideOffset={8}

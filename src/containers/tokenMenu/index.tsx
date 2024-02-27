@@ -85,32 +85,28 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
 
     if (tokenList.length === 0 && searchValue === '') {
       return (
-        <>
-          <NoTokenContainer>
-            <IconWrapper>
-              <Icon icon={IconType.APP_ASSETS} size="lg" />
-            </IconWrapper>
-            <TokenTitle>{t('TokenModal.tokenNotAvailable')}</TokenTitle>
-            <TokenDescription>
-              {isWallet
-                ? t('TokenModal.tokenNotAvailableSubtitle')
-                : t('TokenModal.tokenNotAvailableSubtitleDao')}
-            </TokenDescription>
-          </NoTokenContainer>
-        </>
+        <NoTokenContainer>
+          <IconWrapper>
+            <Icon icon={IconType.APP_ASSETS} size="lg" />
+          </IconWrapper>
+          <TokenTitle>{t('TokenModal.tokenNotAvailable')}</TokenTitle>
+          <TokenDescription>
+            {isWallet
+              ? t('TokenModal.tokenNotAvailableSubtitle')
+              : t('TokenModal.tokenNotAvailableSubtitleDao')}
+          </TokenDescription>
+        </NoTokenContainer>
       );
     } else if (tokenList.length === 0) {
       return (
-        <>
-          <NoTokenWrapper>
-            <TokenTitle>{t('TokenModal.tokenNotFoundTitle')}</TokenTitle>
-            <TokenSubtitle>
-              {isWallet
-                ? t('TokenModal.tokenNotFoundSubtitle')
-                : t('TokenModal.tokenNotFoundSubtitleDao')}
-            </TokenSubtitle>
-          </NoTokenWrapper>
-        </>
+        <NoTokenWrapper>
+          <TokenTitle>{t('TokenModal.tokenNotFoundTitle')}</TokenTitle>
+          <TokenSubtitle>
+            {isWallet
+              ? t('TokenModal.tokenNotFoundSubtitle')
+              : t('TokenModal.tokenNotFoundSubtitleDao')}
+          </TokenSubtitle>
+        </NoTokenWrapper>
       );
     } else {
       return (

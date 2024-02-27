@@ -15,14 +15,14 @@ export type AlertChipProps = {
 
 export const AlertChip: React.FC<AlertChipProps> = ({
   label,
-  icon = <Icon icon={IconType.CHECKMARK} />,
+  icon = IconType.CHECKMARK,
   showIcon = false,
   isShown = false,
 }) => {
   return (
     <Wrapper data-testid="alertChip" {...{isShown}}>
       <BadgeContainer>
-        {showIcon && icon}
+        {showIcon && <Icon icon={icon} className="text-neutral-300" />}
         <Label>{label}</Label>
       </BadgeContainer>
     </Wrapper>
