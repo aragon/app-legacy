@@ -1,7 +1,7 @@
 import {useClient} from '@vocdoni/react-providers';
 import {useCallback, useEffect, useState} from 'react';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   PluginTypes,
   usePluginClient,
 } from './usePluginClient';
@@ -42,7 +42,7 @@ export const useCensus3SupportedChains = (chainId: number) => {
 };
 
 export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
-  const client = usePluginClient(GaselessPluginName);
+  const client = usePluginClient(GaslessPluginName);
   const census3 = useCensus3Client();
   const isSupported = useCensus3SupportedChains(chainId);
 
@@ -79,7 +79,7 @@ export const useGaslessCensusId = ({
 }) => {
   const {dao, id: proposalId} = useParams();
 
-  const isGasless = pluginType === GaselessPluginName;
+  const isGasless = pluginType === GaslessPluginName;
   const _enable: boolean = enable && !!dao && !!proposalId && isGasless;
 
   const {data: proposalData} = useProposal(
@@ -94,7 +94,11 @@ export const useGaslessCensusId = ({
 
   let censusId: string | null = null;
   let censusSize: number | null = null;
-  if (_enable && proposalData) {
+  if (
+    _enable &&
+    proposalData &&
+    (proposalData as GaslessVotingProposal).vochain
+  ) {
     const census = (proposalData as GaslessVotingProposal).vochain.metadata
       .census;
     censusId = census.censusId;

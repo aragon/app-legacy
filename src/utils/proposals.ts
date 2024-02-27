@@ -9,6 +9,7 @@ import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods-old';
 import {
   Client,
   CreateMajorityVotingProposalParams,
+  DaoMetadata,
   Erc20TokenDetails,
   MajorityVotingSettings,
   MultisigProposal,
@@ -50,6 +51,7 @@ import {
   decodeOSUpdateActions,
   decodeUpgradeToAndCallAction,
   formatUnits,
+  readFile,
   translateToNetworkishName,
 } from './library';
 import {abbreviateTokenAmount} from './tokens';
@@ -1189,3 +1191,55 @@ export async function getDecodedUpdateActions(
   decodedActions.push(...pluginUpdateActions);
   return decodedActions;
 }
+
+/**
+ * Pin a DAO's avatar to IPFS and return the IPFS URI
+ * @param avatar
+ * @param client
+ */
+export const pinAvatar = async (avatar: Blob, client: Client) => {
+  try {
+    const daoLogoBuffer = await readFile(avatar);
+
+    const logoCID = await client.ipfs.add(new Uint8Array(daoLogoBuffer));
+    await client.ipfs.pin(logoCID);
+    return `ipfs://${logoCID}`;
+  } catch (e) {
+    return undefined;
+  }
+};
+
+/**
+ * Get the modify metadata action for a DAO.
+ * It pins the avatar to IPFS and returns if needed
+ * @param preparedAction
+ * @param daoAddress
+ * @param client
+ */
+export const getModifyMetadataAction = async (
+  preparedAction: {name: 'modify_metadata'; inputs: DaoMetadata},
+  daoAddress: string,
+  client: Client
+) => {
+  if (preparedAction.inputs?.links)
+    preparedAction.inputs.links = preparedAction.inputs?.links.filter(
+      link => link.name !== '' && link.url !== ''
+    );
+
+  if (
+    preparedAction.inputs.avatar &&
+    typeof preparedAction.inputs.avatar !== 'string'
+  ) {
+    preparedAction.inputs.avatar = await pinAvatar(
+      preparedAction.inputs.avatar as unknown as Blob,
+      client
+    );
+  }
+  try {
+    const ipfsUri = await client.methods.pinMetadata(preparedAction.inputs);
+
+    return client.encoding.updateDaoMetadataAction(daoAddress, ipfsUri);
+  } catch (error) {
+    throw Error('Could not pin metadata on IPFS');
+  }
+};

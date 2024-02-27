@@ -6,7 +6,6 @@ import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Link} from '@aragon/ods-old';
 import React from 'react';
 import CommitteeAddressesModal from '../committeeAddressesModal';
-import {TokenType} from 'utils/validators';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 
 const Committee = () => {
@@ -21,7 +20,6 @@ const Committee = () => {
     executionExpirationMinutes,
     executionExpirationHours,
     executionExpirationDays,
-    tokenType,
   } = getValues();
 
   return (
@@ -49,7 +47,6 @@ const Committee = () => {
             executionExpirationMinutes={executionExpirationMinutes}
             executionExpirationHours={executionExpirationHours}
             executionExpirationDays={executionExpirationDays}
-            tokenType={tokenType}
           />
         </DescriptionListContainer>
       )}
@@ -63,7 +60,6 @@ export type ReviewExecutionMultisigProps = {
   executionExpirationMinutes: number;
   executionExpirationHours: number;
   executionExpirationDays: number;
-  tokenType: TokenType;
 };
 export const ReviewExecutionMultisig: React.FC<
   ReviewExecutionMultisigProps
@@ -73,7 +69,6 @@ export const ReviewExecutionMultisig: React.FC<
   executionExpirationMinutes,
   executionExpirationHours,
   executionExpirationDays,
-  tokenType,
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
@@ -126,14 +121,6 @@ export const ReviewExecutionMultisig: React.FC<
               </div>
             )}
           </div>
-        </Dd>
-      </Dl>
-      <Dl>
-        <Dt>{t('labels.governanceEnabled')}</Dt>
-        <Dd>
-          {tokenType === 'governance-ERC20'
-            ? t('labels.review.yes')
-            : t('labels.review.no')}
         </Dd>
       </Dl>
       <CommitteeAddressesModal

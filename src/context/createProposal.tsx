@@ -49,7 +49,7 @@ import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
-  GaselessPluginName,
+  GaslessPluginName,
   isGaslessVotingClient,
   isTokenVotingClient,
   PluginTypes,
@@ -83,13 +83,12 @@ import {
 } from 'utils/date';
 import {
   getDefaultPayableAmountInputName,
-  readFile,
   toDisplayEns,
   translateToNetworkishName,
 } from 'utils/library';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {Proposal} from 'utils/paths';
-import {getNonEmptyActions} from 'utils/proposals';
+import {getModifyMetadataAction, getNonEmptyActions} from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
 import {
   GaslessProposalCreationParams,
@@ -145,7 +144,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
-  const gasless = pluginType === GaselessPluginName;
+  const gasless = pluginType === GaslessPluginName;
 
   const {
     days: minDays,
@@ -376,45 +375,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
         case 'modify_metadata': {
           const preparedAction = {...action};
-
-          if (preparedAction.inputs?.links)
-            preparedAction.inputs.links = preparedAction.inputs?.links.filter(
-              link => link.name !== '' && link.url !== ''
-            );
-
-          if (
-            preparedAction.inputs.avatar &&
-            typeof preparedAction.inputs.avatar !== 'string'
-          ) {
-            try {
-              const daoLogoBuffer = await readFile(
-                preparedAction.inputs.avatar as unknown as Blob
-              );
-
-              const logoCID = await client.ipfs.add(
-                new Uint8Array(daoLogoBuffer)
-              );
-              await client.ipfs.pin(logoCID);
-              preparedAction.inputs.avatar = `ipfs://${logoCID}`;
-            } catch (e) {
-              preparedAction.inputs.avatar = undefined;
-            }
-          }
-
-          try {
-            const ipfsUri = await client.methods.pinMetadata(
-              preparedAction.inputs
-            );
-
-            actions.push(
-              client.encoding.updateDaoMetadataAction(
-                daoDetails.address,
-                ipfsUri
-              )
-            );
-          } catch (error) {
-            throw Error('Could not pin metadata on IPFS');
-          }
+          actions.push(
+            getModifyMetadataAction(preparedAction, daoDetails.address, client)
+          );
           break;
         }
         case 'modify_gasless_voting_settings': {

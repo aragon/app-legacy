@@ -18,7 +18,7 @@ import {
   Term,
 } from '../settingsCard';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
-import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 
 export const VersionInfoCard: React.FC<{
   pluginAddress: string;
@@ -54,7 +54,7 @@ export const VersionInfoCard: React.FC<{
     case 'token-voting.plugin.dao.eth':
       pluginName = 'Token Voting';
       break;
-    case GaselessPluginName:
+    case GaslessPluginName:
       pluginName = 'Vocdoni Gasless Voting';
       break;
     default:
