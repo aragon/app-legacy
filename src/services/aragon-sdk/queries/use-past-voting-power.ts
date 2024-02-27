@@ -67,22 +67,23 @@ export const usePastVotingPowerAsync = () => {
     (params: IFetchPastVotingPowerParams) =>
       queryClient.fetchQuery({
         queryKey: aragonSdkQueryKeys.pastVotingPower(params),
-        queryFn: () =>
-          censusId !== null
-            ? BigNumber.from(
-                fetchVotingPowerByCensusId({
-                  vocdoniClient,
-                  holderAddress: params.address,
-                  censusId,
-                })
-              )
-            : getPastVotingPower(
-                params.tokenAddress,
-                params.address,
-                params.blockNumber,
-                provider,
-                network
-              ),
+        queryFn: async () => {
+          if (censusId) {
+            const vp = await fetchVotingPowerByCensusId({
+              vocdoniClient,
+              holderAddress: params.address,
+              censusId,
+            });
+            return BigNumber.from(vp);
+          }
+          return getPastVotingPower(
+            params.tokenAddress,
+            params.address,
+            params.blockNumber,
+            provider,
+            network
+          );
+        },
       }),
     [queryClient, censusId, vocdoniClient, provider, network]
   );
