@@ -116,7 +116,7 @@ const AddCommittee: React.FC = () => {
         walletFieldName={'committee'}
       />
       <AlertInline
-        message={t('createDAO.step3.distributionWalletAlertText') as string}
+        message={t('createDAO.step3.distributionWalletAlertText')}
         variant="info"
       />
     </Container>

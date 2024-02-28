@@ -79,14 +79,6 @@ export const WalletTable: React.FC<WalletTableProps> = ({
           <Button variant="tertiary" size="lg" onClick={handleAdd}>
             {t('labels.whitelistWallets.addAddress')}
           </Button>
-          {/*
-          To be enabled when csv functionality is there
-          <ButtonText
-            label={t('labels.whitelistWallets.uploadCSV')}
-            mode="ghost"
-            size="large"
-            onClick={() => alert('upload CSV here')}
-          /> */}
         </TextButtonsContainer>
         <Dropdown
           side="bottom"
@@ -137,21 +129,27 @@ export const WalletTable: React.FC<WalletTableProps> = ({
 const TableContainer = styled.div.attrs(() => ({
   className: 'rounded-xl bg-neutral-0 flex flex-col',
 }))``;
+
 const TableTitleContainer = styled.div.attrs(() => ({
   className: 'mx-6 mt-6 mb-3',
 }))``;
+
 const Title = styled.p.attrs({
   className: 'ft-text-base xl:font-semibold font-semibold text-neutral-800',
 })``;
+
 const Text = styled.p.attrs({
   className: 'ft-text-base  text-neutral-600',
 })``;
+
 const Divider = styled.div.attrs(() => ({
   className: 'flex bg-neutral-50 h-0.5',
 }))``;
+
 const ActionsContainer = styled.div.attrs(() => ({
   className: 'flex xl:px-6 xl:py-3 p-4 place-content-between',
 }))``;
+
 const TextButtonsContainer = styled.div.attrs(() => ({
   className: 'flex gap-4',
 }))``;
@@ -159,6 +157,7 @@ const TextButtonsContainer = styled.div.attrs(() => ({
 const SummaryContainer = styled.div.attrs(() => ({
   className: 'flex xl:p-6 p-4 flex-col space-y-3',
 }))``;
+
 const TotalWalletsContainer = styled.div.attrs(() => ({
   className: 'flex place-content-between',
 }))``;
