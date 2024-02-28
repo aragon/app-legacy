@@ -1,4 +1,3 @@
-import {ListItemAction} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -7,6 +6,7 @@ import {WCActionCard} from 'components/executionWidget/actions/walletConnectActi
 import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
 import {ActionIndex} from 'utils/types';
+import {Dropdown} from '@aragon/ods';
 
 const WalletConnectAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   actionIndex,
@@ -23,15 +23,17 @@ const WalletConnectAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
     const result = [];
 
     if (allowRemove) {
-      result.push({
-        component: (
-          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-        ),
-        callback: () => {
-          removeAction(actionIndex);
-          alert(t('alert.chip.removedAction'));
-        },
-      });
+      result.push(
+        <Dropdown.Item
+          onClick={() => {
+            removeAction(actionIndex);
+            alert(t('alert.chip.removedAction'));
+          }}
+          key={0}
+        >
+          {t('labels.removeEntireAction')}
+        </Dropdown.Item>
+      );
     }
 
     return result;

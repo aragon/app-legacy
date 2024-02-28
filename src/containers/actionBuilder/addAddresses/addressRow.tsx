@@ -35,7 +35,7 @@ type Props = {
   fieldIndex: number;
   dropdownItems: Array<{
     callback: (index: number) => void;
-    component: React.ReactNode;
+    label: string;
   }>;
   onBlur?: () => void;
   onClearRow?: () => void;
@@ -155,7 +155,7 @@ export const AddressRow = ({
                 onClick={() => item.callback(fieldIndex)}
                 key={index}
               >
-                {item.component}
+                {item.label}
               </Dropdown.Item>
             ))}
           </Dropdown.Container>

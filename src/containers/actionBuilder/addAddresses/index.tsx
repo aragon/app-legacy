@@ -1,4 +1,4 @@
-import {Label, ListItemAction} from '@aragon/ods-old';
+import {Label} from '@aragon/ods-old';
 import {Button, IconType, Dropdown} from '@aragon/ods';
 import React, {useCallback, useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
@@ -132,12 +132,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
   // separating this because rows sometimes don't have the same actions
   const rowActions = [
     {
-      component: (
-        <ListItemAction
-          title={t('labels.whitelistWallets.deleteEntry')}
-          bgWhite
-        />
-      ),
+      label: t('labels.whitelistWallets.deleteEntry'),
       callback: (rowIndex: number) => {
         handleRowDelete(rowIndex);
         alert(t('alert.chip.removedAddress'));

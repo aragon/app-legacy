@@ -1,6 +1,5 @@
 import React, {useMemo, useReducer, useState} from 'react';
-import {Dropdown} from '@aragon/ods-old';
-import {Spinner, Button, Icon, IconType} from '@aragon/ods';
+import {Spinner, Button, Dropdown, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
@@ -43,7 +42,6 @@ export const DaoExplorer = () => {
   const {isConnected, address} = useWallet();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(false);
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
   const useFollowList = filters.quickFilter === 'following' && isConnected;
@@ -181,76 +179,62 @@ export const DaoExplorer = () => {
               {filtersCount}
             </Button>
             {filters.quickFilter !== 'following' && (
-              <Dropdown
-                side="bottom"
+              <Dropdown.Container
                 align="end"
-                sideOffset={4}
-                trigger={
+                customTrigger={
                   <Button
-                    variant={activeDropdown ? 'secondary' : 'tertiary'}
+                    variant={'tertiary'}
                     size="md"
                     responsiveSize={{lg: 'lg'}}
                     iconLeft={IconType.SORT_DESC}
                   />
                 }
-                onOpenChange={e => {
-                  setActiveDropdown(e);
-                }}
-                listItems={[
-                  {
-                    component: (
-                      <CredentialsDropdownItem
-                        isActive={filters.order === 'tvl'}
-                      >
-                        {t('explore.sortBy.largestTreasury')}
-                        {filters.order === 'tvl' && (
-                          <Icon icon={IconType.CHECKMARK} />
-                        )}
-                      </CredentialsDropdownItem>
-                    ),
-                    callback: () => toggleOrderby('tvl'),
-                  },
-                  {
-                    component: (
-                      <CredentialsDropdownItem
-                        isActive={filters.order === 'proposals'}
-                      >
-                        {t('explore.sortBy.mostProposals')}
-                        {filters.order === 'proposals' && (
-                          <Icon icon={IconType.CHECKMARK} />
-                        )}
-                      </CredentialsDropdownItem>
-                    ),
-                    callback: () => toggleOrderby('proposals'),
-                  },
-                  {
-                    component: (
-                      <CredentialsDropdownItem
-                        isActive={filters.order === 'members'}
-                      >
-                        {t('explore.sortBy.largestCommunity')}
-                        {filters.order === 'members' && (
-                          <Icon icon={IconType.CHECKMARK} />
-                        )}
-                      </CredentialsDropdownItem>
-                    ),
-                    callback: () => toggleOrderby('members'),
-                  },
-                  {
-                    component: (
-                      <CredentialsDropdownItem
-                        isActive={filters.order === 'createdAt'}
-                      >
-                        {t('explore.sortBy.recentlyCreated')}
-                        {filters.order === 'createdAt' && (
-                          <Icon icon={IconType.CHECKMARK} />
-                        )}
-                      </CredentialsDropdownItem>
-                    ),
-                    callback: () => toggleOrderby('createdAt'),
-                  },
-                ]}
-              />
+              >
+                <Dropdown.Item
+                  icon={
+                    filters.order === 'tvl' ? IconType.CHECKMARK : undefined
+                  }
+                  iconPosition="left"
+                  selected={filters.order === 'tvl'}
+                  onClick={() => toggleOrderby('tvl')}
+                >
+                  {t('explore.sortBy.largestTreasury')}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  icon={
+                    filters.order === 'proposals'
+                      ? IconType.CHECKMARK
+                      : undefined
+                  }
+                  iconPosition="left"
+                  selected={filters.order === 'proposals'}
+                  onClick={() => toggleOrderby('proposals')}
+                >
+                  {t('explore.sortBy.mostProposals')}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  icon={
+                    filters.order === 'members' ? IconType.CHECKMARK : undefined
+                  }
+                  iconPosition="left"
+                  selected={filters.order === 'members'}
+                  onClick={() => toggleOrderby('members')}
+                >
+                  {t('explore.sortBy.largestCommunity')}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  icon={
+                    filters.order === 'createdAt'
+                      ? IconType.CHECKMARK
+                      : undefined
+                  }
+                  iconPosition="left"
+                  selected={filters.order === 'createdAt'}
+                  onClick={() => toggleOrderby('createdAt')}
+                >
+                  {t('explore.sortBy.recentlyCreated')}
+                </Dropdown.Item>
+              </Dropdown.Container>
             )}
           </ButtonGroupContainer>
         </FilterGroupContainer>
@@ -316,10 +300,6 @@ export const DaoExplorer = () => {
   );
 };
 
-type CredentialsDropdownItemPropType = {
-  isActive: boolean;
-};
-
 const MainContainer = styled.div.attrs({
   className: 'flex flex-col space-y-4 xl:space-y-6',
 })``;
@@ -342,11 +322,3 @@ const FilterGroupContainer = styled.div.attrs({
 const ButtonGroupContainer = styled.div.attrs({
   className: 'flex space-x-3 items-start',
 })``;
-
-const CredentialsDropdownItem = styled.div.attrs<CredentialsDropdownItemPropType>(
-  ({isActive}) => ({
-    className: `flex text-neutral-600 items-center justify-between gap-3 py-3 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400 ${
-      isActive ? 'text-primary-400 bg-primary-50 cursor-auto' : 'cursor-pointer'
-    }`,
-  })
-)``;
