@@ -386,9 +386,11 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
 
     try {
-      const ipfsUri = await retry(() => client?.methods.pinMetadata(metadata));
+      const cidMetadata = await client?.ipfs.add(JSON.stringify(metadata));
+      await client?.ipfs.pin(cidMetadata!);
+
       return {
-        metadataUri: ipfsUri || '',
+        metadataUri: `ipfs://${cidMetadata}`,
         // TODO: We're using dao name without spaces for ens, We need to add alert
         // to inform this to user
         ensSubdomain: daoEnsName || '',
