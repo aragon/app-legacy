@@ -1,6 +1,6 @@
 import React from 'react';
 import {CardProposal, CardProposalProps, ListItemHeader} from '@aragon/ods-old';
-import {Button, CardEmptyState, Icon, IconType} from '@aragon/ods';
+import {Button, CardEmptyState, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -139,7 +139,7 @@ const ProposalSnapshot: React.FC<Props> = ({
   return (
     <Container>
       <ListItemHeader
-        icon={<Icon icon={IconType.APP_PROPOSALS} />}
+        icon={IconType.APP_PROPOSALS}
         value={displayedCount?.toString() ?? '0'}
         label={t('dashboard.proposalsTitle')}
         buttonText={t('newProposal.title')}

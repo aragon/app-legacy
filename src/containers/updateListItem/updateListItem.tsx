@@ -81,7 +81,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
           <span>
             <Link
               label={linkLabel}
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+              iconRight={IconType.LINK_EXTERNAL}
               href={releaseNote?.html_url}
             />
           </span>

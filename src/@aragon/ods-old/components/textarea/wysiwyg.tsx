@@ -5,17 +5,8 @@ import {StarterKit} from '@tiptap/starter-kit';
 import React, {useCallback, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {styled} from 'styled-components';
-
 import {ButtonIcon} from '../button';
-import {
-  IconBold,
-  IconExpand,
-  IconItalic,
-  IconLinkSet,
-  IconLinkUnset,
-  IconListOrdered,
-  IconListUnordered,
-} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 type MenuBarProps = {
   disabled: boolean;
@@ -71,41 +62,41 @@ const MenuBar: React.FC<MenuBarProps> = ({
     <StyledMenuBar disabled={disabled} fullScreen={fullScreen}>
       <Toolgroup>
         <ButtonIcon
-          icon={<IconBold />}
+          icon={<Icon icon={IconType.RICHTEXT_BOLD} />}
           mode="ghost"
           isActive={editor.isActive('bold')}
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={disabled}
         />
         <ButtonIcon
-          icon={<IconItalic />}
+          icon={<Icon icon={IconType.RICHTEXT_ITALIC} />}
           mode="ghost"
           isActive={editor.isActive('italic')}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={disabled}
         />
         <ButtonIcon
-          icon={<IconLinkSet />}
+          icon={<Icon icon={IconType.RICHTEXT_LINK_ADD} />}
           mode="ghost"
           isActive={editor.isActive('link')}
           onClick={setLink}
           disabled={disabled}
         />
         <ButtonIcon
-          icon={<IconLinkUnset />}
+          icon={<Icon icon={IconType.RICHTEXT_LINK_REMOVE} />}
           mode="ghost"
           onClick={() => editor.chain().focus().unsetLink().run()}
           disabled={!editor.isActive('link') || disabled}
         />
         <ButtonIcon
-          icon={<IconListOrdered />}
+          icon={<Icon icon={IconType.RICHTEXT_LIST_ORDERED} />}
           mode="ghost"
           isActive={editor.isActive('bulletList')}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           disabled={disabled}
         />
         <ButtonIcon
-          icon={<IconListUnordered />}
+          icon={<Icon icon={IconType.RICHTEXT_LIST_UNORDERED} />}
           mode="ghost"
           isActive={editor.isActive('orderedList')}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
@@ -113,7 +104,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
         />
       </Toolgroup>
       <ButtonIcon
-        icon={<IconExpand />}
+        icon={<Icon icon={IconType.EXPAND} />}
         mode="ghost"
         disabled={disabled}
         onClick={() => setIsExpanded(!isExpanded)}

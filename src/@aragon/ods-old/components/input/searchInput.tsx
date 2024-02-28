@@ -1,9 +1,8 @@
 import React from 'react';
 import {styled} from 'styled-components';
-
-import {IconClose, IconSearch} from '../icons';
 import {Spinner} from '../spinner';
 import {TextInput, type TextInputProps} from './textInput';
+import {Icon, IconType} from '@aragon/ods';
 
 export type SearchInputProps = Omit<
   TextInputProps,
@@ -31,7 +30,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
           </LeftAdornmentWrapper>
         ) : (
           <LeftAdornmentWrapper>
-            <IconSearch className="text-neutral-300" />
+            <Icon icon={IconType.SEARCH} className="text-neutral-300" />
           </LeftAdornmentWrapper>
         )
       }
@@ -52,7 +51,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
             }}
           >
             <RightAdornmentWrapper>
-              <IconClose className="text-neutral-300" />
+              <Icon icon={IconType.CLOSE} className="text-neutral-300" />
             </RightAdornmentWrapper>
           </button>
         )

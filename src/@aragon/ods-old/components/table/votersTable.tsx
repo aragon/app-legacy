@@ -1,9 +1,8 @@
 import React from 'react';
 import {styled} from 'styled-components';
-
 import {shortenAddress} from '../../utils';
-import {IconChevronDown} from '../icons';
 import {ListItemVoter} from '../listItem/voter';
+import {Icon, IconType} from '@aragon/ods';
 
 export type VoterType = {
   wallet: string;
@@ -71,7 +70,7 @@ export const VotersTable: React.FC<VotersTableProps> = ({
           <LoadMoreContainer onClick={onLoadMore}>
             <Link>
               <LinkLabel>{LoadMoreLabel}</LinkLabel>
-              <IconChevronDown />
+              <Icon icon={IconType.CHEVRON_DOWN} />
             </Link>
           </LoadMoreContainer>
         )}

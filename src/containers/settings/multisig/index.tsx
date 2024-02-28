@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {MultisigVotingSettings} from '@aragon/sdk-client';
 import {Link} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {IconType} from '@aragon/ods';
 
 import {Loading} from 'components/temporary';
 import {
@@ -68,7 +68,7 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
                 count: daoMembers.memberCount,
               })}
               description={t('settings.community.memberHelptext')}
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+              iconRight={IconType.LINK_EXTERNAL}
               onClick={() =>
                 navigate(
                   generatePath(Community, {network, dao: daoDetails.address})

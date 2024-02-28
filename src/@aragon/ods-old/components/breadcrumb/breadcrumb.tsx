@@ -1,7 +1,6 @@
-import React, {type ReactComponentElement, type ReactElement} from 'react';
+import React, {type ReactElement} from 'react';
 import {styled} from 'styled-components';
-import {Button, IconType} from '@aragon/ods';
-import {IconChevronRight, type IconType as IconsType} from '../icons';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {type TagProps} from '../tag';
 import Crumb from './crumb';
 import {shortenAddress} from '../../utils/addresses';
@@ -19,12 +18,12 @@ export type DefaultCrumbProps = {
   crumbs: CrumbType[];
 
   /** Base path icon to be displayed */
-  icon: ReactComponentElement<IconsType>;
+  icon: IconType;
 };
 
 export type ProcessCrumbProps = {
   crumbs: CrumbType;
-  icon?: ReactComponentElement<IconsType>;
+  icon?: IconType;
 };
 
 export type BreadcrumbProps = {
@@ -67,7 +66,12 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                 tag={tag}
                 {...(isLast ? {} : {onClick: () => onClick?.(path)})}
               />
-              {!isLast && <IconChevronRight className="text-neutral-300" />}
+              {!isLast && (
+                <Icon
+                  icon={IconType.CHEVRON_RIGHT}
+                  className="text-neutral-300"
+                />
+              )}
             </div>
           );
         })}

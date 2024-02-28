@@ -1,9 +1,8 @@
 import React from 'react';
 import {styled} from 'styled-components';
-
 import {IsAddress, shortenAddress} from '../../utils/addresses';
-import {IconChevronRight, IconLinkExternal} from '../icons';
 import {Link} from '../link';
+import {Icon, IconType} from '@aragon/ods';
 
 export type CardTransferProps = {
   to: string;
@@ -33,7 +32,7 @@ export const CardTransfer: React.FC<CardTransferProps> = ({
         bgWhite={bgWhite}
         explorerURL={fromLinkURL}
       />
-      <IconChevronRight className="text-neutral-600" />
+      <Icon icon={IconType.CHEVRON_RIGHT} className="text-neutral-600" />
       <Card
         label={toLabel}
         copy={to}
@@ -57,7 +56,7 @@ const Card: React.FC<CardProps> = ({label, copy, bgWhite, explorerURL}) => {
       <Link
         label={IsAddress(copy) ? shortenAddress(copy) : copy}
         type="neutral"
-        iconRight={<IconLinkExternal />}
+        iconRight={IconType.LINK_EXTERNAL}
         href={explorerURL}
       />
     </Container>

@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Breadcrumb, WidgetStatus} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 import {
   MultisigClient,
   MultisigProposal,
@@ -793,7 +793,7 @@ export const Proposal: React.FC = () => {
               )
             }
             crumbs={breadcrumbs}
-            icon={<Icon icon={IconType.APP_PROPOSALS} />}
+            icon={IconType.APP_PROPOSALS}
             tag={tag}
           />
         )}

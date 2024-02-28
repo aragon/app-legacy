@@ -72,7 +72,7 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             })}
           </Definition>
         </DescriptionPair>
-        <DescriptionPair>
+        <DescriptionPair className="border-none">
           <Term>{t('labels.minimumDuration')}</Term>
           <Definition>
             {t('governance.settings.preview', {
@@ -80,14 +80,6 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
               hours,
               minutes,
             })}
-          </Definition>
-        </DescriptionPair>
-        <DescriptionPair className="border-none">
-          <Term>{t('labels.governanceEnabled')}</Term>
-          <Definition>
-            {votingSettings.hasGovernanceEnabled
-              ? t('labels.review.yes')
-              : t('labels.review.no')}
           </Definition>
         </DescriptionPair>
       </SettingsCard>

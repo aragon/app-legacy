@@ -214,7 +214,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
               type="primary"
               className="shrink-0"
               href={explorerLink}
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+              iconRight={IconType.LINK_EXTERNAL}
             />
             <Tag label={t('labels.notChangeable')} variant="neutral" />
           </div>
@@ -232,11 +232,11 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
               {...(showAll
                 ? {
                     label: t('settings.dao.summaryToggleClose'),
-                    iconRight: <Icon icon={IconType.CHEVRON_DOWN} />,
+                    iconRight: IconType.CHEVRON_DOWN,
                   }
                 : {
                     label: t('settings.dao.summaryToggleMore'),
-                    iconRight: <Icon icon={IconType.CHEVRON_DOWN} />,
+                    iconRight: IconType.CHEVRON_DOWN,
                   })}
               className="ft-text-base"
               onClick={() => setShowAll(prevState => !prevState)}
@@ -257,7 +257,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                   description={url}
                   type="primary"
                   href={url}
-                  iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+                  iconRight={IconType.LINK_EXTERNAL}
                 />
               ))}
               {daoDetails.metadata.links.length > 3 && (
@@ -266,7 +266,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                     <Link
                       label={t('settings.dao.links.allLinks')}
                       type="primary"
-                      iconRight={<Icon icon={IconType.CHEVRON_DOWN} />}
+                      iconRight={IconType.CHEVRON_DOWN}
                     />
                   }
                   listItems={daoDetails.metadata.links.map(({name, url}) => ({
@@ -277,7 +277,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                           description={url}
                           type="primary"
                           href={url}
-                          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+                          iconRight={IconType.LINK_EXTERNAL}
                         />
                       </div>
                     ),

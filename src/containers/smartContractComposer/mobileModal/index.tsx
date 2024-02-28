@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from '@aragon/ods-old';
-import {Button, EmptyState, Icon, IconType} from '@aragon/ods';
+import {Button, EmptyState, IconType} from '@aragon/ods';
 
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -114,7 +114,7 @@ const MobileModal: React.FC<Props> = props => {
                 <Link
                   external
                   type="primary"
-                  iconRight={<Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
+                  iconRight={IconType.LINK_EXTERNAL}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
                   className="mt-4 w-full justify-center"

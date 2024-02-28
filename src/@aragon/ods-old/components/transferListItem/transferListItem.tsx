@@ -1,12 +1,6 @@
 import React from 'react';
 import {styled} from 'styled-components';
-
-import {
-  IconChevronRight,
-  IconDeposit,
-  IconSpinner,
-  IconWithdraw,
-} from '../icons';
+import {Icon, IconType, Spinner} from '@aragon/ods';
 
 export type TransferListItemProps = {
   isPending?: boolean;
@@ -30,13 +24,17 @@ export type TransferListItemProps = {
 
 const Icons: {[key: string]: JSX.Element} = {
   VaultDeposit: (
-    <IconDeposit className="h-3 w-3 text-success-600 xl:h-4 xl:w-4" />
+    <Icon
+      icon={IconType.DEPOSIT}
+      className="h-3 w-3 text-success-600 xl:h-4 xl:w-4"
+    />
   ),
-  Pending: (
-    <IconSpinner className="h-3 w-3 animate-spin text-primary-500 xl:h-4 xl:w-4" />
-  ),
+  Pending: <Spinner className="h-3 w-3 text-primary-500 xl:h-4 xl:w-4" />,
   VaultWithdraw: (
-    <IconWithdraw className="h-3 w-3 text-warning-600 xl:h-4 xl:w-4" />
+    <Icon
+      icon={IconType.WITHDRAW}
+      className="h-3 w-3 text-warning-600 xl:h-4 xl:w-4"
+    />
   ),
 };
 
@@ -73,7 +71,10 @@ export const TransferListItem: React.FC<TransferListItemProps> = ({
         } ${tokenAmount} ${tokenSymbol}`}</USDValue>
         <TokenAmount>{usdValue}</TokenAmount>
       </Value>
-      <IconChevronRight className="text-neutral-300 group-hover:text-primary-500" />
+      <Icon
+        icon={IconType.CHEVRON_RIGHT}
+        className="text-neutral-300 group-hover:text-primary-500"
+      />
     </Container>
   );
 };

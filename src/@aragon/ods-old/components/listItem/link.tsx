@@ -1,7 +1,6 @@
 import React from 'react';
 import {styled} from 'styled-components';
-
-import {IconLinkExternal} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 export type ListItemLinkProps =
   React.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -28,7 +27,7 @@ export const ListItemLink: React.FC<ListItemLinkProps> = ({
         data-testid="listItem-link"
       >
         <Title>{props.label ? props.label : props.href}</Title>
-        <Icon />
+        <Icon icon={IconType.LINK_EXTERNAL} className="ml-2 h-3 w-3" />
       </Link>
 
       {props.label && <Subtitle>{props.href}</Subtitle>}
@@ -48,8 +47,6 @@ const Title = styled.p.attrs({
   className:
     'md:max-w-xs max-w-full overflow-hidden font-semibold truncate whitespace-nowrap',
 })``;
-
-const Icon = styled(IconLinkExternal).attrs({className: 'ml-2 w-3 h-3'})``;
 
 const Subtitle = styled.p.attrs({
   className: 'ft-text-sm text-neutral-500 truncate',

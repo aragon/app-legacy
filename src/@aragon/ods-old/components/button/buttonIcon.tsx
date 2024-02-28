@@ -1,7 +1,7 @@
 import React from 'react';
 import {styled} from 'styled-components';
 
-import type {IconType} from '../icons';
+import {IconType} from '@aragon/ods';
 import type {ButtonBaseProps} from './buttonBase';
 import {ButtonBase} from './buttonBase';
 
