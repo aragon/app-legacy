@@ -62,7 +62,7 @@ export const WalletTable: React.FC<WalletTableProps> = ({
         </TableTitleContainer>
       )}
       {controlledWallets.map((field, index) => (
-        <div key={index}>
+        <div key={field.id}>
           {(!isMobile || (isMobile && index !== 0)) && <Divider />}
           <Row
             index={index}
