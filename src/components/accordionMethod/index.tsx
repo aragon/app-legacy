@@ -1,7 +1,6 @@
 import React, {ReactNode} from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
-import {Dropdown, ListItemProps} from '@aragon/ods-old';
-import {Button, AlertInline, Icon, IconType} from '@aragon/ods';
+import {Dropdown, Button, AlertInline, Icon, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {shortenAddress} from 'utils/library';
 
@@ -17,7 +16,7 @@ export type AccordionMethodType = {
   alertLabel?: string;
   methodDescription?: string | React.ReactNode;
   additionalInfo?: string;
-  dropdownItems?: ListItemProps[];
+  dropdownItems?: React.ReactNode[];
   customHeader?: React.ReactNode;
   children: ReactNode;
 };
@@ -102,19 +101,19 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
 
           <VStack>
             {type === 'action-builder' && (
-              <Dropdown
-                side="bottom"
+              <Dropdown.Container
                 align="end"
-                listItems={dropdownItems}
-                disabled={dropdownItems.length === 0}
-                trigger={
+                customTrigger={
                   <Button
                     variant="tertiary"
                     size="md"
                     iconLeft={IconType.DOTS_VERTICAL}
                   />
                 }
-              />
+                disabled={dropdownItems.length === 0}
+              >
+                {dropdownItems}
+              </Dropdown.Container>
             )}
             <Accordion.Trigger asChild>
               <AccordionButton

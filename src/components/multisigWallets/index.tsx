@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
-import {Dropdown, Label, ListItemAction} from '@aragon/ods-old';
-import {Button, IconType, AlertInline} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
+import {Button, IconType, AlertInline, Dropdown} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address, useEnsName} from 'wagmi';
@@ -142,11 +142,9 @@ export const MultisigWallets = () => {
             onClick={() => alert('upload CSV here')}
           /> */}
           </TextButtonsContainer>
-          <Dropdown
-            side="bottom"
+          <Dropdown.Container
             align="start"
-            sideOffset={4}
-            trigger={
+            customTrigger={
               <Button
                 size="lg"
                 variant="tertiary"
@@ -154,27 +152,14 @@ export const MultisigWallets = () => {
                 data-testid="trigger"
               />
             }
-            listItems={[
-              {
-                component: (
-                  <ListItemAction
-                    title={t('labels.whitelistWallets.resetAllEntries')}
-                    bgWhite
-                  />
-                ),
-                callback: handleResetAll,
-              },
-              {
-                component: (
-                  <ListItemAction
-                    title={t('labels.whitelistWallets.deleteAllEntries')}
-                    bgWhite
-                  />
-                ),
-                callback: handleDeleteAll,
-              },
-            ]}
-          />
+          >
+            <Dropdown.Item onClick={handleResetAll}>
+              {t('labels.whitelistWallets.resetAllEntries')}
+            </Dropdown.Item>
+            <Dropdown.Item onClick={handleDeleteAll}>
+              {t('labels.whitelistWallets.deleteAllEntries')}
+            </Dropdown.Item>
+          </Dropdown.Container>
         </ActionsContainer>
         <Divider />
         <SummaryContainer>

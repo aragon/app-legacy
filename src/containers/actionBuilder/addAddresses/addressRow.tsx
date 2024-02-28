@@ -1,5 +1,5 @@
-import {Dropdown, InputValue as WalletInputValue} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {InputValue as WalletInputValue} from '@aragon/ods-old';
+import {Button, IconType, Dropdown} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import {
   Controller,
@@ -138,16 +138,10 @@ export const AddressRow = ({
               onClearButtonClick={handleRowClear}
             />
           </InputContainer>
-          <Dropdown
+          <Dropdown.Container
             disabled={memberWallets?.length === 1 && !isRemove}
-            side="bottom"
             align="start"
-            sideOffset={4}
-            listItems={dropdownItems.map(item => ({
-              component: item.component,
-              callback: () => item.callback(fieldIndex),
-            }))}
-            trigger={
+            customTrigger={
               <Button
                 size="lg"
                 variant="tertiary"
@@ -155,7 +149,16 @@ export const AddressRow = ({
                 data-testid="trigger"
               />
             }
-          />
+          >
+            {dropdownItems.map((item, index) => (
+              <Dropdown.Item
+                onClick={() => item.callback(fieldIndex)}
+                key={index}
+              >
+                {item.component}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Container>
         </Container>
       )}
     />
