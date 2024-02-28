@@ -42,6 +42,7 @@ export const DaoExplorer = () => {
   const {isConnected, address} = useWallet();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(false);
   const [filters, dispatch] = useReducer(daoFiltersReducer, DEFAULT_FILTERS);
 
   const useFollowList = filters.quickFilter === 'following' && isConnected;
@@ -181,9 +182,13 @@ export const DaoExplorer = () => {
             {filters.quickFilter !== 'following' && (
               <Dropdown.Container
                 align="end"
+                open={activeDropdown}
+                onOpenChange={e => {
+                  setActiveDropdown(e);
+                }}
                 customTrigger={
                   <Button
-                    variant={'tertiary'}
+                    variant={activeDropdown ? 'secondary' : 'tertiary'}
                     size="md"
                     responsiveSize={{lg: 'lg'}}
                     iconLeft={IconType.SORT_DESC}
