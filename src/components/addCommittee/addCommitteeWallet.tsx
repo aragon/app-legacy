@@ -1,10 +1,5 @@
-import {
-  Dropdown,
-  Label,
-  ListItemAction,
-  InputValue as WalletInputValue,
-} from '@aragon/ods-old';
-import {IconType, Button} from '@aragon/ods';
+import {Label, InputValue as WalletInputValue} from '@aragon/ods-old';
+import {IconType, Button, Dropdown} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -113,9 +108,9 @@ const AddCommitteeWalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
 
       <DropdownMenuWrapper>
         {/* Disable index 0 when minting to DAO Treasury is supported */}
-        <Dropdown
+        <Dropdown.Container
           align="start"
-          trigger={
+          customTrigger={
             <Button
               variant="tertiary"
               size="lg"
@@ -123,25 +118,19 @@ const AddCommitteeWalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               data-testid="trigger"
             />
           }
-          sideOffset={8}
-          listItems={[
-            {
-              component: (
-                <ListItemAction
-                  title={t('labels.removeWallet')}
-                  {...(typeof onDelete !== 'function' && {mode: 'disabled'})}
-                  bgWhite
-                />
-              ),
-              callback: () => {
-                if (typeof onDelete === 'function') {
-                  onDelete(index);
-                  alert(t('alert.chip.removedAddress') as string);
-                }
-              },
-            },
-          ]}
-        />
+        >
+          <Dropdown.Item
+            disabled={typeof onDelete !== 'function'}
+            onClick={() => {
+              if (typeof onDelete === 'function') {
+                onDelete(index);
+                alert(t('alert.chip.removedAddress') as string);
+              }
+            }}
+          >
+            {t('labels.removeWallet')}
+          </Dropdown.Item>
+        </Dropdown.Container>
       </DropdownMenuWrapper>
     </Container>
   );

@@ -14,10 +14,7 @@ import {useNetwork} from 'context/network';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
-  methodActions?: Array<{
-    component: React.ReactNode;
-    callback: () => void;
-  }>;
+  methodActions?: React.ReactNode[];
   status: ExecutionStatus | undefined;
 };
 

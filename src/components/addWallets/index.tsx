@@ -1,5 +1,4 @@
-import {Dropdown, ListItemAction} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button, IconType, Dropdown} from '@aragon/ods';
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -100,9 +99,9 @@ const AddWallets: React.FC = () => {
         <Button variant="tertiary" size="lg" onClick={handleAddWallet}>
           {t('labels.addWallet')}
         </Button>
-        <Dropdown
+        <Dropdown.Container
           align="start"
-          trigger={
+          customTrigger={
             <Button
               variant="tertiary"
               size="lg"
@@ -110,30 +109,21 @@ const AddWallets: React.FC = () => {
               data-testid="trigger"
             />
           }
-          sideOffset={8}
-          listItems={[
-            {
-              component: (
-                <ListItemAction title={t('labels.resetDistribution')} bgWhite />
-              ),
-              callback: resetDistribution,
-            },
-            {
-              component: (
-                <ListItemAction
-                  title={t('labels.deleteAllAddresses')}
-                  bgWhite
-                />
-              ),
-              callback: () => {
-                remove();
-                setValue('tokenTotalSupply', 0);
-                resetField('eligibilityTokenAmount');
-                alert(t('alert.chip.removedAllAddresses'));
-              },
-            },
-          ]}
-        />
+        >
+          <Dropdown.Item onClick={resetDistribution}>
+            {t('labels.resetDistribution')}
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              remove();
+              setValue('tokenTotalSupply', 0);
+              resetField('eligibilityTokenAmount');
+              alert(t('alert.chip.removedAllAddresses'));
+            }}
+          >
+            {t('labels.deleteAllAddresses')}
+          </Dropdown.Item>
+        </Dropdown.Container>
       </ActionsWrapper>
     </Container>
   );

@@ -1,12 +1,10 @@
 import {
-  Dropdown,
   Label,
-  ListItemAction,
   NumberInput,
   TextInput,
   InputValue as WalletInputValue,
 } from '@aragon/ods-old';
-import {Button, IconType, AlertInline} from '@aragon/ods';
+import {Button, IconType, AlertInline, Dropdown} from '@aragon/ods';
 import Big from 'big.js';
 import {constants} from 'ethers';
 import React, {useCallback, useState} from 'react';
@@ -227,9 +225,9 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
 
       <DropdownMenuWrapper>
         {/* Disable index 0 when minting to DAO Treasury is supported */}
-        <Dropdown
+        <Dropdown.Container
           align="start"
-          trigger={
+          customTrigger={
             <Button
               variant="tertiary"
               size="lg"
@@ -237,56 +235,50 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               data-testid="trigger"
             />
           }
-          sideOffset={8}
-          listItems={[
-            {
-              component: (
-                <ListItemAction
-                  title={t('labels.removeWallet')}
-                  {...(typeof onDelete !== 'function' && {mode: 'disabled'})}
-                  bgWhite
-                />
-              ),
-              callback: () => {
-                if (typeof onDelete === 'function') {
-                  const [
-                    totalSupply,
-                    amount,
-                    eligibilityType,
-                    eligibilityTokenAmount,
-                  ] = getValues([
-                    'tokenTotalSupply',
-                    `wallets.${index}.amount`,
-                    'eligibilityType',
-                    'eligibilityTokenAmount',
-                  ]);
+        >
+          <Dropdown.Item
+            disabled={typeof onDelete !== 'function'}
+            onClick={() => {
+              if (typeof onDelete === 'function') {
+                const [
+                  totalSupply,
+                  amount,
+                  eligibilityType,
+                  eligibilityTokenAmount,
+                ] = getValues([
+                  'tokenTotalSupply',
+                  `wallets.${index}.amount`,
+                  'eligibilityType',
+                  'eligibilityTokenAmount',
+                ]);
 
-                  const newTotalSupply = Number(totalSupply) - Number(amount);
-                  setValue(
-                    'tokenTotalSupply',
-                    newTotalSupply < 0 ? 0 : newTotalSupply
-                  );
-                  onDelete(index);
-                  if (eligibilityType === 'token') {
-                    if (eligibilityTokenAmount === amount) {
-                      let minAmount = walletFieldArray[0]?.amount;
-                      (walletFieldArray as TokenVotingWalletField[]).forEach(
-                        (wallet, mapIndex) => {
-                          if (mapIndex !== index)
-                            if (Number(wallet.amount) < Number(minAmount)) {
-                              minAmount = wallet.amount;
-                            }
-                        }
-                      );
-                      setValue('minimumTokenAmount', minAmount);
-                    }
+                const newTotalSupply = Number(totalSupply) - Number(amount);
+                setValue(
+                  'tokenTotalSupply',
+                  newTotalSupply < 0 ? 0 : newTotalSupply
+                );
+                onDelete(index);
+                if (eligibilityType === 'token') {
+                  if (eligibilityTokenAmount === amount) {
+                    let minAmount = walletFieldArray[0]?.amount;
+                    (walletFieldArray as TokenVotingWalletField[]).forEach(
+                      (wallet, mapIndex) => {
+                        if (mapIndex !== index)
+                          if (Number(wallet.amount) < Number(minAmount)) {
+                            minAmount = wallet.amount;
+                          }
+                      }
+                    );
+                    setValue('minimumTokenAmount', minAmount);
                   }
-                  alert(t('alert.chip.removedAddress') as string);
                 }
-              },
-            },
-          ]}
-        />
+                alert(t('alert.chip.removedAddress') as string);
+              }
+            }}
+          >
+            {t('labels.removeWallet')}
+          </Dropdown.Item>
+        </Dropdown.Container>
       </DropdownMenuWrapper>
     </Container>
   );

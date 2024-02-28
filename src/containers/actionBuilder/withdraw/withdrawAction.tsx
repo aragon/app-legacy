@@ -1,4 +1,3 @@
-import {ListItemAction} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -11,6 +10,7 @@ import {FormItem} from '../addAddresses';
 import {useAlertContext} from 'context/alert';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useNetwork} from 'context/network';
+import {Dropdown} from '@aragon/ods';
 
 type WithdrawActionProps = ActionIndex & {allowRemove?: boolean};
 
@@ -49,31 +49,32 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
 
   const methodActions = (() => {
     const result = [
-      {
-        component: (
-          <ListItemAction title={t('labels.duplicateAction')} bgWhite />
-        ),
-        callback: () => {
+      <Dropdown.Item
+        onClick={() => {
           duplicateAction(actionIndex);
           alert(t('alert.chip.duplicateAction'));
-        },
-      },
-      {
-        component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
-        callback: resetWithdrawFields,
-      },
+        }}
+        key={0}
+      >
+        {t('labels.duplicateAction')}
+      </Dropdown.Item>,
+      <Dropdown.Item onClick={resetWithdrawFields} key={1}>
+        {t('labels.resetAction')}
+      </Dropdown.Item>,
     ];
 
     if (allowRemove) {
-      result.push({
-        component: (
-          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-        ),
-        callback: () => {
-          removeWithdrawFields(actionIndex);
-          alert(t('alert.chip.removedAction'));
-        },
-      });
+      result.push(
+        <Dropdown.Item
+          onClick={() => {
+            removeWithdrawFields(actionIndex);
+            alert(t('alert.chip.removedAction'));
+          }}
+          key={result.length}
+        >
+          {t('labels.resetAction')}
+        </Dropdown.Item>
+      );
     }
 
     return result;
