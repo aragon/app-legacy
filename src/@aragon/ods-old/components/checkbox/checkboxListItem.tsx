@@ -10,8 +10,8 @@ export const Icons = {
     error: <Icon icon={IconType.CHECKBOX} />,
   },
   radio: {
-    active: <Icon icon={IconType.CHECKBOX_SELECTED} />,
-    multi: <Icon icon={IconType.WARNING} />,
+    active: <Icon icon={IconType.RADIO_SELECTED} />,
+    multi: <Icon icon={IconType.RADIO} />,
     default: <Icon icon={IconType.RADIO} />,
     error: <Icon icon={IconType.RADIO} />,
   },

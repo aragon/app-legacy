@@ -22,7 +22,9 @@ export const AlertChip: React.FC<AlertChipProps> = ({
   return (
     <Wrapper data-testid="alertChip" {...{isShown}}>
       <BadgeContainer>
-        {showIcon && <Icon icon={icon} className="text-neutral-300" />}
+        {showIcon && (
+          <Icon icon={icon} className="text-neutral-300" size="sm" />
+        )}
         <Label>{label}</Label>
       </BadgeContainer>
     </Wrapper>
