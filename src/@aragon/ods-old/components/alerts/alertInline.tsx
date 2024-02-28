@@ -1,8 +1,7 @@
 import React from 'react';
 import {styled} from 'styled-components';
 
-import {IconInfo, IconSuccess, IconWarning, type IconType} from '../icons';
-
+import {Icon, IconType} from '@aragon/ods';
 export type AlertInlineProps = {
   /** type and severity of alert */
   mode?: 'neutral' | 'success' | 'warning' | 'critical';
@@ -14,19 +13,19 @@ export type AlertInlineProps = {
 
 const styles = {
   neutral: {
-    icon: <IconInfo className="text-info-500" />,
+    icon: <Icon icon={IconType.INFO} className="text-info-500" />,
     color: 'text-info-800',
   },
   success: {
-    icon: <IconSuccess className="text-success-500" />,
+    icon: <Icon icon={IconType.SUCCESS} className="text-info-500" />,
     color: 'text-success-800',
   },
   warning: {
-    icon: <IconWarning className="text-warning-500" />,
+    icon: <Icon icon={IconType.WARNING} className="text-info-500" />,
     color: 'text-warning-800',
   },
   critical: {
-    icon: <IconWarning className="text-critical-500" />,
+    icon: <Icon icon={IconType.CRITICAL} className="text-info-500" />,
     color: 'text-critical-800',
   },
 };

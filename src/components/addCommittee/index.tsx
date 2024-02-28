@@ -1,17 +1,18 @@
 import React, {useEffect, useRef} from 'react';
-import {useFieldArray, useFormContext} from 'react-hook-form';
+import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {Button, AlertInline, Dropdown, IconType} from '@aragon/ods';
+import {AlertInline} from '@aragon/ods';
 
 import {useAlertContext} from 'context/alert';
+import {WalletTable} from 'components/multisigWallets/walletTable';
+import {Web3Address} from 'utils/library';
+import {validateWeb3Address} from 'utils/validators';
+import {MultisigWalletField} from '../multisigWallets/row';
 import {useWallet} from 'hooks/useWallet';
-import Footer from './addCommitteeWalletsFooter';
-import Header from './addCommitteeWalletsHeader';
-import Row from './addCommitteeWallet';
-import {useNetwork} from '../../context/network';
+import {useNetwork} from 'context/network';
 import {Address, useEnsName} from 'wagmi';
-import {CHAIN_METADATA} from '../../utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 
 const AddCommittee: React.FC = () => {
   const {t} = useTranslation();
@@ -27,9 +28,17 @@ const AddCommittee: React.FC = () => {
   });
 
   const {control, setFocus, trigger} = useFormContext();
+  const committeeWallets = useWatch({name: 'committee', control});
   const {fields, append, remove} = useFieldArray({
     name: 'committee',
     control,
+  });
+
+  const controlledWallets = fields.map((field, index) => {
+    return {
+      ...field,
+      ...(committeeWallets && {...committeeWallets[index]}),
+    };
   });
 
   useEffect(() => {
@@ -40,7 +49,7 @@ const AddCommittee: React.FC = () => {
   }, [address, append, fields?.length, ensName, trigger]);
 
   // setTimeout added because instant trigger not working
-  const handleAddWallet = () => {
+  const handleAdd = () => {
     append({address: '', ensName: '', amount: 1});
     alert(t('alert.chip.addressAdded'));
     const id = `committee.${fields.length}`;
@@ -50,7 +59,7 @@ const AddCommittee: React.FC = () => {
     }, 50);
   };
 
-  const handleDeleteRow = (index: number) => {
+  const handleDeleteEntry = (index: number) => {
     remove(index);
     alert(t('alert.chip.removedAddress'));
     setTimeout(() => {
@@ -66,39 +75,48 @@ const AddCommittee: React.FC = () => {
     }, 50);
   };
 
+  const addressValidator = async (web3Address: Web3Address, index: number) => {
+    // check if address is valid
+    let validationResult = await validateWeb3Address(
+      web3Address,
+      t('errors.required.walletAddress'),
+      t
+    );
+
+    if (validationResult && validationResult !== true) {
+      return validationResult;
+    }
+
+    if (committeeWallets) {
+      committeeWallets.forEach(
+        ({address, ensName}: MultisigWalletField, itemIndex: number) => {
+          if (
+            ((web3Address.address &&
+              address.toLowerCase() === web3Address.address.toLowerCase()) ||
+              (web3Address.ensName &&
+                ensName.toLowerCase() === web3Address.ensName.toLowerCase())) &&
+            itemIndex !== index
+          ) {
+            validationResult = t('errors.duplicateAddress');
+          }
+        }
+      );
+    }
+    return validationResult;
+  };
+
   return (
     <Container>
-      <ListGroup>
-        {fields.length > 0 && <Header />}
-        {fields.map((field, index) => {
-          return (
-            <Row key={field.id} index={index} onDelete={handleDeleteRow} />
-          );
-        })}
-        <Footer totalAddresses={fields.length || 0} />
-      </ListGroup>
-      <ActionsWrapper>
-        <Button variant="tertiary" size="lg" onClick={handleAddWallet}>
-          {t('labels.addWallet')}
-        </Button>
-        <Dropdown.Container
-          align="start"
-          customTrigger={
-            <Button
-              variant="tertiary"
-              size="lg"
-              iconLeft={IconType.DOTS_VERTICAL}
-              data-testid="trigger"
-            />
-          }
-        >
-          <Dropdown.Item onClick={handleDeleteAll}>
-            {t('labels.deleteAllAddresses')}
-          </Dropdown.Item>
-        </Dropdown.Container>
-      </ActionsWrapper>
+      <WalletTable
+        controlledWallets={controlledWallets}
+        handleAdd={handleAdd}
+        handleDeleteEntry={handleDeleteEntry}
+        handleDeleteAll={handleDeleteAll}
+        rowValidator={addressValidator}
+        walletFieldName={'committee'}
+      />
       <AlertInline
-        message={t('createDAO.step3.distributionWalletAlertText') as string}
+        message={t('createDAO.step3.distributionWalletAlertText')}
         variant="info"
       />
     </Container>
@@ -107,12 +125,6 @@ const AddCommittee: React.FC = () => {
 
 export default AddCommittee;
 
-const Container = styled.div.attrs({className: 'space-y-1.5'})``;
-
-const ListGroup = styled.div.attrs({
-  className: 'flex flex-col overflow-hidden space-y-0.25 rounded-xl',
-})``;
-
-const ActionsWrapper = styled.div.attrs({
-  className: 'flex justify-between p-2',
-})``;
+const Container = styled.div.attrs(() => ({
+  className: 'space-y-3 flex flex-col',
+}))``;

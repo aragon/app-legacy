@@ -4,9 +4,9 @@ import {styled} from 'styled-components';
 import {shortenAddress} from '../../utils/addresses';
 import {AlertInline} from '../alerts';
 import {AvatarDao} from '../avatar';
-import {IconClock, IconUpdate} from '../icons';
 import {LinearProgress} from '../progress';
 import {Tag} from '../tag';
+import {Icon, IconType} from '@aragon/ods';
 
 type ProposalUseCase = 'list' | 'explore';
 
@@ -103,7 +103,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
   daoName,
   onClick,
   bannerContent,
-  bannerIcon = <IconUpdate />,
+  bannerIcon = <Icon icon={IconType.RELOAD} />,
 }: CardProposalProps) => {
   const addressExploreUrl = `${explorer}address/${publisherAddress}`;
 
@@ -197,7 +197,7 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
           {alertMessage && (
             <AlertInline
               label={alertMessage}
-              icon={<IconClock className="text-info-500" />}
+              icon={<Icon icon={IconType.CLOCK} className="text-info-500" />}
               mode="neutral"
             />
           )}
@@ -212,7 +212,7 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
           {alertMessage && (
             <AlertInline
               label={alertMessage}
-              icon={<IconClock className="text-info-500" />}
+              icon={<Icon icon={IconType.CLOCK} className="text-info-500" />}
               mode="neutral"
             />
           )}
@@ -227,7 +227,7 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
           {alertMessage && (
             <AlertInline
               label={alertMessage}
-              icon={<IconClock className="text-info-500" />}
+              icon={<Icon icon={IconType.CLOCK} className="text-info-500" />}
               mode="neutral"
             />
           )}

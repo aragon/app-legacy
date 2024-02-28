@@ -1,18 +1,18 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
-import {IconFinance} from '../icons';
 import {ListItemHeader} from './header';
+import {IconType} from '@aragon/ods';
 
 const DefaultProps = {
   buttonText: 'New Transfer',
-  icon: <IconFinance />,
+  icon: IconType.APP_ASSETS,
   label: 'Treasury Volume',
   value: '$1,000,000.00',
 };
 
 describe('ListItemHeader', () => {
   // eslint-disable-next-line
-    function setup(args?: any) {
+  function setup(args?: any) {
     render(<ListItemHeader {...DefaultProps} {...args} />);
     return {
       button: screen.getByRole('button'),

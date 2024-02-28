@@ -1,7 +1,7 @@
 import React, {type ButtonHTMLAttributes, type CSSProperties} from 'react';
 import {styled} from 'styled-components';
 
-import {type IconType} from '../icons';
+import {IconType} from '@aragon/ods';
 
 export type ButtonBaseProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   iconOnly?: boolean; // Guard against passing label to ButtonIcon

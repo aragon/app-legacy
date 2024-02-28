@@ -1,25 +1,19 @@
 import React from 'react';
 import {styled} from 'styled-components';
-import {
-  IconCheckboxDefault,
-  IconCheckboxMulti,
-  IconCheckboxSelected,
-  IconRadioDefault,
-  IconRadioSelected,
-} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 export const Icons = {
   multiSelect: {
-    active: <IconCheckboxSelected />,
-    multi: <IconCheckboxMulti />,
-    default: <IconCheckboxDefault />,
-    error: <IconCheckboxDefault />,
+    active: <Icon icon={IconType.CHECKBOX_SELECTED} />,
+    multi: <Icon icon={IconType.CHECKBOX_INDETERMINATE} />,
+    default: <Icon icon={IconType.CHECKBOX} />,
+    error: <Icon icon={IconType.CHECKBOX} />,
   },
   radio: {
-    active: <IconRadioSelected />,
-    multi: <IconRadioDefault />,
-    default: <IconRadioDefault />,
-    error: <IconRadioDefault />,
+    active: <Icon icon={IconType.RADIO_SELECTED} />,
+    multi: <Icon icon={IconType.RADIO} />,
+    default: <Icon icon={IconType.RADIO} />,
+    error: <Icon icon={IconType.RADIO} />,
   },
 };
 

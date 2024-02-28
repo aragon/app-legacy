@@ -1,8 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {useDropzone, type FileRejection} from 'react-dropzone';
 import {styled} from 'styled-components';
-import {Button, IconType} from '@aragon/ods';
-import {IconAdd} from '../icons/interface';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {Spinner} from '../spinner';
 
 export type InputImageSingleProps = {
@@ -137,7 +136,10 @@ export const InputImageSingle: React.FC<InputImageSingleProps> = ({
       data-testid="input-image"
       {...getRootProps()}
     >
-      <StyledIconAdd {...{isdragactive}} />
+      <Icon
+        icon={IconType.PLUS}
+        className={`${isdragactive ? 'text-primary-500' : 'text-neutral-600'}`}
+      />
       <input {...getInputProps()} />
     </DefaultContainer>
   );
@@ -177,9 +179,3 @@ const StyledButton = styled(Button).attrs({
     0px 0px 2px rgba(31, 41, 51, 0.06),
     0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
-
-const StyledIconAdd = styled(IconAdd).attrs(
-  ({isdragactive}: DefaultContainerProps) => ({
-    className: `${isdragactive ? 'text-primary-500' : 'text-neutral-600'}`,
-  })
-)<DefaultContainerProps>``;

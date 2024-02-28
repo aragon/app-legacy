@@ -40,9 +40,7 @@ export const ListHeaderContract: React.FC<Props> = ({
       <Link
         external
         type="neutral"
-        iconRight={
-          <Icon icon={IconType.LINK_EXTERNAL} size="md" className="ml-8" />
-        }
+        iconRight={IconType.LINK_EXTERNAL}
         href={chainExplorerAddressLink(network, sc.address) + '#code'}
         label={t('scc.detailContract.dropdownExplorerLinkLabel', {
           address: sc.address,
@@ -59,7 +57,7 @@ export const ListHeaderContract: React.FC<Props> = ({
       <Link
         external
         type="neutral"
-        iconRight={<Icon icon={IconType.COPY} size="md" className="ml-8" />}
+        iconRight={IconType.COPY}
         label={t('scc.detailContract.dropdownCopyLabel')}
         className="my-2 w-full justify-between px-4"
       />
@@ -77,7 +75,7 @@ export const ListHeaderContract: React.FC<Props> = ({
       <Link
         external
         type="neutral"
-        iconRight={<Icon icon={IconType.CLOSE} size="md" className="ml-8" />}
+        iconRight={IconType.CLOSE}
         label={t('scc.detailContract.dropdownRemoveLabel')}
         className="my-2 w-full justify-between px-4"
       />
@@ -125,7 +123,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
               : t('scc.writeProxy.dropdownDontWriteLabel')
           }
-          iconRight={<Icon icon={IconType.BLOCKCHAIN_SMARTCONTRACT} />}
+          iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
           className="my-2 w-full justify-between px-4"
         />
       </Dropdown.Item>

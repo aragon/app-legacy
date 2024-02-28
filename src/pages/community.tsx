@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {IconLinkExternal, Pagination, SearchInput} from '@aragon/ods-old';
+import {Pagination, SearchInput} from '@aragon/ods-old';
 import {Button, Dropdown, Icon, IconType, IllustrationHuman} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
@@ -221,7 +221,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
-              iconLeft: <IconLinkExternal />,
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
               onClick: handleSecondaryButtonClick,
             },
           }

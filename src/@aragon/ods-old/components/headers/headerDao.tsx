@@ -3,16 +3,8 @@ import {styled} from 'styled-components';
 import {useScreen} from '../../hooks';
 import {shortenAddress, shortenDaoUrl} from '../../utils';
 import {AvatarDao} from '../avatar';
-import {Button, IconType} from '@aragon/ods';
+import {Button, Icon, IconType} from '@aragon/ods';
 import {Dropdown} from '../dropdown';
-import {
-  IconBlock,
-  IconChevronDown,
-  IconChevronUp,
-  IconCommunity,
-  IconCopy,
-  IconFlag,
-} from '../icons';
 import {Link} from '../link';
 import {ListItemLink} from '../listItem';
 
@@ -115,7 +107,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
         component: (
           <CredentialsDropdownItem key={2} onClick={() => onCopy?.(daoAddress)}>
             {shortenAddress(daoAddress)}
-            <StyledCopyIcon />
+            <Icon icon={IconType.COPY} className="text-neutral-400" />
           </CredentialsDropdownItem>
         ),
       },
@@ -126,7 +118,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             onClick={() => onCopy?.(`https://${daoUrl}`)}
           >
             {shortenDaoUrl(daoUrl)}
-            <StyledCopyIcon />
+            <Icon icon={IconType.COPY} className="text-neutral-400" />
           </CredentialsDropdownItem>
         ),
       },
@@ -137,7 +129,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
         component: (
           <CredentialsDropdownItem key={1} onClick={() => onCopy?.(daoEnsName)}>
             {daoEnsName}
-            <StyledCopyIcon />
+            <Icon icon={IconType.COPY} className="text-neutral-400" />
           </CredentialsDropdownItem>
         ),
       });
@@ -158,7 +150,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             trigger={
               <CredentialsDropdownTrigger
                 label={daoEnsName ? daoEnsName : shortenAddress(daoAddress)}
-                iconRight={<IconChevronDown />}
+                iconRight={IconType.CHEVRON_DOWN}
               />
             }
             sideOffset={8}
@@ -174,11 +166,11 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 {...(showAll
                   ? {
                       label: labels.readLess,
-                      iconRight: <IconChevronUp />,
+                      iconRight: IconType.CHEVRON_UP,
                     }
                   : {
                       label: labels.readMore,
-                      iconRight: <IconChevronDown />,
+                      iconRight: IconType.CHEVRON_DOWN,
                     })}
                 className="ft-text-base"
                 onClick={() => setShowAll(prevState => !prevState)}
@@ -198,15 +190,18 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
       <DetailsWrapper>
         <NetworkDetailsContainer>
           <NetworkDetails>
-            <IconFlag className="text-primary-400" />
+            <Icon icon={IconType.FLAG} className="text-primary-400" />
             <DetailsText>{created_at}</DetailsText>
           </NetworkDetails>
           <NetworkDetails>
-            <IconBlock className="text-primary-400" />
+            <Icon
+              icon={IconType.BLOCKCHAIN_BLOCK}
+              className="text-primary-400"
+            />
             <DetailsText className="capitalize">{daoChain}</DetailsText>
           </NetworkDetails>
           <NetworkDetails>
-            <IconCommunity className="text-primary-400" />
+            <Icon icon={IconType.APP_MEMBERS} className="text-primary-400" />
             <DetailsText>{daoType}</DetailsText>
           </NetworkDetails>
         </NetworkDetailsContainer>
@@ -329,8 +324,4 @@ const CredentialsDropdownItem = styled.div.attrs({
 const CredentialsDropdownTrigger = styled(Link).attrs({
   className:
     'mt-3 text-primary-400 hover:text-primary-600 active:text-primary-800 focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-neutral-50',
-})``;
-
-const StyledCopyIcon = styled(IconCopy).attrs({
-  className: 'text-neutral-400',
 })``;
