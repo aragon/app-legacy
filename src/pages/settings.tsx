@@ -277,7 +277,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                         description={url}
                         type="primary"
                         href={url}
-                        iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+                        iconRight={IconType.LINK_EXTERNAL}
                       />
                     </Dropdown.Item>
                   ))}

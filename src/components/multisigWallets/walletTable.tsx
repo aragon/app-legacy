@@ -1,6 +1,5 @@
 import {MultisigWalletField, Row, RowValidator} from './row';
-import {Button, IconType} from '@aragon/ods';
-import {Dropdown, ListItemAction} from '../../@aragon/ods-old';
+import {Button, Dropdown, IconType} from '@aragon/ods';
 import React from 'react';
 import styled from 'styled-components';
 import useScreen from '../../hooks/useScreen';
@@ -80,11 +79,9 @@ export const WalletTable: React.FC<WalletTableProps> = ({
             {t('labels.whitelistWallets.addAddress')}
           </Button>
         </TextButtonsContainer>
-        <Dropdown
-          side="bottom"
+        <Dropdown.Container
           align="start"
-          sideOffset={4}
-          trigger={
+          customTrigger={
             <Button
               size="lg"
               variant="tertiary"
@@ -92,27 +89,14 @@ export const WalletTable: React.FC<WalletTableProps> = ({
               data-testid="trigger"
             />
           }
-          listItems={[
-            {
-              component: (
-                <ListItemAction
-                  title={t('labels.whitelistWallets.resetAllEntries')}
-                  bgWhite
-                />
-              ),
-              callback: handleResetAll,
-            },
-            {
-              component: (
-                <ListItemAction
-                  title={t('labels.whitelistWallets.deleteAllEntries')}
-                  bgWhite
-                />
-              ),
-              callback: handleDeleteAll,
-            },
-          ]}
-        />
+        >
+          <Dropdown.Item onClick={handleResetAll}>
+            {t('labels.whitelistWallets.resetAllEntries')}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={handleDeleteAll}>
+            {t('labels.whitelistWallets.deleteAllEntries')}
+          </Dropdown.Item>
+        </Dropdown.Container>
       </ActionsContainer>
       <Divider />
       <SummaryContainer>
