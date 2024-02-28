@@ -4,7 +4,7 @@ import {useFormContext, useWatch} from 'react-hook-form';
 
 import ContractAddressValidation from 'containers/smartContractComposer/components/contractAddressValidation';
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
-import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
+import ContractEmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
 import {SmartContract, SmartContractAction} from 'utils/types';
 import {
   getVerifiedSmartContracts,
@@ -116,7 +116,7 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
         }}
       />
 
-      <EmptyState
+      <ContractEmptyState
         isOpen={emptyStateIsOpen}
         onConnectNew={() => {
           setEmptyStateIsOpen(false);

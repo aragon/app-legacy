@@ -7,7 +7,7 @@ import {
   VoterType,
   VotersTable,
 } from '@aragon/ods-old';
-import {Button, AlertCard, AlertInline} from '@aragon/ods';
+import {Button, AlertCard, AlertInline, EmptyState} from '@aragon/ods';
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
@@ -16,8 +16,6 @@ import {
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
-import {StateEmpty} from 'components/stateEmpty';
 import {useProviders} from 'context/providers';
 import {formatUnits} from 'ethers/lib/utils';
 import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voting-power';
@@ -286,22 +284,22 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               }}
             />
           ) : (
-            <StateEmpty
-              type="Object"
-              mode="inline"
-              object="MAGNIFYING_GLASS"
-              title={t(
-                query === ''
-                  ? 'votingTerminal.emptyState.title'
-                  : 'votingTerminal.emptyState.titleSearch',
-                {
-                  query: shortenAddress(query),
+            <div className="flex justify-center">
+              <EmptyState
+                objectIllustration={{object: 'MAGNIFYING_GLASS'}}
+                heading={t(
+                  query === ''
+                    ? 'votingTerminal.emptyState.title'
+                    : 'votingTerminal.emptyState.titleSearch',
+                  {
+                    query: shortenAddress(query),
+                  }
+                )}
+                description={
+                  query === '' ? '' : t('votingTerminal.emptyState.subtitle')
                 }
-              )}
-              description={
-                query === '' ? '' : t('votingTerminal.emptyState.subtitle')
-              }
-            />
+              />
+            </div>
           )}
         </VotersTabContainer>
       ) : (

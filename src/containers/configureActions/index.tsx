@@ -3,9 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import {Label} from '@aragon/ods-old';
-import {Button, AlertInline, IconType} from '@aragon/ods';
-
-import {StateEmpty} from 'components/stateEmpty';
+import {Button, AlertInline, IconType, CardEmptyState} from '@aragon/ods';
 import ActionBuilder from 'containers/actionBuilder';
 import AddActionMenu from 'containers/addActionMenu';
 import {useActionsContext} from 'context/actions';
@@ -100,11 +98,9 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
         </ActionsWrapper>
       ) : (
         <>
-          <StateEmpty
-            type="Object"
-            mode="card"
-            object="SMART_CONTRACT"
-            title={t('newProposal.configureActions.addFirstAction')}
+          <CardEmptyState
+            objectIllustration={{object: 'SMART_CONTRACT'}}
+            heading={t('newProposal.configureActions.addFirstAction')}
             description={t(
               'newProposal.configureActions.addFirstActionSubtitle'
             )}

@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import {useForm, useWatch, Controller} from 'react-hook-form';
 import {saveAs} from 'file-saver';
 import {DateInput, Label} from '@aragon/ods-old';
-import {Button, AlertInline, IconType} from '@aragon/ods';
+import {Button, AlertInline, IconType, CardEmptyState} from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
 
 import {getCanonicalDate} from 'utils/date';
-import {StateEmpty} from 'components/stateEmpty';
 import {Transfer, Deposit, Withdraw} from 'utils/types';
 import {TransferTypes} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
@@ -183,12 +182,9 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
       subtitle={isFlowFinished ? '' : t('finance.modalExport.headerDesc')}
     >
       {isFlowFinished ? (
-        <StateEmpty
-          customCardPaddingClassName="p-6"
-          type="Object"
-          object="SUCCESS"
-          mode="card"
-          title={t('finance.modalExport.feedback.title')}
+        <CardEmptyState
+          objectIllustration={{object: 'SUCCESS'}}
+          heading={t('finance.modalExport.feedback.title')}
           description={t('finance.modalExport.feedback.desc')}
           primaryButton={{
             label: t('finance.modalExport.ctaLabelContinue'),

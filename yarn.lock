@@ -48,13 +48,15 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
-"@aragon/ods@^1.0.15":
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.15.tgz#0f1e12ecae807eccd3741e36cf11fe5d8508d93c"
-  integrity sha512-ZZ1u6nkyiroXjzv9d5Z7pq2t96AubG7Mj5zBq+zaC0nfTLQhM8uSYrIoGULDTKh1omI2Qm+6hmuONG9opGAM7Q==
+"@aragon/ods@^1.0.17":
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.17.tgz#8d7529615b72f5a3ecee7374bda253ae1240e46a"
+  integrity sha512-Qv5yKTUMG4t39+Bz0Bct2PqyEqmGKkZm5+L3gSjT6KOkojHmpPBulC168gXfxtQiw28y7kVr9qsoNruGrdm0Bg==
   dependencies:
+    "@radix-ui/react-alert-dialog" "^1.0.0"
     "@radix-ui/react-avatar" "^1.0.0"
     "@radix-ui/react-checkbox" "^1.0.0"
+    "@radix-ui/react-dialog" "^1.0.0"
     "@radix-ui/react-dropdown-menu" "^2.0.0"
     "@radix-ui/react-progress" "^1.0.0"
     "@radix-ui/react-radio-group" "^1.1.0"
@@ -2807,6 +2809,19 @@
     "@radix-ui/react-primitive" "1.0.3"
     "@radix-ui/react-use-controllable-state" "1.0.1"
 
+"@radix-ui/react-alert-dialog@^1.0.0":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-alert-dialog/-/react-alert-dialog-1.0.5.tgz#70dd529cbf1e4bff386814d3776901fcaa131b8c"
+  integrity sha512-OrVIOcZL0tl6xibeuGt5/+UxoT2N27KCFOPjFyfXMnchxSHZ/OW7cCX2nGlIYJrbHK/fczPcFzAwvNBB6XBNMA==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.1"
+    "@radix-ui/react-compose-refs" "1.0.1"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-dialog" "1.0.5"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-slot" "1.0.2"
+
 "@radix-ui/react-arrow@1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-arrow/-/react-arrow-1.0.3.tgz#c24f7968996ed934d57fe6cde5d6ec7266e1d25d"
@@ -2881,7 +2896,7 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@radix-ui/react-dialog@^1.0.4":
+"@radix-ui/react-dialog@1.0.5", "@radix-ui/react-dialog@^1.0.0", "@radix-ui/react-dialog@^1.0.4":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-dialog/-/react-dialog-1.0.5.tgz#71657b1b116de6c7a0b03242d7d43e01062c7300"
   integrity sha512-GjWJX/AUpB703eEBanuBnIWdIXg6NvJFCXcNlSZk4xdszCdhrJgBoUd1cGk67vFO+WdA2pfI/plOpqz/5GUP6Q==

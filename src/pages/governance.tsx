@@ -1,6 +1,12 @@
 import React, {useState} from 'react';
 import {ButtonGroup, Option} from '@aragon/ods-old';
-import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
+import {
+  Button,
+  CardEmptyState,
+  Icon,
+  IconType,
+  IllustrationHuman,
+} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -90,31 +96,53 @@ export const Governance: React.FC = () => {
   // Empty State
   if (noProposals) {
     return (
-      <PageEmptyState
-        title={t('governance.emptyState.title')}
-        subtitle={htmlIn(t)('governance.emptyState.subtitle')}
-        Illustration={
-          <IllustrationHuman
-            body="VOTING"
-            expression="SMILE"
-            hairs="MIDDLE"
-            accessory="EARRINGS_RHOMBUS"
-            sunglasses="BIG_ROUNDED"
-          />
-        }
-        primaryButton={{
-          label: t('newProposal.title'),
-          onClick: handleNewProposalClick,
-        }}
-        secondaryButton={
-          enableDelegation
-            ? {
-                label: t('governance.actionSecondary'),
-                onClick: () => open('delegateVoting'),
-              }
-            : undefined
-        }
-      />
+      <PageWrapper includeHeader={false}>
+        <CardEmptyState
+          heading={t('governance.emptyState.title')}
+          description={htmlIn(t)('governance.emptyState.description')}
+          humanIllustration={{
+            body: 'VOTING',
+            expression: 'SMILE',
+            hairs: 'MIDDLE',
+            accessory: 'EARRINGS_RHOMBUS',
+            sunglasses: 'BIG_ROUNDED',
+          }}
+          primaryButton={{
+            label: t('TransactionModal.createProposal'),
+            onClick: handleNewProposalClick,
+          }}
+          secondaryButton={{
+            label: t('governance.emptyState.descriptionLinkLabel'),
+            href: 'https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes',
+            target: '_blank',
+          }}
+        />
+        <PageEmptyState
+          title={t('governance.emptyState.title')}
+          subtitle={htmlIn(t)('governance.emptyState.subtitle')}
+          Illustration={
+            <IllustrationHuman
+              body="VOTING"
+              expression="SMILE"
+              hairs="MIDDLE"
+              accessory="EARRINGS_RHOMBUS"
+              sunglasses="BIG_ROUNDED"
+            />
+          }
+          primaryButton={{
+            label: t('newProposal.title'),
+            onClick: handleNewProposalClick,
+          }}
+          secondaryButton={
+            enableDelegation
+              ? {
+                  label: t('governance.actionSecondary'),
+                  onClick: () => open('delegateVoting'),
+                }
+              : undefined
+          }
+        />
+      </PageWrapper>
     );
   }
 

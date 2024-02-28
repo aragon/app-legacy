@@ -307,8 +307,8 @@
       "subtitle": "What's the first thing your community needs to decide? For ideas on how to structure proposals, {{link}}.",
       "subtitleLinkLabel": "read this guide",
       "subtitleLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes",
-      "description": "Get your community involved in the decision-making process. Learn more in our {{link}}.",
-      "descriptionLinkLabel": "proposal guide",
+      "description": "Get your community involved in the decision-making process. Learn more in our proposal guide.",
+      "descriptionLinkLabel": "Read the guide",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
     "proposals": {
@@ -353,6 +353,7 @@
     "executionCard": {
       "title": "Actions",
       "description": "These actions can be executed only once the governance parameters are met.",
+      "emptyStateHeading": "No actions were added",
       "addAction": "Add action",
       "seeTransaction": "See transaction",
       "status": {

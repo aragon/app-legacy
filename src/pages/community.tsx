@@ -6,13 +6,19 @@ import {
   Pagination,
   SearchInput,
 } from '@aragon/ods-old';
-import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
+import {
+  Button,
+  CardEmptyState,
+  EmptyState,
+  Icon,
+  IconType,
+  IllustrationHuman,
+} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {MembersList} from 'components/membersList';
-import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
@@ -141,29 +147,27 @@ export const Community: React.FC = () => {
 
   if (!totalMemberCount && isDAOTokenWrapped) {
     return (
-      <PageEmptyState
-        title={t('community.emptyState.title')}
-        subtitle={htmlIn(t)('community.emptyState.desc', {
-          tokenSymbol:
-            (daoToken as Erc20WrapperTokenDetails)?.underlyingToken?.symbol ||
-            daoToken?.symbol,
-        })}
-        Illustration={
-          <div className="flex">
-            <IllustrationHuman
-              body="ELEVATING"
-              expression="SMILE_WINK"
-              hairs="MIDDLE"
-              sunglasses="BIG_ROUNDED"
-              accessory="BUDDHA"
-            />
-          </div>
-        }
-        primaryButton={{
-          label: t('community.emptyState.ctaLabel'),
-          onClick: handleOpenModal,
-        }}
-      />
+      <PageWrapper includeHeader={false}>
+        <CardEmptyState
+          heading={t('community.emptyState.title')}
+          description={htmlIn(t)('community.emptyState.desc', {
+            tokenSymbol:
+              (daoToken as Erc20WrapperTokenDetails)?.underlyingToken?.symbol ||
+              daoToken?.symbol,
+          })}
+          humanIllustration={{
+            body: 'ELEVATING',
+            expression: 'SMILE_WINK',
+            hairs: 'MIDDLE',
+            sunglasses: 'BIG_ROUNDED',
+            accessory: 'BUDDHA',
+          }}
+          primaryButton={{
+            label: t('community.emptyState.ctaLabel'),
+            onClick: handleOpenModal,
+          }}
+        />
+      </PageWrapper>
     );
   }
 
@@ -314,11 +318,9 @@ export const Community: React.FC = () => {
           ) : (
             <>
               {debouncedTerm !== '' && !filteredMemberCount ? (
-                <StateEmpty
-                  type="Object"
-                  mode="inline"
-                  object="MAGNIFYING_GLASS"
-                  title={t('labels.noResults')}
+                <EmptyState
+                  objectIllustration={{object: 'MAGNIFYING_GLASS'}}
+                  heading={t('labels.noResults')}
                   description={t('labels.noResultsSubtitle')}
                 />
               ) : (

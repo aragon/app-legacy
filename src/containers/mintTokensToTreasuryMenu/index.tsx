@@ -1,12 +1,12 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {InputValue} from '@aragon/ods-old';
-import {Button, AlertCard, IconType} from '@aragon/ods';
+import {Button, AlertCard, IconType, CardEmptyState} from '@aragon/ods';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {StateEmpty} from 'components/stateEmpty';
+
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useProviders} from 'context/providers';
 import {Web3Address} from 'utils/library';
@@ -59,37 +59,36 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} {...{onCloseReset}}>
       {step === 0 ? (
-        <div className="px-4 pb-6">
-          <StateEmpty
-            type="Object"
-            object="WARNING"
-            mode="inline"
-            title={t('modal.mintTokensToTreasury.title')}
+        <div className="flex flex-col gap-y-3 p-6">
+          <CardEmptyState
+            objectIllustration={{object: 'WARNING'}}
+            heading={t('modal.mintTokensToTreasury.title')}
             description={t('modal.mintTokensToTreasury.description')}
-            content={
-              <div className="mb-3 mt-6">
-                <AlertCard
-                  variant="critical"
-                  message={t('modal.mintTokensToTreasury.alertTitle')}
-                  description={t('modal.mintTokensToTreasury.alertDescription')}
-                />
-              </div>
-            }
-            primaryButton={{
-              label: t('modal.mintTokensToTreasury.step1CtaLabel'),
-              onClick: () => {
-                onCloseReset();
-                setStep(0);
-              },
-            }}
-            secondaryButton={{
-              label: t('modal.mintTokensToTreasury.step1CancelLabel'),
-              onClick: () => {
-                setStep(1);
-              },
-            }}
-            actionsColumn
           />
+          <AlertCard
+            variant="critical"
+            message={t('modal.mintTokensToTreasury.alertTitle')}
+            description={t('modal.mintTokensToTreasury.alertDescription')}
+          />
+
+          <Button
+            variant="primary"
+            onClick={() => {
+              onCloseReset();
+              setStep(0);
+            }}
+          >
+            {t('modal.mintTokensToTreasury.step1CtaLabel')}
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setStep(1);
+            }}
+          >
+            {t('modal.mintTokensToTreasury.step1CancelLabel')}
+          </Button>
         </div>
       ) : (
         <>

@@ -3,9 +3,14 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {Button, IconType, Tag, IllustrationHuman} from '@aragon/ods';
-
-import {StateEmpty} from 'components/stateEmpty';
+import {
+  Button,
+  IconType,
+  Tag,
+  IllustrationHuman,
+  EmptyState,
+  CardEmptyState,
+} from '@aragon/ods';
 import {Loading} from 'components/temporary';
 import TokenList from 'components/tokenList';
 import TransferList from 'components/transferList';
@@ -72,23 +77,23 @@ export const Finance: React.FC = () => {
     // full page empty state
     if (tokens.length === 0 && transfers.length === 0) {
       return (
-        <PageEmptyState
-          title={t('finance.emptyState.title')}
-          subtitle={htmlIn(t)('finance.emptyState.description')}
-          Illustration={
-            <IllustrationHuman
-              body="CHART"
-              expression="EXCITED"
-              hairs="BUN"
-              object="WALLET"
-              objectPosition="right"
-            />
-          }
-          primaryButton={{
-            label: t('finance.emptyState.buttonLabel'),
-            onClick: () => open('deposit'),
-          }}
-        />
+        <PageWrapper includeHeader={false}>
+          <CardEmptyState
+            heading={t('finance.emptyState.title')}
+            description={htmlIn(t)('finance.emptyState.description')}
+            humanIllustration={{
+              body: 'CHART',
+              expression: 'EXCITED',
+              hairs: 'BUN',
+              object: 'WALLET',
+              objectPosition: 'right',
+            }}
+            primaryButton={{
+              label: t('finance.emptyState.buttonLabel'),
+              onClick: () => open('deposit'),
+            }}
+          />
+        </PageWrapper>
       );
     }
 
@@ -97,17 +102,16 @@ export const Finance: React.FC = () => {
       return (
         <PageWrapper includeHeader={false}>
           <div className="mb-16 mt-10">
-            <StateEmpty
-              type="Human"
-              mode="card"
-              body="BLOCKS"
-              expression="SURPRISED"
-              sunglasses="SMALL_INTELLECTUAL"
-              hairs="LONG"
-              accessory="FLUSHED"
-              title={t('finance.treasuryEmptyState.title')}
+            <EmptyState
+              humanIllustration={{
+                body: 'BLOCKS',
+                expression: 'SURPRISED',
+                sunglasses: 'SMALL_INTELLECTUAL',
+                hairs: 'LONG',
+                accessory: 'FLUSHED',
+              }}
+              heading={t('finance.treasuryEmptyState.title')}
               description={htmlIn(t)('finance.treasuryEmptyState.desc')}
-              renderHtml
               primaryButton={{
                 label: t('finance.emptyState.buttonLabel'),
                 onClick: () => {
@@ -223,17 +227,16 @@ export const Finance: React.FC = () => {
                   tag={tag}
                   onClick={navigate}
                 />
-                <StateEmpty
-                  type="Human"
-                  mode="inline"
-                  body="BLOCKS"
-                  expression="SURPRISED"
-                  sunglasses="SMALL_INTELLECTUAL"
-                  hairs="LONG"
-                  accessory="FLUSHED"
-                  title={t('finance.treasuryEmptyState.title')}
+                <EmptyState
+                  humanIllustration={{
+                    body: 'BLOCKS',
+                    expression: 'SURPRISED',
+                    sunglasses: 'SMALL_INTELLECTUAL',
+                    hairs: 'LONG',
+                    accessory: 'FLUSHED',
+                  }}
+                  heading={t('finance.treasuryEmptyState.title')}
                   description={htmlIn(t)('finance.treasuryEmptyState.desc')}
-                  renderHtml
                   primaryButton={{
                     label: t('finance.emptyState.buttonLabel'),
                     onClick: () => {

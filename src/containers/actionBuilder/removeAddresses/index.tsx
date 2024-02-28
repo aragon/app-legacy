@@ -1,11 +1,11 @@
 import {Dropdown, Label, ListItemAction} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button, EmptyState, IconType} from '@aragon/ods';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {AccordionMethod} from 'components/accordionMethod';
-import {StateEmpty} from 'components/stateEmpty';
+
 import ManageWalletsModal from 'containers/manageWalletsModal';
 import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -142,16 +142,14 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
     >
       {!memberWallets || memberWallets.length === 0 ? (
         <FormItem
-          className={`py-6 ${
+          className={`flex justify-center py-6 ${
             useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
           }`}
           hideBorder={borderless}
         >
-          <StateEmpty
-            type="Object"
-            mode="inline"
-            object="WALLET"
-            title={t('labels.whitelistWallets.noWallets')}
+          <EmptyState
+            objectIllustration={{object: 'WALLET'}}
+            heading={t('labels.whitelistWallets.noWallets')}
             secondaryButton={{
               label: t('labels.selectWallet'),
               onClick: () => open('manageWallet'),
@@ -166,16 +164,6 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
             }`}
             hideBorder={borderless}
           >
-            <StateEmpty
-              type="Object"
-              mode="inline"
-              object="WALLET"
-              title={t('labels.whitelistWallets.noWallets')}
-              secondaryButton={{
-                label: t('labels.selectWallet'),
-                onClick: () => open('manageWallet'),
-              }}
-            />
             <Label label={t('labels.whitelistWallets.address')} />
           </FormItem>
           {controlledWallets.map((field, fieldIndex) => (

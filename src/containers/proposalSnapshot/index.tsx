@@ -1,12 +1,12 @@
 import React from 'react';
 import {CardProposal, CardProposalProps, ListItemHeader} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {Button, CardEmptyState, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {proposal2CardProps} from 'components/proposalList';
-import {StateEmpty} from 'components/stateEmpty';
+
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
@@ -102,15 +102,15 @@ const ProposalSnapshot: React.FC<Props> = ({
 
   if (proposalCountIsFetched && (proposalCount === 0 || proposalCountError)) {
     return (
-      <StateEmpty
-        type="Human"
-        mode="card"
-        body="VOTING"
-        expression="SMILE"
-        hairs="MIDDLE"
-        accessory="EARRINGS_RHOMBUS"
-        sunglasses="BIG_ROUNDED"
-        title={t('governance.emptyState.title')}
+      <CardEmptyState
+        humanIllustration={{
+          body: 'VOTING',
+          expression: 'SMILE',
+          hairs: 'MIDDLE',
+          accessory: 'EARRINGS_RHOMBUS',
+          sunglasses: 'BIG_ROUNDED',
+        }}
+        heading={t('governance.emptyState.title')}
         description={htmlIn(t)('governance.emptyState.description')}
         primaryButton={{
           label: t('TransactionModal.createProposal'),
@@ -123,7 +123,11 @@ const ProposalSnapshot: React.FC<Props> = ({
               })
             ),
         }}
-        renderHtml
+        secondaryButton={{
+          label: t('governance.emptyState.descriptionLinkLabel'),
+          href: 'https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes',
+          target: '_blank',
+        }}
       />
     );
   }
