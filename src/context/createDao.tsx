@@ -403,7 +403,6 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
   }, [
     client?.ipfs,
-    client?.methods,
     getErc20PluginParams,
     getGaslessPluginInstallParams,
     getMultisigPluginInstallParams,
