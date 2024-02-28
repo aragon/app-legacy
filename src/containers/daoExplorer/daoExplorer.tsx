@@ -194,7 +194,7 @@ export const DaoExplorer = () => {
                   icon={
                     filters.order === 'tvl' ? IconType.CHECKMARK : undefined
                   }
-                  iconPosition="left"
+                  iconPosition="right"
                   selected={filters.order === 'tvl'}
                   onClick={() => toggleOrderby('tvl')}
                 >
@@ -206,7 +206,7 @@ export const DaoExplorer = () => {
                       ? IconType.CHECKMARK
                       : undefined
                   }
-                  iconPosition="left"
+                  iconPosition="right"
                   selected={filters.order === 'proposals'}
                   onClick={() => toggleOrderby('proposals')}
                 >
@@ -216,7 +216,7 @@ export const DaoExplorer = () => {
                   icon={
                     filters.order === 'members' ? IconType.CHECKMARK : undefined
                   }
-                  iconPosition="left"
+                  iconPosition="right"
                   selected={filters.order === 'members'}
                   onClick={() => toggleOrderby('members')}
                 >
@@ -228,7 +228,7 @@ export const DaoExplorer = () => {
                       ? IconType.CHECKMARK
                       : undefined
                   }
-                  iconPosition="left"
+                  iconPosition="right"
                   selected={filters.order === 'createdAt'}
                   onClick={() => toggleOrderby('createdAt')}
                 >
