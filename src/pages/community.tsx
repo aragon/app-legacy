@@ -148,7 +148,7 @@ export const Community: React.FC = () => {
             daoToken?.symbol,
         })}
         Illustration={
-          <div className="flex">
+          <div className="flex w-[320px] justify-center md:w-[640px]">
             <IllustrationHuman
               body="ELEVATING"
               expression="SMILE_WINK"
