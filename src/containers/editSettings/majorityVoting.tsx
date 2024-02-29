@@ -464,7 +464,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const metadataAction = [
     <Dropdown.Item
-      disabled={isMetadataChanged}
+      disabled={!isMetadataChanged}
       onClick={setCurrentMetadata}
       key={0}
     >
