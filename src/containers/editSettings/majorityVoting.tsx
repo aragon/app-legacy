@@ -474,7 +474,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const communityAction = [
     <Dropdown.Item
-      disabled={isCommunityChanged}
+      disabled={!isCommunityChanged}
       onClick={setCurrentCommunity}
       key={0}
     >
