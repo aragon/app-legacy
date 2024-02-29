@@ -493,7 +493,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const gaslessAction = [
     <Dropdown.Item
-      disabled={isGaslessChanged}
+      disabled={!isGaslessChanged}
       onClick={setCurrentGasless}
       key={0}
     >
