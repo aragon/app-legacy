@@ -97,7 +97,7 @@ const RenderIllustration: React.FC<StateEmptyProps> = props => {
   return (
     <>
       {props.type !== 'Object' && (
-        <div className="flex justify-center w-[320px]">
+        <div className="flex w-[320px] justify-center">
           <IllustrationHuman
             body={props.body}
             expression={props.expression}
@@ -110,7 +110,7 @@ const RenderIllustration: React.FC<StateEmptyProps> = props => {
         </div>
       )}
       {props.type !== 'Human' && (
-        <div className="flex justify-center w-[160px]">
+        <div className="flex w-[160px] justify-center">
           <IllustrationObject object={props.object} className={props.type} />
         </div>
       )}
