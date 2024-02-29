@@ -231,7 +231,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const metadataAction = [
     <Dropdown.Item
-      disabled={isMetadataChanged}
+      disabled={!isMetadataChanged}
       onClick={setCurrentMetadata}
       key={0}
     >
@@ -241,7 +241,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const communityAction = [
     <Dropdown.Item
-      disabled={isCommunityChanged}
+      disabled={!isCommunityChanged}
       onClick={setCurrentCommunity}
       key={0}
     >
@@ -251,7 +251,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const governanceAction = [
     <Dropdown.Item
-      disabled={isGovernanceChanged}
+      disabled={!isGovernanceChanged}
       onClick={setCurrentGovernance}
       key={0}
     >

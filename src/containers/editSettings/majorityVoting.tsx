@@ -464,7 +464,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const metadataAction = [
     <Dropdown.Item
-      disabled={isMetadataChanged}
+      disabled={!isMetadataChanged}
       onClick={setCurrentMetadata}
       key={0}
     >
@@ -474,7 +474,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const communityAction = [
     <Dropdown.Item
-      disabled={isCommunityChanged}
+      disabled={!isCommunityChanged}
       onClick={setCurrentCommunity}
       key={0}
     >
@@ -483,7 +483,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   ];
   const governanceAction = [
     <Dropdown.Item
-      disabled={isGovernanceChanged}
+      disabled={!isGovernanceChanged}
       onClick={setCurrentGovernance}
       key={0}
     >
@@ -493,7 +493,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const gaslessAction = [
     <Dropdown.Item
-      disabled={isGaslessChanged}
+      disabled={!isGaslessChanged}
       onClick={setCurrentGasless}
       key={0}
     >
