@@ -95,7 +95,11 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
 
   const methodActions = (() => {
     const result = [
-      <Dropdown.Item onClick={handleResetAll} key={0}>
+      <Dropdown.Item
+        onClick={handleResetAll}
+        key={0}
+        disabled={memberWallets?.length === 0}
+      >
         {t('labels.resetAction')}
       </Dropdown.Item>,
     ];
