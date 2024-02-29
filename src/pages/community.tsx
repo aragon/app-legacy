@@ -5,14 +5,7 @@ import {
   Pagination,
   SearchInput,
 } from '@aragon/ods-old';
-import {
-  Button,
-  CardEmptyState,
-  EmptyState,
-  Icon,
-  IconType,
-  IllustrationHuman,
-} from '@aragon/ods';
+import {Button, CardEmptyState, EmptyState, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -26,7 +19,6 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
-import PageEmptyState from 'containers/pageEmptyState';
 import {htmlIn} from 'utils/htmlIn';
 import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
