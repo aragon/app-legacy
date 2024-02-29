@@ -231,7 +231,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const metadataAction = [
     <Dropdown.Item
-      disabled={isMetadataChanged}
+      disabled={!isMetadataChanged}
       onClick={setCurrentMetadata}
       key={0}
     >
