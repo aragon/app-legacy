@@ -241,7 +241,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const communityAction = [
     <Dropdown.Item
-      disabled={isCommunityChanged}
+      disabled={!isCommunityChanged}
       onClick={setCurrentCommunity}
       key={0}
     >
