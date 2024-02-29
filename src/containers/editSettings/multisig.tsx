@@ -251,7 +251,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const governanceAction = [
     <Dropdown.Item
-      disabled={isGovernanceChanged}
+      disabled={!isGovernanceChanged}
       onClick={setCurrentGovernance}
       key={0}
     >
