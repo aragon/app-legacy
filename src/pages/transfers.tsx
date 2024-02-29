@@ -130,10 +130,7 @@ export const Transfers: React.FC = () => {
                 >
                   <Dropdown.Item
                     onClick={() => {
-                      // Otherwise modal doesn't open property on desktop
-                      setTimeout(() => {
-                        open('exportCsv');
-                      }, 100);
+                      open('exportCsv');
                     }}
                   >
                     {t('label.exportCSV')}
