@@ -483,7 +483,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   ];
   const governanceAction = [
     <Dropdown.Item
-      disabled={isGovernanceChanged}
+      disabled={!isGovernanceChanged}
       onClick={setCurrentGovernance}
       key={0}
     >
