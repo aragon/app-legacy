@@ -141,6 +141,37 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
     [index, walletFieldArray]
   );
 
+  const handleRemoveWallet = useCallback(() => {
+    if (typeof onDelete === 'function') {
+      const [totalSupply, amount, eligibilityType, eligibilityTokenAmount] =
+        getValues([
+          'tokenTotalSupply',
+          `wallets.${index}.amount`,
+          'eligibilityType',
+          'eligibilityTokenAmount',
+        ]);
+
+      const newTotalSupply = Number(totalSupply) - Number(amount);
+      setValue('tokenTotalSupply', newTotalSupply < 0 ? 0 : newTotalSupply);
+      onDelete(index);
+      if (eligibilityType === 'token') {
+        if (eligibilityTokenAmount === amount) {
+          let minAmount = walletFieldArray[0]?.amount;
+          (walletFieldArray as TokenVotingWalletField[]).forEach(
+            (wallet, mapIndex) => {
+              if (mapIndex !== index)
+                if (Number(wallet.amount) < Number(minAmount)) {
+                  minAmount = wallet.amount;
+                }
+            }
+          );
+          setValue('minimumTokenAmount', minAmount);
+        }
+      }
+      alert(t('alert.chip.removedAddress') as string);
+    }
+  }, [alert, getValues, index, onDelete, setValue, t, walletFieldArray]);
+
   return (
     <Container data-testid="wallet-row">
       <Controller
@@ -238,43 +269,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         >
           <Dropdown.Item
             disabled={typeof onDelete !== 'function'}
-            onClick={() => {
-              if (typeof onDelete === 'function') {
-                const [
-                  totalSupply,
-                  amount,
-                  eligibilityType,
-                  eligibilityTokenAmount,
-                ] = getValues([
-                  'tokenTotalSupply',
-                  `wallets.${index}.amount`,
-                  'eligibilityType',
-                  'eligibilityTokenAmount',
-                ]);
-
-                const newTotalSupply = Number(totalSupply) - Number(amount);
-                setValue(
-                  'tokenTotalSupply',
-                  newTotalSupply < 0 ? 0 : newTotalSupply
-                );
-                onDelete(index);
-                if (eligibilityType === 'token') {
-                  if (eligibilityTokenAmount === amount) {
-                    let minAmount = walletFieldArray[0]?.amount;
-                    (walletFieldArray as TokenVotingWalletField[]).forEach(
-                      (wallet, mapIndex) => {
-                        if (mapIndex !== index)
-                          if (Number(wallet.amount) < Number(minAmount)) {
-                            minAmount = wallet.amount;
-                          }
-                      }
-                    );
-                    setValue('minimumTokenAmount', minAmount);
-                  }
-                }
-                alert(t('alert.chip.removedAddress') as string);
-              }
-            }}
+            onClick={handleRemoveWallet}
           >
             {t('labels.removeWallet')}
           </Dropdown.Item>

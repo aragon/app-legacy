@@ -270,8 +270,8 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                     />
                   }
                 >
-                  {daoDetails.metadata.links.map(({name, url}, index) => (
-                    <Dropdown.Item key={index}>
+                  {daoDetails.metadata.links.map(({name, url}) => (
+                    <Dropdown.Item key={name}>
                       <Link
                         label={name}
                         description={url}

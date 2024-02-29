@@ -199,7 +199,6 @@ export const DaoExplorer = () => {
                   icon={
                     filters.order === 'tvl' ? IconType.CHECKMARK : undefined
                   }
-                  iconPosition="right"
                   selected={filters.order === 'tvl'}
                   onClick={() => toggleOrderby('tvl')}
                 >

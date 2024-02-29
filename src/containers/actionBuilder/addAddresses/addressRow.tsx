@@ -150,10 +150,10 @@ export const AddressRow = ({
               />
             }
           >
-            {dropdownItems.map((item, index) => (
+            {dropdownItems.map(item => (
               <Dropdown.Item
                 onClick={() => item.callback(fieldIndex)}
-                key={index}
+                key={item.label}
               >
                 {item.label}
               </Dropdown.Item>

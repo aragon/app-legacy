@@ -72,7 +72,7 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
           }}
           key={result.length}
         >
-          {t('labels.resetAction')}
+          {t('labels.removeEntireAction')}
         </Dropdown.Item>
       );
     }

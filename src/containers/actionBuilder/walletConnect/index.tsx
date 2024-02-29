@@ -41,14 +41,12 @@ const WalletConnectAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
 
   if (actionData) {
     return (
-      <>
-        <WCActionCard
-          status="default"
-          type="action-builder"
-          action={actionData}
-          methodActions={methodActions}
-        />
-      </>
+      <WCActionCard
+        status="default"
+        type="action-builder"
+        action={actionData}
+        methodActions={methodActions}
+      />
     );
   }
 

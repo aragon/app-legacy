@@ -215,7 +215,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                 />
               }
             >
-              <Dropdown.Item onClick={handleDeleteAll} key={0}>
+              <Dropdown.Item onClick={handleDeleteAll}>
                 {t('labels.whitelistWallets.deleteAllEntries')}
               </Dropdown.Item>
             </Dropdown.Container>
