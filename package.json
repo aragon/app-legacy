@@ -18,7 +18,8 @@
     "lint:fix": "eslint src --fix",
     "check-types": "tsc --noemit",
     "e2e": "env-cmd -f .env npx synpress run --configFile synpress.config.js",
-    "e2e:reset": "cd tests/e2e && cpx default/runContext.json ."
+    "e2e:reset": "cd tests/e2e && cpx default/runContext.json .",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org aragonorg --project app-react ./dist && sentry-cli sourcemaps upload --org aragonorg --project app-react ./dist"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
@@ -29,6 +30,8 @@
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
+    "@sentry/cli": "^2.28.6",
+    "@sentry/react": "^7.103.0",
     "@tailwindcss/typography": "^0.5.10",
     "@tanstack/react-query": "^4.32.1",
     "@tanstack/react-query-devtools": "^4.32.1",
