@@ -1,14 +1,16 @@
 import {CardProposal, CardProposalProps} from '@aragon/ods-old';
 import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {ProposalStatus} from '@aragon/sdk-client-common';
-import {BigNumber} from 'ethers';
 import {TFunction} from 'i18next';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
+import {Spinner} from '@aragon/ods';
+import Big from 'big.js';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
@@ -24,12 +26,10 @@ import {
   TokenVotingOptions,
   getErc20Results,
   isErc20VotingProposal,
-  stripPlgnAdrFromProposalId,
   isGaslessProposal,
+  stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
-import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
-import {Spinner} from '@aragon/ods';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
@@ -250,29 +250,27 @@ export function proposal2CardProps(
       // threshold criteria (N_yes / (N_yes + N_no)) > supportThreshold
       let winningOption: OptionResult[TokenVotingOptions] | undefined;
 
-      const yesNoCount = BigNumber.from(proposal.result.yes).add(
-        proposal.result.no
-      );
+      // intermediate values for calculation
+      const no = Big(proposal.result.no.toString());
+      const yes = Big(proposal.result.yes.toString());
+      const abstain = Big(proposal.result.abstain.toString());
+      const yesNoCount = yes.add(no);
 
-      // if there are any votes find the winning option
+      // votes have been cast for yes or no
       if (yesNoCount.gt(0)) {
-        if (
-          BigNumber.from(proposal.result.yes).div(yesNoCount).toNumber() >
-          proposal.settings.supportThreshold
-        ) {
+        if (yes.div(yesNoCount).gt(proposal.settings.supportThreshold)) {
           winningOption = {...results.yes, option: 'yes'};
         } else {
-          // technically abstain never "wins" the vote, but showing on UI
-          // if there are more 'abstain' votes than 'no' votes
-          winningOption = BigNumber.from(proposal.result.no).gte(
-            proposal.result.abstain
-          )
+          // technically abstain never "wins" the vote, but showing on UI when
+          // there are more 'abstain' votes than 'no' votes
+          winningOption = no.gte(abstain)
             ? {...results.no, option: 'no'}
             : {...results.abstain, option: 'abstain'};
         }
-      } else {
-        if (BigNumber.from(proposal.result.abstain).gt(0))
-          winningOption = {...results.abstain, option: 'abstain'};
+      }
+      // abstain is the winning option assuming any votes for that have been cast
+      else if (abstain.gt(0)) {
+        winningOption = {...results.abstain, option: 'abstain'};
       }
 
       // show winning vote option
