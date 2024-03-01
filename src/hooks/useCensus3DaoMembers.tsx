@@ -58,7 +58,9 @@ export const useCensus3DaoMembers = ({
     },
     {
       ...options,
-      enabled: enable && enableGetMembers,
+      enabled: enableGetMembers,
+      refetchInterval:
+        enableGetMembers && !census3Token?.status.synced ? 3000 : false,
     }
   );
 
