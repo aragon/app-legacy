@@ -1432,30 +1432,6 @@
     chance "^1.1.4"
     core-js "^3.6.4"
 
-"@elastic/apm-rum-core@^5.19.0":
-  version "5.19.0"
-  resolved "https://registry.yarnpkg.com/@elastic/apm-rum-core/-/apm-rum-core-5.19.0.tgz#653a120e60549b2486c86919e5079df9fd779a67"
-  integrity sha512-vjddutdSY2L15I0hFd45PaStleemFfxmvXj1KjiFCbRGQRW2JhMoaNJ6YpFXP+L5rs96olwXGzYLHaztWs1ciQ==
-  dependencies:
-    error-stack-parser "^1.3.5"
-    opentracing "^0.14.3"
-    promise-polyfill "^8.1.3"
-
-"@elastic/apm-rum-react@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@elastic/apm-rum-react/-/apm-rum-react-2.0.0.tgz#06b39eed7cdd96cc6fdcc834c5339795717c4c68"
-  integrity sha512-0hegYHNvhAv3Odk+OzDEvsqqM5FZEr+YoYwp1rViayaGgkWXuwisyLGZDxZz4Huym2lVfMITEmy6HgAQxdKXRA==
-  dependencies:
-    "@elastic/apm-rum" "^5.14.0"
-    hoist-non-react-statics "^3.3.0"
-
-"@elastic/apm-rum@^5.14.0":
-  version "5.14.0"
-  resolved "https://registry.yarnpkg.com/@elastic/apm-rum/-/apm-rum-5.14.0.tgz#a7d503a3ef3272767e383e9be780bf68a63c553f"
-  integrity sha512-JyJrKAtumXpQL9X3MTkR4YTw7CzYq5O7jqpB7nVZtqgmfkKgUBAQsmQ4kkpIYhDFDKGDI+45EBj+O0ZQ9QND9w==
-  dependencies:
-    "@elastic/apm-rum-core" "^5.19.0"
-
 "@emotion/is-prop-valid@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-1.2.1.tgz#23116cf1ed18bfeac910ec6436561ecb1a3885cc"

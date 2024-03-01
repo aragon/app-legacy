@@ -1,9 +1,9 @@
-import {ApmRoutes} from '@elastic/apm-rum-react';
 import React, {Suspense, lazy, useEffect} from 'react';
 import {
   Navigate,
   Outlet,
   Route,
+  Routes,
   useLocation,
   useParams,
 } from 'react-router-dom';
@@ -26,7 +26,6 @@ import {FormProvider, useForm} from 'react-hook-form';
 import DepositModal from 'containers/transactionModals/depositModal';
 import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
-import {useMonitoring} from 'hooks/useMonitoring';
 import {useWallet} from 'hooks/useWallet';
 import {identifyUser, trackPage} from 'services/analytics';
 import {featureFlags} from 'utils/featureFlags';
@@ -45,7 +44,6 @@ export const App: React.FC = () => {
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
   const {methods, status, network, address, provider} = useWallet();
-  useMonitoring();
 
   // Initialize feature flags using the initial URL
   useEffect(() => featureFlags.initializeFeatureFlags(), []);
@@ -74,7 +72,7 @@ export const App: React.FC = () => {
     <>
       {/* TODO: replace with loading indicator */}
       <Suspense fallback={<Loading />}>
-        <ApmRoutes>
+        <Routes>
           <Route element={<ExploreWrapper />}>
             <Route path="/" element={<ExplorePage />} />
           </Route>
@@ -139,7 +137,7 @@ export const App: React.FC = () => {
               />
             }
           />
-        </ApmRoutes>
+        </Routes>
       </Suspense>
       <DaoSelectMenu />
       <WalletMenu />
