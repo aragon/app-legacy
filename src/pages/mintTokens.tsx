@@ -44,10 +44,7 @@ export const MintToken: React.FC = () => {
     pluginAddress,
     pluginType,
   });
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginAddress,
-    pluginType,
-  });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
   const {t} = useTranslation();
   const {network} = useNetwork();

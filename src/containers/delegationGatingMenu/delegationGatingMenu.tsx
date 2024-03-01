@@ -16,7 +16,6 @@ import {useMember} from 'services/aragon-sdk/queries/use-member';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {PluginTypes} from '../../hooks/usePluginClient';
-import {useGaslessGovernanceEnabled} from '../../hooks/useGaslessGovernanceEnabled';
 
 export interface IDelegationGatingMenuState {
   proposal?: TokenVotingProposal;
@@ -74,15 +73,11 @@ export const DelegationGatingMenu: React.FC = () => {
   const parsedPastBalance = abbreviateTokenAmount(pastBalance.toString());
 
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginType: daoDetails?.plugins[0].id as PluginTypes,
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-  });
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
     pluginType,
-    {enabled: daoToken != null && isGovernanceEnabled}
+    {enabled: daoToken != null}
   );
 
   // The useDelegatee hook returns null when current delegate is connected address

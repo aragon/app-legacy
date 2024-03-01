@@ -17,7 +17,6 @@ import {
   DelegateVotingFormField,
   IDelegateVotingFormValues,
 } from './delegateVotingUtils';
-import {useGaslessGovernanceEnabled} from '../../hooks/useGaslessGovernanceEnabled';
 import {PluginTypes} from '../../hooks/usePluginClient';
 
 export interface IDelegateVotingFormProps {
@@ -62,15 +61,11 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
   );
 
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginType: daoDetails?.plugins[0].id as PluginTypes,
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-  });
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
     pluginType,
-    {enabled: daoToken != null && !isOnWrongNetwork && isGovernanceEnabled}
+    {enabled: daoToken != null && !isOnWrongNetwork}
   );
   const currentDelegate = delegateData === null ? address : delegateData;
 
