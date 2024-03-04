@@ -20,6 +20,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useMemo,
   useState,
 } from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -51,6 +52,7 @@ import {
   GaslessPluginVotingSettings,
 } from '@vocdoni/gasless-voting';
 import {useCensus3CreateToken} from '../hooks/useCensus3';
+import {GaslessPluginName} from 'hooks/usePluginClient';
 
 const DEFAULT_TOKEN_DECIMALS = 18;
 
@@ -422,8 +424,14 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   } = usePollGasFee(estimateCreationFees, shouldPoll);
 
   const chainId = getValues('blockchain')?.id;
+  const [membership, votingType] = getValues(['membership', 'votingType']);
+
   const {createToken} = useCensus3CreateToken({
     chainId,
+    pluginType:
+      membership === 'token' && votingType === 'gasless'
+        ? GaslessPluginName
+        : undefined,
   });
 
   // run dao creation transaction
@@ -563,8 +571,9 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       ? handlePublishDao
       : handleExecuteCreation;
 
+  const value = useMemo(() => ({handlePublishDao}), []);
   return (
-    <CreateDaoContext.Provider value={{handlePublishDao}}>
+    <CreateDaoContext.Provider value={value}>
       {children}
       <PublishModal
         subtitle={t('TransactionModal.publishDaoSubtitle')}

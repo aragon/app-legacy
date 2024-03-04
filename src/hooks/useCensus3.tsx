@@ -15,7 +15,7 @@ const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
 
 interface IUseCensus3CreateToken {
   chainId: number;
-  pluginType: PluginTypes;
+  pluginType?: PluginTypes;
 }
 
 export const useCensus3Client = () => {
@@ -56,6 +56,7 @@ export const useCensus3CreateToken = ({
   const createToken = useCallback(
     async (pluginAddress: string, tokenAddress?: string) => {
       if (
+        !pluginType ||
         pluginType !== GaslessPluginName ||
         !client ||
         !isGaslessVotingClient(client)
