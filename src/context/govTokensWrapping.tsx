@@ -60,7 +60,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const {data: daoTokenData, isLoading: isTokenDataLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
-  const underlyingToken = (daoTokenData as Erc20WrapperTokenDetails)
+  const underlyingToken = (daoTokenData as Erc20WrapperTokenDetails | undefined)
     ?.underlyingToken;
   const [daoTokenBalance, setDaoTokenBalance] = useState('');
 
@@ -80,7 +80,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
 
   const {data: tokenAllowance} = useTokenAllowance(
     {
-      token: underlyingToken?.address,
+      token: underlyingToken?.address as string,
       owner: userAddress as string,
       spender: wrappedDaoToken?.address as string,
     },
