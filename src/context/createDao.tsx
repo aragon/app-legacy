@@ -20,7 +20,6 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useMemo,
   useState,
 } from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -47,12 +46,12 @@ import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 
 import {
+  GaslessPluginVotingSettings,
   GaslessVotingClient,
   GaslessVotingPluginInstall,
-  GaslessPluginVotingSettings,
 } from '@vocdoni/gasless-voting';
-import {useCensus3CreateToken} from '../hooks/useCensus3';
 import {GaslessPluginName} from 'hooks/usePluginClient';
+import {useCensus3CreateToken} from '../hooks/useCensus3';
 
 const DEFAULT_TOKEN_DECIMALS = 18;
 
