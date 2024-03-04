@@ -3,7 +3,7 @@ import {styled} from 'styled-components';
 
 import {shortenAddress} from '../../utils/addresses';
 import {AvatarWallet} from '../avatar';
-import {IconLinkExternal, IconPerson} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 type TokenInfo = {
   amount: number;
@@ -42,7 +42,7 @@ export const ListItemAddress: FC<ListItemAddressProps> = ({
             {tokenInfo.amount} {tokenInfo.symbol} ({tokenInfo.percentage}%)
           </p>
         )}
-        <IconLinkExternal />
+        <Icon icon={IconType.LINK_EXTERNAL} />
       </RightContent>
     </Container>
   );
@@ -52,7 +52,7 @@ type AvatarProps = Pick<ListItemAddressProps, 'src'>;
 
 const Avatar: FC<AvatarProps> = ({src}) => {
   if (!src) {
-    return <IconPerson className="h-5 w-5" />;
+    return <Icon icon={IconType.PERSON} className="h-5 w-5" />;
   }
   return <AvatarWallet src={src} />;
 };

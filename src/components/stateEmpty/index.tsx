@@ -50,6 +50,7 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
       customCardPaddingClassName={props.customCardPaddingClassName}
     >
       <RenderIllustration {...props} />
+
       <ContentWrapper className={props.contentWrapperClassName}>
         <TextWrapper>
           <Title>{props.title}</Title>
@@ -96,18 +97,22 @@ const RenderIllustration: React.FC<StateEmptyProps> = props => {
   return (
     <>
       {props.type !== 'Object' && (
-        <IllustrationHuman
-          body={props.body}
-          expression={props.expression}
-          hairs={props.hairs}
-          sunglasses={props.sunglasses}
-          accessory={props.accessory}
-          object={props.object}
-          objectPosition={props.objectPosition}
-        />
+        <div className="flex w-[320px] justify-center">
+          <IllustrationHuman
+            body={props.body}
+            expression={props.expression}
+            hairs={props.hairs}
+            sunglasses={props.sunglasses}
+            accessory={props.accessory}
+            object={props.object}
+            objectPosition={props.objectPosition}
+          />
+        </div>
       )}
       {props.type !== 'Human' && (
-        <IllustrationObject object={props.object} className={props.type} />
+        <div className="flex w-[160px] justify-center">
+          <IllustrationObject object={props.object} className={props.type} />
+        </div>
       )}
     </>
   );

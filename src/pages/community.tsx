@@ -1,7 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {
   Dropdown,
-  IconLinkExternal,
   ListItemAction,
   Pagination,
   SearchInput,
@@ -149,7 +148,7 @@ export const Community: React.FC = () => {
             daoToken?.symbol,
         })}
         Illustration={
-          <div className="flex">
+          <div className="flex w-[320px] justify-center md:w-[640px]">
             <IllustrationHuman
               body="ELEVATING"
               expression="SMILE_WINK"
@@ -227,7 +226,7 @@ export const Community: React.FC = () => {
             description: t('explore.explorer.tokenBased'),
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
-              iconLeft: <IconLinkExternal />,
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
               onClick: handleSecondaryButtonClick,
             },
           }

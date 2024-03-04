@@ -33,7 +33,7 @@ export const SettingsUpdateCard: React.FC = () => {
           <StyledLink
             label={t('update.alert.ctaLabel')}
             type="neutral"
-            iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+            iconRight={IconType.LINK_EXTERNAL}
             onClick={() =>
               navigate(
                 generatePath(NewProposal, {
@@ -61,7 +61,7 @@ export const SettingsUpdateCard: React.FC = () => {
         <StyledLink
           label={t('update.alert.ctaLabel')}
           type="neutral"
-          iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+          iconRight={IconType.LINK_EXTERNAL}
           onClick={() =>
             navigate(
               generatePath(NewProposal, {

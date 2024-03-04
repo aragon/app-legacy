@@ -1,9 +1,8 @@
 import React, {type SyntheticEvent} from 'react';
 import {styled} from 'styled-components';
-
 import FallbackImg from '../../assets/avatar-token.svg';
-import {IconRadioDefault, IconSuccess} from '../icons';
 import {Tag} from '../tag';
+import {Icon, IconType} from '@aragon/ods';
 
 export type ListItemBlockchainProps = {
   domain: string;
@@ -32,9 +31,19 @@ export const ListItemBlockchain: React.FC<ListItemBlockchainProps> = ({
       </Content>
       {props.tag && <Tag label={props.tag} colorScheme="info" />}
       {selected ? (
-        <IconSuccess width={20} height={20} className="text-primary-500" />
+        <Icon
+          icon={IconType.SUCCESS}
+          width={20}
+          height={20}
+          className="text-primary-500"
+        />
       ) : (
-        <IconRadioDefault width={20} height={20} className="text-neutral-400" />
+        <Icon
+          icon={IconType.RADIO}
+          width={20}
+          height={20}
+          className="text-neutral-400"
+        />
       )}
     </Container>
   );

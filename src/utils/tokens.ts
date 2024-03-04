@@ -23,7 +23,6 @@ import {erc1155TokenABI} from 'abis/erc1155TokenABI';
 import {erc721TokenABI} from 'abis/erc721TokenABI';
 import {aragonTokenABI} from 'abis/aragonTokenABI';
 import {queryClient} from 'index';
-import {VocdoniSDKClient} from '@vocdoni/sdk';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -124,18 +123,6 @@ export async function getPastVotingPower(
   } catch (error) {
     return BigNumber.from('0');
   }
-}
-
-/**
- * Returns the voting power for the specified address at specified gasless census id.
- * This is the way to get the voting power for gasless processes.
- */
-export async function getCensus3VotingPower(
-  address: string,
-  censusId: string,
-  vocdoniClient: VocdoniSDKClient
-) {
-  return (await vocdoniClient.fetchProof(censusId, address)).weight;
 }
 
 /**

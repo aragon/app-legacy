@@ -1,7 +1,7 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {IconType} from '@aragon/ods';
 import {
   LIVE_CONTRACTS,
   SupportedNetworksArray,
@@ -74,7 +74,7 @@ export const VersionInfoCard: React.FC<{
             <Link
               label={`Aragon App v${AppVersion}`}
               type="primary"
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+              iconRight={IconType.LINK_EXTERNAL}
               href={'https://app.aragon.org'}
             />
           </FlexibleDefinition>
@@ -89,7 +89,7 @@ export const VersionInfoCard: React.FC<{
               description={OSxAddress ? shortenAddress(OSxAddress) : undefined}
               type="primary"
               href={explorerEndpoint + OSxAddress}
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+              iconRight={IconType.LINK_EXTERNAL}
             />
           </FlexibleDefinition>
         </DescriptionPair>
@@ -102,7 +102,7 @@ export const VersionInfoCard: React.FC<{
               description={shortenAddress(pluginAddress)}
               type="primary"
               href={explorerEndpoint + pluginAddress}
-              iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+              iconRight={IconType.LINK_EXTERNAL}
             />
           </FlexibleDefinition>
         </DescriptionPair>

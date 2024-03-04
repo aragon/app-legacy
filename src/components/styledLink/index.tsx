@@ -8,7 +8,7 @@ export const StyledLink = styled(Link as React.ComponentType<LinkProps>)`
     color: #ffffff; // ui-0
   }
 
-  & > div > div > svg {
+  & > div > svg {
     color: #ffffff;
   }
 
@@ -17,7 +17,7 @@ export const StyledLink = styled(Link as React.ComponentType<LinkProps>)`
       color: #c4d7ff; // primary-100
     }
 
-    & > div > div > svg {
+    & > div > svg {
       color: #c4d7ff;
     }
   }
@@ -27,7 +27,7 @@ export const StyledLink = styled(Link as React.ComponentType<LinkProps>)`
       color: #001f5c; // primary-900
     }
 
-    & > div > div > svg {
+    & > div > svg {
       color: #001f5c;
     }
   }

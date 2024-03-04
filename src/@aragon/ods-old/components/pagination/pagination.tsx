@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {styled} from 'styled-components';
 import {useScreen} from '../../hooks';
 import {ButtonIcon, ButtonText} from '../button';
-import {IconChevronLeft, IconChevronRight} from '../icons/interface';
+import {Icon, IconType} from '@aragon/ods';
 export interface PaginationProps {
   /**
    * white background
@@ -238,7 +238,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         size="large"
         onClick={() => setPage(page - 1)}
         disabled={page === 1}
-        icon={<IconChevronLeft />}
+        icon={<Icon icon={IconType.CHEVRON_LEFT} />}
         {...(bgWhite && {bgWhite})}
       />
       <ButtonList />
@@ -247,7 +247,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         size="large"
         onClick={() => setPage(page + 1)}
         disabled={page === totalPages}
-        icon={<IconChevronRight />}
+        icon={<Icon icon={IconType.CHEVRON_RIGHT} />}
         {...(bgWhite && {bgWhite})}
       />
     </HStack>

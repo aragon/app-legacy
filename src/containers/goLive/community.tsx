@@ -3,7 +3,7 @@ import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {Link} from '@aragon/ods-old';
-import {Icon, IconType, Tag} from '@aragon/ods';
+import {IconType, Tag} from '@aragon/ods';
 
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useFormStep} from 'components/fullScreenStepper';
@@ -208,7 +208,7 @@ const Community: React.FC = () => {
                           '/token/tokenholderchart/' +
                           tokenAddress?.address || tokenAddress
                       }
-                      iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}
+                      iconRight={IconType.LINK_EXTERNAL}
                       external
                     />
                   )}

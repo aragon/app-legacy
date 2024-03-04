@@ -9,7 +9,7 @@ import {
 import React, {type CSSProperties, type ReactNode} from 'react';
 import {styled} from 'styled-components';
 import {BackdropStyles} from '../backdrop';
-import {IconClose} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 export interface ModalProps {
   /**
@@ -73,7 +73,12 @@ export const Modal: React.FC<ModalProps> = ({
                 {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
               </ModalTitleContainer>
               <ModalClose onClick={onClose}>
-                <IconClose height={10} width={10} className="mx-auto" />
+                <Icon
+                  icon={IconType.CLOSE}
+                  height={10}
+                  width={10}
+                  className="mx-auto"
+                />
               </ModalClose>
             </ModalHeader>
           )}

@@ -1,12 +1,11 @@
 import React, {type ButtonHTMLAttributes, type FC} from 'react';
 import {styled} from 'styled-components';
-
 import {useScreen} from '../../hooks';
 import {shortenAddress} from '../../utils/addresses';
 import {AvatarWallet} from '../avatar';
-import {IconChevronRight, IconPerson} from '../icons';
 import type {TagProps} from '../tag';
 import {Tag} from '../tag';
+import {Icon, IconType} from '@aragon/ods';
 
 type TokenInfo = {
   amount: number | string;
@@ -80,7 +79,7 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
         </RightContent>
         {!isMobile && (
           <span className="px-3">
-            <IconChevronRight />
+            <Icon icon={IconType.CHEVRON_RIGHT} />
           </span>
         )}
       </RightSection>
@@ -92,7 +91,7 @@ type AvatarProps = Pick<ListItemVoterProps, 'src'>;
 
 const Avatar: FC<AvatarProps> = ({src}) => {
   if (!src) {
-    return <IconPerson className="h-5 w-5" />;
+    return <Icon icon={IconType.PERSON} className="h-5 w-5" />;
   }
   return <AvatarWallet src={src} />;
 };

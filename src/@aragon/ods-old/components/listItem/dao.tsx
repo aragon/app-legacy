@@ -3,7 +3,7 @@ import {styled} from 'styled-components';
 
 import {shortenAddress} from '../../utils/addresses';
 import {AvatarDao} from '../avatar';
-import {IconRadioDefault, IconSuccess} from '../icons';
+import {Icon, IconType} from '@aragon/ods';
 
 // TODO: Refactor to use input type radio for accessibility
 
@@ -29,7 +29,11 @@ export const ListItemDao: React.FC<ListItemDaoProps> = props => {
         <Domain>{shortenAddress(props.daoAddress)}</Domain>
       </Content>
       <IconContainer selected={props.selected}>
-        {props.selected ? <IconSuccess /> : <IconRadioDefault />}
+        {props.selected ? (
+          <Icon icon={IconType.SUCCESS} />
+        ) : (
+          <Icon icon={IconType.RADIO} />
+        )}
       </IconContainer>
     </Container>
   );

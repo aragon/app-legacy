@@ -1,8 +1,7 @@
 import React from 'react';
 import {styled} from 'styled-components';
-
-import {IconChevronDown} from '../icons';
 import {type StyledContainerProps} from './numberInput';
+import {Icon, IconType} from '@aragon/ods';
 
 export type DropDownInputProps = {
   /** Changes a input's color schema */
@@ -29,7 +28,10 @@ export const DropdownInput: React.FC<DropDownInputProps> = ({
       {...{mode, name, disabled, onClick}}
     >
       {value ?? <Placeholder>{placeholder}</Placeholder>}
-      <StyledIconChevronDown {...{disabled}} />
+      <Icon
+        icon={IconType.CHEVRON_DOWN}
+        className={`${disabled ? 'text-neutral-300' : 'text-neutral-600'}`}
+      />
     </Container>
   );
 };
@@ -60,12 +62,6 @@ const Container = styled.button.attrs(
 `;
 
 export type StyledChevronDownProps = Pick<StyledContainerProps, 'disabled'>;
-
-const StyledIconChevronDown = styled(IconChevronDown).attrs(
-  ({disabled}: StyledChevronDownProps) => ({
-    className: `${disabled ? 'text-neutral-300' : 'text-neutral-600'}`,
-  })
-)``;
 
 const Placeholder = styled.span.attrs({
   className: 'text-neutral-300',

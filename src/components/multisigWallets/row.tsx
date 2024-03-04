@@ -1,7 +1,7 @@
 import React from 'react';
 import {Dropdown, InputValue, ListItemAction} from '@aragon/ods-old';
 import {Button, IconType} from '@aragon/ods';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {Controller, useFormContext, ValidateResult} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,7 +10,6 @@ import {useAlertContext} from 'context/alert';
 import {useProviders} from 'context/providers';
 import useScreen from 'hooks/useScreen';
 import {Web3Address} from 'utils/library';
-import {validateWeb3Address} from 'utils/validators';
 
 export type MultisigWalletField = {
   id: string;
@@ -18,50 +17,39 @@ export type MultisigWalletField = {
   ensName: string;
 };
 
+export type RowValidator = (
+  wallet: Web3Address,
+  index: number
+) => Promise<ValidateResult | string | undefined>;
+
 type MultisigWalletsRowProps = {
   index: number;
   onResetEntry: (index: number) => void;
   onDeleteEntry: (index: number) => void;
+  validator: RowValidator;
+  walletFieldName: string;
 };
 
-export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
+export const Row = ({
+  index,
+  walletFieldName,
+  ...props
+}: MultisigWalletsRowProps) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
   const {isMobile} = useScreen();
   const {api: provider} = useProviders();
 
   const {control, trigger} = useFormContext();
-  const multisigWallets = useWatch({name: 'multisigWallets', control});
-
   const addressValidator = async (value: InputValue, index: number) => {
     const wallet = new Web3Address(provider, value?.address, value?.ensName);
-
-    let validationResult = await validateWeb3Address(
-      wallet,
-      t('errors.required.walletAddress'),
-      t
-    );
-
-    if (multisigWallets) {
-      multisigWallets.forEach(
-        ({address, ensName}: MultisigWalletField, itemIndex: number) => {
-          if (
-            (address === wallet.address || ensName === wallet.ensName) &&
-            itemIndex !== index
-          ) {
-            validationResult = t('errors.duplicateAddress');
-          }
-        }
-      );
-    }
-    return validationResult;
+    return props.validator(wallet, index);
   };
-
   return (
     <RowContainer>
       {isMobile && <Title>{t('labels.whitelistWallets.address')}</Title>}
       <Controller
-        name={`multisigWallets.${index}`}
+        name={`${walletFieldName}.${index}`}
         defaultValue={{address: '', ensName: ''}}
         control={control}
         rules={{validate: value => addressValidator(value, index)}}
@@ -82,7 +70,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 onClearButtonClick={() => {
                   alert(t('alert.chip.inputCleared'));
                   setTimeout(() => {
-                    trigger('multisigWallets');
+                    trigger(walletFieldName);
                   }, 50);
                 }}
               />

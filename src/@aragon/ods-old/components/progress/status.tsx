@@ -1,13 +1,8 @@
 import React from 'react';
 import {styled} from 'styled-components';
-import {
-  IconBlock,
-  IconRadioCancel,
-  IconRadioDefault,
-  IconSuccess,
-} from '../icons';
 import {type LabelProps} from '../label';
 import {Spinner} from '../spinner';
+import {Icon, IconType} from '@aragon/ods';
 
 export type ModeType = 'active' | 'failed' | 'done' | 'succeeded' | 'upcoming';
 export type ProgressStatusProps = {
@@ -60,7 +55,7 @@ export const ProgressStatus: React.FC<ProgressStatusProps> = ({
     <TopContainer data-testid="progressStatus">
       <LeftContainer mode={mode}>
         <IconContainer>
-          <Icon mode={mode} />
+          <VariableIcon mode={mode} />
         </IconContainer>
         <LabelContainer>
           <CustomLabel label={label} helpText={date} />
@@ -70,7 +65,10 @@ export const ProgressStatus: React.FC<ProgressStatusProps> = ({
         <BlockContainer>
           <p>{block}</p>
           <div className="pt-0.5">
-            <IconBlock className="text-neutral-400" />
+            <Icon
+              icon={IconType.BLOCKCHAIN_BLOCK}
+              className="text-neutral-400"
+            />
           </div>
         </BlockContainer>
       )}{' '}
@@ -116,16 +114,16 @@ const iconColors: Record<ModeType, string> = {
   failed: 'text-critical-500',
 };
 
-const Icon: React.FC<ModeProps> = ({mode}) => {
+const VariableIcon: React.FC<ModeProps> = ({mode}) => {
   switch (mode) {
     case 'active':
       return <Spinner size="xs" className={iconColors[mode]} />;
     case 'upcoming':
-      return <IconRadioDefault className={iconColors[mode]} />;
+      return <Icon icon={IconType.RADIO} className={iconColors[mode]} />;
     case 'failed':
-      return <IconRadioCancel className={iconColors[mode]} />;
+      return <Icon icon={IconType.REMOVE} className={iconColors[mode]} />;
     default:
-      return <IconSuccess className={iconColors[mode]} />;
+      return <Icon icon={IconType.SUCCESS} className={iconColors[mode]} />;
   }
 };
 

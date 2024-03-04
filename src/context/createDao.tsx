@@ -439,8 +439,16 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       throw new Error('deposit function is not initialized correctly');
     }
 
-    const {daoName, daoSummary, daoLogo, links, votingType, membership} =
-      getValues();
+    const {
+      daoName,
+      daoSummary,
+      daoLogo,
+      links,
+      votingType,
+      membership,
+      isCustomToken,
+      tokenAddress,
+    } = getValues();
     const metadata: DaoMetadata = {
       name: daoName,
       description: daoSummary,
@@ -507,7 +515,14 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
                 }),
               ]).then(async () => {
                 if (votingType === 'gasless' && membership === 'token') {
-                  await createToken(step.pluginAddresses[0]);
+                  if (!isCustomToken) {
+                    await createToken(
+                      step.pluginAddresses[0],
+                      tokenAddress?.address
+                    );
+                  } else {
+                    await createToken(step.pluginAddresses[0]);
+                  }
                 }
               });
               // After everything is
