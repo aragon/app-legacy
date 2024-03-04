@@ -571,9 +571,8 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       ? handlePublishDao
       : handleExecuteCreation;
 
-  const value = useMemo(() => ({handlePublishDao}), []);
   return (
-    <CreateDaoContext.Provider value={value}>
+    <CreateDaoContext.Provider value={{handlePublishDao}}>
       {children}
       <PublishModal
         subtitle={t('TransactionModal.publishDaoSubtitle')}
