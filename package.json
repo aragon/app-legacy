@@ -38,7 +38,7 @@
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
-    "@vocdoni/gasless-voting": "0.0.1-rc24",
+    "@vocdoni/gasless-voting": "0.0.1-rc26",
     "@vocdoni/react-providers": "0.3.1",
     "@vocdoni/sdk": "0.7.5",
     "@walletconnect/core": "^2.8.3",
