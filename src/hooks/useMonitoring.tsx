@@ -8,9 +8,7 @@ export const useMonitoring = () => {
 
   useEffect(() => {
     const enableMonitoring = async () => {
-      if (preferences?.analytics !== undefined) {
-        await monitoring.enableMonitoring(preferences.analytics);
-      }
+      await monitoring.enableMonitoring(preferences?.analytics);
     };
     enableMonitoring().catch((error: Error) => {
       logger.error('Error enabling monitoring', {error});
