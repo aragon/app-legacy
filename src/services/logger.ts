@@ -1,4 +1,3 @@
-import pino, {LoggerOptions} from 'pino';
 import {sendToSentry} from './sentry';
 
 export enum LogLevel {
@@ -8,19 +7,11 @@ export enum LogLevel {
   error = 'error',
 }
 
-const pinoLogger = pino({
-  level: (import.meta.env.VITE_APP_LOG_LEVEL as LogLevel) || LogLevel.warn,
-  browser: {
-    asObject: true,
-  },
-} as LoggerOptions);
-
 const logWithLevel = (
   level: LogLevel,
   msg: string,
   obj: Record<string, unknown> = {}
 ) => {
-  pinoLogger[level](obj, msg);
   sendToSentry({level, msg, obj});
 };
 

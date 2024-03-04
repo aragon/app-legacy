@@ -34,7 +34,9 @@ export const sendToSentry = ({
   obj?: Record<string, unknown>;
 }) => {
   const client = Sentry.getClient();
-  if (!client) return;
+  if (!client) {
+    console.log(msg, obj);
+  }
 
   const sentryLevel = mapLogLevelToSentrySeverity(level);
 
