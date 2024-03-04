@@ -1,4 +1,4 @@
-import {logger} from './logger';
+import {initSentry} from 'services/sentry';
 
 class Monitoring {
   enableMonitoring = async (enable?: boolean) => {
@@ -9,7 +9,6 @@ class Monitoring {
       return;
     }
 
-    const {initSentry} = await import('services/sentry');
     initSentry();
   };
 }

@@ -1,7 +1,7 @@
 import {usePrivacyContext} from 'context/privacyContext';
 import {useEffect} from 'react';
 import {monitoring} from 'services/monitoring';
-import {logger} from '../services/logger';
+import {logger} from 'services/logger';
 
 export const useMonitoring = () => {
   const {preferences} = usePrivacyContext();
