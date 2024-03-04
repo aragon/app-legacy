@@ -26,6 +26,7 @@ import {FormProvider, useForm} from 'react-hook-form';
 import DepositModal from 'containers/transactionModals/depositModal';
 import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
+import {useMonitoring} from 'hooks/useMonitoring';
 import {useWallet} from 'hooks/useWallet';
 import {identifyUser, trackPage} from 'services/analytics';
 import {featureFlags} from 'utils/featureFlags';
@@ -44,6 +45,7 @@ export const App: React.FC = () => {
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
   const {methods, status, network, address, provider} = useWallet();
+  useMonitoring();
 
   // Initialize feature flags using the initial URL
   useEffect(() => featureFlags.initializeFeatureFlags(), []);
