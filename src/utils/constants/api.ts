@@ -19,7 +19,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mainnet/version/v1.4.0/api',
 
   polygon:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/v1.4.0/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon-jordan-polygon/version/1.5.1/api',
   sepolia:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-sepolia/version/v1.4.0/api',
   unsupported: undefined,
