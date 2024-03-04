@@ -378,10 +378,10 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     }
 
     const wrapAmount = BigInt(
-      ethers.utils.parseUnits(amount, wrappedDaoToken?.decimals).toString()
+      ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
     );
 
-    if (tokenAllowance?.gte(wrapAmount)) {
+    if (tokenAllowance.gte(wrapAmount)) {
       setCurrentStep(2);
     } else {
       setCurrentStep(1);
