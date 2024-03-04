@@ -80,3 +80,9 @@ export interface IFetchIsDAOListParams {
   address: string | null;
   pluginType?: PluginTypes;
 }
+
+export interface IFetchTokenAllowanceParams {
+  token: string;
+  owner: string;
+  spender: string;
+}
