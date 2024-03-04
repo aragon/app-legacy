@@ -11,10 +11,6 @@ class Monitoring {
 
     const {initSentry} = await import('services/sentry');
     initSentry();
-    logger.info('sentry loaded info1', {test: 1});
-    logger.warn('sentry loaded warn1', {test: 2});
-    // logger.error('sentry loaded error');
-    logger.debug('sentry loaded debug1');
   };
 }
 
