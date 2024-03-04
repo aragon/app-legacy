@@ -51,7 +51,6 @@ import {
   GaslessPluginVotingSettings,
 } from '@vocdoni/gasless-voting';
 import {useCensus3CreateToken} from '../hooks/useCensus3';
-import {retry} from 'utils/retry';
 
 const DEFAULT_TOKEN_DECIMALS = 18;
 
@@ -375,10 +374,8 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     if (daoLogo) {
       try {
         const daoLogoBuffer = await readFile(daoLogo as Blob);
-        const logoCID = await retry(
-          () => client?.ipfs.add(new Uint8Array(daoLogoBuffer))
-        );
-        await retry(() => client?.ipfs.pin(logoCID!));
+        const logoCID = await client?.ipfs.add(new Uint8Array(daoLogoBuffer));
+        await client?.ipfs.pin(logoCID!);
         metadata.avatar = `ipfs://${logoCID}`;
       } catch (e) {
         metadata.avatar = undefined;
@@ -386,9 +383,11 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
 
     try {
-      const ipfsUri = await retry(() => client?.methods.pinMetadata(metadata));
+      const cidMetadata = await client?.ipfs.add(JSON.stringify(metadata));
+      await client?.ipfs.pin(cidMetadata!);
+
       return {
-        metadataUri: ipfsUri || '',
+        metadataUri: `ipfs://${cidMetadata}`,
         // TODO: We're using dao name without spaces for ens, We need to add alert
         // to inform this to user
         ensSubdomain: daoEnsName || '',
@@ -401,7 +400,6 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
   }, [
     client?.ipfs,
-    client?.methods,
     getErc20PluginParams,
     getGaslessPluginInstallParams,
     getMultisigPluginInstallParams,
