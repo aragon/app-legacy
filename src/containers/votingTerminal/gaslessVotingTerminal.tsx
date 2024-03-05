@@ -13,7 +13,7 @@ import {VoterType} from '@aragon/ods-old';
 import styled from 'styled-components';
 import {AccordionMultiple} from '../../components/accordionMethod';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {useGaslessCommiteVotes} from '../../context/useGaslessVoting';
+import {useGaslessCommitteeVotes} from '../../context/useGaslessVoting';
 import {useWallet} from '../../hooks/useWallet';
 import {useProposalTransactionContext} from '../../context/proposalTransaction';
 import {
@@ -73,7 +73,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     executableWithNextApproval,
     isApprovalPeriod,
     notBegan,
-  } = useGaslessCommiteVotes(pluginAddress, proposal);
+  } = useGaslessCommitteeVotes(pluginAddress, pluginType, proposal);
 
   const {handleExecutionMultisigApprove, executionFailed, executionTxHash} =
     useProposalTransactionContext();
