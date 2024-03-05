@@ -36,7 +36,7 @@ const ExploreNav: React.FC = () => {
   };
 
   return (
-    <Container data-testid="navbar">
+    <Container data-testid="navbar" isExplorePage={location.pathname === '/'}>
       <Menu>
         <GridLayout>
           <LeftContent>

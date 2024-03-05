@@ -92,7 +92,7 @@ export const Modal: React.FC<ModalProps> = ({
 type StyledContentProps = Pick<ModalProps, 'style'>;
 
 const ModalContainer = styled(Content).attrs(({style}: StyledContentProps) => {
-  const className = 'bg-neutral-50 z-30';
+  const className = 'bg-neutral-50';
   const currentStyle: CSSProperties = style ?? {
     position: 'fixed',
     top: '50%',
