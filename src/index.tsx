@@ -1,4 +1,3 @@
-import 'services/logger';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {EthereumClient, w3mConnectors, w3mProvider} from '@web3modal/ethereum';
