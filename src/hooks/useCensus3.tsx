@@ -9,8 +9,6 @@ import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 import {useParams} from 'react-router-dom';
 import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {DaoMember, TokenDaoMember} from './useDaoMembers';
-import {getCensus3VotingPower} from '../utils/tokens';
 
 const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
 
@@ -47,13 +45,17 @@ export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
   const isSupported = useCensus3SupportedChains(chainId);
 
   const createToken = useCallback(
-    async (pluginAddress: string) => {
+    async (pluginAddress: string, tokenAddress?: string) => {
       if (!isSupported) throw Error('ChainId is not supported');
       // Check if the census is already sync
       try {
-        const token = await client?.methods.getToken(pluginAddress);
-        if (!token) throw Error('Cannot retrieve the token');
-        await census3.createToken(token.address, 'erc20', chainId, undefined, [
+        if (!tokenAddress) {
+          const token = await client?.methods.getToken(pluginAddress);
+          if (!token) throw Error('Cannot retrieve the token');
+          tokenAddress = token.address;
+        }
+
+        await census3.createToken(tokenAddress, 'erc20', chainId, undefined, [
           'aragon',
           'dao',
         ]);
@@ -74,7 +76,7 @@ export const useGaslessCensusId = ({
   pluginType,
   enable = true,
 }: {
-  pluginType?: PluginTypes;
+  pluginType: PluginTypes;
   enable?: boolean;
 }) => {
   const {dao, id: proposalId} = useParams();
@@ -82,7 +84,11 @@ export const useGaslessCensusId = ({
   const isGasless = pluginType === GaslessPluginName;
   const _enable: boolean = enable && !!dao && !!proposalId && isGasless;
 
-  const {data: proposalData} = useProposal(
+  const {
+    data: proposalData,
+    isLoading,
+    isError,
+  } = useProposal(
     {
       pluginType: pluginType,
       id: proposalId ?? '',
@@ -105,42 +111,5 @@ export const useGaslessCensusId = ({
     censusSize = census.size;
   }
 
-  return {censusId, censusSize};
-};
-
-export const useNonWrappedDaoMemberBalance = ({
-  isGovernanceEnabled,
-  censusId,
-  subgraphMembers,
-}: {
-  isGovernanceEnabled: boolean;
-  censusId: string | null;
-  subgraphMembers: TokenDaoMember[];
-}) => {
-  // State to store DaoMembers[]
-  const [members, setMembers] = useState<DaoMember[]>(subgraphMembers);
-  const {client: vocdoniClient} = useClient();
-
-  // UseEffect to calculate the vocdoni client fetchProof function
-  useEffect(() => {
-    if (vocdoniClient && isGovernanceEnabled && censusId) {
-      (async () => {
-        const members = await Promise.all(
-          subgraphMembers.map(async member => {
-            const votingPower = await getCensus3VotingPower(
-              member.address,
-              censusId,
-              vocdoniClient
-            );
-            member.balance = Number(votingPower);
-            member.votingPower = Number(votingPower);
-            return member;
-          })
-        );
-        setMembers(members);
-      })();
-    }
-  }, [censusId, isGovernanceEnabled, subgraphMembers, vocdoniClient]);
-
-  return {members};
+  return {censusId, censusSize, isLoading, isError};
 };

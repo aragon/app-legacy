@@ -22,16 +22,19 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import {useForm, useWatch} from 'react-hook-form';
 import {generatePath, useLocation, useNavigate} from 'react-router-dom';
+import {useTokenAllowance} from 'services/aragon-sdk/queries/use-token-allowance';
 import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {fetchBalance} from 'utils/tokens';
 import {TokensWrappingFormData} from 'utils/types';
 import {useQueryClient} from 'wagmi';
+import {useGlobalModalContext} from './globalModals';
 
 interface IGovTokensWrappingContextType {
   handleOpenModal: () => void;
@@ -42,11 +45,12 @@ const GovTokensWrappingContext =
 
 const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const navigate = useNavigate();
-  const {address: userAddress} = useWallet();
+  const {address: userAddress, isConnected, isOnWrongNetwork} = useWallet();
   const {network} = useNetwork();
   const loc = useLocation();
   const wagmiQueryClient = useQueryClient();
   const {api: provider} = useProviders();
+  const {open} = useGlobalModalContext();
 
   const {data: daoDetails, isLoading: isDaoDetailsLoading} =
     useDaoDetailsQuery();
@@ -59,7 +63,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const {data: daoTokenData, isLoading: isTokenDataLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
-  const underlyingToken = (daoTokenData as Erc20WrapperTokenDetails)
+  const underlyingToken = (daoTokenData as Erc20WrapperTokenDetails | undefined)
     ?.underlyingToken;
   const [daoTokenBalance, setDaoTokenBalance] = useState('');
 
@@ -68,7 +72,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const isWrappedDaoTokenDataLoading = isTokenDataLoading;
   const [wrappedDaoTokenBalance, setWrappedDaoTokenBalance] = useState('');
 
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const isLoading =
     isDaoDetailsLoading || isTokenDataLoading || isWrappedDaoTokenDataLoading;
 
@@ -76,6 +80,20 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isTxLoading, setIsTxLoading] = useState(false);
   const [isTxError, setIsTxError] = useState(false);
+
+  const {data: tokenAllowance} = useTokenAllowance(
+    {
+      token: underlyingToken?.address as string,
+      owner: userAddress as string,
+      spender: wrappedDaoToken?.address as string,
+    },
+    {
+      enabled:
+        underlyingToken != null &&
+        userAddress != null &&
+        wrappedDaoToken != null,
+    }
+  );
 
   /* User-Input data configuration */
   const form = useForm<TokensWrappingFormData>({
@@ -146,13 +164,13 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const handleOpenModal = useCallback(() => {
     loadDaoTokenBalance();
     loadWrappedDaoTokenBalance();
-    setModalVisible(true);
+    setShowModal(true);
   }, [loadDaoTokenBalance, loadWrappedDaoTokenBalance]);
 
   const handleCloseModal = useCallback(
     (redirectPage = true) => {
       if (isTxLoading) return;
-      setModalVisible(false);
+      setShowModal(false);
       reset();
 
       if (isFlowFinished && daoDetails && redirectPage) {
@@ -176,6 +194,21 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       }
     },
     [isTxLoading, reset, isFlowFinished, daoDetails, network, loc, navigate]
+  );
+
+  const ensureOnRightNetwork = useCallback(
+    (callback: () => unknown) => {
+      if (!isConnected) {
+        handleCloseModal();
+        open('wallet');
+      } else if (isOnWrongNetwork) {
+        handleCloseModal();
+        open('network');
+      } else {
+        callback();
+      }
+    },
+    [handleCloseModal, isConnected, isOnWrongNetwork, open]
   );
 
   // Invalidate wagmi balance cache to display the correct token balances after
@@ -231,7 +264,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     } finally {
       setIsTxLoading(false);
     }
-  }, [amount, client, underlyingToken, isTxLoading, wrappedDaoToken]);
+  }, [isTxLoading, wrappedDaoToken, underlyingToken, client, amount]);
 
   const handleWrap = useCallback(async () => {
     if (isTxLoading || !wrappedDaoToken || !pluginClient) return;
@@ -269,10 +302,10 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       setIsTxLoading(false);
     }
   }, [
-    amount,
     isTxLoading,
-    pluginClient,
     wrappedDaoToken,
+    pluginClient,
+    amount,
     invalidateDaoTokenBalanceCache,
   ]);
 
@@ -357,14 +390,32 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     form.resetField('amount');
   }, [form, mode]);
 
+  useEffect(() => {
+    if (wrappedDaoToken == null || amount === '' || tokenAllowance == null) {
+      return;
+    }
+
+    const wrapAmount = BigInt(
+      ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
+    );
+
+    if (tokenAllowance.gte(wrapAmount)) {
+      setCurrentStep(2);
+    } else {
+      setCurrentStep(1);
+    }
+  }, [wrappedDaoToken, amount, tokenAllowance]);
+
   /*************************************************
    *                   Render                      *
    *************************************************/
+  const contextValue = useMemo(() => ({handleOpenModal}), [handleOpenModal]);
+
   return (
-    <GovTokensWrappingContext.Provider value={{handleOpenModal}}>
+    <GovTokensWrappingContext.Provider value={contextValue}>
       {children}
       <GovTokensWrappingModal
-        isOpen={isModalVisible}
+        isOpen={showModal}
         onClose={handleCloseModal}
         isLoading={isLoading}
         daoToken={underlyingToken}
@@ -378,10 +429,18 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
         currentStep={currentStep}
         isTxLoading={isTxLoading}
         isTxError={isTxError}
-        handleApprove={handleApprove}
-        handleWrap={handleWrap}
-        handleAddWrappedTokenToWallet={handleAddWrappedTokenToWallet}
-        handleUnwrap={handleUnwrap}
+        handleApprove={() => {
+          ensureOnRightNetwork(handleApprove);
+        }}
+        handleWrap={() => {
+          ensureOnRightNetwork(handleWrap);
+        }}
+        handleAddWrappedTokenToWallet={() => {
+          ensureOnRightNetwork(handleAddWrappedTokenToWallet);
+        }}
+        handleUnwrap={() => {
+          ensureOnRightNetwork(handleUnwrap);
+        }}
       />
     </GovTokensWrappingContext.Provider>
   );

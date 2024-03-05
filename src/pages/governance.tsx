@@ -103,12 +103,19 @@ export const Governance: React.FC = () => {
             label: t('TransactionModal.createProposal'),
             onClick: handleNewProposalClick,
           }}
-          secondaryButton={{
-            label: t('navLinks.guide'),
-            href: t('governance.emptyState.descriptionLinkURL'),
-            target: '_blank',
-            iconRight: IconType.LINK_EXTERNAL,
-          }}
+          secondaryButton={
+            enableDelegation
+              ? {
+                  label: t('governance.actionSecondary'),
+                  onClick: () => open('delegateVoting'),
+                }
+              : {
+                  label: t('navLinks.guide'),
+                  href: t('governance.emptyState.descriptionLinkURL'),
+                  target: '_blank',
+                  iconRight: IconType.LINK_EXTERNAL,
+                }
+          }
         />
       </PageWrapper>
     );

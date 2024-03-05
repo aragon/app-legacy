@@ -1808,7 +1808,7 @@
   },
   "deprecation": {
     "banner": {
-      "title": "This DAO will no longer be available once support for Goerli and related testnets ends in 2024.",
+      "title": "This DAO will no longer be usable once support for Goerli and related testnets ends in 2024.",
       "ctaLabel": "Learn more",
       "ctaLink": "https://blog.ethereum.org/2023/11/30/goerli-lts-update"
     }
