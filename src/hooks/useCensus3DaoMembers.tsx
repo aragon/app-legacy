@@ -9,12 +9,14 @@ import {HookData} from '../utils/types';
 import {useParams} from 'react-router-dom';
 import {PluginTypes} from './usePluginClient';
 import {useDaoToken} from './useDaoToken';
-import {useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useWallet} from './useWallet';
 import {formatUnits} from 'ethers/lib/utils';
 import {useCensus3Members} from 'services/vocdoni-census3/queries/use-census3-members';
 import {useCensus3Token} from 'services/vocdoni-census3/queries/use-census3-token';
 import {useCensus3VotingPower} from 'services/vocdoni-census3/queries/use-census3-voting-power';
+
+const REFETCH_INTERVAL_MS = 3000;
 
 interface UseCensus3DaoMembersProps {
   holders?: TokenDaoMember[];
@@ -34,13 +36,16 @@ export const useCensus3DaoMembers = ({
   const {id: proposalId} = useParams();
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {address} = useWallet();
+  const [tokenSynced, setTokenSynced] = useState(false);
 
   // If is not a wrapped token and not on a proposal context we can still get the token holders amount
-  const enableCensus3Token = enable && !proposalId;
+  const enableCensus3Token = enable && !!daoToken?.address && !proposalId;
   const {data: census3Token} = useCensus3Token(
     {tokenAddress: daoToken?.address ?? ''},
     {
-      enabled: enable && !!daoToken?.address && enableCensus3Token,
+      enabled: enableCensus3Token,
+      refetchInterval:
+        enableCensus3Token && !tokenSynced ? REFETCH_INTERVAL_MS : false,
     }
   );
 
@@ -60,9 +65,16 @@ export const useCensus3DaoMembers = ({
       ...options,
       enabled: enableGetMembers,
       refetchInterval:
-        enableGetMembers && !census3Token?.status.synced ? 3000 : false,
+        enableGetMembers && !tokenSynced ? false : REFETCH_INTERVAL_MS,
     }
   );
+
+  useEffect(() => {
+    // Set token synced based on census3Token status
+    if (census3Token?.status.synced) {
+      setTokenSynced(true);
+    }
+  }, [census3Token?.status.synced]);
 
   // Get Census id
   const {
