@@ -16,7 +16,7 @@ import {useCensus3Members} from 'services/vocdoni-census3/queries/use-census3-me
 import {useCensus3Token} from 'services/vocdoni-census3/queries/use-census3-token';
 import {useCensus3VotingPower} from 'services/vocdoni-census3/queries/use-census3-voting-power';
 
-const REFETCH_INTERVAL_MS = 3000;
+const REFETCH_INTERVAL_MS = 5000;
 
 interface UseCensus3DaoMembersProps {
   holders?: TokenDaoMember[];
