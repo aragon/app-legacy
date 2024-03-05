@@ -33,8 +33,10 @@ import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {fetchBalance} from 'utils/tokens';
 import {TokensWrappingFormData} from 'utils/types';
-import {useQueryClient} from 'wagmi';
+import {useQueryClient as useWagmiQueryClient} from 'wagmi';
 import {useGlobalModalContext} from './globalModals';
+import {useQueryClient} from '@tanstack/react-query';
+import {aragonSdkQueryKeys} from 'services/aragon-sdk/query-keys';
 
 interface IGovTokensWrappingContextType {
   handleOpenModal: () => void;
@@ -48,7 +50,8 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const {address: userAddress, isConnected, isOnWrongNetwork} = useWallet();
   const {network} = useNetwork();
   const loc = useLocation();
-  const wagmiQueryClient = useQueryClient();
+  const wagmiQueryClient = useWagmiQueryClient();
+  const queryClient = useQueryClient();
   const {api: provider} = useProviders();
   const {open} = useGlobalModalContext();
 
@@ -237,13 +240,14 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     setIsTxError(false);
     setIsTxLoading(true);
 
-    const setAllowanceSteps = client.methods.setAllowance({
+    const allowanceParams = {
       amount: BigInt(
         ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
       ),
       spender: wrappedDaoToken.address,
       tokenAddress: underlyingToken.address,
-    });
+    };
+    const setAllowanceSteps = client.methods.setAllowance(allowanceParams);
 
     try {
       for await (const step of setAllowanceSteps) {
@@ -252,6 +256,13 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
             case SetAllowanceSteps.ALLOWANCE_SET:
               setIsTxError(false);
               setCurrentStep(2);
+              queryClient.invalidateQueries({
+                queryKey: aragonSdkQueryKeys.tokenAllowance({
+                  token: allowanceParams.tokenAddress,
+                  spender: allowanceParams.spender,
+                  owner: userAddress as string,
+                }),
+              });
               break;
           }
         } catch (err) {
@@ -264,7 +275,15 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     } finally {
       setIsTxLoading(false);
     }
-  }, [isTxLoading, wrappedDaoToken, underlyingToken, client, amount]);
+  }, [
+    isTxLoading,
+    wrappedDaoToken,
+    underlyingToken,
+    userAddress,
+    queryClient,
+    client,
+    amount,
+  ]);
 
   const handleWrap = useCallback(async () => {
     if (isTxLoading || !wrappedDaoToken || !pluginClient) return;
