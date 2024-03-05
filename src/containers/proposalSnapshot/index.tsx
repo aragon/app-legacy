@@ -124,9 +124,10 @@ const ProposalSnapshot: React.FC<Props> = ({
             ),
         }}
         secondaryButton={{
-          label: t('governance.emptyState.descriptionLinkLabel'),
-          href: 'https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes',
+          label: t('navLinks.guide'),
+          href: t('governance.emptyState.descriptionLinkURL'),
           target: '_blank',
+          iconRight: IconType.LINK_EXTERNAL,
         }}
       />
     );

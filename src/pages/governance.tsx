@@ -1,21 +1,13 @@
 import React, {useState} from 'react';
 import {ButtonGroup, Option} from '@aragon/ods-old';
-import {
-  Button,
-  CardEmptyState,
-  Icon,
-  IconType,
-  IllustrationHuman,
-} from '@aragon/ods';
+import {Button, CardEmptyState, Icon, IconType} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-
 import ProposalList from 'components/proposalList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
-import PageEmptyState from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
@@ -112,35 +104,11 @@ export const Governance: React.FC = () => {
             onClick: handleNewProposalClick,
           }}
           secondaryButton={{
-            label: t('governance.emptyState.descriptionLinkLabel'),
-            href: 'https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes',
+            label: t('navLinks.guide'),
+            href: t('governance.emptyState.descriptionLinkURL'),
             target: '_blank',
+            iconRight: IconType.LINK_EXTERNAL,
           }}
-        />
-        <PageEmptyState
-          title={t('governance.emptyState.title')}
-          subtitle={htmlIn(t)('governance.emptyState.subtitle')}
-          Illustration={
-            <IllustrationHuman
-              body="VOTING"
-              expression="SMILE"
-              hairs="MIDDLE"
-              accessory="EARRINGS_RHOMBUS"
-              sunglasses="BIG_ROUNDED"
-            />
-          }
-          primaryButton={{
-            label: t('newProposal.title'),
-            onClick: handleNewProposalClick,
-          }}
-          secondaryButton={
-            enableDelegation
-              ? {
-                  label: t('governance.actionSecondary'),
-                  onClick: () => open('delegateVoting'),
-                }
-              : undefined
-          }
         />
       </PageWrapper>
     );

@@ -92,6 +92,12 @@ export const Finance: React.FC = () => {
               label: t('finance.emptyState.buttonLabel'),
               onClick: () => open('deposit'),
             }}
+            secondaryButton={{
+              label: t('navLinks.guide'),
+              href: t('finance.emptyState.descriptionLinkURL'),
+              target: '_blank',
+              iconRight: IconType.LINK_EXTERNAL,
+            }}
           />
         </PageWrapper>
       );

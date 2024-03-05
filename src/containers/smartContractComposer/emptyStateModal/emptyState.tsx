@@ -2,11 +2,10 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
-
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
 import {htmlIn} from 'utils/htmlIn';
-import {CardEmptyState} from '@aragon/ods';
+import {CardEmptyState, IconType} from '@aragon/ods';
 
 type Props = {
   isOpen: boolean;
@@ -42,6 +41,12 @@ const ContractEmptyState: React.FC<Props> = props => {
             });
             props.onConnectNew();
           },
+        }}
+        secondaryButton={{
+          label: t('scc.emptyState.secondaryCtaLabel'),
+          href: t('scc.emptyState.descriptionLinkURL'),
+          iconRight: IconType.LINK_EXTERNAL,
+          target: '_blank',
         }}
       />
     </ModalBottomSheetSwitcher>

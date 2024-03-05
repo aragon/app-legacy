@@ -41,9 +41,15 @@ const TreasurySnapshot: React.FC<Props> = ({
         }}
         heading={t('finance.emptyState.title')}
         description={htmlIn(t)('finance.emptyState.description')}
-        secondaryButton={{
+        primaryButton={{
           label: t('finance.emptyState.buttonLabel'),
           onClick: () => open('deposit'),
+        }}
+        secondaryButton={{
+          label: t('navLinks.guide'),
+          href: t('finance.emptyState.descriptionLinkURL'),
+          iconRight: IconType.LINK_EXTERNAL,
+          target: '_blank',
         }}
       />
     );

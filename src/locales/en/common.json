@@ -24,7 +24,8 @@
     "termsLinkURL": "https://aragon.org/terms-and-conditions",
     "privacyLinkLabel": "Privacy",
     "privacyLinkURL": "https://aragon.org/privacy-policy",
-    "members": "Members"
+    "members": "Members",
+    "guide": "Learn more"
   },
   "daoSwitcher": {
     "title": "Select your DAO",
@@ -269,9 +270,8 @@
     "allocation": "Allocation",
     "emptyState": {
       "title": "Make your first deposit",
-      "description": "Begin by making your first treasury deposit. Learn more about managing a DAO treasury {{link}}.",
+      "description": "Every community needs capital to motivate and operate. Get things moving by making your first treasury deposit.",
       "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
-      "descriptionLinkLabel": "in this guide",
       "buttonLabel": "Deposit funds"
     },
     "modalExport": {
@@ -304,11 +304,8 @@
     "action": "New proposal",
     "emptyState": {
       "title": "Create your first proposal",
-      "subtitle": "What's the first thing your community needs to decide? For ideas on how to structure proposals, {{link}}.",
-      "subtitleLinkLabel": "read this guide",
       "subtitleLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes",
-      "description": "Get your community involved in the decision-making process. Learn more in our proposal guide.",
-      "descriptionLinkLabel": "Read the guide",
+      "description": "What's the first thing your community needs to decide? Get your community involved in the decision-making process.",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
     "proposals": {
@@ -680,28 +677,26 @@
     "step1": {
       "label": "Step 1",
       "title": "Select blockchain",
-      "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later. For help selecting your chain, read our guide on choosing the best {{link}}.",
+      "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
       "descriptionLinkLabel": "blockchain for your DAO",
       "descriptionLinkURL": "https://aragon.org/how-to/choose-the-right-blockchain-for-your-dao"
     },
     "step2": {
       "label": "Step 2",
       "title": "Describe your DAO",
-      "description": "Name and define your DAO so new contributors know they've come to the right place. This information is displayed on the DAO Explore page and can be changed with a vote. For ideas on DAO branding, {{link}}.",
+      "description": "Name and define your DAO so new contributors know they've come to the right place. This information is displayed on the DAO Explore page and can be changed with a vote.",
       "nameSubtitle": "Maximum of 128 characters",
       "logoSubtitle": "JPG, PNG or GIF of no more than 3MB. We recommend 1024x1024px.",
       "descriptionSubtitle": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
       "linksSubtitle": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers.",
-      "metadataOverviewGuide": "read our guide",
-      "descriptionLinkLabel": "read our guide",
       "descriptionLinkURL": "https://aragon.org/how-to/build-a-dao-brand-identity",
       "ensNameSubtitle": "This will be your DAO’s unique ENS subdomain, created automatically for you. Lowercase letters, numbers, and the dash '-' are all acceptable characters; ideally, the character count should be under 128."
     },
     "step3": {
       "label": "Step 3",
       "title": "Define membership",
-      "description": "Decide the type of voting your DAO uses. You can change these settings with a vote. For help deciding which type of governance is best for you, {{link}}.",
-      "communityOverviewGuide": "read this guide",
+      "description": "Decide the type of voting your DAO uses. You can change these settings with a vote.",
+  
       "newToken": "No",
       "authorisedWalletsSubtitle": "Add wallets of members who are authorized to participate in governance",
       "warningTitle": "Changing the list",
@@ -805,7 +800,7 @@
     "step4": {
       "label": "Step 4",
       "title": "Select governance settings",
-      "description": "These are the rules that define how decisions are made in your DAO. How many people have to participate? How much support is needed? How long are proposals open for voting? Learn more in {{link}}.",
+      "description": "These are the rules that define how decisions are made in your DAO. How many people have to participate? How much support is needed? How long are proposals open for voting?",
       "bestPractices": "best practices on governance",
       "supportThresholdSubtitle": "The percentage of tokens that vote \"Yes\" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.",
       "minimumParticipationSubtitle": "The percentage of tokens that participate in a proposal, out of the total {{gTokenSymbol}} supply, must be greater than or equal to this value for the proposal to pass.",
@@ -1441,8 +1436,7 @@
       "title": "No smart contract added",
       "description": "Add a smart contract to interact with it. To learn more, read {{link}}.",
       "modalTitle": "Smart contract composer",
-      "descriptionLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao",
-      "descriptionLinkLabel": "our guide"
+      "descriptionLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao"
     },
     "abi": {
       "abiInputLabel": "ABI function",
