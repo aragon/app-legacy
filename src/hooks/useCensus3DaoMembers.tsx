@@ -65,7 +65,7 @@ export const useCensus3DaoMembers = ({
       ...options,
       enabled: enableGetMembers,
       refetchInterval:
-        enableGetMembers && !tokenSynced ? false : REFETCH_INTERVAL_MS,
+        enableGetMembers && !tokenSynced ? REFETCH_INTERVAL_MS : false,
     }
   );
 
