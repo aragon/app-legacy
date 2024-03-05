@@ -157,14 +157,12 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       if (eligibilityType === 'token') {
         if (eligibilityTokenAmount === amount) {
           let minAmount = walletFieldArray[0]?.amount;
-          (walletFieldArray as TokenVotingWalletField[]).forEach(
-            (wallet, mapIndex) => {
-              if (mapIndex !== index)
-                if (Number(wallet.amount) < Number(minAmount)) {
-                  minAmount = wallet.amount;
-                }
-            }
-          );
+          walletFieldArray.forEach((wallet, mapIndex) => {
+            if (mapIndex !== index)
+              if (Number(wallet.amount) < Number(minAmount)) {
+                minAmount = wallet.amount;
+              }
+          });
           setValue('minimumTokenAmount', minAmount);
         }
       }
