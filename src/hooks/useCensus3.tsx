@@ -3,6 +3,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {
   GaslessPluginName,
   PluginTypes,
+  isGaslessVotingClient,
   usePluginClient,
 } from './usePluginClient';
 import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
@@ -11,6 +12,11 @@ import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
+
+interface IUseCensus3CreateToken {
+  chainId: number;
+  pluginType?: PluginTypes;
+}
 
 export const useCensus3Client = () => {
   const {census3} = useClient();
@@ -39,13 +45,25 @@ export const useCensus3SupportedChains = (chainId: number) => {
   return isSupported;
 };
 
-export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
-  const client = usePluginClient(GaslessPluginName);
+export const useCensus3CreateToken = ({
+  chainId,
+  pluginType,
+}: IUseCensus3CreateToken) => {
+  const client = usePluginClient(pluginType);
   const census3 = useCensus3Client();
   const isSupported = useCensus3SupportedChains(chainId);
 
   const createToken = useCallback(
     async (pluginAddress: string, tokenAddress?: string) => {
+      if (
+        !pluginType ||
+        pluginType !== GaslessPluginName ||
+        !client ||
+        !isGaslessVotingClient(client)
+      ) {
+        return;
+      }
+
       if (!isSupported) throw Error('ChainId is not supported');
       // Check if the census is already sync
       try {
@@ -65,7 +83,7 @@ export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
         }
       }
     },
-    [census3, chainId, client?.methods, isSupported]
+    [census3, chainId, client, isSupported, pluginType]
   );
 
   return {createToken};

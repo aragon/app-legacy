@@ -46,10 +46,11 @@ import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 
 import {
+  GaslessPluginVotingSettings,
   GaslessVotingClient,
   GaslessVotingPluginInstall,
-  GaslessPluginVotingSettings,
 } from '@vocdoni/gasless-voting';
+import {GaslessPluginName} from 'hooks/usePluginClient';
 import {useCensus3CreateToken} from '../hooks/useCensus3';
 
 const DEFAULT_TOKEN_DECIMALS = 18;
@@ -422,7 +423,15 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   } = usePollGasFee(estimateCreationFees, shouldPoll);
 
   const chainId = getValues('blockchain')?.id;
-  const {createToken} = useCensus3CreateToken({chainId});
+  const [membership, votingType] = getValues(['membership', 'votingType']);
+
+  const {createToken} = useCensus3CreateToken({
+    chainId,
+    pluginType:
+      membership === 'token' && votingType === 'gasless'
+        ? GaslessPluginName
+        : undefined,
+  });
 
   // run dao creation transaction
   const createDao = async () => {
