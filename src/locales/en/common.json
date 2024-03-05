@@ -1500,9 +1500,8 @@
   "community": {
     "emptyState": {
       "title": "Become the first member",
-      "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance. Learn more about it {{link}}.",
+      "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance.",
       "ctaLabel": "Join the DAO",
-      "descLinkLabel": "in our guide",
       "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
     },
     "ctaMain": {
@@ -1541,7 +1540,7 @@
   "modalAlert": {
     "wrapToken": {
       "title": "No governance tokens found",
-      "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance. Learn more {{link}}.",
+      "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance.",
       "ctaLabel": "Wrap tokens",
       "cancleLabel": "Cancel",
       "descLinkLabel": "our guide",

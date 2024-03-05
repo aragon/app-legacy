@@ -19,7 +19,6 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
-import {htmlIn} from 'utils/htmlIn';
 import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useExistingToken} from 'hooks/useExistingToken';
@@ -141,7 +140,7 @@ export const Community: React.FC = () => {
       <PageWrapper includeHeader={false}>
         <CardEmptyState
           heading={t('community.emptyState.title')}
-          description={htmlIn(t)('community.emptyState.desc', {
+          description={t('community.emptyState.desc', {
             tokenSymbol:
               (daoToken as Erc20WrapperTokenDetails)?.underlyingToken?.symbol ||
               daoToken?.symbol,
@@ -156,6 +155,12 @@ export const Community: React.FC = () => {
           primaryButton={{
             label: t('community.emptyState.ctaLabel'),
             onClick: handleOpenModal,
+          }}
+          secondaryButton={{
+            label: t('navLinks.guide'),
+            href: t('community.emptyState.descLinkURL'),
+            target: '_blank',
+            iconRight: IconType.LINK_EXTERNAL,
           }}
         />
       </PageWrapper>

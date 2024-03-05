@@ -21,12 +21,11 @@ import {
 } from '@aragon/sdk-client';
 import {formatUnits, toDisplayEns} from 'utils/library';
 import {useExistingToken} from 'hooks/useExistingToken';
-import {htmlIn} from 'utils/htmlIn';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
-import {Button} from '@aragon/ods';
+import {Button, IconType} from '@aragon/ods';
 
 export const GatingMenu: React.FC = () => {
   const {close, isOpen} = useGlobalModalContext('gating');
@@ -89,18 +88,24 @@ export const GatingMenu: React.FC = () => {
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={handleCloseMenu}>
       <ModalBody>
+        <div className="mt-6 flex justify-end">
+          <Button
+            variant="tertiary"
+            iconLeft={IconType.CLOSE}
+            size="sm"
+            onClick={() => handleCloseMenu()}
+          />
+        </div>
         <StyledImage src={WalletIcon} />
         {displayWrapToken && (
           <WarningContainer>
             <WarningTitle>{t('modalAlert.wrapToken.title')}</WarningTitle>
             <WarningDescription>
-              <span
-                dangerouslySetInnerHTML={{
-                  __html: htmlIn(t)('modalAlert.wrapToken.desc', {
-                    tokenSymbol: wrapTokenSymbol,
-                  }),
-                }}
-              />
+              <span>
+                {t('modalAlert.wrapToken.desc', {
+                  tokenSymbol: wrapTokenSymbol,
+                })}
+              </span>
             </WarningDescription>
           </WarningContainer>
         )}
@@ -128,13 +133,21 @@ export const GatingMenu: React.FC = () => {
           </WarningContainer>
         )}
         {displayWrapToken ? (
-          <div className="grid grid-cols-2 gap-6">
-            <Button onClick={handleWrapTokens} size="lg" variant="primary">
-              {t('modalAlert.wrapToken.ctaLabel')}
-            </Button>
-            <Button variant="tertiary" onClick={handleCloseMenu} size="lg">
-              {t('modalAlert.wrapToken.cancleLabel')}
-            </Button>
+          <div>
+            <div className="grid grid-cols-2 gap-3">
+              <Button onClick={handleWrapTokens} size="lg" variant="primary">
+                {t('modalAlert.wrapToken.ctaLabel')}
+              </Button>
+              <Button
+                href={t('modalAlert.wrapToken.descLinkURL')}
+                size="lg"
+                variant="secondary"
+                iconRight={IconType.LINK_EXTERNAL}
+                target="_blank"
+              >
+                {t('navLinks.guide')}
+              </Button>
+            </div>
           </div>
         ) : (
           <Button onClick={handleCloseMenu} size="lg" variant="primary">

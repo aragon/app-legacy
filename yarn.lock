@@ -48,10 +48,10 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
-"@aragon/ods@^1.0.17":
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.17.tgz#8d7529615b72f5a3ecee7374bda253ae1240e46a"
-  integrity sha512-Qv5yKTUMG4t39+Bz0Bct2PqyEqmGKkZm5+L3gSjT6KOkojHmpPBulC168gXfxtQiw28y7kVr9qsoNruGrdm0Bg==
+"@aragon/ods@^1.0.18":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.18.tgz#34d18a951d2053dbdf79f364b8d55dbc2e807b8d"
+  integrity sha512-lUywiCd7JiEHDI1zWd47aPDkcKBUJfxeT3g3oX7rxEG5DCLDtN5LAEValD0Pyf8rK+RjO6KCuM8C1hBG8j5oxw==
   dependencies:
     "@radix-ui/react-alert-dialog" "^1.0.0"
     "@radix-ui/react-avatar" "^1.0.0"
