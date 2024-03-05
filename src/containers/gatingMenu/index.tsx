@@ -7,6 +7,7 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {
   ModalBody,
   StyledImage,
+  Title,
   WarningContainer,
   WarningTitle,
 } from 'containers/networkErrorMenu';
@@ -87,15 +88,17 @@ export const GatingMenu: React.FC = () => {
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={handleCloseMenu}>
+      <ModalHeader>
+        <Title>{t('modalAlert.wrapToken.header')}</Title>
+        <Button
+          variant="tertiary"
+          iconLeft={IconType.CLOSE}
+          size="sm"
+          onClick={() => handleCloseMenu()}
+        />
+      </ModalHeader>
       <ModalBody>
-        <div className="mt-6 flex justify-end">
-          <Button
-            variant="tertiary"
-            iconLeft={IconType.CLOSE}
-            size="sm"
-            onClick={() => handleCloseMenu()}
-          />
-        </div>
+        <div className="mt-6 flex justify-end"></div>
         <StyledImage src={WalletIcon} />
         {displayWrapToken && (
           <WarningContainer>
@@ -162,3 +165,12 @@ export const GatingMenu: React.FC = () => {
 const WarningDescription = styled.p.attrs({
   className: 'text-base text-neutral-500 text-center',
 })``;
+
+const ModalHeader = styled.div.attrs({
+  className: 'flex items-center p-6 bg-neutral-0 rounded-xl gap-4 sticky top-0',
+})`
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
+`;

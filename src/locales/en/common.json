@@ -1539,6 +1539,7 @@
   },
   "modalAlert": {
     "wrapToken": {
+      "header": "Join the DAO",
       "title": "No governance tokens found",
       "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance.",
       "ctaLabel": "Wrap tokens",
