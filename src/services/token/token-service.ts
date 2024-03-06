@@ -3,17 +3,17 @@ import {TokenType} from '@aragon/sdk-client-common';
 import {BigNumber} from '@ethersproject/bignumber';
 import {AddressZero} from '@ethersproject/constants';
 
+import {constants} from 'ethers';
+import request, {gql} from 'graphql-request';
 import {
   CHAIN_METADATA,
   COVALENT_API_KEY,
   SupportedNetworks,
-  alchemyApiKeys,
   supportedNetworksToBackendMap,
 } from 'utils/constants';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
-import {getTokenInfo, isNativeToken} from 'utils/tokens';
-import {CoingeckoError, Token} from './domain';
-import {AlchemyTransfer} from './domain/alchemy-transfer';
+import {isNativeToken} from 'utils/tokens';
+import {Token} from './domain';
 import {CovalentResponse} from './domain/covalent-response';
 import {TokenBalanceResponse} from './domain/covalent-token';
 import {
@@ -25,9 +25,6 @@ import {
   IFetchTokenParams,
   IFetchTokenTransfersParams,
 } from './token-service.api';
-import request, {gql} from 'graphql-request';
-import {constants} from 'ethers';
-import {aragonGateway} from 'utils/aragonGateway';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
@@ -168,9 +165,6 @@ class TokenService {
     }
   `;
 
-  // Note: Purposefully not including a function to fetch token balances
-  // via Alchemy because we want to slowly remove the Alchemy dependency
-  // F.F. [01/01/2023]
   fetchTokenBalances = async ({
     address,
     network,
@@ -238,17 +232,6 @@ class TokenService {
     network,
     assets,
   }: IFetchTokenTransfersParams) => {
-    // TODO: Remove this Goerli based network conditions
-    return network === 'base' || network === 'base-goerli'
-      ? this.fetchCovalentErc20Deposits(address, network, assets)
-      : this.fetchAlchemyErc20Deposits(address, network);
-  };
-
-  private fetchCovalentErc20Deposits = async (
-    address: string,
-    network: SupportedNetworks,
-    assets: AssetBalance[]
-  ): Promise<Deposit[] | null> => {
     const {networkId} = CHAIN_METADATA[network].covalent ?? {};
 
     // check if network is supported
@@ -301,57 +284,6 @@ class TokenService {
       .filter(Boolean) as Deposit[];
   };
 
-  private fetchAlchemyErc20Deposits = async (
-    walletAddress: string,
-    network: SupportedNetworks
-  ): Promise<Deposit[] | null> => {
-    const apiKey = alchemyApiKeys[network];
-
-    if (!apiKey) return null;
-
-    const url = `${CHAIN_METADATA[network].alchemyApi}/${apiKey}`;
-    const options = {
-      method: 'POST',
-      headers: {accept: 'application/json', 'content-type': 'application/json'},
-      body: JSON.stringify({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'alchemy_getAssetTransfers',
-        params: [
-          {
-            fromBlock: '0x0',
-            toBlock: 'latest',
-            toAddress: walletAddress,
-            category: ['erc20'],
-            withMetadata: true,
-            excludeZeroValue: true,
-          },
-        ],
-      }),
-    };
-
-    const res = await fetch(url, options);
-    const parsed = await res.json();
-    const transfers: AlchemyTransfer[] = parsed?.result?.transfers || [];
-
-    return await Promise.all(
-      transfers.map(transfer =>
-        this.transformAlchemyDeposit(transfer, network, walletAddress)
-      )
-    );
-  };
-
-  /**
-   * Checks if the given object is a Coingecko error object.
-   * @param data Result from a Coingecko API request
-   * @returns true if the object is an error object, false otherwise
-   */
-  private isErrorCoingeckoResponse = <TData extends object>(
-    data: TData | CoingeckoError
-  ): data is CoingeckoError => {
-    return Object.hasOwn(data, 'error');
-  };
-
   private transformCovalentDeposit = (
     address: string,
     deposit: CovalentTransferInfo
@@ -374,38 +306,6 @@ class TokenService {
         symbol: deposit.contract_ticker_symbol,
       },
       transactionId: deposit.tx_hash,
-    };
-  };
-
-  private transformAlchemyDeposit = async (
-    transfer: AlchemyTransfer,
-    network: SupportedNetworks,
-    address: string
-  ): Promise<Deposit> => {
-    const {rawContract, metadata, from, hash} = transfer;
-    const provider = aragonGateway.getRpcProvider(network)!;
-
-    // fetch token info
-    const {decimals, name, symbol} = await getTokenInfo(
-      rawContract.address,
-      provider,
-      CHAIN_METADATA[network].nativeCurrency
-    );
-
-    return {
-      type: TransferType.DEPOSIT,
-      tokenType: TokenType.ERC20,
-      amount: BigInt(rawContract.value),
-      creationDate: new Date(metadata.blockTimestamp),
-      from,
-      to: address,
-      token: {
-        address: rawContract.address,
-        decimals,
-        name,
-        symbol,
-      },
-      transactionId: hash,
     };
   };
 }
