@@ -276,15 +276,13 @@ class TokenService {
         t =>
           t.data?.items.flatMap(
             item =>
-              item.transfers?.map(t =>
-                this.transformCovalentDeposit(address, t)
-              ) ?? []
+              item.transfers?.map(t => this.transformDeposit(address, t)) ?? []
           ) ?? []
       )
       .filter(Boolean) as Deposit[];
   };
 
-  private transformCovalentDeposit = (
+  private transformDeposit = (
     address: string,
     deposit: CovalentTransferInfo
   ): Deposit | null => {
