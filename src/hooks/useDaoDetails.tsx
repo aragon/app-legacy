@@ -169,7 +169,7 @@ export const useDaoDetailsQuery = () => {
   useEffect(() => {
     if (apiResponse.isFetched) {
       // navigate to 404 if the DAO is not found or there is some sort of error
-      if (apiResponse.error || apiResponse.data === null) {
+      if (apiResponse.data === null) {
         navigate(NotFound, {
           replace: true,
           state: {incorrectDao: daoAddressOrEns},
