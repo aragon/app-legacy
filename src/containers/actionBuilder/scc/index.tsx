@@ -54,6 +54,8 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   })();
 
   if (actionData) {
+    const actionHasInputs = actionData.inputs?.length > 0;
+
     return (
       <AccordionMethod
         type="action-builder"
@@ -63,9 +65,10 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
         // TODO: How should we add verified badge? (Etherscan/Sourcify verification status)?
         verified
         methodDescription={actionData.notice}
+        emptyItem={!actionHasInputs}
       >
-        <FormItem className="space-y-6 rounded-b-xl">
-          {actionData.inputs?.length > 0 ? (
+        {actionHasInputs && (
+          <FormItem className="space-y-6 rounded-b-xl">
             <div className="space-y-4 pb-3">
               {(actionData.inputs as Input[])
                 .filter(input => input.type)
@@ -96,10 +99,10 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
                   message={t('newProposal.configureActions.alertCritical')}
                   variant="critical"
                 />
-              )}{' '}
+              )}
             </div>
-          ) : null}
-        </FormItem>
+          </FormItem>
+        )}
       </AccordionMethod>
     );
   }

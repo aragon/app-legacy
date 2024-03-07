@@ -11,6 +11,9 @@ export const SCCExecutionCard: React.FC<{
   action: any;
 }> = ({action}) => {
   const {network} = useNetwork();
+
+  const actionHasInputs = action.inputs?.length > 0;
+
   return (
     <AccordionMethod
       type="execution-widget"
@@ -22,10 +25,11 @@ export const SCCExecutionCard: React.FC<{
           ? `${CHAIN_METADATA[network].explorer}address/${action.contractAddress}`
           : undefined
       }
+      emptyItem={!actionHasInputs}
       verified
     >
-      <Container>
-        {action.inputs?.length > 0 ? (
+      {actionHasInputs && (
+        <Container>
           <div className="space-y-4">
             {(action.inputs as Array<Input & {value: any}>).map(input => (
               <div key={input.name}>
@@ -45,8 +49,8 @@ export const SCCExecutionCard: React.FC<{
               </div>
             ))}
           </div>
-        ) : null}
-      </Container>
+        </Container>
+      )}
     </AccordionMethod>
   );
 };
