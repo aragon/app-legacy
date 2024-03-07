@@ -290,7 +290,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
             etherscanData.result[0].ABI !== 'Contract source code not verified'
           ) {
             const functionParams = action.inputs
-              .filter(
+              ?.filter(
                 // ignore payable value
                 input => input.name !== getDefaultPayableAmountInputName(t)
               )
