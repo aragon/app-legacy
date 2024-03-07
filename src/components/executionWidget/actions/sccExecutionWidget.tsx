@@ -12,7 +12,7 @@ export const SCCExecutionCard: React.FC<{
 }> = ({action}) => {
   const {network} = useNetwork();
 
-  const actionHasInputs = action.inputs?.length > 0;
+  const actionHasInputs = action.inputs && action.inputs.length > 0;
 
   return (
     <AccordionMethod

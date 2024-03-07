@@ -54,7 +54,7 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   })();
 
   if (actionData) {
-    const actionHasInputs = actionData.inputs?.length > 0;
+    const actionHasInputs = actionData.inputs && actionData.inputs.length > 0;
 
     return (
       <AccordionMethod
