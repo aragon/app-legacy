@@ -16,6 +16,7 @@ export const useCensus3Token = (
   const census3 = useCensus3Client();
   const {network} = useNetwork();
   const chainId = CHAIN_METADATA[network].id;
+
   return useQuery(
     Census3QueryKeys.token(tokenAddress),
     async () => await census3.getToken(tokenAddress, chainId),
