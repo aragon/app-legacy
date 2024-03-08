@@ -14,15 +14,12 @@ export const useGaslessGovernanceEnabled = () => {
     pluginType,
   });
 
-  const isGasless = pluginType === GaslessPluginName;
-
-  let isGovernanceEnabled = true;
-
-  if (isGasless) {
-    isGovernanceEnabled =
-      (votingSettings as GaslessPluginVotingSettings)?.hasGovernanceEnabled ??
-      false; // Await until loading is finished to ensure that governance is enabled
-  }
-
+  // If is not gasless, return true
+  // If is loading should return false, to avoid to "wrapped tokens" workflows before know if the token is wrapped or not
+  // Then, return the value of hasGovernanceEnabled
+  const isGovernanceEnabled =
+    pluginType === GaslessPluginName
+      ? !!(votingSettings as GaslessPluginVotingSettings)?.hasGovernanceEnabled
+      : true;
   return {isGovernanceEnabled};
 };
