@@ -8,6 +8,9 @@ import {
   usePluginClient,
 } from './usePluginClient';
 import {useDaoDetailsQuery} from './useDaoDetails';
+import {logger, logMeta} from '../services/logger';
+
+const llo = logMeta.bind(null, {service: 'hooks:UseDaoToken'});
 
 export function useDaoToken(
   pluginAddress?: string
@@ -35,9 +38,9 @@ export function useDaoToken(
         if (response) {
           setData(response as Erc20TokenDetails | Erc20WrapperTokenDetails);
         }
-      } catch (err) {
-        console.error('Error fetching DAO token', err);
-        setError(err as Error);
+      } catch (error) {
+        logger.error('Error fetching DAO token', llo({error, address}));
+        setError(error as Error);
       } finally {
         setIsLoading(false);
       }

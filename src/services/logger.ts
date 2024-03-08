@@ -38,6 +38,8 @@ export const mapLogLevelToSentrySeverity = (level: LogLevel): SeverityLevel => {
   return level;
 };
 
+export const logMeta = (...metas: object[]) => Object.assign({}, ...metas);
+
 export const logger = {
   debug: (msg: string, obj: Record<string, unknown> = {}) =>
     logWithLevel(LogLevel.debug, msg, obj),

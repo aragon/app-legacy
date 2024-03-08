@@ -37,6 +37,9 @@ import {useQueryClient as useWagmiQueryClient} from 'wagmi';
 import {useGlobalModalContext} from './globalModals';
 import {useQueryClient} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from 'services/aragon-sdk/query-keys';
+import {logger, logMeta} from '../services/logger';
+
+const llo = logMeta.bind(null, {service: 'context:GovTokensWrapping'});
 
 interface IGovTokensWrappingContextType {
   handleOpenModal: () => void;
@@ -130,8 +133,8 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       if (Number(balanceResult) && Number(balanceResult) >= 0.000001) {
         setDaoTokenBalance(balanceResult);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      logger.error('Error load dao token balance', llo({error}));
     }
   }, [underlyingToken, network, provider, userAddress]);
 
@@ -149,8 +152,11 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       if (Number(balanceResult) && Number(balanceResult) >= 0.000001) {
         setWrappedDaoTokenBalance(balanceResult);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      logger.error(
+        'Error load wrapped token balance',
+        llo({error, network, userAddress, wrappedDaoToken})
+      );
     }
   }, [network, provider, userAddress, wrappedDaoToken]);
 
@@ -265,9 +271,12 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
               });
               break;
           }
-        } catch (err) {
+        } catch (error) {
+          logger.error(
+            'Error setting allowance',
+            llo({error, allowanceParams, amount})
+          );
           setIsTxError(true);
-          console.error(err);
         }
       }
     } catch (e) {
@@ -310,8 +319,11 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
               break;
             }
           }
-        } catch (err) {
-          console.error(err);
+        } catch (error) {
+          logger.error(
+            'Error wrapping tokens',
+            llo({error, wrappedDaoToken, amount})
+          );
           setIsTxError(true);
         }
       }
@@ -344,7 +356,10 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
         },
       });
     } catch (error) {
-      console.log(error);
+      logger.error(
+        'Error adding wrapped token to wallet',
+        llo({error, wrappedDaoToken})
+      );
     }
   }, [wrappedDaoToken]);
 
@@ -373,8 +388,11 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
               break;
             }
           }
-        } catch (err) {
-          console.error(err);
+        } catch (error) {
+          logger.error(
+            'Error unwrapping tokens',
+            llo({error, wrappedDaoToken, amount})
+          );
           setIsTxError(true);
         }
       }

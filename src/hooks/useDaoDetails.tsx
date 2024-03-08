@@ -12,6 +12,9 @@ import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
+import {logger, logMeta} from '../services/logger';
+
+const llo = logMeta.bind(null, {service: 'hooks:UseDaoDetails'});
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -52,8 +55,11 @@ async function fetchDaoDetails(
         const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
 
         daoDetails.metadata.avatar = URL.createObjectURL(imageBlob);
-      } catch (err) {
-        console.warn('Error resolving DAO avatar IPFS Cid', err);
+      } catch (error) {
+        logger.warn(
+          'Error resolving DAO avatar IPFS Cid',
+          llo({error, avatar, daoDetails})
+        );
       }
     } else {
       daoDetails.metadata.avatar = avatar;

@@ -52,6 +52,9 @@ import {
 } from '@vocdoni/gasless-voting';
 import {GaslessPluginName} from 'hooks/usePluginClient';
 import {useCensus3CreateToken} from '../hooks/useCensus3';
+import {logger, logMeta} from '../services/logger';
+
+const llo = logMeta.bind(null, {service: 'context:createDao'});
 
 const DEFAULT_TOKEN_DECIMALS = 18;
 
@@ -116,7 +119,6 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
 
     // if no creation data is set, or transaction already running, do nothing.
     if (!daoCreationData || creationProcessState === TransactionState.LOADING) {
-      console.log('Transaction is running');
       return;
     }
 
@@ -378,7 +380,8 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
         const logoCID = await client?.ipfs.add(new Uint8Array(daoLogoBuffer));
         await client?.ipfs.pin(logoCID!);
         metadata.avatar = `ipfs://${logoCID}`;
-      } catch (e) {
+      } catch (error) {
+        logger.error('Could not pin daoLogo on IPFS', llo({error, metadata}));
         metadata.avatar = undefined;
       }
     }
@@ -396,7 +399,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       };
     } catch (error: unknown) {
       setCreationProcessState(TransactionState.ERROR);
-      console.error('Could not pin metadata on IPFS', error);
+      logger.error('Could not pin metadata on IPFS', llo({error, metadata}));
       throw error;
     }
   }, [
@@ -469,7 +472,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       for await (const step of createDaoIterator) {
         switch (step.key) {
           case DaoCreationSteps.CREATING:
-            console.log(step.txHash);
+            logger.info('Creating DAO', llo({step}));
             trackEvent('daoCreation_transaction_signed', {
               network: getValues('blockchain')?.network,
               wallet_provider: provider?.connection.url,
@@ -477,10 +480,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
             });
             break;
           case DaoCreationSteps.DONE:
-            console.log(
-              'Newly created DAO address',
-              step.address.toLowerCase()
-            );
+            logger.info('DAO created', llo({step}));
             trackEvent('daoCreation_transaction_success', {
               network: getValues('blockchain')?.network,
               wallet_provider: provider?.connection.url,
@@ -536,9 +536,9 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
               });
               // After everything is
             } catch (error) {
-              console.warn(
-                'Error favoriting and adding newly created DAO to cache',
-                error
+              logger.warn(
+                'Error adding created DAO to cache',
+                llo({error, step})
               );
             }
             break;
@@ -546,7 +546,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       }
     } catch (err) {
       // unsuccessful execution, keep creation data for retry
-      console.log(err);
+      logger.error('Error creating DAO', llo({err}));
       trackEvent('daoCreation_transaction_failed', {
         network: getValues('blockchain')?.network,
         wallet_provider: provider?.connection.url,

@@ -2,6 +2,9 @@ import {Client} from '@aragon/sdk-client';
 import {useClient} from './useClient';
 import {useState, useEffect, useCallback} from 'react';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
+import {logger, logMeta} from '../services/logger';
+
+const llo = logMeta.bind(null, {service: 'hooks:useResolveDaoAvatar'});
 
 export function useResolveDaoAvatar(
   avatarInput?: string | Blob | string[] | Blob[]
@@ -15,8 +18,8 @@ export function useResolveDaoAvatar(
       try {
         const result = await resolveDaoAvatarIpfsCid(clientInstance, input);
         setAvatar(result || '');
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        logger.error('Error resolving DAO avatar', llo({error, input}));
       }
     },
     []
@@ -33,8 +36,8 @@ export function useResolveDaoAvatar(
         results = results.map(avatar => avatar || '');
 
         setAvatars(results as unknown as string[]);
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        logger.error('Error resolving DAO avatars', llo({error, input}));
       }
     },
     []

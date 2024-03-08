@@ -39,6 +39,9 @@ import {formatDate} from 'utils/date';
 import {toDisplayEns} from 'utils/library';
 import {Dashboard as DashboardPath, NotFound} from 'utils/paths';
 import {Container} from './governance';
+import {logger, logMeta} from '../services/logger';
+
+const llo = logMeta.bind(null, {service: 'pages:dashboard'});
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -161,9 +164,9 @@ export const Dashboard: React.FC = () => {
           daoAddress: pendingDao?.address,
         });
       } catch (error) {
-        console.error(
-          `Error removing pending dao:${pendingDao?.address}`,
-          error
+        logger.error(
+          'Error removing pending dao',
+          llo({error, network, address: pendingDao?.address})
         );
       }
     }
@@ -196,7 +199,7 @@ export const Dashboard: React.FC = () => {
             ? 'removing DAO from list of followed DAOs'
             : 'adding DAO to list of followed DAOs';
 
-          console.error(`Error ${action}`, error);
+          logger.error(`Error action`, llo({error, dao, action}));
         }
       }
     },

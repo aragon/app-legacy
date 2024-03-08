@@ -24,8 +24,8 @@ class Monitoring {
         integrations: [
           Sentry.browserTracingIntegration(),
           Sentry.replayIntegration({
-            maskAllText: true, // Masks all text to protect user privacy
-            blockAllMedia: true, // Blocks all media to ensure privacy
+            maskAllText: false,
+            blockAllMedia: false,
           }),
         ],
         tracesSampleRate: 1.0,
