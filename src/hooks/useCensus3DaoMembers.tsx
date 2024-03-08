@@ -9,7 +9,7 @@ import {HookData} from '../utils/types';
 import {useParams} from 'react-router-dom';
 import {PluginTypes} from './usePluginClient';
 import {useDaoToken} from './useDaoToken';
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {useWallet} from './useWallet';
 import {formatUnits} from 'ethers/lib/utils';
 import {useCensus3Members} from 'services/vocdoni-census3/queries/use-census3-members';
@@ -36,7 +36,6 @@ export const useCensus3DaoMembers = ({
   const {id: proposalId} = useParams();
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {address} = useWallet();
-  const [tokenSynced, setTokenSynced] = useState(false);
 
   // If is not a wrapped token and not on a proposal context we can still get the token holders amount
   const enableCensus3Token = enable && !!daoToken?.address && !proposalId;
@@ -44,8 +43,8 @@ export const useCensus3DaoMembers = ({
     {tokenAddress: daoToken?.address ?? ''},
     {
       enabled: enableCensus3Token,
-      refetchInterval:
-        enableCensus3Token && !tokenSynced ? REFETCH_INTERVAL_MS : false,
+      refetchInterval: token =>
+        token?.status.synced ? false : REFETCH_INTERVAL_MS,
     }
   );
 
@@ -64,17 +63,11 @@ export const useCensus3DaoMembers = ({
     {
       ...options,
       enabled: enableGetMembers,
-      refetchInterval:
-        enableGetMembers && !tokenSynced ? REFETCH_INTERVAL_MS : false,
+      refetchInterval: !census3Token?.status.synced
+        ? REFETCH_INTERVAL_MS
+        : false,
     }
   );
-
-  useEffect(() => {
-    // Set token synced based on census3Token status
-    if (census3Token?.status.synced) {
-      setTokenSynced(true);
-    }
-  }, [census3Token?.status.synced]);
 
   // Get Census id
   const {
