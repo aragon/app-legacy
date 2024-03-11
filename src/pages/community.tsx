@@ -60,10 +60,7 @@ export const Community: React.FC = () => {
     sort,
     page: apiPage,
   });
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginAddress,
-    pluginType,
-  });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
   const {isDAOTokenWrapped, isTokenMintable} = useExistingToken({
     daoToken,
