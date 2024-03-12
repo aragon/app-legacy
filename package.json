@@ -5,6 +5,7 @@
   "private": true,
   "author": "Aragon Association",
   "license": "GPL-3.0",
+  "type": "module",
   "scripts": {
     "dev": "vite --host",
     "dev:watch": "cross-env WATCH=true vite --host",

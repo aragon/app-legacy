@@ -1,4 +1,8 @@
-import {MetaMask, defineWalletSetup} from '@synthetixio/synpress';
+import {
+  MetaMask,
+  defineWalletSetup,
+  getExtensionId,
+} from '@synthetixio/synpress';
 // import 'dotenv/config';
 
 // const SEED_PHRASE = import.meta.env.SEED_PHRASE;
@@ -7,10 +11,13 @@ import {MetaMask, defineWalletSetup} from '@synthetixio/synpress';
 const SEED_PHRASE =
   'clay risk pepper raccoon card erode desert index short glide junk fox';
 const PASSWORD = 'testitesti';
-console.log({SEED_PHRASE, PASSWORD});
 
 export default defineWalletSetup(PASSWORD, async (context, walletPage) => {
-  const metamask = new MetaMask(context, walletPage, PASSWORD);
+  // This is a workaround for the fact that the MetaMask extension ID changes, and this ID is required to detect the pop-ups.
+  // It won't be needed in the near future! 😇
+  const extensionId = await getExtensionId(context, 'MetaMask');
+
+  const metamask = new MetaMask(context, walletPage, PASSWORD, extensionId);
 
   await metamask.importWallet(SEED_PHRASE);
 });
