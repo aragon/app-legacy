@@ -48,3 +48,7 @@ subgraph.yaml
 
 tests/e2e/videos/*
 test.http
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
