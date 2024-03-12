@@ -10,5 +10,5 @@
     ],
     "outDir": "./output"
   },
-  "include": ["**/*.*"]
+  "include": ["**/*.*", "../../test/wallet-setup/basic.setup.ts"]
 }
