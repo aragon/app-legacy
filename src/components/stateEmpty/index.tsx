@@ -5,7 +5,7 @@ import {
   IllustrationObject,
   IllustrationHuman,
 } from '@aragon/ods';
-import {IButtonBaseProps} from '@aragon/ods/dist/types/src/components/button/button.api';
+import {IButtonBaseProps} from '@aragon/ods';
 import React, {ButtonHTMLAttributes} from 'react';
 import styled from 'styled-components';
 
