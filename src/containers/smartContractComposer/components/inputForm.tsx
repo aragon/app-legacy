@@ -63,12 +63,13 @@ const InputForm: React.FC<InputFormProps> = ({
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const [selectedAction, selectedSC, sccActions]: [
+  const [selectedAction, selectedSC, sccActions, writeAsProxy]: [
     SmartContractAction,
     SmartContract,
     Record<string, Record<string, Record<string, unknown>>>,
+    boolean,
   ] = useWatch({
-    name: ['selectedAction', 'selectedSC', 'sccActions'],
+    name: ['selectedAction', 'selectedSC', 'sccActions', 'writeAsProxy'],
   });
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
@@ -91,9 +92,14 @@ const InputForm: React.FC<InputFormProps> = ({
       name: 'external_contract_action',
     });
 
+    // check if the action is being written as a proxy
+    const contractAddress = writeAsProxy
+      ? selectedSC.proxyAddress
+      : selectedSC.address;
+
     resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}.name`, 'external_contract_action');
-    setValue(`actions.${actionIndex}.contractAddress`, selectedSC.address);
+    setValue(`actions.${actionIndex}.contractAddress`, contractAddress);
     setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
     setValue(`actions.${actionIndex}.functionName`, selectedAction.name);
     setValue(`actions.${actionIndex}.notice`, selectedAction.notice);
@@ -145,18 +151,21 @@ const InputForm: React.FC<InputFormProps> = ({
     removeAction,
     actionIndex,
     addAction,
-    resetField,
-    setValue,
+    writeAsProxy,
+    selectedSC?.proxy,
+    selectedSC?.proxyAddress,
     selectedSC.address,
     selectedSC.name,
+    resetField,
+    setValue,
     selectedAction.name,
     selectedAction.notice,
-    sccActions,
     actionInputs,
     onComposeButtonClicked,
     another,
     daoAddressOrEns,
     t,
+    sccActions,
   ]);
 
   return (

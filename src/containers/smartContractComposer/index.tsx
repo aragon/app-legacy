@@ -22,6 +22,7 @@ export type SccFormData = {
   selectedSC: SmartContract | null;
   selectedAction: SmartContractAction;
   ABIInput: string;
+  writeAsProxy: boolean;
 };
 
 type SCC = {

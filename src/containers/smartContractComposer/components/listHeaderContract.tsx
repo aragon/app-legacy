@@ -90,6 +90,7 @@ export const ListHeaderContract: React.FC<Props> = ({
         className="my-2 w-full justify-between px-4"
         onClick={() => {
           if (sc.implementationData) {
+            setValue('writeAsProxy', true);
             setValue('selectedSC', sc.implementationData as SmartContract);
             setValue(
               'selectedAction',
@@ -104,6 +105,7 @@ export const ListHeaderContract: React.FC<Props> = ({
             const contract = contracts.filter(
               c => c.address === sc.proxyAddress
             )[0];
+            setValue('writeAsProxy', false);
             setValue('selectedSC', contract);
             setValue(
               'selectedAction',
