@@ -109,7 +109,9 @@ const ModalContainer = styled(Content).attrs(({style}: StyledContentProps) => {
   };
 
   return {style: currentStyle, className};
-})<StyledContentProps>``;
+})<StyledContentProps>`
+  z-index: 15;
+`;
 
 const ModalHeader = styled.div.attrs({
   className:

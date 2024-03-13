@@ -71,6 +71,7 @@ export const BackdropStyles = ({visible}: StyledBackdropProps) => {
     : 'invisible opacity-0';
   const css: React.CSSProperties = {
     position: 'fixed',
+    zIndex: 10,
     top: 0,
     left: 0,
     right: 0,
