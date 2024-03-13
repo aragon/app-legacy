@@ -73,7 +73,7 @@ const InputForm: React.FC<InputFormProps> = ({
   });
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
-  const {setValue, resetField} = useFormContext();
+  const {setValue, resetField, getValues} = useFormContext();
   const [another, setAnother] = useState(false);
 
   // add payable input to the selected action if it is a payable method
@@ -93,14 +93,26 @@ const InputForm: React.FC<InputFormProps> = ({
     });
 
     // check if the action is being written as a proxy
-    const contractAddress = writeAsProxy
-      ? selectedSC.proxyAddress
-      : selectedSC.address;
+    let contractAddress = selectedSC.address;
+    let contractName = selectedSC.name;
+
+    if (writeAsProxy) {
+      // get proxy contract
+      const contracts: SmartContract[] = getValues('contracts');
+      const contract = contracts.filter(
+        c => c.address === selectedSC.proxyAddress
+      )[0];
+
+      if (contract.proxy) {
+        contractName = contract.name;
+        contractAddress = contract.address;
+      }
+    }
 
     resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}.name`, 'external_contract_action');
     setValue(`actions.${actionIndex}.contractAddress`, contractAddress);
-    setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
+    setValue(`actions.${actionIndex}.contractName`, contractName);
     setValue(`actions.${actionIndex}.functionName`, selectedAction.name);
     setValue(`actions.${actionIndex}.notice`, selectedAction.notice);
 
@@ -151,10 +163,10 @@ const InputForm: React.FC<InputFormProps> = ({
     removeAction,
     actionIndex,
     addAction,
-    writeAsProxy,
-    selectedSC?.proxyAddress,
     selectedSC.address,
     selectedSC.name,
+    selectedSC?.proxyAddress,
+    writeAsProxy,
     resetField,
     setValue,
     selectedAction.name,
@@ -163,6 +175,7 @@ const InputForm: React.FC<InputFormProps> = ({
     onComposeButtonClicked,
     another,
     daoAddressOrEns,
+    getValues,
     t,
     sccActions,
   ]);
