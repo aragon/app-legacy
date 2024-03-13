@@ -19,6 +19,7 @@ export type AccordionMethodType = {
   additionalInfo?: string;
   dropdownItems?: ListItemProps[];
   customHeader?: React.ReactNode;
+  emptyItem?: boolean;
   children: ReactNode;
 };
 
@@ -26,7 +27,11 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   children,
   ...props
 }) => (
-  <Accordion.Root type="single" collapsible defaultValue="item-2">
+  <Accordion.Root
+    type="single"
+    collapsible
+    defaultValue={props.emptyItem ? '' : 'item-2'}
+  >
     <AccordionItem name="item-2" {...props}>
       {children}
     </AccordionItem>
@@ -61,6 +66,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
   additionalInfo,
   dropdownItems = [],
   customHeader,
+  emptyItem = false,
   children,
 }) => (
   <Accordion.Item value={name}>
@@ -116,13 +122,15 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                 }
               />
             )}
-            <Accordion.Trigger asChild>
-              <AccordionButton
-                variant={type === 'action-builder' ? 'tertiary' : 'secondary'}
-                size="md"
-                iconLeft={IconType.CHEVRON_DOWN}
-              />
-            </Accordion.Trigger>
+            {!emptyItem && (
+              <Accordion.Trigger asChild>
+                <AccordionButton
+                  variant={type === 'action-builder' ? 'tertiary' : 'secondary'}
+                  size="md"
+                  iconLeft={IconType.CHEVRON_DOWN}
+                />
+              </Accordion.Trigger>
+            )}
           </VStack>
         </HStack>
 

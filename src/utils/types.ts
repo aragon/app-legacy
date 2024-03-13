@@ -383,7 +383,7 @@ export type ActionSCC = {
   contractName: string;
   contractAddress: string;
   functionName: string;
-  inputs: Array<ExternalActionInput>;
+  inputs?: Array<ExternalActionInput>;
   value?: string;
 };
 

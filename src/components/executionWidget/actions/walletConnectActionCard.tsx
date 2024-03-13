@@ -53,6 +53,7 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
     return false;
   }, [action.inputs]);
 
+  const actionHasInputs = action.inputs && action.inputs.length > 0;
   return (
     <AccordionMethod
       type={type}
@@ -67,11 +68,12 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
       }
       verified={!!action.verified}
       methodDescription={action.notice}
+      emptyItem={!actionHasInputs}
     >
       <Content type={type}>
-        {action.inputs?.length > 0 ? (
+        {actionHasInputs && (
           <FormGroup>
-            {action.inputs.map(input => {
+            {action.inputs?.map(input => {
               if (!input.name) return null;
               return (
                 <FormItem key={input.name}>
@@ -88,7 +90,7 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
               );
             })}
           </FormGroup>
-        ) : null}
+        )}
         {!action.decoded && (
           <AlertCard
             variant="warning"

@@ -16,6 +16,8 @@ import {useCensus3Members} from 'services/vocdoni-census3/queries/use-census3-me
 import {useCensus3Token} from 'services/vocdoni-census3/queries/use-census3-token';
 import {useCensus3VotingPower} from 'services/vocdoni-census3/queries/use-census3-voting-power';
 
+const REFETCH_INTERVAL_MS = 5000;
+
 interface UseCensus3DaoMembersProps {
   holders?: TokenDaoMember[];
   pluginAddress: string;
@@ -36,11 +38,13 @@ export const useCensus3DaoMembers = ({
   const {address} = useWallet();
 
   // If is not a wrapped token and not on a proposal context we can still get the token holders amount
-  const enableCensus3Token = enable && !proposalId;
+  const enableCensus3Token = enable && !!daoToken?.address && !proposalId;
   const {data: census3Token} = useCensus3Token(
     {tokenAddress: daoToken?.address ?? ''},
     {
-      enabled: enable && !!daoToken?.address && enableCensus3Token,
+      enabled: enableCensus3Token,
+      refetchInterval: token =>
+        token?.status.synced ? false : REFETCH_INTERVAL_MS,
     }
   );
 
@@ -59,8 +63,9 @@ export const useCensus3DaoMembers = ({
     {
       ...options,
       enabled: enableGetMembers,
-      refetchInterval:
-        enableGetMembers && !census3Token?.status.synced ? 3000 : false,
+      refetchInterval: !census3Token?.status.synced
+        ? REFETCH_INTERVAL_MS
+        : false,
     }
   );
 
