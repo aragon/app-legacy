@@ -152,7 +152,6 @@ const InputForm: React.FC<InputFormProps> = ({
     actionIndex,
     addAction,
     writeAsProxy,
-    selectedSC?.proxy,
     selectedSC?.proxyAddress,
     selectedSC.address,
     selectedSC.name,
