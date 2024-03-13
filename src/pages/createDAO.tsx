@@ -353,6 +353,7 @@ export const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step1.title')}
             wizardDescription={htmlIn(t)('createDAO.step1.description')}
+            wizardDescriptionLink={t('createDAO.step1.descriptionLinkURL')}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '1_select_blockchain', {
                 network: formMethods.getValues('blockchain')?.network,
@@ -364,6 +365,7 @@ export const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step2.title')}
             wizardDescription={htmlIn(t)('createDAO.step2.description')}
+            wizardDescriptionLink={t('createDAO.step2.descriptionLinkURL')}
             isNextButtonDisabled={!daoMetadataIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '2_define_metadata', {
@@ -377,6 +379,7 @@ export const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step3.title')}
             wizardDescription={htmlIn(t)('createDAO.step3.description')}
+            wizardDescriptionLink={t('createDAO.step3.descriptionLinkURL')}
             isNextButtonDisabled={!daoCommunitySetupIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '3_setup_community', {
@@ -397,6 +400,7 @@ export const CreateDAO: React.FC = () => {
             // wizardDescription={htmlIn(t)('createDao.stepCommunityVoting.desc')}
             wizardTitle={t('createDAO.step4.title')}
             wizardDescription={htmlIn(t)('createDAO.step4.description')}
+            wizardDescriptionLink={t('createDAO.step4.descriptionLinkURL')}
             isNextButtonDisabled={!daoCommunityConfigurationIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '4_configure_governance', {

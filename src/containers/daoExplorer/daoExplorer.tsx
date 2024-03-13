@@ -1,5 +1,5 @@
 import React, {useMemo, useReducer, useState} from 'react';
-import {Spinner, Button, Dropdown, IconType} from '@aragon/ods';
+import {Spinner, Button, IconType, CardEmptyState, Dropdown} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
@@ -23,7 +23,6 @@ import {
   quickFilters,
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
-import {StateEmpty} from 'components/stateEmpty';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   creatorAddress: '' as Address,
@@ -243,13 +242,10 @@ export const DaoExplorer = () => {
           </ButtonGroupContainer>
         </FilterGroupContainer>
         {noDaosFound ? (
-          <StateEmpty
-            type="Object"
-            mode="card"
-            object="MAGNIFYING_GLASS"
-            title={t('explore.emptyStateSearch.title')}
+          <CardEmptyState
+            objectIllustration={{object: 'MAGNIFYING_GLASS'}}
+            heading={t('explore.emptyStateSearch.title')}
             description={t('explore.emptyStateSearch.description')}
-            contentWrapperClassName="lg:w-[560px]"
             secondaryButton={{
               label: t('explore.emptyStateSearch.ctaLabel'),
               iconLeft: IconType.RELOAD,

@@ -1,10 +1,13 @@
 import React from 'react';
-
-import {Button, AlertCard, AlertInline, IconType} from '@aragon/ods';
+import {
+  Button,
+  AlertCard,
+  AlertInline,
+  IconType,
+  EmptyState,
+} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
-import {StateEmpty} from 'components/stateEmpty';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -37,11 +40,9 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
         <Description>{t('governance.executionCard.description')}</Description>
       </Header>
       {actions.length === 0 ? (
-        <StateEmpty
-          mode="inline"
-          type="Object"
-          object="SMART_CONTRACT"
-          title="No actions were added"
+        <EmptyState
+          objectIllustration={{object: 'SMART_CONTRACT'}}
+          heading={t('governance.executionCard.emptyStateHeading')}
           secondaryButton={
             onAddAction && {
               label: t('governance.executionCard.addAction'),

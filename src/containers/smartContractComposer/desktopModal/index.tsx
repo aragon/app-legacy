@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Link, Modal} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button, EmptyState, IconType} from '@aragon/ods';
 
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import Header from 'components/modalHeader/searchHeader';
-import {StateEmpty} from 'components/stateEmpty';
 import {useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
@@ -17,6 +16,8 @@ import ActionListGroup from '../components/actionListGroup';
 import InputForm from '../components/inputForm';
 import {ListHeaderContract} from '../components/listHeaderContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -151,11 +152,9 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
   return (
     <Container>
       <div>
-        <StateEmpty
-          mode="inline"
-          type="Object"
-          object="SMART_CONTRACT"
-          title={t('scc.writeContractEmptyState.title')}
+        <EmptyState
+          objectIllustration={{object: 'SMART_CONTRACT'}}
+          heading={t('scc.writeContractEmptyState.title')}
           description={t('scc.writeContractEmptyState.desc')}
         />
         {selectedSC.implementationData && (
@@ -190,15 +189,16 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
 
 const DesktopModalEmptyState: React.FC = () => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
 
   return (
     <Container>
-      <StateEmpty
-        mode="inline"
-        type="Object"
-        object="SMART_CONTRACT"
-        title={t('scc.selectionEmptyState.title')}
-        description={t('scc.selectionEmptyState.description')}
+      <EmptyState
+        objectIllustration={{object: 'SMART_CONTRACT'}}
+        heading={t('scc.selectionEmptyState.title')}
+        description={t('scc.selectionEmptyState.description', {
+          networkName: CHAIN_METADATA[network].name,
+        })}
       />
     </Container>
   );

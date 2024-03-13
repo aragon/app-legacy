@@ -1,12 +1,9 @@
 import React from 'react';
 import {ListItemHeader, TransferListItem} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
-
+import {Button, CardEmptyState, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-
-import {StateEmpty} from 'components/stateEmpty';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
@@ -34,21 +31,26 @@ const TreasurySnapshot: React.FC<Props> = ({
 
   if (transfers.length === 0) {
     return (
-      <StateEmpty
-        type="Human"
-        mode="card"
-        body="CHART"
-        expression="EXCITED"
-        hairs="BUN"
-        object="WALLET"
-        objectPosition="right"
-        title={t('finance.emptyState.title')}
+      <CardEmptyState
+        humanIllustration={{
+          body: 'CHART',
+          expression: 'EXCITED',
+          hairs: 'BUN',
+          object: 'WALLET',
+          objectPosition: 'right',
+        }}
+        heading={t('finance.emptyState.title')}
         description={htmlIn(t)('finance.emptyState.description')}
-        secondaryButton={{
+        primaryButton={{
           label: t('finance.emptyState.buttonLabel'),
           onClick: () => open('deposit'),
         }}
-        renderHtml
+        secondaryButton={{
+          label: t('navLinks.guide'),
+          href: t('finance.emptyState.descriptionLinkURL'),
+          iconRight: IconType.LINK_EXTERNAL,
+          target: '_blank',
+        }}
       />
     );
   }
