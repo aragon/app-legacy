@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {ButtonGroup, Option} from '@aragon/ods-old';
-import {Button, CardEmptyState, Icon, IconType} from '@aragon/ods';
+import {Button, Card, EmptyState, Icon, IconType} from '@aragon/ods';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -89,34 +89,36 @@ export const Governance: React.FC = () => {
   if (noProposals) {
     return (
       <PageWrapper includeHeader={false}>
-        <CardEmptyState
-          heading={t('governance.emptyState.title')}
-          description={htmlIn(t)('governance.emptyState.description')}
-          humanIllustration={{
-            body: 'VOTING',
-            expression: 'SMILE',
-            hairs: 'MIDDLE',
-            accessory: 'EARRINGS_RHOMBUS',
-            sunglasses: 'BIG_ROUNDED',
-          }}
-          primaryButton={{
-            label: t('TransactionModal.createProposal'),
-            onClick: handleNewProposalClick,
-          }}
-          secondaryButton={
-            enableDelegation
-              ? {
-                  label: t('governance.actionSecondary'),
-                  onClick: () => open('delegateVoting'),
-                }
-              : {
-                  label: t('navLinks.guide'),
-                  href: t('governance.emptyState.descriptionLinkURL'),
-                  target: '_blank',
-                  iconRight: IconType.LINK_EXTERNAL,
-                }
-          }
-        />
+        <Card className="mt-10 flex items-center justify-center">
+          <EmptyState
+            heading={t('governance.emptyState.title')}
+            description={htmlIn(t)('governance.emptyState.description')}
+            humanIllustration={{
+              body: 'VOTING',
+              expression: 'SMILE',
+              hairs: 'MIDDLE',
+              accessory: 'EARRINGS_RHOMBUS',
+              sunglasses: 'BIG_ROUNDED',
+            }}
+            primaryButton={{
+              label: t('TransactionModal.createProposal'),
+              onClick: handleNewProposalClick,
+            }}
+            secondaryButton={
+              enableDelegation
+                ? {
+                    label: t('governance.actionSecondary'),
+                    onClick: () => open('delegateVoting'),
+                  }
+                : {
+                    label: t('navLinks.guide'),
+                    href: t('governance.emptyState.descriptionLinkURL'),
+                    target: '_blank',
+                    iconRight: IconType.LINK_EXTERNAL,
+                  }
+            }
+          />
+        </Card>
       </PageWrapper>
     );
   }

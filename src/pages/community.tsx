@@ -5,7 +5,7 @@ import {
   Pagination,
   SearchInput,
 } from '@aragon/ods-old';
-import {Button, CardEmptyState, EmptyState, Icon, IconType} from '@aragon/ods';
+import {Button, Card, EmptyState, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -137,31 +137,33 @@ export const Community: React.FC = () => {
   if (!totalMemberCount && isDAOTokenWrapped) {
     return (
       <PageWrapper includeHeader={false}>
-        <CardEmptyState
-          heading={t('community.emptyState.title')}
-          description={t('community.emptyState.desc', {
-            tokenSymbol:
-              (daoToken as Erc20WrapperTokenDetails)?.underlyingToken?.symbol ||
-              daoToken?.symbol,
-          })}
-          humanIllustration={{
-            body: 'ELEVATING',
-            expression: 'SMILE_WINK',
-            hairs: 'MIDDLE',
-            sunglasses: 'BIG_ROUNDED',
-            accessory: 'BUDDHA',
-          }}
-          primaryButton={{
-            label: t('community.emptyState.ctaLabel'),
-            onClick: handleOpenModal,
-          }}
-          secondaryButton={{
-            label: t('navLinks.guide'),
-            href: t('community.emptyState.descLinkURL'),
-            target: '_blank',
-            iconRight: IconType.LINK_EXTERNAL,
-          }}
-        />
+        <Card className="mt-10 flex items-center justify-center">
+          <EmptyState
+            heading={t('community.emptyState.title')}
+            description={t('community.emptyState.desc', {
+              tokenSymbol:
+                (daoToken as Erc20WrapperTokenDetails)?.underlyingToken
+                  ?.symbol || daoToken?.symbol,
+            })}
+            humanIllustration={{
+              body: 'ELEVATING',
+              expression: 'SMILE_WINK',
+              hairs: 'MIDDLE',
+              sunglasses: 'BIG_ROUNDED',
+              accessory: 'BUDDHA',
+            }}
+            primaryButton={{
+              label: t('community.emptyState.ctaLabel'),
+              onClick: handleOpenModal,
+            }}
+            secondaryButton={{
+              label: t('navLinks.guide'),
+              href: t('community.emptyState.descLinkURL'),
+              target: '_blank',
+              iconRight: IconType.LINK_EXTERNAL,
+            }}
+          />
+        </Card>
       </PageWrapper>
     );
   }

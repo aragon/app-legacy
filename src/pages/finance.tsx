@@ -9,7 +9,7 @@ import {
   Tag,
   IllustrationHuman,
   EmptyState,
-  CardEmptyState,
+  Card,
 } from '@aragon/ods';
 import {Loading} from 'components/temporary';
 import TokenList from 'components/tokenList';
@@ -78,27 +78,29 @@ export const Finance: React.FC = () => {
     if (tokens.length === 0 && transfers.length === 0) {
       return (
         <PageWrapper includeHeader={false}>
-          <CardEmptyState
-            heading={t('finance.emptyState.title')}
-            description={htmlIn(t)('finance.emptyState.description')}
-            humanIllustration={{
-              body: 'CHART',
-              expression: 'EXCITED',
-              hairs: 'BUN',
-              object: 'WALLET',
-              objectPosition: 'right',
-            }}
-            primaryButton={{
-              label: t('finance.emptyState.buttonLabel'),
-              onClick: () => open('deposit'),
-            }}
-            secondaryButton={{
-              label: t('navLinks.guide'),
-              href: t('finance.emptyState.descriptionLinkURL'),
-              target: '_blank',
-              iconRight: IconType.LINK_EXTERNAL,
-            }}
-          />
+          <Card className="mt-10 flex items-center justify-center">
+            <EmptyState
+              heading={t('finance.emptyState.title')}
+              description={htmlIn(t)('finance.emptyState.description')}
+              humanIllustration={{
+                body: 'CHART',
+                expression: 'EXCITED',
+                hairs: 'BUN',
+                object: 'WALLET',
+                objectPosition: 'right',
+              }}
+              primaryButton={{
+                label: t('finance.emptyState.buttonLabel'),
+                onClick: () => open('deposit'),
+              }}
+              secondaryButton={{
+                label: t('navLinks.guide'),
+                href: t('finance.emptyState.descriptionLinkURL'),
+                target: '_blank',
+                iconRight: IconType.LINK_EXTERNAL,
+              }}
+            />
+          </Card>
         </PageWrapper>
       );
     }
