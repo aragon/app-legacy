@@ -92,7 +92,7 @@ export const Modal: React.FC<ModalProps> = ({
 type StyledContentProps = Pick<ModalProps, 'style'>;
 
 const ModalContainer = styled(Content).attrs(({style}: StyledContentProps) => {
-  const className = 'bg-neutral-50';
+  const className = 'bg-neutral-50 z-[var(--ods-dialog-content-z-index)]';
   const currentStyle: CSSProperties = style ?? {
     position: 'fixed',
     top: '50%',
@@ -109,9 +109,7 @@ const ModalContainer = styled(Content).attrs(({style}: StyledContentProps) => {
   };
 
   return {style: currentStyle, className};
-})<StyledContentProps>`
-  z-index: 15;
-`;
+})<StyledContentProps>``;
 
 const ModalHeader = styled.div.attrs({
   className:

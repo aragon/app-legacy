@@ -6,6 +6,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import {HashRouter as Router} from 'react-router-dom';
 import '@aragon/ods/index.css';
+import './index.css';
 import isPropValid from '@emotion/is-prop-valid';
 import {StyleSheetManager} from 'styled-components';
 import {WagmiConfig, configureChains, createConfig} from 'wagmi';

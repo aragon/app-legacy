@@ -1,0 +1,11 @@
+:root {
+  --app-navbar-z-index: 10;
+
+  --ods-dialog-overlay-z-index: 20;
+  --ods-dialog-alert-overlay-z-index: 20;
+
+  --ods-dialog-content-z-index: 30;
+  --ods-dialog-alert-content-z-index: 30;
+
+  --ods-dropdown-content-z-index: 40;
+}
