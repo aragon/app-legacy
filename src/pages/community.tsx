@@ -13,7 +13,7 @@ import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
-import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import PageEmptyState from 'containers/pageEmptyState';
 import {htmlIn} from 'utils/htmlIn';
@@ -23,6 +23,7 @@ import {useExistingToken} from 'hooks/useExistingToken';
 import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 import {featureFlags} from 'utils/featureFlags';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useGaslessGovernanceEnabled} from 'hooks/useGaslessGovernanceEnabled';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -42,19 +43,19 @@ export const Community: React.FC = () => {
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
+  const pluginAddress = daoDetails?.plugins[0].instanceAddress as string;
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+
   const apiPage = Math.floor(((page - 1) / 1000) * MEMBERS_PER_PAGE);
   const {
     data: {members, filteredMembers, daoToken, memberCount: totalMemberCount},
     isLoading: membersLoading,
-  } = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes,
-    {
-      searchTerm: debouncedTerm,
-      sort,
-      page: apiPage,
-    }
-  );
+  } = useDaoMembers(pluginAddress, pluginType, {
+    searchTerm: debouncedTerm,
+    sort,
+    page: apiPage,
+  });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
   const {isDAOTokenWrapped, isTokenMintable} = useExistingToken({
     daoToken,
@@ -79,8 +80,6 @@ export const Community: React.FC = () => {
 
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
-  const isGasless =
-    (daoDetails?.plugins[0].id as PluginTypes) === GaslessPluginName;
   const enableSearchSort = totalMemberCount <= 1000;
   const enableDelegation =
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
@@ -143,7 +142,7 @@ export const Community: React.FC = () => {
             daoToken?.symbol,
         })}
         Illustration={
-          <div className="flex">
+          <div className="flex w-[320px] justify-center md:w-[640px]">
             <IllustrationHuman
               body="ELEVATING"
               expression="SMILE_WINK"
@@ -161,10 +160,7 @@ export const Community: React.FC = () => {
     );
   }
 
-  const isGaslessNonWrappedDao =
-    isGasless && !isDAOTokenWrapped && !isTokenMintable;
-
-  const pageTitle = isGaslessNonWrappedDao
+  const pageTitle = !isGovernanceEnabled
     ? t('labels.activeMembers', {count: totalMemberCount})
     : `${totalMemberCount} ${t('labels.members')}`;
 
@@ -177,6 +173,15 @@ export const Community: React.FC = () => {
             primaryBtnProps: {
               label: t('labels.manageMember'),
               onClick: handlePrimaryClick,
+            },
+          }
+        : !isGovernanceEnabled
+        ? {
+            description: t('explore.explorer.tokenBased'),
+            secondaryBtnProps: {
+              label: t('labels.seeAllHolders'),
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
+              onClick: handleSecondaryButtonClick,
             },
           }
         : isDAOTokenWrapped
@@ -214,15 +219,6 @@ export const Community: React.FC = () => {
               label: t('labels.seeAllHolders'),
               iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
               onClick: navigateToTokenHoldersChart,
-            },
-          }
-        : isGaslessNonWrappedDao
-        ? {
-            description: t('explore.explorer.tokenBased'),
-            secondaryBtnProps: {
-              label: t('labels.seeAllHolders'),
-              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-              onClick: handleSecondaryButtonClick,
             },
           }
         : {

@@ -173,11 +173,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     steps: gaslessProposalSteps,
     globalState: gaslessGlobalState,
     createProposal,
-  } = useCreateGaslessProposal({
-    daoToken,
-    pluginAddress,
-    chainId: CHAIN_METADATA[network].id,
-  });
+  } = useCreateGaslessProposal(daoToken?.address);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -218,7 +214,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
             actions.push(
               Promise.resolve(
                 (pluginClient as TokenVotingClient).encoding.mintTokenAction(
-                  action.summary.daoTokenAddress as string,
+                  action.summary.daoTokenAddress,
                   {
                     address: mint.web3Address.address,
                     amount: BigInt(
@@ -294,7 +290,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
             etherscanData.result[0].ABI !== 'Contract source code not verified'
           ) {
             const functionParams = action.inputs
-              .filter(
+              ?.filter(
                 // ignore payable value
                 input => input.name !== getDefaultPayableAmountInputName(t)
               )

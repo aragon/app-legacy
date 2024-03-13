@@ -1,31 +1,31 @@
-import {
-  Erc20TokenDetails,
-  Erc20WrapperTokenDetails,
-  VoteValues,
-} from '@aragon/sdk-client';
+import {VoteValues} from '@aragon/sdk-client';
 import {ProposalMetadata} from '@aragon/sdk-client-common';
 import {useCallback, useState} from 'react';
 
+import {useClient} from '@vocdoni/react-providers';
 import {
+  AccountData,
   Census,
   Census3Census,
-  Election,
   Token as Census3Token,
+  Election,
+  ErrFaucetAlreadyFunded,
+  ErrNotFoundToken,
   IElectionParameters,
   TokenCensus,
   UnpublishedElection,
-  AccountData,
-  ErrNotFoundToken,
-  ErrFaucetAlreadyFunded,
 } from '@vocdoni/sdk';
-import {useClient} from '@vocdoni/react-providers';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useCensus3Client, useCensus3CreateToken} from '../hooks/useCensus3';
 import {
-  StepsMap,
   StepStatus,
+  StepsMap,
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
-import {useCensus3Client, useCensus3CreateToken} from '../hooks/useCensus3';
 import {GaslessProposalCreationParams} from '../utils/types';
+import {useNetwork} from './network';
 
 export enum GaslessProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
@@ -35,12 +35,6 @@ export enum GaslessProposalStepId {
 }
 
 export type GaslessProposalSteps = StepsMap<GaslessProposalStepId>;
-
-type ICreateGaslessProposal = {
-  daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
-  pluginAddress: string;
-  chainId: number;
-};
 
 export type UseCreateElectionProps = Omit<
   IElectionParameters,
@@ -77,11 +71,14 @@ const proposalToElection = ({
   };
 };
 
-const useCreateGaslessProposal = ({
-  daoToken,
-  chainId,
-  pluginAddress,
-}: ICreateGaslessProposal) => {
+const useCreateGaslessProposal = (daoTokenAddress: string | undefined) => {
+  const {network} = useNetwork();
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const chainId = CHAIN_METADATA[network].id;
+
   const {steps, updateStepStatus, doStep, globalState, resetStates} =
     useFunctionStepper({
       initialSteps: {
@@ -102,7 +99,7 @@ const useCreateGaslessProposal = ({
 
   const {client: vocdoniClient} = useClient();
   const census3 = useCensus3Client();
-  const {createToken} = useCensus3CreateToken({chainId});
+  const {createToken} = useCensus3CreateToken({chainId, pluginType});
   const [account, setAccount] = useState<AccountData | undefined>(undefined);
 
   const collectFaucet = useCallback(
@@ -174,49 +171,49 @@ const useCreateGaslessProposal = ({
     }
   }, [account, vocdoniClient]);
 
-  const createCensus = useCallback(async (): Promise<TokenCensus> => {
-    async function getCensus3Token(): Promise<Census3Token> {
-      let attempts = 0;
-      const maxAttempts = 6;
+  const createCensus = useCallback(
+    async (daoToken: string): Promise<TokenCensus> => {
+      async function getCensus3Token(): Promise<Census3Token> {
+        let attempts = 0;
+        const maxAttempts = 6;
 
-      while (attempts < maxAttempts) {
-        try {
-          const censusToken = await census3.getToken(
-            daoToken!.address,
-            chainId
-          );
-          if (censusToken.status.synced) {
-            return censusToken; // early exit if the object has sync set to true
+        while (attempts < maxAttempts) {
+          try {
+            const censusToken = await census3.getToken(daoToken, chainId);
+            if (censusToken.status.synced) {
+              return censusToken; // early exit if the object has sync set to true
+            }
+          } catch (e) {
+            if (e instanceof ErrNotFoundToken) {
+              await createToken(pluginAddress);
+            }
           }
-        } catch (e) {
-          if (e instanceof ErrNotFoundToken) {
-            await createToken(pluginAddress);
+          attempts++;
+          if (attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 10000));
           }
         }
-        attempts++;
-        if (attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 10000));
-        }
+        throw Error('Census token is not already calculated, try again later');
       }
-      throw Error('Census token is not already calculated, try again later');
-    }
 
-    const censusToken = await getCensus3Token();
+      const censusToken = await getCensus3Token();
 
-    // Create the vocdoni census
-    const census3census: Census3Census = await census3.createCensus(
-      censusToken.defaultStrategy
-    );
+      // Create the vocdoni census
+      const census3census: Census3Census = await census3.createCensus(
+        censusToken.defaultStrategy
+      );
 
-    return new TokenCensus(
-      census3census.merkleRoot,
-      census3census.uri,
-      census3census.anonymous,
-      censusToken,
-      census3census.size,
-      BigInt(census3census.weight)
-    );
-  }, [census3, chainId, createToken, daoToken, pluginAddress]);
+      return new TokenCensus(
+        census3census.merkleRoot,
+        census3census.uri,
+        census3census.anonymous,
+        censusToken,
+        census3census.size,
+        BigInt(census3census.weight)
+      );
+    },
+    [census3, chainId, createToken, pluginAddress]
+  );
 
   const createProposal = useCallback(
     async (
@@ -235,7 +232,7 @@ const useCreateGaslessProposal = ({
         return await handleOnchainProposal();
       }
 
-      if (!daoToken) {
+      if (!daoTokenAddress) {
         return new Error('ERC20 SDK client is not initialized correctly');
       }
 
@@ -251,7 +248,7 @@ const useCreateGaslessProposal = ({
         async () => {
           // 2.1 Register gasless proposal
           // This involves various steps such the census creation and election creation
-          census = await createCensus();
+          census = await createCensus(daoTokenAddress);
           // 2.2. Create vocdoni election
           return await createVocdoniElection(
             proposalToElection({metadata, data, census})
@@ -272,14 +269,14 @@ const useCreateGaslessProposal = ({
       );
     },
     [
-      globalState,
-      daoToken,
-      doStep,
       checkAccountCreation,
-      updateStepStatus,
-      resetStates,
       createCensus,
       createVocdoniElection,
+      daoTokenAddress,
+      doStep,
+      globalState,
+      resetStates,
+      updateStepStatus,
     ]
   );
 

@@ -22,7 +22,6 @@ import {
 } from './delegateVotingUtils';
 import {aragonBackendQueryKeys} from 'services/aragon-backend/query-keys';
 import {PluginTypes} from '../../hooks/usePluginClient';
-import {useGaslessGovernanceEnabled} from '../../hooks/useGaslessGovernanceEnabled';
 
 const buildFormSettings = (
   delegateAddress = ''
@@ -84,15 +83,11 @@ export const DelegateVotingMenu: React.FC = () => {
   });
 
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginType: daoDetails?.plugins[0].id as PluginTypes,
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-  });
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
     pluginType,
-    {enabled: daoToken != null && !isOnWrongNetwork && isGovernanceEnabled}
+    {enabled: daoToken != null && !isOnWrongNetwork}
   );
 
   // The useDelegatee hook returns null when current delegate is connected address

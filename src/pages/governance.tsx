@@ -94,13 +94,15 @@ export const Governance: React.FC = () => {
         title={t('governance.emptyState.title')}
         subtitle={htmlIn(t)('governance.emptyState.subtitle')}
         Illustration={
-          <IllustrationHuman
-            body="VOTING"
-            expression="SMILE"
-            hairs="MIDDLE"
-            accessory="EARRINGS_RHOMBUS"
-            sunglasses="BIG_ROUNDED"
-          />
+          <div className="flex w-[320px] justify-center md:w-[640px]">
+            <IllustrationHuman
+              body="VOTING"
+              expression="SMILE"
+              hairs="MIDDLE"
+              accessory="EARRINGS_RHOMBUS"
+              sunglasses="BIG_ROUNDED"
+            />
+          </div>
         }
         primaryButton={{
           label: t('newProposal.title'),

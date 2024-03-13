@@ -76,13 +76,15 @@ export const Finance: React.FC = () => {
           title={t('finance.emptyState.title')}
           subtitle={htmlIn(t)('finance.emptyState.description')}
           Illustration={
-            <IllustrationHuman
-              body="CHART"
-              expression="EXCITED"
-              hairs="BUN"
-              object="WALLET"
-              objectPosition="right"
-            />
+            <div className="flex w-[320px] justify-center md:w-[640px]">
+              <IllustrationHuman
+                body="CHART"
+                expression="EXCITED"
+                hairs="BUN"
+                object="WALLET"
+                objectPosition="right"
+              />
+            </div>
           }
           primaryButton={{
             label: t('finance.emptyState.buttonLabel'),

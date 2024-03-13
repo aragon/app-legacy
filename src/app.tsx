@@ -1,9 +1,9 @@
-import {ApmRoutes} from '@elastic/apm-rum-react';
 import React, {Suspense, lazy, useEffect} from 'react';
 import {
   Navigate,
   Outlet,
   Route,
+  Routes,
   useLocation,
   useParams,
 } from 'react-router-dom';
@@ -74,7 +74,7 @@ export const App: React.FC = () => {
     <>
       {/* TODO: replace with loading indicator */}
       <Suspense fallback={<Loading />}>
-        <ApmRoutes>
+        <Routes>
           <Route element={<ExploreWrapper />}>
             <Route path="/" element={<ExplorePage />} />
           </Route>
@@ -139,7 +139,7 @@ export const App: React.FC = () => {
               />
             }
           />
-        </ApmRoutes>
+        </Routes>
       </Suspense>
       <DaoSelectMenu />
       <WalletMenu />

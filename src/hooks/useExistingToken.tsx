@@ -26,10 +26,7 @@ export const useExistingToken = ({
 } = {}) => {
   const {api: provider} = useProviders();
   const {data: daoDetailsFetched} = useDaoDetailsQuery();
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-    pluginType: daoDetails?.plugins[0].id as PluginTypes,
-  });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
   const dao = useMemo(
     () => daoDetails || daoDetailsFetched,

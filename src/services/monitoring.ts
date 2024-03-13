@@ -1,30 +1,38 @@
-import {init as initApm, ApmBase, AgentConfigOptions} from '@elastic/apm-rum';
+import * as Sentry from '@sentry/react';
 
 class Monitoring {
-  options: AgentConfigOptions;
-  apm?: ApmBase;
-
-  constructor() {
-    const version = import.meta.env.VITE_REACT_APP_DEPLOY_VERSION ?? '0.1.0';
-    const env = import.meta.env.VITE_REACT_APP_DEPLOY_ENVIRONMENT ?? 'local';
-
-    this.options = {
-      serviceName: 'aragon-app',
-      serverUrl: 'https://apm-monitoring.aragon.org',
-      serviceVersion: version,
-      environment: env,
-    };
-  }
-
-  enableMonitoring = (enable?: boolean) => {
+  public enableMonitoring = async (enable?: boolean) => {
     const serviceDisabled =
       import.meta.env.VITE_FEATURE_FLAG_MONITORING === 'false';
 
-    if (!enable || this.apm != null || serviceDisabled) {
+    if (!enable || serviceDisabled) {
       return;
     }
 
-    this.apm = initApm(this.options);
+    this.initSentry();
+  };
+
+  private initSentry = () => {
+    const sentryKey = import.meta.env.VITE_SENTRY_DNS;
+
+    if (sentryKey && sentryKey.length > 0) {
+      Sentry.init({
+        dsn: sentryKey,
+        release: import.meta.env.VITE_REACT_APP_DEPLOY_VERSION ?? '0.1.0',
+        environment:
+          import.meta.env.VITE_REACT_APP_DEPLOY_ENVIRONMENT ?? 'local',
+        integrations: [
+          Sentry.browserTracingIntegration(),
+          Sentry.replayIntegration({
+            maskAllText: true, // Masks all text to protect user privacy
+            blockAllMedia: true, // Blocks all media to ensure privacy
+          }),
+        ],
+        tracesSampleRate: 1.0,
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
+      });
+    }
   };
 }
 

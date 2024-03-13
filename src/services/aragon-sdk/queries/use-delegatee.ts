@@ -11,6 +11,7 @@ import {SupportedNetworks} from 'utils/constants';
 import {TokenVotingClient} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
+import {useGaslessGovernanceEnabled} from '../../../hooks/useGaslessGovernanceEnabled';
 
 const fetchDelegatee = async (
   params: IFetchDelegateeParams,
@@ -27,6 +28,8 @@ export const useDelegatee = (
   pluginType: PluginTypes,
   options: UseQueryOptions<string | null> = {}
 ) => {
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
+
   const client = usePluginClient(
     pluginType === GaslessPluginName
       ? GaslessPluginName
@@ -39,7 +42,12 @@ export const useDelegatee = (
     network: network as SupportedNetworks,
   };
 
-  if (client == null || address == null || network == null) {
+  if (
+    client == null ||
+    address == null ||
+    network == null ||
+    !isGovernanceEnabled
+  ) {
     options.enabled = false;
   }
 

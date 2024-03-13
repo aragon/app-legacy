@@ -3,14 +3,13 @@ import {useNetwork} from 'context/network';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
-import {PluginTypes} from './usePluginClient';
+import {GaslessPluginName, PluginTypes} from './usePluginClient';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
 import {Address, useBalance} from 'wagmi';
 import {useDaoToken} from './useDaoToken';
 import {useWallet} from './useWallet';
-import {useGaslessGovernanceEnabled} from './useGaslessGovernanceEnabled';
-import {useGaslessCensusId, useNonWrappedDaoMemberBalance} from './useCensus3';
+import {useCensus3DaoMembers} from './useCensus3DaoMembers';
 
 export type MultisigDaoMember = {
   address: string;
@@ -40,7 +39,12 @@ const compareAddresses = (addressA?: string | null, addressB?: string | null) =>
 export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
   'balance' in member;
 
-const sortDaoMembers =
+/**
+ * Sorts DAO members by voting power or delegations, moving the connected user at the top position.
+ * @param sort by delegations or votingPower by default
+ * @param userAddress
+ */
+export const sortDaoMembers =
   (sort?: DaoMemberSort, userAddress?: string | null) =>
   (a: DaoMember, b: DaoMember) => {
     const isConnectedUserA = compareAddresses(a.address, userAddress);
@@ -124,16 +128,9 @@ export const useDaoMembers = (
   const {address} = useWallet();
   const {data: daoToken} = useDaoToken(pluginAddress);
 
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginAddress,
-    pluginType,
-  });
-  const {censusId, censusSize: nonWrappedCensusSize} = useGaslessCensusId({
-    pluginType,
-    enable: !isGovernanceEnabled,
-  });
-
+  const isGaslessBased = pluginType === GaslessPluginName;
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
+
   const opts = options ? options : {};
   let memberCount = 0;
   const countOnly = opts?.countOnly || false;
@@ -163,24 +160,40 @@ export const useDaoMembers = (
     sdkToDaoMember(member, daoToken?.decimals)
   );
 
-  const {members: nonGovernanceMembers} = useNonWrappedDaoMemberBalance({
-    isGovernanceEnabled,
-    subgraphMembers: parsedSubgraphData as TokenDaoMember[],
-    censusId,
+  const enableCensus3 = enabled && isGaslessBased;
+  const census3Data = useCensus3DaoMembers({
+    holders: parsedSubgraphData as TokenDaoMember[],
+    pluginAddress,
+    pluginType,
+    options: {
+      ...options,
+      countOnly,
+      enabled: enableCensus3,
+      page: opts?.page,
+    },
   });
 
   const {data: userBalance} = useBalance({
     address: address as Address,
     token: daoToken?.address as Address,
     chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled: address != null && daoToken != null && !countOnly && enabled,
+    enabled:
+      address != null &&
+      daoToken != null &&
+      !countOnly &&
+      enabled &&
+      !enableCensus3,
   });
   const userBalanceNumber = Number(
     formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
   );
 
   const useGraphql =
-    !useSubgraph && pluginType != null && daoToken != null && enabled;
+    !useSubgraph &&
+    pluginType != null &&
+    daoToken != null &&
+    enabled &&
+    !enableCensus3;
 
   const {
     data: graphqlData,
@@ -206,12 +219,12 @@ export const useDaoMembers = (
       isError: false,
     };
 
+  if (enableCensus3) return census3Data;
+
   // token holders data gives us the total holders, so only need to call once
   // and return this number if countOnly === true
   if (countOnly) {
-    if (nonWrappedCensusSize !== null) {
-      memberCount = nonWrappedCensusSize;
-    } else if (useSubgraph) {
+    if (useSubgraph) {
       memberCount = parsedSubgraphData?.length || 0;
     } else {
       memberCount = graphqlData?.holders.totalHolders || 0;
@@ -262,9 +275,6 @@ export const useDaoMembers = (
           },
         ];
       } else {
-        if (!isGovernanceEnabled) {
-          return nonGovernanceMembers;
-        }
         return parsedSubgraphData;
       }
     } else {
@@ -275,10 +285,9 @@ export const useDaoMembers = (
   const sortedData = opts?.sort
     ? [...getCombinedData()].sort(sortDaoMembers(opts.sort, address))
     : getCombinedData();
-  memberCount =
-    nonWrappedCensusSize ?? useSubgraph
-      ? sortedData.length
-      : graphqlData?.holders.totalHolders ?? sortedData.length;
+  memberCount = useSubgraph
+    ? sortedData.length
+    : graphqlData?.holders.totalHolders ?? sortedData.length;
   const searchTerm = opts?.searchTerm;
   const filteredData = !searchTerm
     ? sortedData
