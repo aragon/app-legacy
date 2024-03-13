@@ -7,7 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {useWallet} from 'hooks/useWallet';
 import Logo from 'public/logo.svg';
 import {useGlobalModalContext} from 'context/globalModals';
-import {GridLayout} from 'components/layout';
+import {Container, GridLayout} from 'components/layout';
 import {FEEDBACK_FORM} from 'utils/constants';
 
 const ExploreNav: React.FC = () => {
@@ -81,10 +81,6 @@ const ExploreNav: React.FC = () => {
     </Container>
   );
 };
-
-export const Container = styled.header.attrs({
-  className: 'sticky top-0 w-full',
-})``;
 
 const Menu = styled.nav.attrs({
   className: 'py-4 xl:py-6',
