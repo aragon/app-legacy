@@ -3,8 +3,7 @@ import {styled} from 'styled-components';
 import {useScreen} from '../../hooks';
 import {shortenAddress, shortenDaoUrl} from '../../utils';
 import {AvatarDao} from '../avatar';
-import {Button, Icon, IconType} from '@aragon/ods';
-import {Dropdown} from '../dropdown';
+import {Button, Icon, IconType, Dropdown} from '@aragon/ods';
 import {Link} from '../link';
 import {ListItemLink} from '../listItem';
 
@@ -103,36 +102,35 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
 
   const daoCredentialsDropdownItems = useMemo(() => {
     const result = [
-      {
-        component: (
-          <CredentialsDropdownItem key={2} onClick={() => onCopy?.(daoAddress)}>
-            {shortenAddress(daoAddress)}
-            <Icon icon={IconType.COPY} className="text-neutral-400" />
-          </CredentialsDropdownItem>
-        ),
-      },
-      {
-        component: (
-          <CredentialsDropdownItem
-            key={3}
-            onClick={() => onCopy?.(`https://${daoUrl}`)}
-          >
-            {shortenDaoUrl(daoUrl)}
-            <Icon icon={IconType.COPY} className="text-neutral-400" />
-          </CredentialsDropdownItem>
-        ),
-      },
+      <Dropdown.Item
+        key={2}
+        onClick={() => onCopy?.(daoAddress)}
+        icon={IconType.COPY}
+        iconPosition="right"
+      >
+        {shortenAddress(daoAddress)}
+      </Dropdown.Item>,
+      <Dropdown.Item
+        key={3}
+        onClick={() => onCopy?.(`https://${daoUrl}`)}
+        icon={IconType.COPY}
+        iconPosition="right"
+      >
+        {shortenDaoUrl(daoUrl)}
+      </Dropdown.Item>,
     ];
 
     if (daoEnsName) {
-      result.unshift({
-        component: (
-          <CredentialsDropdownItem key={1} onClick={() => onCopy?.(daoEnsName)}>
-            {daoEnsName}
-            <Icon icon={IconType.COPY} className="text-neutral-400" />
-          </CredentialsDropdownItem>
-        ),
-      });
+      result.unshift(
+        <Dropdown.Item
+          key={1}
+          onClick={() => onCopy?.(daoEnsName)}
+          icon={IconType.COPY}
+          iconPosition="right"
+        >
+          {shortenDaoUrl(daoUrl)}
+        </Dropdown.Item>
+      );
     }
 
     return result;
@@ -144,18 +142,17 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
         <Content>
           <Title>{daoName}</Title>
 
-          <Dropdown
-            className="w-60"
+          <Dropdown.Container
             align="start"
-            trigger={
+            customTrigger={
               <CredentialsDropdownTrigger
                 label={daoEnsName ? daoEnsName : shortenAddress(daoAddress)}
                 iconRight={IconType.CHEVRON_DOWN}
               />
             }
-            sideOffset={8}
-            listItems={daoCredentialsDropdownItems}
-          />
+          >
+            {daoCredentialsDropdownItems}
+          </Dropdown.Container>
 
           <div className="mt-3">
             <Description ref={descriptionRef} {...{fullDescription: showAll}}>
@@ -215,9 +212,9 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           </LinksWrapper>
           <ActionContainer>
             {showDropdown && (
-              <Dropdown
+              <Dropdown.Container
                 align="start"
-                trigger={
+                customTrigger={
                   <Button
                     iconRight={IconType.CHEVRON_DOWN}
                     variant="tertiary"
@@ -226,16 +223,13 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                     All Links
                   </Button>
                 }
-                sideOffset={8}
-                className="max-w-xs"
-                listItems={links?.map(({label, href}, index: number) => ({
-                  component: (
-                    <div className="mb-3 p-2">
-                      <ListItemLink {...{label, href}} key={index} external />
-                    </div>
-                  ),
-                }))}
-              />
+              >
+                {links?.map(({label, href}, index: number) => (
+                  <div className="mb-3 p-2" key={index}>
+                    <ListItemLink {...{label, href}} external />
+                  </div>
+                ))}
+              </Dropdown.Container>
             )}
             <Button
               onClick={onFollowClick}
@@ -315,10 +309,6 @@ const ActionContainer = styled.div.attrs({
 const ActionWrapper = styled.div.attrs({
   className:
     'flex items-center md:space-x-6 justify-between md:justify-start w-full md:w-max space-y-6 md:space-y-0',
-})``;
-
-const CredentialsDropdownItem = styled.div.attrs({
-  className: `flex text-neutral-600 items-center justify-between gap-3 py-3 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400`,
 })``;
 
 const CredentialsDropdownTrigger = styled(Link).attrs({
