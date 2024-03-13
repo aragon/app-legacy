@@ -137,7 +137,7 @@ export const Community: React.FC = () => {
   if (!totalMemberCount && isDAOTokenWrapped) {
     return (
       <PageWrapper includeHeader={false}>
-        <Card className="mt-10 flex items-center justify-center">
+        <Card className="mt-6 flex items-center justify-center md:mt-10">
           <EmptyState
             heading={t('community.emptyState.title')}
             description={t('community.emptyState.desc', {

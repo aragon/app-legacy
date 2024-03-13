@@ -89,7 +89,7 @@ export const Governance: React.FC = () => {
   if (noProposals) {
     return (
       <PageWrapper includeHeader={false}>
-        <Card className="mt-10 flex items-center justify-center">
+        <Card className="mt-6 flex items-center justify-center md:mt-10">
           <EmptyState
             heading={t('governance.emptyState.title')}
             description={htmlIn(t)('governance.emptyState.description')}

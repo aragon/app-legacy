@@ -78,7 +78,7 @@ export const Finance: React.FC = () => {
     if (tokens.length === 0 && transfers.length === 0) {
       return (
         <PageWrapper includeHeader={false}>
-          <Card className="mt-10 flex items-center justify-center">
+          <Card className="mt-6 flex items-center justify-center md:mt-10">
             <EmptyState
               heading={t('finance.emptyState.title')}
               description={htmlIn(t)('finance.emptyState.description')}
