@@ -13,8 +13,6 @@ import {useScreen} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import {featureFlags} from 'utils/featureFlags';
 import {useGaslessGovernanceEnabled} from '../../hooks/useGaslessGovernanceEnabled';
-import {useDaoDetailsQuery} from '../../hooks/useDaoDetails';
-import {PluginTypes} from '../../hooks/usePluginClient';
 
 type MembersListProps = {
   members: DaoMember[];
@@ -37,11 +35,7 @@ export const MembersList: React.FC<MembersListProps> = ({
 
   // Gasless voting plugin support non wrapped tokens
   // Used to hide delegation column in case of gasless voting plugin
-  const {data: daoDetails} = useDaoDetailsQuery();
-  const {isGovernanceEnabled} = useGaslessGovernanceEnabled({
-    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
-    pluginType: daoDetails?.plugins[0].id as PluginTypes,
-  });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
   const isTokenBasedDao = token != null;
   const useCompactMode = isCompactMode ?? !isDesktop;

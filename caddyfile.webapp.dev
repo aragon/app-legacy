@@ -1,4 +1,0 @@
-:9080 {
-    root * /website
-    file_server
-}

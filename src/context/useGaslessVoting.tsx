@@ -1,25 +1,29 @@
+import {VoteProposalParams} from '@aragon/sdk-client';
+import {ProposalStatus} from '@aragon/sdk-client-common';
+import {
+  GaslessVotingClient,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 import {
   useClient,
   useClient as useVocdoniClient,
 } from '@vocdoni/react-providers';
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import {VoteProposalParams} from '@aragon/sdk-client';
 import {ErrElectionFinished, Vote} from '@vocdoni/sdk';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
 import {
-  StepsMap,
   StepStatus,
+  StepsMap,
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
 import {
-  GaslessVotingProposal,
-  GaslessVotingClient,
-} from '@vocdoni/gasless-voting';
-import {DetailedProposal} from '../utils/types';
-import {isGaslessProposal} from '../utils/proposals';
-import {GaslessPluginName, usePluginClient} from '../hooks/usePluginClient';
+  PluginTypes,
+  isGaslessVotingClient,
+  usePluginClient,
+} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
-import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
-import {ProposalStatus} from '@aragon/sdk-client-common';
+import {isGaslessProposal} from '../utils/proposals';
+import {DetailedProposal} from '../utils/types';
 
 export enum GaslessVotingStepId {
   CREATE_VOTE_ID = 'CREATE_VOTE_ID',
@@ -30,22 +34,28 @@ export type GaslessVotingSteps = StepsMap<GaslessVotingStepId>;
 
 const useGaslessVoting = () => {
   const {client: vocdoniClient} = useVocdoniClient();
-  const pluginClient = usePluginClient(
-    GaslessPluginName
-  ) as GaslessVotingClient;
   const {data: daoDetails} = useDaoDetailsQuery();
+
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+  const pluginClient = usePluginClient(pluginType);
 
   const getElectionId = useCallback(
     async (proposalId: string) => {
-      if (daoDetails === undefined) return '';
+      if (
+        !daoDetails ||
+        !pluginClient ||
+        !isGaslessVotingClient(pluginClient)
+      ) {
+        return '';
+      }
 
       const proposal = await pluginClient.methods.getProposal(
         proposalId,
-        daoDetails!.ensDomain,
-        daoDetails!.address
+        daoDetails.ensDomain,
+        daoDetails.address
       );
 
-      return proposal?.vochainProposalId || '';
+      return proposal?.vochainProposalId ?? '';
     },
     [daoDetails, pluginClient]
   );
@@ -64,9 +74,11 @@ const useGaslessVoting = () => {
   const submitVote = useCallback(
     async (vote: VoteProposalParams, electionId: string) => {
       const vocVote = new Vote([vote.vote - 1]); // See values on the enum, using vocdoni starts on 0
-      await vocdoniClient.setElectionId(electionId);
+
+      vocdoniClient.setElectionId(electionId);
+
       try {
-        return vocdoniClient.submitVote(vocVote);
+        return await vocdoniClient.submitVote(vocVote);
       } catch (e) {
         if (e instanceof ErrElectionFinished) {
           throw new Error('The election has finished');
@@ -147,12 +159,13 @@ export const useGaslessHasAlreadyVote = ({
   return {hasAlreadyVote};
 };
 
-export const useGaslessCommiteVotes = (
+export const useGaslessCommitteeVotes = (
   pluginAddress: string,
+  pluginType: PluginTypes,
   proposal: GaslessVotingProposal
 ) => {
   const [canApprove, setCanApprove] = useState(false);
-  const client = usePluginClient(GaslessPluginName) as GaslessVotingClient;
+  const client = usePluginClient(pluginType);
   const {address} = useWallet();
 
   const isExecutionPeriod = proposal.status === ProposalStatus.SUCCEEDED;
@@ -200,12 +213,14 @@ export const useGaslessCommiteVotes = (
   useEffect(() => {
     const checkCanVote = async () => {
       const canApprove =
-        (await client?.methods.isMultisigMember(pluginAddress, address!)) ||
-        false;
+        (await (client as GaslessVotingClient)?.methods.isMultisigMember(
+          pluginAddress,
+          address!
+        )) || false;
       setCanApprove(canApprove);
     };
 
-    if (!address || !client) {
+    if (!address || !client || !isGaslessVotingClient(client)) {
       return;
     }
 
@@ -213,7 +228,8 @@ export const useGaslessCommiteVotes = (
       setCanApprove(false);
       return;
     }
-    void checkCanVote();
+
+    checkCanVote();
   }, [address, client, isApprovalPeriod, pluginAddress, isUserApproved]);
 
   return {

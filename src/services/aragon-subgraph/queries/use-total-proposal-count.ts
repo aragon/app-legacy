@@ -85,7 +85,7 @@ const fetchGaslessVotingProposalCount = async (
     params: {pluginAddress: params.pluginAddress},
   });
 
-  return Number(data.plugins[0].dao?.proposalsCount) || 0;
+  return Number(data.plugins[0]?.dao?.proposalsCount) || 0;
 };
 
 const fetchTotalProposalCount = async (
