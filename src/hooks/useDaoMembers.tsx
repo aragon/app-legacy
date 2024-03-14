@@ -135,7 +135,6 @@ export const useDaoMembers = (
   let memberCount = 0;
   const countOnly = opts?.countOnly || false;
   const enabled = opts?.enabled || true;
-  let isCovalentFailed = false;
 
   // TODO: Remove this Goerli based network conditions
   const covalentSupportedNetwork = !(
@@ -148,9 +147,7 @@ export const useDaoMembers = (
   );
 
   let useSubgraph =
-    (pluginType != null && !isTokenBased) ||
-    !covalentSupportedNetwork ||
-    isCovalentFailed;
+    (pluginType != null && !isTokenBased) || !covalentSupportedNetwork;
 
   const {
     data: subgraphData = [],
@@ -214,8 +211,7 @@ export const useDaoMembers = (
   );
 
   // Fetch Subgraph when backend request fails to fetch the DAO members
-  if (isGraphqlError && !isCovalentFailed) {
-    isCovalentFailed = true;
+  if (isGraphqlError) {
     useSubgraph = true;
     refetch();
   }
