@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "author": "Aragon Association",
+  "homepage": ".",
   "license": "GPL-3.0",
   "scripts": {
     "dev": "vite --host",
