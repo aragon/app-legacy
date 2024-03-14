@@ -28,32 +28,29 @@ const ModalHeader: React.FC<Props> = props => {
 
   return (
     <Header>
-      <ButtonWrapper className="h-8 w-8">
-        {showBackButton && (
-          <Button
-            variant="tertiary"
-            size="sm"
-            iconLeft={IconType.CHEVRON_LEFT}
-            onClick={onBackButtonClicked}
-            {...otherProps}
-          />
-        )}
-      </ButtonWrapper>
+      {showBackButton && (
+        <Button
+          variant="tertiary"
+          size="sm"
+          iconLeft={IconType.CHEVRON_LEFT}
+          onClick={onBackButtonClicked}
+          {...otherProps}
+        />
+      )}
+
       <div className="flex-1">
         <Title>{title}</Title>
         {subTitle && <SubTitle dangerouslySetInnerHTML={{__html: subTitle}} />}
       </div>
-      <ButtonWrapper className="h-8 w-8">
-        {showCloseButton && (
-          <Button
-            variant="tertiary"
-            size="sm"
-            iconLeft={IconType.CLOSE}
-            onClick={onClose}
-            className="hidden xl:block"
-          />
-        )}
-      </ButtonWrapper>
+
+      {showCloseButton && (
+        <Button
+          variant="tertiary"
+          size="sm"
+          iconLeft={IconType.CLOSE}
+          onClick={onClose}
+        />
+      )}
     </Header>
   );
 };
@@ -61,7 +58,7 @@ const ModalHeader: React.FC<Props> = props => {
 export default ModalHeader;
 
 const Header = styled.div.attrs({
-  className: 'flex rounded-xl space-x-4 xl:space-x-6 p-4 xl:p-6 bg-neutral-0',
+  className: 'flex rounded-xl xl:space-x-6 p-4 xl:p-6 bg-neutral-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -76,5 +73,3 @@ const Title = styled.div.attrs({
 const SubTitle = styled.div.attrs({
   className: 'mt-1 text-sm leading-normal text-neutral-600',
 })``;
-
-const ButtonWrapper = styled.div.attrs({className: 'w-8 h-8' as string})``;

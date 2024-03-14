@@ -1434,9 +1434,9 @@
     "emptyState": {
       "ctaLabel": "Connect smart contract",
       "title": "No smart contract added",
-      "description": "Add a smart contract to interact with it. To learn more, read {{link}}.",
+      "description": "Add a smart contract to interact with it.",
       "modalTitle": "Smart contract composer",
-      "descriptionLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao"
+      "learnMore": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao"
     },
     "abi": {
       "abiInputLabel": "ABI function",

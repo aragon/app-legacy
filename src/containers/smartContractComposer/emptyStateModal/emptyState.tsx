@@ -4,8 +4,8 @@ import {useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
-import {htmlIn} from 'utils/htmlIn';
-import {CardEmptyState, IconType} from '@aragon/ods';
+import {EmptyState, IconType} from '@aragon/ods';
+import {ModalBody} from 'containers/networkErrorMenu';
 
 type Props = {
   isOpen: boolean;
@@ -27,28 +27,30 @@ const ContractEmptyState: React.FC<Props> = props => {
         title={t('scc.emptyState.modalTitle')}
         onClose={props.onClose}
         onBackButtonClicked={props.onBackButtonClicked}
+        showCloseButton
       />
-
-      <CardEmptyState
-        objectIllustration={{object: 'SMART_CONTRACT'}}
-        heading={t('scc.emptyState.title')}
-        description={htmlIn(t)('scc.emptyState.description')}
-        primaryButton={{
-          label: t('scc.emptyState.ctaLabel'),
-          onClick: () => {
-            trackEvent('newProposal_connectSmartContract_clicked', {
-              dao_address: daoAddressOrEns,
-            });
-            props.onConnectNew();
-          },
-        }}
-        secondaryButton={{
-          label: t('scc.emptyState.secondaryCtaLabel'),
-          href: t('scc.emptyState.descriptionLinkURL'),
-          iconRight: IconType.LINK_EXTERNAL,
-          target: '_blank',
-        }}
-      />
+      <ModalBody className="flex items-center overflow-hidden !pb-0">
+        <EmptyState
+          objectIllustration={{object: 'SMART_CONTRACT'}}
+          heading={t('scc.emptyState.title')}
+          description={t('scc.emptyState.description')}
+          primaryButton={{
+            label: t('scc.emptyState.ctaLabel'),
+            onClick: () => {
+              trackEvent('newProposal_connectSmartContract_clicked', {
+                dao_address: daoAddressOrEns,
+              });
+              props.onConnectNew();
+            },
+          }}
+          secondaryButton={{
+            label: t('navLinks.guide'),
+            href: t('scc.emptyState.learnMore'),
+            iconRight: IconType.LINK_EXTERNAL,
+            target: '_blank',
+          }}
+        />
+      </ModalBody>
     </ModalBottomSheetSwitcher>
   );
 };
