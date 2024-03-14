@@ -65,8 +65,8 @@ export default defineConfig(({mode}) => {
       target: 'es2020',
       rollupOptions: {
         input: {
-          main: resolve(__dirname, 'index.html'),
-          nested: resolve(__dirname, 'ipfs-404.html'),
+          main: resolve(__dirname, '/public/index.html'),
+          nested: resolve(__dirname, '/public/ipfs-404.html'),
         },
         plugins: [
           analyze({

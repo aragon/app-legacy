@@ -14,7 +14,7 @@ import {
 } from 'containers/networkErrorMenu';
 import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
-import WalletIcon from 'public/wallet.svg';
+import WalletIcon from 'assets/images/wallet.svg';
 
 interface ILoginRequiredProps {
   isOpen?: boolean;

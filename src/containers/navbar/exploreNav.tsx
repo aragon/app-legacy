@@ -5,7 +5,7 @@ import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useWallet} from 'hooks/useWallet';
-import Logo from 'public/logo.svg';
+import Logo from 'assets/images/logo.svg';
 import {useGlobalModalContext} from 'context/globalModals';
 import {Container, GridLayout} from 'components/layout';
 import {FEEDBACK_FORM} from 'utils/constants';

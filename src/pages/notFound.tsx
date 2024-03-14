@@ -4,10 +4,10 @@ import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 
 import {Container, GridLayout} from 'components/layout';
-import Logo from 'public/logoBlue.svg';
-import Logo404 from 'public/illu-custom.svg';
-import Green from 'public/circleGreenGradient.svg';
-import Purple from 'public/purpleGradient.svg';
+import Logo from 'assets/images/logoBlue.svg';
+import Logo404 from 'assets/images/illu-custom.svg';
+import Green from 'assets/images/circleGreenGradient.svg';
+import Purple from 'assets/images/purpleGradient.svg';
 import {Landing} from 'utils/paths';
 import {Button} from '@aragon/ods';
 

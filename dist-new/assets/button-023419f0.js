@@ -1,0 +1,1 @@
+import{fu as r,q as c,fv as u}from"./main-1e616d6f.js";const l=({value:t,label:e,disabled:s=!1,className:o})=>{const{bgWhite:n,selectedValue:a,onChange:i}=r();return c.jsx(u,{label:e,isActive:a===t,bgWhite:!n,mode:"ghost",size:"small",className:`justify-center whitespace-nowrap ${o}`,disabled:s,onClick:()=>i?.(t)})};export{l as O};

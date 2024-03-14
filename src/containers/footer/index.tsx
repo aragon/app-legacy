@@ -5,7 +5,7 @@ import {Icon, IconType} from '@aragon/ods';
 
 import {GridLayout} from 'components/layout';
 import useScreen from 'hooks/useScreen';
-import IconLogoBlue from 'public/iconLogoBlue.svg';
+import IconLogoBlue from 'assets/images/iconLogoBlue.svg';
 import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
 import {useWallet} from 'hooks/useWallet';
 

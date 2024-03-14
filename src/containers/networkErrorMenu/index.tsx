@@ -11,7 +11,7 @@ import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import {useSwitchNetwork} from 'hooks/useSwitchNetwork';
 import {useWallet} from 'hooks/useWallet';
-import WalletIcon from 'public/wallet.svg';
+import WalletIcon from 'assets/images/wallet.svg';
 import {CHAIN_METADATA} from 'utils/constants';
 import {handleClipboardActions, shortenAddress} from 'utils/library';
 
