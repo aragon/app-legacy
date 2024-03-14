@@ -1,7 +1,7 @@
 import React, {ButtonHTMLAttributes} from 'react';
 import styled from 'styled-components';
 
-import {IButtonBaseProps} from '@aragon/ods/dist/types/src/components/button/button.api';
+import {IButtonBaseProps} from '@aragon/ods';
 import {Button} from '@aragon/ods';
 
 type PageEmptyStateProps = {

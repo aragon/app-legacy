@@ -5,7 +5,6 @@ export * from './breadcrumb';
 export * from './button';
 export * from './cards';
 export * from './checkbox';
-export * from './dropdown';
 export * from './headers';
 export * from './input';
 export * from './label';

@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {ListItemAction} from '@aragon/ods-old';
-import {AlertInline} from '@aragon/ods';
+import {AlertInline, Dropdown} from '@aragon/ods';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
@@ -39,15 +38,17 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
     const result = [];
 
     if (allowRemove) {
-      result.push({
-        component: (
-          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-        ),
-        callback: () => {
-          removeAction(actionIndex);
-          alert(t('alert.chip.removedAction'));
-        },
-      });
+      result.push(
+        <Dropdown.Item
+          onClick={() => {
+            removeAction(actionIndex);
+            alert(t('alert.chip.removedAction'));
+          }}
+          key={0}
+        >
+          {t('labels.removeEntireAction')}
+        </Dropdown.Item>
+      );
     }
 
     return result;

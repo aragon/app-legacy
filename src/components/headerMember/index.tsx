@@ -1,12 +1,7 @@
 import React, {useMemo, ReactNode} from 'react';
 import {styled} from 'styled-components';
-import {
-  Dropdown,
-  AvatarWallet,
-  shortenAddress,
-  shortenDaoUrl,
-} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {AvatarWallet, shortenAddress, shortenDaoUrl} from '@aragon/ods-old';
+import {Button, IconType, Dropdown} from '@aragon/ods';
 
 export interface HeaderMemberStat {
   value: ReactNode;
@@ -41,54 +36,44 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
 
   const credentialsDropdownItems = useMemo(() => {
     const result = [
-      {
-        component: (
-          <CredentialsDropdownItem key={2} onClick={() => onCopy?.(address)}>
-            {shortenAddress(address)}
-            <Icon className="text-neutral-400" icon={IconType.COPY} />
-          </CredentialsDropdownItem>
-        ),
-      },
-      {
-        component: (
-          <CredentialsDropdownItem
-            key={3}
-            onClick={() => onCopy?.(`https://${profileUrl}`)}
-          >
-            {shortenDaoUrl(profileUrl)}
-            <Icon className="text-neutral-400" icon={IconType.COPY} />
-          </CredentialsDropdownItem>
-        ),
-      },
-      {
-        component: <Break key={4} />,
-      },
-      {
-        component: (
-          <CredentialsDropdownItem
-            key={5}
-            onClick={() => window.open(explorerUrl, '_blank')}
-          >
-            {explorerName}
-            <Icon className="text-neutral-400" icon={IconType.LINK_EXTERNAL} />
-          </CredentialsDropdownItem>
-        ),
-      },
+      <Dropdown.Item
+        key={2}
+        onClick={() => onCopy?.(address)}
+        icon={IconType.COPY}
+      >
+        {shortenAddress(address)}
+      </Dropdown.Item>,
+      <Dropdown.Item
+        key={3}
+        onClick={() => onCopy?.(`https://${profileUrl}`)}
+        icon={IconType.COPY}
+      >
+        {shortenDaoUrl(profileUrl)}
+      </Dropdown.Item>,
+      <Break key={4} />,
+      <Dropdown.Item
+        key={5}
+        onClick={() => window.open(explorerUrl, '_blank')}
+        icon={IconType.LINK_EXTERNAL}
+      >
+        {explorerName}
+      </Dropdown.Item>,
     ];
 
     if (ens) {
-      result.unshift({
-        component: (
-          <CredentialsDropdownItem key={1} onClick={() => onCopy?.(ens)}>
-            {ens}
-            <Icon className="text-neutral-400" icon={IconType.COPY} />
-          </CredentialsDropdownItem>
-        ),
-      });
+      result.unshift(
+        <Dropdown.Item
+          key={1}
+          onClick={() => onCopy?.(ens)}
+          icon={IconType.COPY}
+        >
+          {ens}
+        </Dropdown.Item>
+      );
     }
 
     return result;
-  }, [address, profileUrl, explorerName, ens, onCopy, explorerUrl]);
+  }, [address, ens, explorerName, explorerUrl, onCopy, profileUrl]);
 
   return (
     <div className="relative">
@@ -98,10 +83,9 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
             <Title>{name}</Title>
 
             <ActionsContainer>
-              <Dropdown
-                className="z-20 w-60"
+              <Dropdown.Container
                 align="start"
-                trigger={
+                customTrigger={
                   <Button
                     iconRight={IconType.CHEVRON_DOWN}
                     variant="tertiary"
@@ -111,9 +95,9 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
                     {shortenAddress(address)}
                   </Button>
                 }
-                sideOffset={8}
-                listItems={credentialsDropdownItems}
-              />
+              >
+                {credentialsDropdownItems}
+              </Dropdown.Container>
 
               {actions}
             </ActionsContainer>
@@ -172,10 +156,6 @@ const Title = styled.h1.attrs({
 
 const ActionsContainer = styled.div.attrs({
   className: 'flex justify-between items-center gap-4 mt-6',
-})``;
-
-const CredentialsDropdownItem = styled.div.attrs({
-  className: `flex text-neutral-600 items-center justify-between gap-3 py-3 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400`,
 })``;
 
 const Break = styled.hr.attrs({

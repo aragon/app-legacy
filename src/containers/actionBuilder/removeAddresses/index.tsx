@@ -1,5 +1,5 @@
-import {Dropdown, Label, ListItemAction} from '@aragon/ods-old';
-import {Button, EmptyState, IconType} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
+import {Button, EmptyState, IconType, Dropdown} from '@aragon/ods';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -85,12 +85,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
 
   const rowActions = [
     {
-      component: (
-        <ListItemAction
-          title={t('labels.whitelistWallets.deleteEntry')}
-          bgWhite
-        />
-      ),
+      label: t('labels.whitelistWallets.deleteEntry'),
       callback: (rowIndex: number) => {
         handleRowDelete(rowIndex);
         alert(t('alert.chip.removedAddress'));
@@ -100,22 +95,27 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
 
   const methodActions = (() => {
     const result = [
-      {
-        component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
-        callback: handleResetAll,
-      },
+      <Dropdown.Item
+        onClick={handleResetAll}
+        key={0}
+        disabled={memberWallets?.length === 0}
+      >
+        {t('labels.resetAction')}
+      </Dropdown.Item>,
     ];
 
     if (allowRemove) {
-      result.push({
-        component: (
-          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-        ),
-        callback: () => {
-          removeAction(actionIndex);
-          alert(t('alert.chip.removedAction'));
-        },
-      });
+      result.push(
+        <Dropdown.Item
+          onClick={() => {
+            removeAction(actionIndex);
+            alert(t('alert.chip.removedAction'));
+          }}
+          key={1}
+        >
+          {t('labels.removeEntireAction')}
+        </Dropdown.Item>
+      );
     }
 
     return result;
@@ -196,11 +196,9 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
               {t('labels.selectWallet')}
             </Button>
 
-            <Dropdown
-              side="bottom"
+            <Dropdown.Container
               align="start"
-              sideOffset={4}
-              trigger={
+              customTrigger={
                 <Button
                   size="lg"
                   variant="tertiary"
@@ -208,18 +206,11 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                   data-testid="trigger"
                 />
               }
-              listItems={[
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.deleteAllEntries')}
-                      bgWhite
-                    />
-                  ),
-                  callback: handleDeleteAll,
-                },
-              ]}
-            />
+            >
+              <Dropdown.Item onClick={handleDeleteAll}>
+                {t('labels.whitelistWallets.deleteAllEntries')}
+              </Dropdown.Item>
+            </Dropdown.Container>
           </FormItem>
           <AccordionSummary total={controlledWallets.length} />
         </>

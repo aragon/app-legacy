@@ -1,8 +1,7 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
-import {ListItemAction} from '@aragon/ods-old';
-import {Button, IconType, AlertInline} from '@aragon/ods';
+import {Button, IconType, AlertInline, Dropdown} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -464,54 +463,42 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   ]);
 
   const metadataAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isMetadataChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentMetadata,
-    },
+    <Dropdown.Item
+      disabled={!isMetadataChanged}
+      onClick={setCurrentMetadata}
+      key={0}
+    >
+      {t('settings.resetChanges')}
+    </Dropdown.Item>,
   ];
 
   const communityAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isCommunityChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentCommunity,
-    },
+    <Dropdown.Item
+      disabled={!isCommunityChanged}
+      onClick={setCurrentCommunity}
+      key={0}
+    >
+      {t('settings.resetChanges')}
+    </Dropdown.Item>,
   ];
   const governanceAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isGovernanceChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentGovernance,
-    },
+    <Dropdown.Item
+      disabled={!isGovernanceChanged}
+      onClick={setCurrentGovernance}
+      key={0}
+    >
+      {t('settings.resetChanges')}
+    </Dropdown.Item>,
   ];
 
   const gaslessAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isGaslessChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentGasless,
-    },
+    <Dropdown.Item
+      disabled={!isGaslessChanged}
+      onClick={setCurrentGasless}
+      key={0}
+    >
+      {t('settings.resetChanges')}
+    </Dropdown.Item>,
   ];
 
   if (isLoading && !dataFetched) {

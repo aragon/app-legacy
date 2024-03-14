@@ -1,6 +1,6 @@
 import React from 'react';
-import {Dropdown, InputValue, ListItemAction} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {InputValue} from '@aragon/ods-old';
+import {Button, IconType, Dropdown} from '@aragon/ods';
 import {Controller, useFormContext, ValidateResult} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -75,11 +75,9 @@ export const Row = ({
                 }}
               />
             </InputContainer>
-            <Dropdown
-              side="bottom"
+            <Dropdown.Container
               align="start"
-              sideOffset={4}
-              trigger={
+              customTrigger={
                 <Button
                   size="lg"
                   variant="tertiary"
@@ -87,33 +85,24 @@ export const Row = ({
                   data-testid="trigger"
                 />
               }
-              listItems={[
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.resetEntry')}
-                      bgWhite
-                    />
-                  ),
-                  callback: () => {
-                    props.onResetEntry(index);
-                    alert(t('alert.chip.resetAddress'));
-                  },
-                },
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.deleteEntry')}
-                      bgWhite
-                    />
-                  ),
-                  callback: () => {
-                    props.onDeleteEntry(index);
-                    alert(t('alert.chip.removedAddress'));
-                  },
-                },
-              ]}
-            />
+            >
+              <Dropdown.Item
+                onClick={() => {
+                  props.onResetEntry(index);
+                  alert(t('alert.chip.resetAddress'));
+                }}
+              >
+                {t('labels.whitelistWallets.resetEntry')}
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  props.onDeleteEntry(index);
+                  alert(t('alert.chip.removedAddress'));
+                }}
+              >
+                {t('labels.whitelistWallets.deleteEntry')}
+              </Dropdown.Item>
+            </Dropdown.Container>
           </Container>
         )}
       />

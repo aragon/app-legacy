@@ -234,7 +234,7 @@ export const Dashboard: React.FC = () => {
           primaryButton={{
             label: buttonLabel[daoCreationState],
             iconLeft: buttonIcon[daoCreationState],
-            onClick: () => handleOpenYourDaoClick,
+            onClick: handleOpenYourDaoClick,
           }}
         />
       </Container>
