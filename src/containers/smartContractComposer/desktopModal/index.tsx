@@ -164,6 +164,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
             variant="primary"
             iconLeft={IconType.BLOCKCHAIN_SMARTCONTRACT}
             onClick={() => {
+              setValue('writeAsProxy', true);
               setValue(
                 'selectedSC',
                 selectedSC.implementationData as SmartContract
