@@ -230,7 +230,7 @@ export const useDaoMembers = (
     if (useSubgraph) {
       memberCount = parsedSubgraphData?.length || 0;
     } else {
-      memberCount = graphqlData?.holders.totalHolders || 0;
+      memberCount = graphqlData?.holders.totalHolders ?? 0;
     }
     return {
       data: {
