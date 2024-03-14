@@ -95,7 +95,7 @@ const sdkToDaoMember = (
     address,
     balance: Number(formatUnits(balance, tokenDecimals)),
     votingPower: Number(formatUnits(votingPower, tokenDecimals)),
-    delegatee: delegatee === null ? address : delegatee,
+    delegatee: delegatee ?? address,
     delegators: delegators.map(delegator => delegator.address),
   };
 };
@@ -146,14 +146,35 @@ export const useDaoMembers = (
     network === 'base-goerli'
   );
 
-  let useSubgraph =
-    (pluginType != null && !isTokenBased) || !covalentSupportedNetwork;
+  const useGraphql =
+    isTokenBased &&
+    covalentSupportedNetwork &&
+    pluginType != null &&
+    daoToken != null &&
+    enabled;
+
+  const {
+    data: graphqlData,
+    isError: isGraphqlError,
+    isLoading: isGraphqlLoading,
+  } = useTokenHolders(
+    {
+      network,
+      tokenAddress: daoToken?.address as string,
+      page: opts?.page,
+    },
+    {enabled: useGraphql}
+  );
+
+  const useSubgraph =
+    (pluginType != null && !isTokenBased) ||
+    !covalentSupportedNetwork ||
+    (covalentSupportedNetwork && isGraphqlError);
 
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
     isLoading: isSubgraphLoading,
-    refetch,
   } = useMembers(
     {pluginAddress, pluginType},
     {enabled: useSubgraph && enabled}
@@ -189,32 +210,6 @@ export const useDaoMembers = (
   const userBalanceNumber = Number(
     formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
   );
-
-  const useGraphql =
-    !useSubgraph &&
-    pluginType != null &&
-    daoToken != null &&
-    enabled &&
-    !enableCensus3;
-
-  const {
-    data: graphqlData,
-    isError: isGraphqlError,
-    isLoading: isGraphqlLoading,
-  } = useTokenHolders(
-    {
-      network,
-      tokenAddress: daoToken?.address as string,
-      page: opts?.page,
-    },
-    {enabled: useGraphql}
-  );
-
-  // Fetch Subgraph when backend request fails to fetch the DAO members
-  if (isGraphqlError) {
-    useSubgraph = true;
-    refetch();
-  }
 
   if (!enabled)
     return {
