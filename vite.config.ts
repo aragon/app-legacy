@@ -39,6 +39,7 @@ export default defineConfig(({mode}) => {
   const analyze = process.env.ANALYZE === 'true';
 
   return {
+    base: '',
     plugins: [
       htmlEnvPlugin(mode),
       react(),
