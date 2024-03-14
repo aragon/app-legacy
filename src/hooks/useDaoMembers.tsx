@@ -135,6 +135,7 @@ export const useDaoMembers = (
   let memberCount = 0;
   const countOnly = opts?.countOnly || false;
   const enabled = opts?.enabled || true;
+  let isCovalentFailed = false;
 
   // TODO: Remove this Goerli based network conditions
   const covalentSupportedNetwork = !(
@@ -146,12 +147,16 @@ export const useDaoMembers = (
     network === 'base-goerli'
   );
 
-  const useSubgraph =
-    (pluginType != null && !isTokenBased) || !covalentSupportedNetwork;
+  let useSubgraph =
+    (pluginType != null && !isTokenBased) ||
+    !covalentSupportedNetwork ||
+    isCovalentFailed;
+
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
     isLoading: isSubgraphLoading,
+    refetch,
   } = useMembers(
     {pluginAddress, pluginType},
     {enabled: useSubgraph && enabled}
@@ -207,6 +212,12 @@ export const useDaoMembers = (
     },
     {enabled: useGraphql}
   );
+
+  if (isGraphqlError && !isCovalentFailed) {
+    isCovalentFailed = true;
+    useSubgraph = true;
+    refetch();
+  }
 
   if (!enabled)
     return {
