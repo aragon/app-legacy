@@ -1,13 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
-import {
-  Dropdown,
-  InputValue,
-  Label,
-  ListItemAction,
-  NumberInput,
-  TextInput,
-} from '@aragon/ods-old';
-import {Button, IconType, AlertInline} from '@aragon/ods';
+import {InputValue, Label, NumberInput, TextInput} from '@aragon/ods-old';
+import {Button, IconType, AlertInline, Dropdown} from '@aragon/ods';
 import Big from 'big.js';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -207,29 +200,26 @@ const DropdownMenu: React.FC<DropdownProps> = ({
   const {alert} = useAlertContext();
 
   return (
-    <Dropdown
-      disabled={disabled}
+    <Dropdown.Container
       align="start"
-      trigger={
+      disabled={disabled}
+      customTrigger={
         <Button
           variant="tertiary"
           size="lg"
           iconLeft={IconType.DOTS_VERTICAL}
         />
       }
-      sideOffset={8}
-      listItems={[
-        {
-          component: (
-            <ListItemAction title={t('labels.removeWallet')} bgWhite />
-          ),
-          callback: () => {
-            onDelete(fieldIndex);
-            alert(t('alert.chip.removedAddress'));
-          },
-        },
-      ]}
-    />
+    >
+      <Dropdown.Item
+        onClick={() => {
+          onDelete(fieldIndex);
+          alert(t('alert.chip.removedAddress'));
+        }}
+      >
+        {t('labels.removeWallet')}
+      </Dropdown.Item>
+    </Dropdown.Container>
   );
 };
 

@@ -23,7 +23,6 @@ import {erc1155TokenABI} from 'abis/erc1155TokenABI';
 import {erc721TokenABI} from 'abis/erc721TokenABI';
 import {aragonTokenABI} from 'abis/aragonTokenABI';
 import {queryClient} from 'index';
-import {VocdoniSDKClient} from '@vocdoni/sdk';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -127,18 +126,6 @@ export async function getPastVotingPower(
 }
 
 /**
- * Returns the voting power for the specified address at specified gasless census id.
- * This is the way to get the voting power for gasless processes.
- */
-export async function getCensus3VotingPower(
-  address: string,
-  censusId: string,
-  vocdoniClient: VocdoniSDKClient
-) {
-  return (await vocdoniClient.fetchProof(censusId, address)).weight;
-}
-
-/**
  * Returns the voting power for the specified address at the current time
  * @param address Address of the contract
  * @param account Address to check the voting power
@@ -217,6 +204,21 @@ export async function isERC721(
     return true;
   } catch (err) {
     return false;
+  }
+}
+
+export async function getAllowance(
+  address: string,
+  owner: string,
+  spender: string,
+  provider: EthersProviders.Provider
+): Promise<BigNumber> {
+  const contract = new ethers.Contract(address, erc20TokenABI, provider);
+  try {
+    const allowance = await contract.allowance(owner, spender);
+    return allowance;
+  } catch (err) {
+    return BigNumber.from(0);
   }
 }
 

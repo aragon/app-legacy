@@ -12,6 +12,10 @@ import AddExistingToken from './addExistingToken';
 import CreateNewToken from './createNewToken';
 import {featureFlags} from '../../utils/featureFlags';
 import GaslessSelector from '../../components/gaslessSelector';
+import {
+  GASLESS_SUPPORTED_NETWORKS,
+  getSupportedNetworkByChainId,
+} from 'utils/constants';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
@@ -35,6 +39,16 @@ const SetupCommunityForm: React.FC = () => {
     {label: t('labels.yes'), selectValue: false},
   ];
 
+  let showGaslessVoting = false;
+  const network = getSupportedNetworkByChainId(blockchain.id);
+  if (network) {
+    showGaslessVoting = !!(
+      membership === 'token' &&
+      featureFlags.getValue('VITE_FEATURE_FLAG_GASLESS_PLUGIN') === 'true' &&
+      GASLESS_SUPPORTED_NETWORKS.includes(network)
+    );
+  }
+
   const resetTokenFields = () => {
     resetField('tokenName');
     resetField('tokenSymbol');
@@ -48,26 +62,30 @@ const SetupCommunityForm: React.FC = () => {
   };
 
   const handleCheckBoxSelected = (
-    membership: CreateDaoFormData['membership'],
+    newMembership: CreateDaoFormData['membership'],
     onChange: (...event: unknown[]) => void
   ) => {
     // reset opposite fields and set default eligibility for
     // proposal creation
-    if (membership === 'token') {
-      resetMultisigFields();
-      setValue('eligibilityType', 'token');
-    } else {
+    if (newMembership !== membership) {
       resetTokenFields();
-      setValue('eligibilityType', 'multisig');
+      resetMultisigFields();
+      setValue('votingType', 'onChain');
+
+      if (newMembership === 'token') {
+        setValue('eligibilityType', 'token');
+      } else {
+        setValue('eligibilityType', 'multisig');
+      }
+      onChange(newMembership);
     }
-    onChange(membership);
   };
 
   return (
     <>
       {/* Eligibility */}
       <FormItem>
-        <Label label={t('createDAO.step3.membership') as string} />
+        <Label label={t('createDAO.step3.membership')} />
         <Controller
           name="membership"
           rules={{required: 'Validate'}}
@@ -90,68 +108,52 @@ const SetupCommunityForm: React.FC = () => {
                 multiSelect={false}
                 {...(value === 'multisig' ? {type: 'active'} : {})}
               />
-
-              {/* Address List Dao has been disabled */}
-              {/* <CheckboxListItem
-                  label={t('createDAO.step3.walletMemberShip')}
-                  helptext={t('createDAO.step3.walletMemberShipSubtitle')}
-                  onClick={() => {
-                    resetTokenFields();
-                    onChange('wallet');
-                  }}
-                  multiSelect={false}
-                  {...(value === 'wallet' ? {type: 'active'} : {})}
-                /> */}
             </>
           )}
         />
       </FormItem>
 
-      {membership === 'token' &&
-        featureFlags.getValue('VITE_FEATURE_FLAG_GASLESS_PLUGIN') ===
-          'true' && (
-          <FormSection>
-            <Label label={t('createDAO.step3.blockChainVoting.label')} />
-            <Controller
-              name="votingType"
-              rules={{required: 'Validate'}}
-              control={control}
-              defaultValue="onChain"
-              render={({field: {onChange, value}}) => (
-                <>
-                  <CheckboxListItem
-                    label={t(
-                      'createDAO.step3.blockChainVoting.optionOnchainLabel',
-                      {blockchainName: blockchain.label}
-                    )}
-                    helptext={t(
-                      'createDAO.step3.blockChainVoting.optionOnchainDesc',
-                      {blockchainName: blockchain.label}
-                    )}
-                    multiSelect={false}
-                    onClick={() => {
-                      onChange('onChain');
-                    }}
-                    {...(value === 'onChain' ? {type: 'active'} : {})}
-                  />
-                  <GaslessSelector
-                    onChange={() => {
-                      onChange('gasless');
-                    }}
-                    value={value}
-                  />
-                </>
-              )}
-            />
-          </FormSection>
-        )}
+      {showGaslessVoting && (
+        <FormSection>
+          <Label label={t('createDAO.step3.blockChainVoting.label')} />
+          <Controller
+            name="votingType"
+            rules={{required: 'Validate'}}
+            control={control}
+            defaultValue="onChain"
+            render={({field: {onChange, value}}) => (
+              <>
+                <CheckboxListItem
+                  label={t(
+                    'createDAO.step3.blockChainVoting.optionOnchainLabel',
+                    {blockchainName: blockchain.label}
+                  )}
+                  helptext={t(
+                    'createDAO.step3.blockChainVoting.optionOnchainDesc',
+                    {blockchainName: blockchain.label}
+                  )}
+                  multiSelect={false}
+                  onClick={() => {
+                    onChange('onChain');
+                  }}
+                  {...(value === 'onChain' ? {type: 'active'} : {})}
+                />
+                <GaslessSelector
+                  onChange={() => {
+                    onChange('gasless');
+                  }}
+                  value={value}
+                />
+              </>
+            )}
+          />
+        </FormSection>
+      )}
 
       {membership === 'multisig' && (
-        <>
-          <FormItem>
-            <MultisigWallets />
-          </FormItem>
-        </>
+        <FormItem>
+          <MultisigWallets />
+        </FormItem>
       )}
 
       {/* Token creation */}

@@ -11,6 +11,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -83,10 +84,13 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
     setContext(sdkContext);
   }, [network, signer]);
 
-  const value: ClientContext = {
-    client,
-    context,
-  };
+  const value: ClientContext = useMemo(
+    () => ({
+      client,
+      context,
+    }),
+    [client, context]
+  );
 
   return (
     <UseClientContext.Provider value={value}>

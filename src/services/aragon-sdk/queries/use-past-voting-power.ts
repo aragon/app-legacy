@@ -4,36 +4,14 @@ import {useCallback} from 'react';
 
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {getCensus3VotingPower, getPastVotingPower} from 'utils/tokens';
+import {getPastVotingPower} from 'utils/tokens';
 import type {IFetchPastVotingPowerParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
-import {useGaslessCensusId} from 'hooks/useCensus3';
-import {useDaoDetailsQuery} from '../../../hooks/useDaoDetails';
-import {GaslessPluginName, PluginTypes} from '../../../hooks/usePluginClient';
+import {fetchVotingPowerByCensusId} from '../../vocdoni-census3/census3-service';
 import {useClient} from '@vocdoni/react-providers';
-
-const useGaslessPastVotingPower = () => {
-  const {data: daoDetails} = useDaoDetailsQuery();
-  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
-  const {client: vocdoniClient} = useClient();
-  const {censusId} = useGaslessCensusId({
-    pluginType,
-    enable: pluginType === GaslessPluginName,
-  });
-  const getGaslessPastVotingPower = useCallback(
-    async (address: string) => {
-      if (!censusId) return BigNumber.from(0);
-      const votingPower = await getCensus3VotingPower(
-        address,
-        censusId,
-        vocdoniClient
-      );
-      return BigNumber.from(votingPower);
-    },
-    [censusId, vocdoniClient]
-  );
-  return {censusId, getGaslessPastVotingPower};
-};
+import {useGaslessCensusId} from '../../../hooks/useCensus3';
+import {GaslessPluginName, PluginTypes} from '../../../hooks/usePluginClient';
+import {useDaoDetailsQuery} from '../../../hooks/useDaoDetails';
 
 export const usePastVotingPower = (
   params: IFetchPastVotingPowerParams,
@@ -41,13 +19,26 @@ export const usePastVotingPower = (
 ) => {
   const {api: provider} = useProviders();
   const {network} = useNetwork();
-  const {censusId, getGaslessPastVotingPower} = useGaslessPastVotingPower();
+
+  const {client: vocdoniClient} = useClient();
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const {censusId} = useGaslessCensusId({
+    pluginType,
+    enable: pluginType === GaslessPluginName,
+  });
 
   return useQuery(
     aragonSdkQueryKeys.pastVotingPower(params),
     () =>
       censusId !== null
-        ? getGaslessPastVotingPower(params.address)
+        ? BigNumber.from(
+            fetchVotingPowerByCensusId({
+              vocdoniClient,
+              holderAddress: params.address,
+              censusId,
+            })
+          )
         : getPastVotingPower(
             params.tokenAddress,
             params.address,
@@ -63,24 +54,38 @@ export const usePastVotingPowerAsync = () => {
   const queryClient = useQueryClient();
   const {api: provider} = useProviders();
   const {network} = useNetwork();
-  const {censusId, getGaslessPastVotingPower} = useGaslessPastVotingPower();
+
+  const {client: vocdoniClient} = useClient();
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const {censusId} = useGaslessCensusId({
+    pluginType,
+    enable: pluginType === GaslessPluginName,
+  });
 
   const fetchPastVotingPowerAsync = useCallback(
     (params: IFetchPastVotingPowerParams) =>
       queryClient.fetchQuery({
         queryKey: aragonSdkQueryKeys.pastVotingPower(params),
-        queryFn: () =>
-          censusId !== null
-            ? getGaslessPastVotingPower(params.address)
-            : getPastVotingPower(
-                params.tokenAddress,
-                params.address,
-                params.blockNumber,
-                provider,
-                network
-              ),
+        queryFn: async () => {
+          if (censusId) {
+            const vp = await fetchVotingPowerByCensusId({
+              vocdoniClient,
+              holderAddress: params.address,
+              censusId,
+            });
+            return BigNumber.from(vp);
+          }
+          return getPastVotingPower(
+            params.tokenAddress,
+            params.address,
+            params.blockNumber,
+            provider,
+            network
+          );
+        },
       }),
-    [queryClient, censusId, getGaslessPastVotingPower, provider, network]
+    [queryClient, censusId, vocdoniClient, provider, network]
   );
 
   return fetchPastVotingPowerAsync;

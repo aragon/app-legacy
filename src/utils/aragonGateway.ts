@@ -17,8 +17,6 @@ class AragonGateway {
   private ipfsVersion = '1.0';
   private baseUrl = import.meta.env.VITE_GATEWAY_URL;
 
-  public backendUrl = `${this.baseUrl}/graphql`;
-
   getRpcProvider = (
     chainIdOrNetwork: number | SupportedNetworks
   ): JsonRpcProvider | null => {

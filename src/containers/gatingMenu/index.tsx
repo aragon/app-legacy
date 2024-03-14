@@ -2,18 +2,17 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {
   ModalBody,
-  StyledImage,
+  Title,
   WarningContainer,
   WarningTitle,
 } from 'containers/networkErrorMenu';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
-import WalletIcon from 'public/wallet.svg';
+
 import {Community, Governance} from 'utils/paths';
 import {
   Erc20WrapperTokenDetails,
@@ -21,12 +20,11 @@ import {
 } from '@aragon/sdk-client';
 import {formatUnits, toDisplayEns} from 'utils/library';
 import {useExistingToken} from 'hooks/useExistingToken';
-import {htmlIn} from 'utils/htmlIn';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
-import {Button} from '@aragon/ods';
+import {Button, IconType, IllustrationObject} from '@aragon/ods';
 
 export const GatingMenu: React.FC = () => {
   const {close, isOpen} = useGlobalModalContext('gating');
@@ -88,19 +86,27 @@ export const GatingMenu: React.FC = () => {
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={handleCloseMenu}>
+      <ModalHeader>
+        <Title>{t('modalAlert.wrapToken.header')}</Title>
+        <Button
+          variant="tertiary"
+          iconLeft={IconType.CLOSE}
+          size="sm"
+          onClick={() => handleCloseMenu()}
+        />
+      </ModalHeader>
       <ModalBody>
-        <StyledImage src={WalletIcon} />
+        <div className="mt-6 flex justify-end"></div>
+        <IllustrationObject object="WALLET" height={160} />
         {displayWrapToken && (
           <WarningContainer>
             <WarningTitle>{t('modalAlert.wrapToken.title')}</WarningTitle>
             <WarningDescription>
-              <span
-                dangerouslySetInnerHTML={{
-                  __html: htmlIn(t)('modalAlert.wrapToken.desc', {
-                    tokenSymbol: wrapTokenSymbol,
-                  }),
-                }}
-              />
+              <span>
+                {t('modalAlert.wrapToken.desc', {
+                  tokenSymbol: wrapTokenSymbol,
+                })}
+              </span>
             </WarningDescription>
           </WarningContainer>
         )}
@@ -128,13 +134,21 @@ export const GatingMenu: React.FC = () => {
           </WarningContainer>
         )}
         {displayWrapToken ? (
-          <div className="grid grid-cols-2 gap-6">
-            <Button onClick={handleWrapTokens} size="lg" variant="primary">
-              {t('modalAlert.wrapToken.ctaLabel')}
-            </Button>
-            <Button variant="tertiary" onClick={handleCloseMenu} size="lg">
-              {t('modalAlert.wrapToken.cancleLabel')}
-            </Button>
+          <div>
+            <div className="grid grid-cols-2 gap-3">
+              <Button onClick={handleWrapTokens} size="lg" variant="primary">
+                {t('modalAlert.wrapToken.ctaLabel')}
+              </Button>
+              <Button
+                href={t('modalAlert.wrapToken.descLinkURL')}
+                size="lg"
+                variant="secondary"
+                iconRight={IconType.LINK_EXTERNAL}
+                target="_blank"
+              >
+                {t('navLinks.guide')}
+              </Button>
+            </div>
           </div>
         ) : (
           <Button onClick={handleCloseMenu} size="lg" variant="primary">
@@ -149,3 +163,12 @@ export const GatingMenu: React.FC = () => {
 const WarningDescription = styled.p.attrs({
   className: 'text-base text-neutral-500 text-center',
 })``;
+
+const ModalHeader = styled.div.attrs({
+  className: 'flex items-center p-6 bg-neutral-0 rounded-xl gap-4 sticky top-0',
+})`
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
+`;

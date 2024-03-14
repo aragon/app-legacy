@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-  Dropdown,
-  ListItemAction,
-  ListItemActionProps,
-  ListItemProps,
-} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {ListItemAction, ListItemActionProps} from '@aragon/ods-old';
+import {Icon, IconType, Dropdown} from '@aragon/ods';
 
 type Props = Omit<ListItemActionProps, 'iconLeft'> & {
   logo?: string;
-  dropdownItems?: ListItemProps[];
+  dropdownItems?: React.ReactNode[];
 };
 
 export const ListItemContract: React.FC<Props> = ({
@@ -20,16 +15,16 @@ export const ListItemContract: React.FC<Props> = ({
 }) => {
   if (dropdownItems && !iconRight) {
     iconRight = (
-      <Dropdown
+      <Dropdown.Container
         align="start"
-        trigger={
+        customTrigger={
           <button>
             <Icon icon={IconType.DOTS_VERTICAL} />
           </button>
         }
-        sideOffset={8}
-        listItems={dropdownItems}
-      />
+      >
+        {dropdownItems}
+      </Dropdown.Container>
     );
   }
   return (

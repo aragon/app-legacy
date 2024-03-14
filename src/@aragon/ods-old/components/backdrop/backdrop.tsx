@@ -67,7 +67,7 @@ type StyledBackdropProps = {
 
 export const BackdropStyles = ({visible}: StyledBackdropProps) => {
   const className: string = visible
-    ? 'visible opacity-100 z-20'
+    ? 'visible opacity-100'
     : 'invisible opacity-0';
   const css: React.CSSProperties = {
     position: 'fixed',
@@ -81,6 +81,7 @@ export const BackdropStyles = ({visible}: StyledBackdropProps) => {
     backdropFilter: 'blur(24px)',
     cursor: 'pointer',
     marginTop: 0,
+    zIndex: 'var(--ods-dialog-overlay-z-index)',
   };
 
   return {className, css};

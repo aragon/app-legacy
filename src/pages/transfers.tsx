@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {ButtonGroup, Dropdown, ListItemAction, Option} from '@aragon/ods-old';
-import {Button, Icon, IconType} from '@aragon/ods';
+import {ButtonGroup, Option} from '@aragon/ods-old';
+import {Button, Dropdown, Icon, IconType} from '@aragon/ods';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import {useTranslation} from 'react-i18next';
@@ -73,18 +73,6 @@ export const Transfers: React.FC = () => {
     return <Loading />;
   }
 
-  const dropdownActions = [
-    {
-      component: <ListItemAction title={t('label.exportCSV')} bgWhite />,
-      callback: () => {
-        // Otherwise modal doesn't open proper;y on desktop
-        setTimeout(() => {
-          open('exportCsv');
-        }, 100);
-      },
-    },
-  ];
-
   /**
    * Note: We can add a nested iterator for both sections and transfer cards
    */
@@ -131,19 +119,23 @@ export const Transfers: React.FC = () => {
               </ButtonGroup>
 
               {!noTransfers && (
-                <Dropdown
-                  side="bottom"
-                  align="end"
-                  listItems={dropdownActions}
-                  disabled={dropdownActions.length === 0}
-                  trigger={
+                <Dropdown.Container
+                  customTrigger={
                     <Button
                       variant="tertiary"
                       size="md"
                       iconLeft={IconType.DOTS_VERTICAL}
                     />
                   }
-                />
+                >
+                  <Dropdown.Item
+                    onClick={() => {
+                      open('exportCsv');
+                    }}
+                  >
+                    {t('label.exportCSV')}
+                  </Dropdown.Item>
+                </Dropdown.Container>
               )}
             </div>
           </div>

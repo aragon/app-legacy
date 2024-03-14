@@ -1,7 +1,6 @@
 import React, {ReactNode} from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
-import {Dropdown, ListItemProps} from '@aragon/ods-old';
-import {Button, AlertInline, Icon, IconType} from '@aragon/ods';
+import {Dropdown, Button, AlertInline, Icon, IconType} from '@aragon/ods';
 import styled from 'styled-components';
 import {shortenAddress} from 'utils/library';
 
@@ -17,8 +16,9 @@ export type AccordionMethodType = {
   alertLabel?: string;
   methodDescription?: string | React.ReactNode;
   additionalInfo?: string;
-  dropdownItems?: ListItemProps[];
+  dropdownItems?: React.ReactNode[];
   customHeader?: React.ReactNode;
+  emptyItem?: boolean;
   children: ReactNode;
 };
 
@@ -26,7 +26,11 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   children,
   ...props
 }) => (
-  <Accordion.Root type="single" collapsible defaultValue="item-2">
+  <Accordion.Root
+    type="single"
+    collapsible
+    defaultValue={props.emptyItem ? '' : 'item-2'}
+  >
     <AccordionItem name="item-2" {...props}>
       {children}
     </AccordionItem>
@@ -61,6 +65,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
   additionalInfo,
   dropdownItems = [],
   customHeader,
+  emptyItem = false,
   children,
 }) => (
   <Accordion.Item value={name}>
@@ -102,27 +107,29 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
 
           <VStack>
             {type === 'action-builder' && (
-              <Dropdown
-                side="bottom"
+              <Dropdown.Container
                 align="end"
-                listItems={dropdownItems}
-                disabled={dropdownItems.length === 0}
-                trigger={
+                customTrigger={
                   <Button
                     variant="tertiary"
                     size="md"
                     iconLeft={IconType.DOTS_VERTICAL}
                   />
                 }
-              />
+                disabled={dropdownItems.length === 0}
+              >
+                {dropdownItems}
+              </Dropdown.Container>
             )}
-            <Accordion.Trigger asChild>
-              <AccordionButton
-                variant={type === 'action-builder' ? 'tertiary' : 'secondary'}
-                size="md"
-                iconLeft={IconType.CHEVRON_DOWN}
-              />
-            </Accordion.Trigger>
+            {!emptyItem && (
+              <Accordion.Trigger asChild>
+                <AccordionButton
+                  variant={type === 'action-builder' ? 'tertiary' : 'secondary'}
+                  size="md"
+                  iconLeft={IconType.CHEVRON_DOWN}
+                />
+              </Accordion.Trigger>
+            )}
           </VStack>
         </HStack>
 

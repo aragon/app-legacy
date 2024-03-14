@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {ListItemAction} from '@aragon/ods-old';
-import {AlertInline} from '@aragon/ods';
+import {AlertInline, Dropdown} from '@aragon/ods';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
@@ -39,21 +38,25 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
     const result = [];
 
     if (allowRemove) {
-      result.push({
-        component: (
-          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-        ),
-        callback: () => {
-          removeAction(actionIndex);
-          alert(t('alert.chip.removedAction'));
-        },
-      });
+      result.push(
+        <Dropdown.Item
+          onClick={() => {
+            removeAction(actionIndex);
+            alert(t('alert.chip.removedAction'));
+          }}
+          key={0}
+        >
+          {t('labels.removeEntireAction')}
+        </Dropdown.Item>
+      );
     }
 
     return result;
   })();
 
   if (actionData) {
+    const actionHasInputs = actionData.inputs && actionData.inputs.length > 0;
+
     return (
       <AccordionMethod
         type="action-builder"
@@ -63,9 +66,10 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
         // TODO: How should we add verified badge? (Etherscan/Sourcify verification status)?
         verified
         methodDescription={actionData.notice}
+        emptyItem={!actionHasInputs}
       >
-        <FormItem className="space-y-6 rounded-b-xl">
-          {actionData.inputs?.length > 0 ? (
+        {actionHasInputs && (
+          <FormItem className="space-y-6 rounded-b-xl">
             <div className="space-y-4 pb-3">
               {(actionData.inputs as Input[])
                 .filter(input => input.type)
@@ -96,10 +100,10 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
                   message={t('newProposal.configureActions.alertCritical')}
                   variant="critical"
                 />
-              )}{' '}
+              )}
             </div>
-          ) : null}
-        </FormItem>
+          </FormItem>
+        )}
       </AccordionMethod>
     );
   }

@@ -1,33 +1,26 @@
 import React, {useCallback, useState} from 'react';
-import {
-  Dropdown,
-  ListItemAction,
-  Pagination,
-  SearchInput,
-} from '@aragon/ods-old';
-import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
+import {Pagination, SearchInput} from '@aragon/ods-old';
+import {Button, Card, EmptyState, Icon, IconType, Dropdown} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {MembersList} from 'components/membersList';
-import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
-import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
-import PageEmptyState from 'containers/pageEmptyState';
-import {htmlIn} from 'utils/htmlIn';
 import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 import {featureFlags} from 'utils/featureFlags';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useGaslessGovernanceEnabled} from 'hooks/useGaslessGovernanceEnabled';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -47,19 +40,19 @@ export const Community: React.FC = () => {
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
+  const pluginAddress = daoDetails?.plugins[0].instanceAddress as string;
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+
   const apiPage = Math.floor(((page - 1) / 1000) * MEMBERS_PER_PAGE);
   const {
     data: {members, filteredMembers, daoToken, memberCount: totalMemberCount},
     isLoading: membersLoading,
-  } = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes,
-    {
-      searchTerm: debouncedTerm,
-      sort,
-      page: apiPage,
-    }
-  );
+  } = useDaoMembers(pluginAddress, pluginType, {
+    searchTerm: debouncedTerm,
+    sort,
+    page: apiPage,
+  });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
   const {isDAOTokenWrapped, isTokenMintable} = useExistingToken({
     daoToken,
@@ -84,8 +77,6 @@ export const Community: React.FC = () => {
 
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
-  const isGasless =
-    (daoDetails?.plugins[0].id as PluginTypes) === GaslessPluginName;
   const enableSearchSort = totalMemberCount <= 1000;
   const enableDelegation =
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
@@ -140,36 +131,39 @@ export const Community: React.FC = () => {
 
   if (!totalMemberCount && isDAOTokenWrapped) {
     return (
-      <PageEmptyState
-        title={t('community.emptyState.title')}
-        subtitle={htmlIn(t)('community.emptyState.desc', {
-          tokenSymbol:
-            (daoToken as Erc20WrapperTokenDetails)?.underlyingToken?.symbol ||
-            daoToken?.symbol,
-        })}
-        Illustration={
-          <div className="flex w-[320px] justify-center md:w-[640px]">
-            <IllustrationHuman
-              body="ELEVATING"
-              expression="SMILE_WINK"
-              hairs="MIDDLE"
-              sunglasses="BIG_ROUNDED"
-              accessory="BUDDHA"
-            />
-          </div>
-        }
-        primaryButton={{
-          label: t('community.emptyState.ctaLabel'),
-          onClick: handleOpenModal,
-        }}
-      />
+      <PageWrapper includeHeader={false}>
+        <Card className="mt-6 flex items-center justify-center md:mt-10">
+          <EmptyState
+            heading={t('community.emptyState.title')}
+            description={t('community.emptyState.desc', {
+              tokenSymbol:
+                (daoToken as Erc20WrapperTokenDetails)?.underlyingToken
+                  ?.symbol || daoToken?.symbol,
+            })}
+            humanIllustration={{
+              body: 'ELEVATING',
+              expression: 'SMILE_WINK',
+              hairs: 'MIDDLE',
+              sunglasses: 'BIG_ROUNDED',
+              accessory: 'BUDDHA',
+            }}
+            primaryButton={{
+              label: t('community.emptyState.ctaLabel'),
+              onClick: handleOpenModal,
+            }}
+            secondaryButton={{
+              label: t('navLinks.guide'),
+              href: t('community.emptyState.descLinkURL'),
+              target: '_blank',
+              iconRight: IconType.LINK_EXTERNAL,
+            }}
+          />
+        </Card>
+      </PageWrapper>
     );
   }
 
-  const isGaslessNonWrappedDao =
-    isGasless && !isDAOTokenWrapped && !isTokenMintable;
-
-  const pageTitle = isGaslessNonWrappedDao
+  const pageTitle = !isGovernanceEnabled
     ? t('labels.activeMembers', {count: totalMemberCount})
     : `${totalMemberCount} ${t('labels.members')}`;
 
@@ -182,6 +176,15 @@ export const Community: React.FC = () => {
             primaryBtnProps: {
               label: t('labels.manageMember'),
               onClick: handlePrimaryClick,
+            },
+          }
+        : !isGovernanceEnabled
+        ? {
+            description: t('explore.explorer.tokenBased'),
+            secondaryBtnProps: {
+              label: t('labels.seeAllHolders'),
+              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
+              onClick: handleSecondaryButtonClick,
             },
           }
         : isDAOTokenWrapped
@@ -221,15 +224,6 @@ export const Community: React.FC = () => {
               onClick: navigateToTokenHoldersChart,
             },
           }
-        : isGaslessNonWrappedDao
-        ? {
-            description: t('explore.explorer.tokenBased'),
-            secondaryBtnProps: {
-              label: t('labels.seeAllHolders'),
-              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-              onClick: handleSecondaryButtonClick,
-            },
-          }
         : {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
@@ -256,45 +250,8 @@ export const Community: React.FC = () => {
               />
             )}
             {!walletBased && enableSearchSort && enableDelegation && (
-              <Dropdown
-                align="end"
-                className="p-2"
-                style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
-                sideOffset={8}
-                listItems={[
-                  {
-                    callback: () => setSort('votingPower'),
-                    component: (
-                      <ListItemAction
-                        title={t('community.sortByVotingPower.default')}
-                        bgWhite={true}
-                        mode={sort === 'votingPower' ? 'selected' : 'default'}
-                        iconRight={
-                          sort === 'votingPower' ? (
-                            <Icon icon={IconType.CHECKMARK} />
-                          ) : undefined
-                        }
-                      />
-                    ),
-                  },
-                  {
-                    callback: () => setSort('delegations'),
-                    component: (
-                      <ListItemAction
-                        title={t('community.sortByDelegations.default')}
-                        bgWhite={true}
-                        mode={sort === 'delegations' ? 'selected' : 'default'}
-                        iconRight={
-                          sort === 'delegations' ? (
-                            <Icon icon={IconType.CHECKMARK} />
-                          ) : undefined
-                        }
-                      />
-                    ),
-                  },
-                ]}
-                side="bottom"
-                trigger={
+              <Dropdown.Container
+                customTrigger={
                   <Button
                     variant="tertiary"
                     iconLeft={IconType.SORT_ASC}
@@ -303,7 +260,25 @@ export const Community: React.FC = () => {
                     {sortLabel}
                   </Button>
                 }
-              />
+                align="end"
+              >
+                <Dropdown.Item
+                  icon={sort === 'votingPower' ? IconType.CHECKMARK : undefined}
+                  iconPosition="right"
+                  selected={sort === 'votingPower'}
+                  onClick={() => setSort('votingPower')}
+                >
+                  {t('community.sortByVotingPower.default')}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  icon={sort === 'delegations' ? IconType.CHECKMARK : undefined}
+                  iconPosition="right"
+                  selected={sort === 'delegations'}
+                  onClick={() => setSort('delegations')}
+                >
+                  {t('community.sortByDelegations.default')}
+                </Dropdown.Item>
+              </Dropdown.Container>
             )}
           </div>
 
@@ -313,11 +288,9 @@ export const Community: React.FC = () => {
           ) : (
             <>
               {debouncedTerm !== '' && !filteredMemberCount ? (
-                <StateEmpty
-                  type="Object"
-                  mode="inline"
-                  object="MAGNIFYING_GLASS"
-                  title={t('labels.noResults')}
+                <EmptyState
+                  objectIllustration={{object: 'MAGNIFYING_GLASS'}}
+                  heading={t('labels.noResults')}
                   description={t('labels.noResultsSubtitle')}
                 />
               ) : (

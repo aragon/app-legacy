@@ -58,6 +58,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
     includeStepper = true,
     wizardTitle,
     wizardDescription,
+    wizardDescriptionLink,
     hideWizard,
     fullWidth,
     customHeader,
@@ -132,7 +133,8 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
               includeStepper={includeStepper}
               processName={wizardProcessName}
               title={wizardTitle || ''}
-              description={wizardDescription || ''}
+              description={wizardDescription}
+              descriptionLink={wizardDescriptionLink}
               totalSteps={totalSteps}
               currentStep={currentFormStep}
               renderHtml
