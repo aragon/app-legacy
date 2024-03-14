@@ -213,6 +213,7 @@ export const useDaoMembers = (
     {enabled: useGraphql}
   );
 
+  // Fetch Subgraph when backend request fails to fetch the DAO members
   if (isGraphqlError && !isCovalentFailed) {
     isCovalentFailed = true;
     useSubgraph = true;
