@@ -216,7 +216,8 @@ const Main = styled.div.attrs({
 })``;
 
 const Container = styled.div.attrs({
-  className: 'flex h-full bg-neutral-0 p-12 pt-0 justify-center items-center',
+  className:
+    'flex h-full bg-neutral-0 overflow-hidden pt-0 justify-center items-center',
 })``;
 
 const StyledModal = styled(Modal).attrs({

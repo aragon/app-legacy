@@ -58,5 +58,5 @@ const ContractEmptyState: React.FC<Props> = props => {
 export default ContractEmptyState;
 
 const ModalBody = styled.div.attrs({
-  className: 'flex flex-col justify-center items-center px-6 overflow-hidden',
+  className: 'flex flex-col justify-center items-center overflow-hidden',
 })``;
