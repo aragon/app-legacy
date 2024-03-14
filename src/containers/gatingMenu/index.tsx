@@ -2,11 +2,9 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {
   ModalBody,
-  StyledImage,
   Title,
   WarningContainer,
   WarningTitle,
@@ -14,7 +12,7 @@ import {
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
-import WalletIcon from 'public/wallet.svg';
+
 import {Community, Governance} from 'utils/paths';
 import {
   Erc20WrapperTokenDetails,
@@ -26,7 +24,7 @@ import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
-import {Button, IconType} from '@aragon/ods';
+import {Button, IconType, IllustrationObject} from '@aragon/ods';
 
 export const GatingMenu: React.FC = () => {
   const {close, isOpen} = useGlobalModalContext('gating');
@@ -99,7 +97,7 @@ export const GatingMenu: React.FC = () => {
       </ModalHeader>
       <ModalBody>
         <div className="mt-6 flex justify-end"></div>
-        <StyledImage src={WalletIcon} />
+        <IllustrationObject object="WALLET" height={160} />
         {displayWrapToken && (
           <WarningContainer>
             <WarningTitle>{t('modalAlert.wrapToken.title')}</WarningTitle>

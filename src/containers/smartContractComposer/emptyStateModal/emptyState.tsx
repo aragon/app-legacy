@@ -5,7 +5,7 @@ import {trackEvent} from 'services/analytics';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
 import {EmptyState, IconType} from '@aragon/ods';
-import {ModalBody} from 'containers/networkErrorMenu';
+import styled from 'styled-components';
 
 type Props = {
   isOpen: boolean;
@@ -29,7 +29,7 @@ const ContractEmptyState: React.FC<Props> = props => {
         onBackButtonClicked={props.onBackButtonClicked}
         showCloseButton
       />
-      <ModalBody className="flex items-center overflow-hidden !pb-0">
+      <ModalBody>
         <EmptyState
           objectIllustration={{object: 'SMART_CONTRACT'}}
           heading={t('scc.emptyState.title')}
@@ -56,3 +56,8 @@ const ContractEmptyState: React.FC<Props> = props => {
 };
 
 export default ContractEmptyState;
+
+const ModalBody = styled.div.attrs({
+  className:
+    'flex flex-col justify-center items-center vo px-6 overflow-hidden',
+})``;
