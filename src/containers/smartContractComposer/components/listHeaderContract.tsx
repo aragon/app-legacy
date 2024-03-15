@@ -35,6 +35,41 @@ export const ListHeaderContract: React.FC<Props> = ({
   // @ts-ignore
   const contracts = getValues('contracts');
 
+  const handleDeleteContract = () => {
+    if (sc.implementationData) {
+      onRemoveContract(sc.address);
+    } else {
+      onRemoveContract(sc.proxyAddress ?? sc.address);
+    }
+  };
+
+  const handleWriteAsProxy = () => {
+    if (sc.implementationData) {
+      const selectedAction = sc.implementationData.actions.filter(
+        a =>
+          a.type === 'function' &&
+          (a.stateMutability === 'payable' ||
+            a.stateMutability === 'nonpayable')
+      )?.[0];
+
+      setValue('writeAsProxy', true);
+      setValue('selectedSC', sc.implementationData);
+      setValue('selectedAction', selectedAction);
+    } else {
+      const contract = contracts.filter(c => c.address === sc.proxyAddress)[0];
+      const selectedAction = contract.actions.filter(
+        a =>
+          a.type === 'function' &&
+          (a.stateMutability === 'payable' ||
+            a.stateMutability === 'nonpayable')
+      )?.[0];
+
+      setValue('writeAsProxy', false);
+      setValue('selectedSC', contract);
+      setValue('selectedAction', selectedAction);
+    }
+  };
+
   const listItems = [
     <Link
       key={0}
@@ -65,13 +100,7 @@ export const ListHeaderContract: React.FC<Props> = ({
       iconRight={IconType.CLOSE}
       label={t('scc.detailContract.dropdownRemoveLabel')}
       className="my-2 w-full justify-between px-4"
-      onClick={() => {
-        if (sc.implementationData) {
-          onRemoveContract(sc.proxyAddress as string);
-        } else {
-          onRemoveContract(sc.address);
-        }
-      }}
+      onClick={handleDeleteContract}
     />,
   ];
 
@@ -88,36 +117,7 @@ export const ListHeaderContract: React.FC<Props> = ({
         }
         iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
         className="my-2 w-full justify-between px-4"
-        onClick={() => {
-          if (sc.implementationData) {
-            setValue('writeAsProxy', true);
-            setValue('selectedSC', sc.implementationData as SmartContract);
-            setValue(
-              'selectedAction',
-              (sc.implementationData as SmartContract).actions.filter(
-                a =>
-                  a.type === 'function' &&
-                  (a.stateMutability === 'payable' ||
-                    a.stateMutability === 'nonpayable')
-              )?.[0]
-            );
-          } else {
-            const contract = contracts.filter(
-              c => c.address === sc.proxyAddress
-            )[0];
-            setValue('writeAsProxy', false);
-            setValue('selectedSC', contract);
-            setValue(
-              'selectedAction',
-              contract.actions.filter(
-                a =>
-                  a.type === 'function' &&
-                  (a.stateMutability === 'payable' ||
-                    a.stateMutability === 'nonpayable')
-              )?.[0]
-            );
-          }
-        }}
+        onClick={handleWriteAsProxy}
       />
     );
   }
@@ -135,13 +135,15 @@ export const ListHeaderContract: React.FC<Props> = ({
     </Dropdown.Container>
   );
 
+  const listItemSubtitle = sc.proxyAddress
+    ? `${t('scc.listContracts.proxyContractAddressLabel', {
+        contractAddress: shortenAddress(sc.address),
+      })}`
+    : shortenAddress(sc.address);
+
   const liaProps = {
     title: sc.name,
-    subtitle: sc.proxyAddress
-      ? `${t('scc.listContracts.proxyContractAddressLabel', {
-          contractAddress: shortenAddress(sc.address),
-        })}`
-      : shortenAddress(sc.address),
+    subtitle: listItemSubtitle,
     bgWhite: true,
     logo: sc.logo,
     iconRight,
