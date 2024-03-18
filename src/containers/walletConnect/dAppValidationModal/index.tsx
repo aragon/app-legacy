@@ -1,6 +1,7 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {AlertInline, Button, IconType} from '@aragon/ods';
 import {Label, WalletInputLegacy} from '@aragon/ods-old';
-import {Button, AlertInline, IconType} from '@aragon/ods';
+import {SessionTypes} from '@walletconnect/types';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
   useFormContext,
@@ -9,20 +10,14 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {SessionTypes} from '@walletconnect/types';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
-import useScreen from 'hooks/useScreen';
-import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
+import useScreen from 'hooks/useScreen';
 import {TransactionState as ConnectionState} from 'utils/constants/misc';
+import {handleClipboardActions} from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
-import {
-  AllowListDApp,
-  AllowListDApps,
-  enableConnectAnyDApp,
-} from '../selectAppModal';
 import {METADATA_NAME_ERROR} from '../walletConnectProvider/useWalletConnectInterceptor';
 
 type Props = {
@@ -30,20 +25,13 @@ type Props = {
   onConnectionSuccess: (session: SessionTypes.Struct) => void;
   onClose: () => void;
   isOpen: boolean;
-  selecteddApp?: AllowListDApp;
 };
 
 // Wallet connect id input name
 export const WC_URI_INPUT_NAME = 'wcID';
 
 const WCdAppValidation: React.FC<Props> = props => {
-  const {
-    onBackButtonClicked,
-    onConnectionSuccess,
-    onClose,
-    isOpen,
-    selecteddApp,
-  } = props;
+  const {onBackButtonClicked, onConnectionSuccess, onClose, isOpen} = props;
 
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -130,20 +118,8 @@ const WCdAppValidation: React.FC<Props> = props => {
   const handleConnectDApp = useCallback(async () => {
     setConnectionStatus(ConnectionState.LOADING);
 
-    const appInAllowlist = AllowListDApps.filter(
-      dApp =>
-        dApp.name === selecteddApp?.name &&
-        selecteddApp.name !== 'Connect any app'
-    );
-
     try {
-      const session = await wcConnect({
-        uri,
-        metadataName:
-          enableConnectAnyDApp && appInAllowlist.length === 0
-            ? undefined
-            : selecteddApp?.name.toLowerCase(),
-      });
+      const session = await wcConnect({uri});
       setSessionTopic(session.pairingTopic);
       setConnectionStatus(ConnectionState.SUCCESS);
     } catch (error: unknown) {
@@ -153,7 +129,7 @@ const WCdAppValidation: React.FC<Props> = props => {
         setConnectionStatus(ConnectionState.ERROR);
       }
     }
-  }, [uri, wcConnect, selecteddApp?.name]);
+  }, [uri, wcConnect]);
 
   // Reset the connection state if the session has been terminated on the dApp
   useEffect(() => {
@@ -162,7 +138,7 @@ const WCdAppValidation: React.FC<Props> = props => {
     if (isSuccess && currentSession == null) {
       resetConnectionState();
     }
-  }, [connectionStatus, currentSession, resetConnectionState, selecteddApp]);
+  }, [connectionStatus, currentSession, resetConnectionState]);
 
   const disableCta = uri == null || Boolean(errors[WC_URI_INPUT_NAME]);
 
@@ -174,16 +150,11 @@ const WCdAppValidation: React.FC<Props> = props => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (!selecteddApp) {
-    return null;
-  }
-
-  const dappName = selecteddApp.shortName || selecteddApp.name;
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={dappName}
+        title={t('wc.validation.modalTitle')}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
@@ -192,17 +163,12 @@ const WCdAppValidation: React.FC<Props> = props => {
         <FormGroup>
           <Label
             label={t('modal.dappConnect.validation.codeInputLabel')}
-            helpText={t('modal.dappConnect.validation.codeInputHelp', {
-              dappName,
-            })}
+            helpText={t('modal.dappConnect.validation.codeInputHelp')}
           />
-          {/* TODO: Please add validation when format of wc Code is known */}
           <Controller
             name={WC_URI_INPUT_NAME}
             control={control}
-            rules={{
-              validate: validateURI,
-            }}
+            rules={{validate: validateURI}}
             defaultValue=""
             render={({
               field: {name, onBlur, onChange, value},
@@ -252,7 +218,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               message={t('modal.dappConnect.validation.alertSuccess', {
-                dappName,
+                dappName: currentSession?.peer.metadata.name ?? '',
               })}
               variant="success"
             />
@@ -261,9 +227,7 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.INCORRECT_URI && (
           <AlertWrapper>
             <AlertInline
-              message={t('modal.dappConnect.validation.alertCriticalQRcode', {
-                dappName,
-              })}
+              message={t('modal.dappConnect.validation.alertCriticalQRcode')}
               variant="critical"
             />
           </AlertWrapper>
@@ -271,9 +235,7 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.ERROR && (
           <AlertWrapper>
             <AlertInline
-              message={t('modal.dappConnect.validation.alertCriticalGeneral', {
-                dappName,
-              })}
+              message={t('modal.dappConnect.validation.alertCriticalGeneral')}
               variant="critical"
             />
           </AlertWrapper>
