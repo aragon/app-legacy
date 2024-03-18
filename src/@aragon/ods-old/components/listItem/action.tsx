@@ -2,6 +2,7 @@ import React, {type ButtonHTMLAttributes} from 'react';
 import {styled} from 'styled-components';
 
 import {AvatarDao} from '../avatar';
+import {ITagProps, Tag} from '@aragon/ods';
 
 type CustomButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -23,6 +24,7 @@ export type ListItemActionProps = CustomButtonProps & {
    * Bold text, left aligned. Mandatory
    */
   title: string;
+  tag?: ITagProps;
   /**
    * Normal font, small. Optional. Displayed below the title, left aligned
    */
@@ -39,6 +41,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
   subtitle,
   iconLeft,
   iconRight,
+  tag,
   mode = 'default',
   truncateText = false,
   ...props
@@ -50,13 +53,16 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
         {/* This could be done with label. However, I can't get the label's text
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
-          <p
-            className={`font-semibold ft-text-base ${
-              truncateText ? 'truncate' : ''
-            }`}
-          >
-            {title}
-          </p>
+          <div className="flex items-center gap-2">
+            <p
+              className={`font-semibold ft-text-base ${
+                truncateText ? 'truncate' : ''
+              }`}
+            >
+              {title}
+            </p>
+            {tag && <Tag {...tag} />}
+          </div>
           {subtitle && (
             <p
               className={`text-neutral-500 ft-text-sm ${
