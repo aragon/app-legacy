@@ -63,17 +63,16 @@ const InputForm: React.FC<InputFormProps> = ({
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const [selectedAction, selectedSC, sccActions, writeAsProxy]: [
+  const [selectedAction, selectedSC, sccActions]: [
     SmartContractAction,
     SmartContract,
     Record<string, Record<string, Record<string, unknown>>>,
-    boolean,
   ] = useWatch({
-    name: ['selectedAction', 'selectedSC', 'sccActions', 'writeAsProxy'],
+    name: ['selectedAction', 'selectedSC', 'sccActions'],
   });
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
-  const {setValue, resetField, getValues} = useFormContext();
+  const {setValue, resetField} = useFormContext();
   const [another, setAnother] = useState(false);
 
   // add payable input to the selected action if it is a payable method
@@ -92,27 +91,10 @@ const InputForm: React.FC<InputFormProps> = ({
       name: 'external_contract_action',
     });
 
-    // check if the action is being written as a proxy
-    let contractAddress = selectedSC.address;
-    let contractName = selectedSC.name;
-
-    if (writeAsProxy) {
-      // get proxy contract
-      const contracts: SmartContract[] = getValues('contracts');
-      const contract = contracts.filter(
-        c => c.address === selectedSC.proxyAddress
-      )[0];
-
-      if (contract.proxy) {
-        contractName = contract.name;
-        contractAddress = contract.address;
-      }
-    }
-
     resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}.name`, 'external_contract_action');
-    setValue(`actions.${actionIndex}.contractAddress`, contractAddress);
-    setValue(`actions.${actionIndex}.contractName`, contractName);
+    setValue(`actions.${actionIndex}.contractAddress`, selectedSC.address);
+    setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
     setValue(`actions.${actionIndex}.functionName`, selectedAction.name);
     setValue(`actions.${actionIndex}.notice`, selectedAction.notice);
 
@@ -160,24 +142,21 @@ const InputForm: React.FC<InputFormProps> = ({
       method_name: selectedAction.name,
     });
   }, [
-    removeAction,
     actionIndex,
-    addAction,
-    selectedSC.address,
-    selectedSC.name,
-    selectedSC?.proxyAddress,
-    writeAsProxy,
-    resetField,
-    setValue,
-    selectedAction.name,
-    selectedAction.notice,
     actionInputs,
-    onComposeButtonClicked,
+    addAction,
     another,
     daoAddressOrEns,
-    getValues,
-    t,
+    onComposeButtonClicked,
+    removeAction,
+    resetField,
     sccActions,
+    selectedAction.name,
+    selectedAction.notice,
+    selectedSC.address,
+    selectedSC.name,
+    setValue,
+    t,
   ]);
 
   return (

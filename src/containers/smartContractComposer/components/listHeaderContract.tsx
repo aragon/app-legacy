@@ -43,31 +43,41 @@ export const ListHeaderContract: React.FC<Props> = ({
     }
   };
 
-  const handleWriteAsProxy = () => {
+  const handleWriteModeClick = () => {
     if (sc.implementationData) {
-      const selectedAction = sc.implementationData.actions.filter(
-        a =>
-          a.type === 'function' &&
-          (a.stateMutability === 'payable' ||
-            a.stateMutability === 'nonpayable')
-      )?.[0];
-
-      setValue('writeAsProxy', true);
-      setValue('selectedSC', sc.implementationData);
-      setValue('selectedAction', selectedAction);
+      writeAsProxy({
+        ...sc.implementationData,
+        name: sc.name,
+        address: sc.address,
+      });
     } else {
-      const contract = contracts.filter(c => c.address === sc.proxyAddress)[0];
-      const selectedAction = contract.actions.filter(
-        a =>
-          a.type === 'function' &&
-          (a.stateMutability === 'payable' ||
-            a.stateMutability === 'nonpayable')
-      )?.[0];
-
-      setValue('writeAsProxy', false);
-      setValue('selectedSC', contract);
-      setValue('selectedAction', selectedAction);
+      writeAsImplementation();
     }
+  };
+
+  const writeAsProxy = (
+    implementationData: NonNullable<SmartContract['implementationData']>
+  ) => {
+    const selectedAction = implementationData.actions.filter(
+      a =>
+        a.type === 'function' &&
+        (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable')
+    )?.[0];
+
+    setValue('selectedSC', implementationData);
+    setValue('selectedAction', selectedAction);
+  };
+
+  const writeAsImplementation = () => {
+    const contract = contracts.filter(c => c.address === sc.proxyAddress)[0];
+    const selectedAction = contract.actions.filter(
+      a =>
+        a.type === 'function' &&
+        (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable')
+    )?.[0];
+
+    setValue('selectedSC', contract);
+    setValue('selectedAction', selectedAction);
   };
 
   const listItems = [
@@ -117,7 +127,7 @@ export const ListHeaderContract: React.FC<Props> = ({
         }
         iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
         className="my-2 w-full justify-between px-4"
-        onClick={handleWriteAsProxy}
+        onClick={handleWriteModeClick}
       />
     );
   }
