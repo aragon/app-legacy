@@ -1,9 +1,11 @@
-import {Core} from '@walletconnect/core';
-import {buildApprovedNamespaces, getSdkError} from '@walletconnect/utils';
-import Web3WalletClient, {Web3Wallet} from '@walletconnect/web3wallet';
 import {AuthClientTypes} from '@walletconnect/auth-client';
-import {Web3WalletTypes} from '@walletconnect/web3wallet';
+import {Core} from '@walletconnect/core';
 import {PairingTypes, SessionTypes} from '@walletconnect/types';
+import {buildApprovedNamespaces, getSdkError} from '@walletconnect/utils';
+import Web3WalletClient, {
+  Web3Wallet,
+  Web3WalletTypes,
+} from '@walletconnect/web3wallet';
 import {WC_URI_PATTERN} from 'utils/constants';
 import {i18n} from '../../i18n.config';
 

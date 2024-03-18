@@ -29,6 +29,7 @@ import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
 import {TokenType} from './validators';
 import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
+import {ITagProps} from '@aragon/ods';
 
 /*************************************************
  *                 DAO Creation types            *
@@ -239,6 +240,10 @@ export type ActionParameter = {
    * Description displayed in the UI
    */
   subtitle: string;
+  /**
+   * Optional tag to be shown
+   */
+  tag?: ITagProps;
   /**
    * Whether an action can be used several times in a proposal. Currently
    * actions are either limited to 1 or not limited at all. This might need to
