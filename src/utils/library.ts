@@ -419,16 +419,6 @@ export async function decodeMetadataToAction(
 }
 
 /**
- * Decodes the provided DAO action into an external action
- * (SCC or Wallet Connect).
- *
- * @param action - A DAO action to decode.
- * @param network - The network on which the action is to be performed.
- *
- * @returns A promise that resolves to the decoded action
- * or undefined if the action could not be decoded.
- */
-/**
  * Decodes a DAO action to an external contract action (SCC or Wallet Connect).
  * @param action - DAO action to decode.
  * @param daoAddress - The address of the DAO.
