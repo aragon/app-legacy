@@ -74,6 +74,12 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       isReuseable: true,
     },
     {
+      type: 'external_contract_modal',
+      title: t('AddActionModal.externalContract'),
+      subtitle: t('AddActionModal.externalContractSubtitle'),
+      isReuseable: true,
+    },
+    {
       type: 'wallet_connect_modal',
       title: t('AddActionModal.connectdAppsTitle'),
       subtitle: t('AddActionModal.connectdAppsSubtitle'),
@@ -82,12 +88,6 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       isDisabled:
         featureFlags.getValue('VITE_FEATURE_FLAG_DAO_WALLET_CONNECT') ===
         'false',
-    },
-    {
-      type: 'external_contract_modal',
-      title: t('AddActionModal.externalContract'),
-      subtitle: t('AddActionModal.externalContractSubtitle'),
-      isReuseable: true,
     },
   ];
 
