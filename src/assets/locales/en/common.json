@@ -1353,18 +1353,16 @@
       "descLinkLabel": "in our guide",
       "descLinkURL": "https://",
       "validation": {
-        "codeInputHelp": "To connect, open {{dappName}}, copy the WalletConnect QR code to your clipboard, and paste it here.",
-        "modalTitle": "{{dappName}}",
+        "codeInputHelp": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
+        "modalTitle": "Connect new dApp",
         "codeInputLabel": "WalletConnect QR code",
         "ctaLabelDefault": "Create connection",
         "ctaLabelVerifying": "Connecting dApp …",
         "ctaLabelCritical": "Retry",
         "ctaLabelSuccess": "Start adding actions",
-        "alertCriticalGeneral": "Connection to {{dappName}} failed",
-        "alertCriticalDapp": "The QR code provided is not from {{dappName}}.",
+        "alertCriticalGeneral": "Connection to dApp failed",
         "alertSuccess": "{{dappName}} connected",
         "codeInputPlaceholder": "wc: …",
-        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}.",
         "alertInvalid": "Invalid code"
       },
       "detaildApp": {

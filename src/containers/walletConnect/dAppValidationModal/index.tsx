@@ -154,7 +154,7 @@ const DAppValidationModal: React.FC<Props> = props => {
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={t('wc.validation.modalTitle')}
+        title={t('modal.dappConnect.validation.modalTitle')}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
