@@ -19,7 +19,7 @@ type Props = {
   onSelectExistingdApp: (session: SessionTypes.Struct) => void;
 };
 
-const SelectWCApp: React.FC<Props> = props => {
+const SelectdAppModal: React.FC<Props> = props => {
   const {
     isOpen,
     onClose,
@@ -92,7 +92,7 @@ const SelectWCApp: React.FC<Props> = props => {
   );
 };
 
-export default SelectWCApp;
+export default SelectdAppModal;
 
 const Content = styled.div.attrs({
   className: 'py-6 px-4 xl:px-6 flex flex-col gap-y-6 justify-center',

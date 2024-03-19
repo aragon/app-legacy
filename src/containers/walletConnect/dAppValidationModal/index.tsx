@@ -30,7 +30,7 @@ type Props = {
 // Wallet connect id input name
 export const WC_URI_INPUT_NAME = 'wcID';
 
-const WCdAppValidation: React.FC<Props> = props => {
+const DAppValidationModal: React.FC<Props> = props => {
   const {onBackButtonClicked, onConnectionSuccess, onClose, isOpen} = props;
 
   const {t} = useTranslation();
@@ -249,7 +249,7 @@ const WCdAppValidation: React.FC<Props> = props => {
   );
 };
 
-export default WCdAppValidation;
+export default DAppValidationModal;
 
 const Content = styled.div.attrs({
   className: 'py-6 px-4 xl:px-6 space-y-6',
