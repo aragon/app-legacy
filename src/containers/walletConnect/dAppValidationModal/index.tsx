@@ -1,5 +1,5 @@
 import {AlertInline, Button, IconType} from '@aragon/ods';
-import {Label, WalletInputLegacy} from '@aragon/ods-old';
+import {WalletInputLegacy} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
@@ -161,10 +161,14 @@ const WCdAppValidation: React.FC<Props> = props => {
       />
       <Content>
         <FormGroup>
-          <Label
-            label={t('modal.dappConnect.validation.codeInputLabel')}
-            helpText={t('modal.dappConnect.validation.codeInputHelp')}
-          />
+          <div className="flex flex-col gap-y-1">
+            <p className="font-semibold text-neutral-800 ft-text-base">
+              {t('modal.dappConnect.validation.codeInputLabel')}
+            </p>
+            <p className="text-neutral-500 ft-text-sm">
+              {t('modal.dappConnect.validation.codeInputHelp')}
+            </p>
+          </div>
           <Controller
             name={WC_URI_INPUT_NAME}
             control={control}
