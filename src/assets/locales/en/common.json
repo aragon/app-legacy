@@ -304,7 +304,6 @@
     "action": "New proposal",
     "emptyState": {
       "title": "Create your first proposal",
-      "subtitleLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes",
       "description": "What's the first thing your community needs to decide? Get your community involved in the decision-making process.",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
@@ -350,7 +349,6 @@
     "executionCard": {
       "title": "Actions",
       "description": "These actions can be executed only once the governance parameters are met.",
-      "emptyStateHeading": "No actions were added",
       "addAction": "Add action",
       "seeTransaction": "See transaction",
       "status": {
@@ -363,7 +361,8 @@
       "statusMultisig": {
         "expiredTitle": "Execution no longer available",
         "expiredDesc": "This proposal action can no longer be executed because the expiration time has passed. If you want to reattempt executing this action, you must create a new proposal, pass it, and execute it within the expiration time."
-      }
+      },
+      "emptyStateHeading": "No actions were added"
     },
     "actionSecondary": "Delegate",
     "vocdoni": {
@@ -678,7 +677,6 @@
       "label": "Step 1",
       "title": "Select blockchain",
       "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
-      "descriptionLinkLabel": "blockchain for your DAO",
       "descriptionLinkURL": "https://aragon.org/how-to/choose-the-right-blockchain-for-your-dao"
     },
     "step2": {
@@ -696,7 +694,6 @@
       "label": "Step 3",
       "title": "Define membership",
       "description": "Decide the type of voting your DAO uses. You can change these settings with a vote.",
-  
       "newToken": "No",
       "authorisedWalletsSubtitle": "Add wallets of members who are authorized to participate in governance",
       "warningTitle": "Changing the list",
@@ -780,7 +777,6 @@
         }
       },
       "membershipSubtitle": "You can always start with a multisig and mint tokens later.",
-      "descriptionLinkLabel": "read this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
@@ -1539,13 +1535,12 @@
   },
   "modalAlert": {
     "wrapToken": {
-      "header": "Join the DAO",
       "title": "No governance tokens found",
       "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance.",
       "ctaLabel": "Wrap tokens",
       "cancleLabel": "Cancel",
-      "descLinkLabel": "our guide",
-      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
+      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+      "header": "Join the DAO"
     },
     "noTokensFound": {
       "title": "Tokens not found",
