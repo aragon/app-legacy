@@ -37,6 +37,9 @@ const ModalHeader: React.FC<Props> = props => {
           {...otherProps}
         />
       )}
+      {!showBackButton && showCloseButton && (
+        <div className="size-8 lg:hidden" />
+      )}
 
       <div className="flex-1">
         <Title>{title}</Title>
@@ -50,6 +53,10 @@ const ModalHeader: React.FC<Props> = props => {
           iconLeft={IconType.CLOSE}
           onClick={onClose}
         />
+      )}
+
+      {!showCloseButton && showBackButton && (
+        <div className="size-8 lg:hidden" />
       )}
     </Header>
   );
