@@ -1369,7 +1369,7 @@
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",
-        "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
+        "desc": "You can interact with {{dappName}}. Actions you take will be added to this proposal.",
         "noActionsTag": "No actions received yet",
         "amountActionsTag": "{{amountActions}} actions received",
         "ctaLabel": "Add {{amountActions}} actions"
@@ -1379,7 +1379,9 @@
       "headerTitle": "Select dApp",
       "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
       "alertInfo": "More dApps coming soon!",
-      "ctaDisconnectDapp": "Disconnect {{dappName}}"
+      "ctaDisconnectDapp": "Disconnect {{dappName}}",
+      "ctaGuide": "Having issues?",
+      "ctaGuideURL": "https://aragon.org/how-to/dapp-connect"
     }
   },
   "scc": {

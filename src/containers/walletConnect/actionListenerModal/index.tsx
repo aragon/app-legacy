@@ -44,16 +44,11 @@ const ActionListenerModal: React.FC<Props> = ({
   const {setValue} = useFormContext();
   const {addAction, removeAction} = useActionsContext();
 
-  const {actions: actionsReceived, wcDisconnect} = useWalletConnectContext();
+  const {actions: actionsReceived} = useWalletConnectContext();
 
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
-  const handleDisconnectDapp = async () => {
-    await wcDisconnect(selectedSession.topic);
-    onBackButtonClicked();
-  };
-
   const handleAddActions = useCallback(async () => {
     // Make sure that the current modal action has some value set on the form
     // to delete the correct action when calling deleteAction at the end
@@ -208,9 +203,9 @@ const ActionListenerModal: React.FC<Props> = ({
             size="unset"
             className="size-[50px] border border-neutral-100 bg-neutral-50"
           />
-          <div className="flex items-center justify-center text-center font-semibold text-neutral-800">
-            <Spinner size="sm" variant="primary" />
-            <p className="ml-4">
+          <div className="flex items-center justify-center gap-x-2 ft-text-base">
+            <Spinner size="sm" />
+            <p className="text-center font-semibold text-neutral-800">
               {t('modal.dappConnect.detaildApp.spinnerLabel')}
             </p>
           </div>
@@ -249,7 +244,8 @@ const ActionListenerModal: React.FC<Props> = ({
 
             {metadataURL && (
               <Button
-                onClick={() => window.open(metadataURL, '_blank')}
+                href={metadataURL}
+                target="_blank"
                 variant="secondary"
                 size="lg"
                 className="w-full"
@@ -264,15 +260,14 @@ const ActionListenerModal: React.FC<Props> = ({
 
           {noActionsReceived && (
             <Button
-              onClick={handleDisconnectDapp}
+              href={t('modal.dappConnect.ctaGuideURL')}
+              target="_blank"
               variant="tertiary"
               size="lg"
               className="w-full"
               iconRight={IconType.LINK_EXTERNAL}
             >
-              {t('modal.dappConnect.ctaDisconnectDapp', {
-                dappName: metadataName,
-              })}
+              {t('modal.dappConnect.ctaGuide')}
             </Button>
           )}
         </div>
