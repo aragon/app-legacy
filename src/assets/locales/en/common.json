@@ -597,7 +597,7 @@
       "subtitle": "Create a proposal to withdraw assets to a wallet."
     },
     "withdrawAssets": "Withdraw assets",
-    "connectdAppsSubtitle": "Interact with verified dApps via WalletConnect."
+    "connectdAppsSubtitle": "Interact with any other dApp using WalletConnect."
   },
   "newDeposit": {
     "depositAssets": "Deposit assets",
@@ -1367,16 +1367,18 @@
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",
-        "desc": "You can interact with {{dappName}}. Actions you take will be added to this proposal.",
+        "desc": "You can interact with any dApp that supports interacting with DAOs and add actions to your proposal.",
         "noActionsTag": "No actions received yet",
         "amountActionsTag": "{{amountActions}} actions received",
-        "ctaLabel": "Add {{amountActions}} actions"
+        "ctaLabel": "Add {{amountActions}} actions",
+        "listTitle": "Connected dApps",
+        "ctaLabelConnect": "Connect new dApp"
       },
       "ctaOpenDapp": "Open {{dappName}}",
       "dAppConnectedLabel": "Connected",
-      "headerTitle": "Select dApp",
+      "headerTitle": "Connect dApp",
       "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
-      "alertInfo": "More dApps coming soon!",
+      "alertInfo": "Not all dApps support connecting to DAOs.",
       "ctaDisconnectDapp": "Disconnect {{dappName}}",
       "ctaGuide": "Having issues?",
       "ctaGuideURL": "https://aragon.org/how-to/dapp-connect"

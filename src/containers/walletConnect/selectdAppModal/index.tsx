@@ -47,7 +47,9 @@ const SelectdAppModal: React.FC<Props> = props => {
       <Content>
         <div className="flex flex-col gap-2">
           <Description>{t('modal.dappConnect.detaildApp.desc')}</Description>
-          {sessions.length > 0 && <Label>{t('Connected dApps - DEV')}</Label>}
+          {sessions.length > 0 && (
+            <Label>{t('modal.dappConnect.detaildApp.listTitle')}</Label>
+          )}
           <div className="flex flex-col gap-y-2">
             {sessions.map(session => (
               <ListItemAction
@@ -80,7 +82,7 @@ const SelectdAppModal: React.FC<Props> = props => {
             onClick={onConnectNewdApp}
             variant={sessions.length > 0 ? 'secondary' : 'primary'}
           >
-            {t('modal.dappConnect.validation.ctaLabelDefault')}
+            {t('modal.dappConnect.detaildApp.ctaLabelConnect')}
           </Button>
           <AlertInline
             message={t('modal.dappConnect.alertInfo')}
