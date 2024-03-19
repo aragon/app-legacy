@@ -1,3 +1,4 @@
+import {Button, IconType, Spinner, Tag} from '@aragon/ods';
 import {AvatarDao} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback} from 'react';
@@ -20,15 +21,12 @@ import {
   parseWCIconUrl,
 } from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
-import {AllowListDApp} from '../selectAppModal';
-import {Button, Spinner, Tag} from '@aragon/ods';
 
 type Props = {
   onBackButtonClicked: () => void;
   onClose: () => void;
   isOpen: boolean;
   selectedSession: SessionTypes.Struct;
-  selecteddApp?: AllowListDApp;
   actionIndex: number;
 };
 
@@ -37,7 +35,6 @@ const ActionListenerModal: React.FC<Props> = ({
   onClose,
   actionIndex,
   selectedSession,
-  selecteddApp,
   isOpen,
 }) => {
   const {t} = useTranslation();
@@ -52,6 +49,11 @@ const ActionListenerModal: React.FC<Props> = ({
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
+  const handleDisconnectDapp = async () => {
+    await wcDisconnect(selectedSession.topic);
+    onBackButtonClicked();
+  };
+
   const handleAddActions = useCallback(async () => {
     // Make sure that the current modal action has some value set on the form
     // to delete the correct action when calling deleteAction at the end
@@ -181,8 +183,9 @@ const ActionListenerModal: React.FC<Props> = ({
     return null;
   }
 
-  const metadataName =
-    selecteddApp?.shortName || selectedSession.peer.metadata.name;
+  const atLeastOneActionReceived = actionsReceived.length > 0;
+  const noActionsReceived = !atLeastOneActionReceived;
+  const metadataName = selectedSession.peer.metadata.name;
   const metadataURL = selectedSession.peer.metadata.url;
   const metadataIcon = parseWCIconUrl(
     metadataURL,
@@ -199,7 +202,12 @@ const ActionListenerModal: React.FC<Props> = ({
       />
       <Content>
         <div className="flex flex-col items-center space-y-3">
-          <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
+          <AvatarDao
+            daoName={metadataName}
+            src={metadataIcon}
+            size="unset"
+            className="size-[50px] border border-neutral-100 bg-neutral-50"
+          />
           <div className="flex items-center justify-center text-center font-semibold text-neutral-800">
             <Spinner size="sm" variant="primary" />
             <p className="ml-4">
@@ -211,55 +219,62 @@ const ActionListenerModal: React.FC<Props> = ({
               dappName: metadataName,
             })}
           </p>
-          {actionsReceived.length > 0 ? (
+          {atLeastOneActionReceived && (
             <Tag
               label={t('modal.dappConnect.detaildApp.amountActionsTag', {
                 amountActions: actionsReceived.length,
               })}
             />
-          ) : (
+          )}
+
+          {noActionsReceived && (
             <Tag label={t('modal.dappConnect.detaildApp.noActionsTag')} />
           )}
         </div>
 
-        <div className="space-y-3">
-          {actionsReceived.length > 0 ? (
+        <div className="flex flex-col gap-y-6">
+          <div className="flex flex-col gap-y-3">
+            {atLeastOneActionReceived && (
+              <Button
+                onClick={handleAddActions}
+                variant="primary"
+                size="lg"
+                className="w-full"
+              >
+                {t('modal.dappConnect.detaildApp.ctaLabel', {
+                  amountActions: actionsReceived.length,
+                })}
+              </Button>
+            )}
+
+            {metadataURL && (
+              <Button
+                onClick={() => window.open(metadataURL, '_blank')}
+                variant="secondary"
+                size="lg"
+                className="w-full"
+                iconRight={IconType.LINK_EXTERNAL}
+              >
+                {t('modal.dappConnect.ctaOpenDapp', {
+                  dappName: metadataName,
+                })}
+              </Button>
+            )}
+          </div>
+
+          {noActionsReceived && (
             <Button
-              onClick={handleAddActions}
-              variant="primary"
-              size="md"
-              className="w-full"
-            >
-              {t('modal.dappConnect.detaildApp.ctaLabel', {
-                amountActions: actionsReceived.length,
-              })}
-            </Button>
-          ) : null}
-          {metadataURL && (
-            <Button
-              onClick={() => window.open(metadataURL, '_blank')}
+              onClick={handleDisconnectDapp}
               variant="tertiary"
-              size="md"
+              size="lg"
               className="w-full"
+              iconRight={IconType.LINK_EXTERNAL}
             >
-              {t('modal.dappConnect.ctaOpenDapp', {
+              {t('modal.dappConnect.ctaDisconnectDapp', {
                 dappName: metadataName,
               })}
             </Button>
           )}
-          <Button
-            onClick={async () => {
-              await wcDisconnect(selectedSession.topic);
-              onBackButtonClicked();
-            }}
-            variant="tertiary"
-            size="md"
-            className="w-full"
-          >
-            {t('modal.dappConnect.ctaDisconnectDapp', {
-              dappName: metadataName,
-            })}
-          </Button>
         </div>
       </Content>
     </ModalBottomSheetSwitcher>
