@@ -1,72 +1,37 @@
-import React, {useMemo} from 'react';
+import {AlertInline, Button, Icon, IconType} from '@aragon/ods';
 import {ListItemAction} from '@aragon/ods-old';
-import {AlertInline, Icon, IconType} from '@aragon/ods';
-import {SessionTypes, SignClientTypes} from '@walletconnect/types';
+import {SessionTypes} from '@walletconnect/types';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {parseWCIconUrl} from 'utils/library';
-import {useWalletConnectContext} from '../walletConnectProvider';
 import ModalHeader from 'components/modalHeader';
 import useScreen from 'hooks/useScreen';
-import {htmlIn} from 'utils/htmlIn';
-import {featureFlags} from 'utils/featureFlags';
+import {parseWCIconUrl} from 'utils/library';
+import {useWalletConnectContext} from '../walletConnectProvider';
 
 type Props = {
-  onConnectNewdApp: (dApp: AllowListDApp) => void;
-  onSelectExistingdApp: (
-    session: SessionTypes.Struct,
-    dApp: AllowListDApp
-  ) => void;
-  onClose: () => void;
   isOpen: boolean;
+  onClose: () => void;
+  onConnectNewdApp: () => void;
+  onBackButtonClicked: () => void;
+  onSelectExistingdApp: (session: SessionTypes.Struct) => void;
 };
 
-export type AllowListDApp = SignClientTypes.Metadata & {shortName?: string};
-
-export const AllowListDApps: AllowListDApp[] = [
-  {
-    name: 'CoW Swap | The smartest way to trade cryptocurrencies',
-    shortName: 'CoW Swap',
-    description:
-      'CoW Swap finds the lowest prices from all decentralized exchanges and DEX aggregators & saves you more with p2p trading and protection from MEV',
-    url: 'https://swap.cow.fi',
-    icons: [
-      'https://swap.cow.fi/favicon.png?v=2',
-      'https://swap.cow.fi/favicon.png?v=2',
-      'https://swap.cow.fi/favicon.png?v=2',
-    ],
-  },
-];
-
-export const enableConnectAnyDApp =
-  featureFlags.getValue('VITE_FEATURE_FLAG_CONNECT_ANY_DAPP') === 'true';
-
-if (enableConnectAnyDApp) {
-  AllowListDApps.push({
-    name: 'Connect any app',
-    shortName: 'Connect any app',
-    description: 'Connect any app',
-    url: '',
-    icons: [],
-  });
-}
-
 const SelectWCApp: React.FC<Props> = props => {
+  const {
+    isOpen,
+    onClose,
+    onConnectNewdApp,
+    onBackButtonClicked,
+    onSelectExistingdApp,
+  } = props;
+
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
-  const {onConnectNewdApp, onSelectExistingdApp, onClose, isOpen} = props;
 
   const {sessions} = useWalletConnectContext();
-
-  const dAppList: AllowListDApp[] = useMemo(
-    () =>
-      enableConnectAnyDApp
-        ? [...AllowListDApps, ...sessions.map(session => session.peer.metadata)]
-        : AllowListDApps,
-    [sessions]
-  );
 
   /*************************************************
    *                     Render                    *
@@ -75,57 +40,53 @@ const SelectWCApp: React.FC<Props> = props => {
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
         title={t('modal.dappConnect.headerTitle')}
-        subTitle={htmlIn(t)('modal.dappConnect.desc')}
         showBackButton
-        onBackButtonClicked={() => {
-          onClose();
-        }}
+        onBackButtonClicked={onBackButtonClicked}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
       />
       <Content>
-        <div className="space-y-2">
-          {dAppList.map(dApp => {
-            const dAppName = dApp.shortName || dApp.name;
-            const filteredSession = sessions.filter(session =>
-              session.peer.metadata.name
-                .toLowerCase()
-                .includes(dApp.name.toLowerCase())
-            );
-            return (
+        <div className="flex flex-col gap-2">
+          <Description>{t('modal.dappConnect.detaildApp.desc')}</Description>
+          {sessions.length > 0 && <Label>{t('Connected dApps - DEV')}</Label>}
+          <div className="flex flex-col gap-y-2">
+            {sessions.map(session => (
               <ListItemAction
-                key={dAppName}
-                title={dAppName}
-                iconLeft={parseWCIconUrl(dApp.url, dApp.icons[0])}
+                key={session.peer.metadata.name}
+                title={session.peer.metadata.name}
+                iconLeft={parseWCIconUrl(
+                  session.peer.metadata.url,
+                  session.peer.metadata.icons[0]
+                )}
                 bgWhite
+                truncateText
+                onClick={() => onSelectExistingdApp(session)}
                 iconRight={
-                  <div className="flex space-x-4">
-                    {filteredSession[0] && (
-                      <div className="flex items-center space-x-2 text-sm font-semibold leading-normal text-success-700">
-                        <div className="h-2 w-2 rounded-full bg-success-700" />
-                        <p>{t('modal.dappConnect.dAppConnectedLabel')}</p>
-                      </div>
-                    )}
+                  <div className="flex gap-x-4">
+                    <div className="flex items-center space-x-2 text-sm font-semibold leading-normal text-success-700">
+                      <div className="h-2 w-2 rounded-full bg-success-700" />
+                      <p>{t('modal.dappConnect.dAppConnectedLabel')}</p>
+                    </div>
                     <Icon icon={IconType.CHEVRON_RIGHT} />
                   </div>
                 }
-                truncateText
-                onClick={() => {
-                  if (filteredSession[0]) {
-                    onSelectExistingdApp(filteredSession[0], dApp);
-                  } else {
-                    onConnectNewdApp(dApp);
-                  }
-                }}
               />
-            );
-          })}
+            ))}
+          </div>
         </div>
-        <div className="mt-4 flex justify-center">
+        <Footer>
+          <Button
+            size="lg"
+            className="w-full"
+            onClick={onConnectNewdApp}
+            variant={sessions.length > 0 ? 'secondary' : 'primary'}
+          >
+            {t('modal.dappConnect.validation.ctaLabelDefault')}
+          </Button>
           <AlertInline
             message={t('modal.dappConnect.alertInfo')}
-            variant="info"
+            variant="warning"
           />
-        </div>
+        </Footer>
       </Content>
     </ModalBottomSheetSwitcher>
   );
@@ -134,5 +95,17 @@ const SelectWCApp: React.FC<Props> = props => {
 export default SelectWCApp;
 
 const Content = styled.div.attrs({
-  className: 'py-6 px-4 xl:px-6',
+  className: 'py-6 px-4 xl:px-6 flex flex-col gap-y-6 justify-center',
+})``;
+
+const Description = styled.p.attrs({
+  className: 'ft-text-sm text-neutral-600',
+})``;
+
+const Label = styled.p.attrs({
+  className: 'ft-text-base font-semibold text-neutral-500',
+})``;
+
+const Footer = styled.div.attrs({
+  className: 'flex flex-col gap-y-3 items-center',
 })``;
