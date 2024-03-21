@@ -5,9 +5,9 @@ import {Icon, IconType} from '@aragon/ods';
 import {GridLayout} from 'components/layout';
 import {StyledLink} from 'components/styledLink';
 import useScreen from 'hooks/useScreen';
-import Green from 'public/greenGradient.svg';
-import IconLogo from 'public/iconLogo.svg';
-import Purple from 'public/purpleGradient.svg';
+import Green from 'assets/images/greenGradient.svg';
+import IconLogo from 'assets/images/iconLogo.svg';
+import Purple from 'assets/images/purpleGradient.svg';
 import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
 
 const Footer: React.FC = () => {

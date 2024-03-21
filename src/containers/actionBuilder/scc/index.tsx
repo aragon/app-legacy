@@ -11,6 +11,7 @@ import {useAlertContext} from 'context/alert';
 import {ComponentForType} from 'containers/smartContractComposer/components/inputForm';
 import {useNetwork} from 'context/network';
 import {validateSCCAction} from 'utils/validators';
+import {CHAIN_METADATA} from 'utils/constants';
 
 const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   actionIndex,
@@ -63,6 +64,12 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
         methodName={actionData.functionName}
         dropdownItems={methodActions}
         smartContractName={actionData.contractName}
+        smartContractAddress={actionData.contractAddress}
+        blockExplorerLink={
+          actionData.contractAddress
+            ? `${CHAIN_METADATA[network].explorer}address/${actionData.contractAddress}`
+            : undefined
+        }
         // TODO: How should we add verified badge? (Etherscan/Sourcify verification status)?
         verified
         methodDescription={actionData.notice}

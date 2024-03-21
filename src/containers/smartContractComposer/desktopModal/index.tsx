@@ -123,17 +123,15 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
         </Aside>
 
         <Main>
-          {selectedSC ? (
-            selectedAction ? (
-              <InputForm
-                actionIndex={props.actionIndex}
-                onComposeButtonClicked={props.onComposeButtonClicked}
-              />
-            ) : (
-              <EmptyActionsState selectedSC={selectedSC} />
-            )
-          ) : (
-            <DesktopModalEmptyState />
+          {!selectedSC && <DesktopModalEmptyState />}
+          {selectedSC && selectedAction && (
+            <InputForm
+              actionIndex={props.actionIndex}
+              onComposeButtonClicked={props.onComposeButtonClicked}
+            />
+          )}
+          {selectedSC && !selectedAction && (
+            <EmptyActionsState selectedSC={selectedSC} />
           )}
         </Main>
       </Wrapper>
@@ -149,6 +147,26 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
   const {t} = useTranslation();
   const {setValue} = useFormContext<SccFormData>();
 
+  const handleWriteAsProxy = () => {
+    const contract: SmartContract = {
+      actions: [],
+      ...selectedSC.implementationData,
+      name: selectedSC.name,
+      address: selectedSC.address,
+    };
+
+    const selectedAction = (
+      selectedSC.implementationData?.actions ?? []
+    ).filter(
+      a =>
+        a.type === 'function' &&
+        (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable')
+    )?.[0];
+
+    setValue('selectedSC', contract);
+    setValue('selectedAction', selectedAction);
+  };
+
   return (
     <Container>
       <div>
@@ -163,21 +181,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
             size="md"
             variant="primary"
             iconLeft={IconType.BLOCKCHAIN_SMARTCONTRACT}
-            onClick={() => {
-              setValue(
-                'selectedSC',
-                selectedSC.implementationData as SmartContract
-              );
-              setValue(
-                'selectedAction',
-                (selectedSC.implementationData as SmartContract).actions.filter(
-                  a =>
-                    a.type === 'function' &&
-                    (a.stateMutability === 'payable' ||
-                      a.stateMutability === 'nonpayable')
-                )?.[0]
-              );
-            }}
+            onClick={handleWriteAsProxy}
           >
             {t('scc.writeContractEmptyState.ctaLabel')}
           </Button>

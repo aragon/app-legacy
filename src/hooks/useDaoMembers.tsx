@@ -95,7 +95,7 @@ const sdkToDaoMember = (
     address,
     balance: Number(formatUnits(balance, tokenDecimals)),
     votingPower: Number(formatUnits(votingPower, tokenDecimals)),
-    delegatee: delegatee === null ? address : delegatee,
+    delegatee: delegatee ?? address,
     delegators: delegators.map(delegator => delegator.address),
   };
 };
@@ -146,8 +146,31 @@ export const useDaoMembers = (
     network === 'base-goerli'
   );
 
+  const useGraphql =
+    isTokenBased &&
+    covalentSupportedNetwork &&
+    pluginType != null &&
+    daoToken != null &&
+    enabled;
+
+  const {
+    data: graphqlData,
+    isError: isGraphqlError,
+    isLoading: isGraphqlLoading,
+  } = useTokenHolders(
+    {
+      network,
+      tokenAddress: daoToken?.address as string,
+      page: opts?.page,
+    },
+    {enabled: useGraphql}
+  );
+
   const useSubgraph =
-    (pluginType != null && !isTokenBased) || !covalentSupportedNetwork;
+    (pluginType != null && !isTokenBased) ||
+    !covalentSupportedNetwork ||
+    (covalentSupportedNetwork && isGraphqlError);
+
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
@@ -188,26 +211,6 @@ export const useDaoMembers = (
     formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
   );
 
-  const useGraphql =
-    !useSubgraph &&
-    pluginType != null &&
-    daoToken != null &&
-    enabled &&
-    !enableCensus3;
-
-  const {
-    data: graphqlData,
-    isError: isGraphqlError,
-    isLoading: isGraphqlLoading,
-  } = useTokenHolders(
-    {
-      network,
-      tokenAddress: daoToken?.address as string,
-      page: opts?.page,
-    },
-    {enabled: useGraphql}
-  );
-
   if (!enabled)
     return {
       data: {
@@ -227,7 +230,7 @@ export const useDaoMembers = (
     if (useSubgraph) {
       memberCount = parsedSubgraphData?.length || 0;
     } else {
-      memberCount = graphqlData?.holders.totalHolders || 0;
+      memberCount = graphqlData?.holders.totalHolders ?? 0;
     }
     return {
       data: {
