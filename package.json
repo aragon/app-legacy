@@ -14,13 +14,13 @@
     "prepbrotli": "brotli-cli compress --glob \"dist/assets/*.*\"",
     "servebrotli": "caddy run",
     "serve:docker": "vite --host --port 5000",
-    "test": "jest --coverage=false",
     "lint": "eslint src --max-warnings=0 && yarn check-types",
     "lint:fix": "eslint src --fix",
     "check-types": "tsc --noemit",
     "e2e": "npx synpress run",
     "e2e:reset": "cd tests/e2e && cpx default/runContext.json .",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org aragonorg --project app-react ./dist && sentry-cli sourcemaps upload --org aragonorg --project app-react ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org aragonorg --project app-react ./dist && sentry-cli sourcemaps upload --org aragonorg --project app-react ./dist",
+    "test": "NODE_OPTIONS=--experimental-modules npx playwright test"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
