@@ -1348,10 +1348,7 @@
       }
     },
     "dappConnect": {
-      "title": "Select dApp",
-      "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
-      "descLinkLabel": "in our guide",
-      "descLinkURL": "https://",
+      "desc": "You can interact with any dApp that supports interacting with DAOs and add actions to your proposal.",
       "validation": {
         "codeInputHelp": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
         "modalTitle": "Connect new dApp",
@@ -1367,7 +1364,7 @@
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",
-        "desc": "You can interact with any dApp that supports interacting with DAOs and add actions to your proposal.",
+        "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
         "noActionsTag": "No actions received yet",
         "amountActionsTag": "{{amountActions}} actions received",
         "ctaLabel": "Add {{amountActions}} actions",
@@ -1377,9 +1374,7 @@
       "ctaOpenDapp": "Open {{dappName}}",
       "dAppConnectedLabel": "Connected",
       "headerTitle": "Connect dApp",
-      "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
       "alertInfo": "Not all dApps support connecting to DAOs.",
-      "ctaDisconnectDapp": "Disconnect {{dappName}}",
       "ctaGuide": "Having issues?",
       "ctaGuideURL": "https://aragon.org/how-to/dapp-connect"
     }
@@ -1706,7 +1701,7 @@
     },
     "executionMultisig": {
       "title": "Define your execution multisig",
-      "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the execution multisig and its tasks in {{link}}.",
+      "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. ",
       "membersLabel": "Execution multisig members",
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig.",
       "executionTitle": "Execution expiration time",

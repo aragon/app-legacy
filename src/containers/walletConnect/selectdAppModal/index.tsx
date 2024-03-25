@@ -46,7 +46,7 @@ const SelectdAppModal: React.FC<Props> = props => {
       />
       <Content>
         <div className="flex flex-col gap-2">
-          <Description>{t('modal.dappConnect.detaildApp.desc')}</Description>
+          <Description>{t('modal.dappConnect.desc')}</Description>
           {sessions.length > 0 && (
             <Label>{t('modal.dappConnect.detaildApp.listTitle')}</Label>
           )}
