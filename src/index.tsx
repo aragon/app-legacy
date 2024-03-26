@@ -74,6 +74,7 @@ export const wagmiConfig = createConfig({
       metadata: AppMetadata,
       showQrModal: false,
     }),
+    injected({shimDisconnect: true}),
     coinbaseWallet({
       appName: AppMetadata.name,
       appLogoUrl: AppMetadata.icons[0],
