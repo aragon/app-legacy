@@ -304,7 +304,6 @@
     "action": "New proposal",
     "emptyState": {
       "title": "Create your first proposal",
-      "subtitleLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes",
       "description": "What's the first thing your community needs to decide? Get your community involved in the decision-making process.",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
@@ -350,7 +349,6 @@
     "executionCard": {
       "title": "Actions",
       "description": "These actions can be executed only once the governance parameters are met.",
-      "emptyStateHeading": "No actions were added",
       "addAction": "Add action",
       "seeTransaction": "See transaction",
       "status": {
@@ -363,7 +361,8 @@
       "statusMultisig": {
         "expiredTitle": "Execution no longer available",
         "expiredDesc": "This proposal action can no longer be executed because the expiration time has passed. If you want to reattempt executing this action, you must create a new proposal, pass it, and execute it within the expiration time."
-      }
+      },
+      "emptyStateHeading": "No actions were added"
     },
     "actionSecondary": "Delegate",
     "vocdoni": {
@@ -598,7 +597,7 @@
       "subtitle": "Create a proposal to withdraw assets to a wallet."
     },
     "withdrawAssets": "Withdraw assets",
-    "connectdAppsSubtitle": "Interact with verified dApps via WalletConnect."
+    "connectdAppsSubtitle": "Interact with any other dApp using WalletConnect."
   },
   "newDeposit": {
     "depositAssets": "Deposit assets",
@@ -678,7 +677,6 @@
       "label": "Step 1",
       "title": "Select blockchain",
       "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
-      "descriptionLinkLabel": "blockchain for your DAO",
       "descriptionLinkURL": "https://aragon.org/how-to/choose-the-right-blockchain-for-your-dao"
     },
     "step2": {
@@ -696,7 +694,6 @@
       "label": "Step 3",
       "title": "Define membership",
       "description": "Decide the type of voting your DAO uses. You can change these settings with a vote.",
-  
       "newToken": "No",
       "authorisedWalletsSubtitle": "Add wallets of members who are authorized to participate in governance",
       "warningTitle": "Changing the list",
@@ -780,7 +777,6 @@
         }
       },
       "membershipSubtitle": "You can always start with a multisig and mint tokens later.",
-      "descriptionLinkLabel": "read this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
@@ -1352,23 +1348,18 @@
       }
     },
     "dappConnect": {
-      "title": "Select dApp",
-      "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
-      "descLinkLabel": "in our guide",
-      "descLinkURL": "https://",
+      "desc": "You can interact with any dApp that supports interacting with DAOs and add actions to your proposal.",
       "validation": {
-        "codeInputHelp": "To connect, open {{dappName}}, copy the WalletConnect QR code to your clipboard, and paste it here.",
-        "modalTitle": "{{dappName}}",
+        "codeInputHelp": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
+        "modalTitle": "Connect new dApp",
         "codeInputLabel": "WalletConnect QR code",
         "ctaLabelDefault": "Create connection",
         "ctaLabelVerifying": "Connecting dApp …",
         "ctaLabelCritical": "Retry",
         "ctaLabelSuccess": "Start adding actions",
-        "alertCriticalGeneral": "Connection to {{dappName}} failed",
-        "alertCriticalDapp": "The QR code provided is not from {{dappName}}.",
+        "alertCriticalGeneral": "Connection to dApp failed",
         "alertSuccess": "{{dappName}} connected",
         "codeInputPlaceholder": "wc: …",
-        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}.",
         "alertInvalid": "Invalid code"
       },
       "detaildApp": {
@@ -1376,14 +1367,16 @@
         "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
         "noActionsTag": "No actions received yet",
         "amountActionsTag": "{{amountActions}} actions received",
-        "ctaLabel": "Add {{amountActions}} actions"
+        "ctaLabel": "Add {{amountActions}} actions",
+        "listTitle": "Connected dApps",
+        "ctaLabelConnect": "Connect new dApp"
       },
       "ctaOpenDapp": "Open {{dappName}}",
       "dAppConnectedLabel": "Connected",
-      "headerTitle": "Select dApp",
-      "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
-      "alertInfo": "More dApps coming soon!",
-      "ctaDisconnectDapp": "Disconnect {{dappName}}"
+      "headerTitle": "Connect dApp",
+      "alertInfo": "Not all dApps support connecting to DAOs.",
+      "ctaGuide": "Having issues?",
+      "ctaGuideURL": "https://aragon.org/how-to/dapp-connect"
     }
   },
   "scc": {
@@ -1539,13 +1532,12 @@
   },
   "modalAlert": {
     "wrapToken": {
-      "header": "Join the DAO",
       "title": "No governance tokens found",
       "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance.",
       "ctaLabel": "Wrap tokens",
       "cancleLabel": "Cancel",
-      "descLinkLabel": "our guide",
-      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
+      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+      "header": "Join the DAO"
     },
     "noTokensFound": {
       "title": "Tokens not found",
@@ -1709,7 +1701,7 @@
     },
     "executionMultisig": {
       "title": "Define your execution multisig",
-      "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the execution multisig and its tasks in {{link}}.",
+      "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. ",
       "membersLabel": "Execution multisig members",
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig.",
       "executionTitle": "Execution expiration time",

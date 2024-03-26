@@ -7,7 +7,7 @@ import {Icon, IconType} from '@aragon/ods';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useActionsContext} from 'context/actions';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {ActionParameter} from 'utils/types';
+import {ActionParameter, ActionsTypes} from 'utils/types';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
 
@@ -21,6 +21,16 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
   const {actions: usedActions, addAction} = useActionsContext();
   const {t} = useTranslation();
 
+  const handleActionClick = (actionType: ActionsTypes) => {
+    trackEvent('newProposal_action_selected', {
+      dao_address: daoAddressOrEns,
+      action: actionType,
+    });
+
+    addAction({name: actionType});
+    close();
+  };
+
   return (
     <ModalBottomSheetSwitcher
       isOpen={isOpen}
@@ -33,22 +43,14 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
             key={a.type}
             title={a.title}
             subtitle={a.subtitle}
+            tag={a.tag}
             mode={
               !a.isReuseable && usedActions.some(ua => ua.name === a.type)
                 ? 'disabled'
                 : 'default'
             }
             iconRight={<Icon icon={IconType.CHEVRON_RIGHT} />}
-            onClick={() => {
-              trackEvent('newProposal_action_selected', {
-                dao_address: daoAddressOrEns,
-                action: a.type,
-              });
-              addAction({
-                name: a.type,
-              });
-              close();
-            }}
+            onClick={() => handleActionClick(a.type)}
           />
         ))}
       </Container>

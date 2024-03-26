@@ -1,17 +1,18 @@
+import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
-import {SessionTypes} from '@walletconnect/types';
 
-import {useActionsContext} from 'context/actions';
-import WCdAppValidation, {WC_URI_INPUT_NAME} from './dAppValidationModal';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import ActionListenerModal from './actionListenerModal';
 import {Loading} from 'components/temporary';
+import {useActionsContext} from 'context/actions';
+import {useGlobalModalContext} from 'context/globalModals';
+import DAppValidationModal, {WC_URI_INPUT_NAME} from './dAppValidationModal';
+import SelectdAppModal from './selectdAppModal';
 import {
   WalletConnectContextProvider,
   useWalletConnectInterceptor,
 } from './walletConnectProvider';
-import SelectWCApp, {AllowListDApp} from './selectAppModal';
+import ActionListenerModal from './actionListenerModal';
 
 type WalletConnectProps = {
   actionIndex: number;
@@ -20,39 +21,41 @@ type WalletConnectProps = {
 const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   const {removeAction} = useActionsContext();
   const {resetField} = useFormContext();
+  const {open} = useGlobalModalContext();
 
   const wcValues = useWalletConnectInterceptor();
 
   const [dAppValidationIsOpen, setdAppValidationIsOpen] = useState(false);
-  const [listeningActionsIsOpen, setListeningActionsIsOpen] = useState(false);
+  const [actionListenerIsOpen, setActionListenerIsOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<SessionTypes.Struct>();
-  const [selecteddApp, setSelecteddApp] = useState<AllowListDApp>();
 
-  const displayDefaultDialogs =
-    !listeningActionsIsOpen && !dAppValidationIsOpen;
+  const showSelectdApp = !dAppValidationIsOpen && !actionListenerIsOpen;
 
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
 
   /* ******* dAppsList handlers ******* */
-  const handleClosedAppsList = useCallback(() => {
+  const handleCloseSelectdAppModal = useCallback(() => {
     removeAction(actionIndex);
   }, [actionIndex, removeAction]);
 
-  const handledConnectNewdApp = useCallback((dApp: AllowListDApp) => {
-    setSelecteddApp(dApp);
-    setdAppValidationIsOpen(true);
-  }, []);
-
   const handleSelectExistingdApp = useCallback(
-    (session: SessionTypes.Struct, dApp: AllowListDApp) => {
+    (session: SessionTypes.Struct) => {
       setSelectedSession(session);
-      setSelecteddApp(dApp);
-      setListeningActionsIsOpen(true);
+      setActionListenerIsOpen(true);
     },
     []
   );
+
+  const handledConnectNewdApp = () => {
+    setdAppValidationIsOpen(true);
+  };
+
+  const handleSelectWCAppButtonClick = () => {
+    removeAction(actionIndex);
+    open('addAction');
+  };
 
   /* ******* dApp Validation handlers ******* */
   const handleClosedAppValidation = useCallback(() => {
@@ -64,7 +67,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   const handledAppValidationBackClick = useCallback(() => {
     resetField(WC_URI_INPUT_NAME);
     setdAppValidationIsOpen(false);
-    setListeningActionsIsOpen(false);
+    setActionListenerIsOpen(false);
   }, [resetField]);
 
   const handleOnConnectionSuccess = useCallback(
@@ -72,7 +75,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
       resetField(WC_URI_INPUT_NAME);
       setSelectedSession(session);
       setdAppValidationIsOpen(false);
-      setListeningActionsIsOpen(true);
+      setActionListenerIsOpen(true);
     },
     [resetField]
   );
@@ -89,18 +92,14 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
 
     if (!isSelectedSessionActive) {
       setSelectedSession(undefined);
-      setListeningActionsIsOpen(false);
+      setActionListenerIsOpen(false);
     }
   }, [wcValues.sessions, selectedSession]);
 
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (
-    !displayDefaultDialogs &&
-    !dAppValidationIsOpen &&
-    !listeningActionsIsOpen
-  ) {
+  if (!showSelectdApp && !dAppValidationIsOpen && !actionListenerIsOpen) {
     return (
       <ModalBottomSheetSwitcher isOpen={true}>
         <div className="pb-36">
@@ -112,27 +111,26 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
 
   return (
     <WalletConnectContextProvider value={wcValues}>
-      <SelectWCApp
-        isOpen={displayDefaultDialogs}
+      <SelectdAppModal
+        isOpen={showSelectdApp}
+        onClose={handleCloseSelectdAppModal}
         onConnectNewdApp={handledConnectNewdApp}
+        onBackButtonClicked={handleSelectWCAppButtonClick}
         onSelectExistingdApp={handleSelectExistingdApp}
-        onClose={handleClosedAppsList}
       />
-      <WCdAppValidation
+      <DAppValidationModal
         isOpen={dAppValidationIsOpen}
+        onClose={handleClosedAppValidation}
         onConnectionSuccess={handleOnConnectionSuccess}
         onBackButtonClicked={handledAppValidationBackClick}
-        onClose={handleClosedAppValidation}
-        selecteddApp={selecteddApp}
       />
       {selectedSession && (
         <ActionListenerModal
-          onBackButtonClicked={handledAppValidationBackClick}
+          isOpen={actionListenerIsOpen}
           onClose={handleClosedAppValidation}
-          isOpen={listeningActionsIsOpen}
-          selecteddApp={selecteddApp}
-          selectedSession={selectedSession}
           actionIndex={actionIndex}
+          selectedSession={selectedSession}
+          onBackButtonClicked={handledAppValidationBackClick}
         />
       )}
     </WalletConnectContextProvider>

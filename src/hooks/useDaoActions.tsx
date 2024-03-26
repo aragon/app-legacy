@@ -34,13 +34,13 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {api: provider} = useProviders();
 
   const {data: daoToken} = useDaoToken(
-    daoDetails?.plugins[0].instanceAddress || ''
+    daoDetails?.plugins[0].instanceAddress ?? ''
   );
 
   useEffect(() => {
     async function fetch() {
       const daoTokenView = await getDaoTokenOwner(
-        daoToken?.address || '',
+        daoToken?.address ?? '',
         provider
       );
       setShowMintOption(
@@ -74,19 +74,20 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       isReuseable: true,
     },
     {
-      type: 'wallet_connect_modal',
-      title: t('AddActionModal.connectdAppsTitle'),
-      subtitle: t('AddActionModal.connectdAppsSubtitle'),
-      isReuseable: true,
-      isDisabled:
-        featureFlags.getValue('VITE_FEATURE_FLAG_DAO_WALLET_CONNECT') ===
-        'false',
-    },
-    {
       type: 'external_contract_modal',
       title: t('AddActionModal.externalContract'),
       subtitle: t('AddActionModal.externalContractSubtitle'),
       isReuseable: true,
+    },
+    {
+      type: 'wallet_connect_modal',
+      title: t('AddActionModal.connectdAppsTitle'),
+      subtitle: t('AddActionModal.connectdAppsSubtitle'),
+      isReuseable: true,
+      tag: {label: 'Alpha', variant: 'warning'},
+      isDisabled:
+        featureFlags.getValue('VITE_FEATURE_FLAG_DAO_WALLET_CONNECT') ===
+        'false',
     },
   ];
 

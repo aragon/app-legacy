@@ -37,6 +37,9 @@ const ModalHeader: React.FC<Props> = props => {
           {...otherProps}
         />
       )}
+      {!showBackButton && showCloseButton && (
+        <div className="size-8 lg:hidden" />
+      )}
 
       <div className="flex-1">
         <Title>{title}</Title>
@@ -51,6 +54,10 @@ const ModalHeader: React.FC<Props> = props => {
           onClick={onClose}
         />
       )}
+
+      {!showCloseButton && showBackButton && (
+        <div className="size-8 lg:hidden" />
+      )}
     </Header>
   );
 };
@@ -58,7 +65,8 @@ const ModalHeader: React.FC<Props> = props => {
 export default ModalHeader;
 
 const Header = styled.div.attrs({
-  className: 'flex rounded-xl xl:space-x-6 p-4 xl:p-6 bg-neutral-0',
+  className:
+    'flex rounded-xl xl:space-x-6 p-4 xl:p-6 bg-neutral-0 items-center',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
