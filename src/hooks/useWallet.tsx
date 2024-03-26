@@ -10,7 +10,8 @@ import {
   useNetwork as useWagmiNetwork,
 } from 'wagmi';
 
-import {useWeb3Modal} from '@web3modal/react';
+import {useWeb3Modal} from '@web3modal/wagmi/react';
+import {useWeb3ModalState} from '@web3modal/wagmi/react';
 
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -52,7 +53,9 @@ export const useWallet = (): IUseWallet => {
   const {chain} = useWagmiNetwork();
   const {address, status: wagmiStatus, isConnected, connector} = useAccount();
   const {disconnect} = useDisconnect();
-  const {open: openWeb3Modal, isOpen} = useWeb3Modal();
+  const {open: openWeb3Modal} = useWeb3Modal();
+  const {open} = useWeb3ModalState();
+
   const chainId = chain?.id || 0;
   const signer = useEthersSigner(chainId);
 
@@ -110,7 +113,7 @@ export const useWallet = (): IUseWallet => {
     ensAvatarUrl: ensAvatarUrl as string,
     ensName: ensName as string,
     isConnected,
-    isModalOpen: isOpen,
+    isModalOpen: open,
     isOnWrongNetwork,
     methods,
     network,
