@@ -592,7 +592,7 @@
     "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on.",
     "changeMinimumApproval": "Change minimum approval",
     "changeMinimumApprovalSubtitle": "Modify minimum approval of this DAO.",
-    "connectdAppsTitle": "Connect verified dApp",
+    "connectdAppsTitle": "Connect dApp",
     "withdrawAddresses": {
       "subtitle": "Create a proposal to withdraw assets to a wallet."
     },
