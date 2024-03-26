@@ -74,7 +74,6 @@ export const wagmiConfig = createConfig({
       metadata: AppMetadata,
       showQrModal: false,
     }),
-    injected({shimDisconnect: true}),
     coinbaseWallet({
       appName: AppMetadata.name,
       appLogoUrl: AppMetadata.icons[0],
@@ -87,7 +86,13 @@ createWeb3Modal({
   wagmiConfig,
   projectId: walletConnectProjectID,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
-  enableOnramp: true, // Optional - false as default
+  enableOnramp: true, // Optional
+  themeMode: 'light',
+  allWallets: 'SHOW',
+  featuredWalletIds: [
+    '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
+    '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1',
+  ],
 });
 
 // React-Query client
