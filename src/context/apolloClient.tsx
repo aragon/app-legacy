@@ -31,7 +31,7 @@ const selectedDaoVar = makeVar<NavigationDao>({
     name: '',
     avatar: '',
   },
-  chain: 5,
+  chain: 11155111,
   plugins: [],
 });
 

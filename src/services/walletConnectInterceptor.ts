@@ -4,19 +4,12 @@ import Web3WalletClient, {Web3Wallet} from '@walletconnect/web3wallet';
 import {AuthClientTypes} from '@walletconnect/auth-client';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {PairingTypes, SessionTypes} from '@walletconnect/types';
-import {WC_URI_PATTERN} from 'utils/constants';
+import {AppMetadata, WC_URI_PATTERN} from 'utils/constants';
 import {i18n} from '../../i18n.config';
 
 const URI_REGEX = new RegExp(WC_URI_PATTERN);
 class WalletConnectInterceptor {
-  clientMetadata: AuthClientTypes.Metadata = {
-    name: 'Aragon DAO',
-    description: 'Aragon DAO',
-    url: 'https://aragon.org',
-    icons: [
-      'https://assets.website-files.com/5e997428d0f2eb13a90aec8c/635283b535e03c60d5aafe64_logo_aragon_isotype.png',
-    ],
-  };
+  clientMetadata: AuthClientTypes.Metadata = AppMetadata;
 
   client: Web3WalletClient | undefined;
 

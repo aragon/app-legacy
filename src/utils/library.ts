@@ -72,6 +72,7 @@ import {Abi, addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
 import {daoABI} from 'abis/daoABI';
+import {SupportedChainID} from './constants/chains';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -1110,7 +1111,7 @@ export class Web3Address {
           const chainId = (await provider.getNetwork()).chainId;
           addressObj._avatar = await getEnsAvatar(wagmiConfig, {
             name: normalize(addressObj._ensName),
-            chainId: chainId as 1 | 11155111 | 8453 | 137 | 42161 | undefined,
+            chainId: chainId as SupportedChainID,
           });
         }
       }

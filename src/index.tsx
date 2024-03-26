@@ -11,7 +11,18 @@ import {createWeb3Modal} from '@web3modal/wagmi/react';
 import {http, createConfig, WagmiProvider} from 'wagmi';
 import {walletConnect, injected, coinbaseWallet} from 'wagmi/connectors';
 
-import {arbitrum, base, mainnet, polygon, sepolia} from 'wagmi/chains';
+import {
+  Chain,
+  arbitrum,
+  arbitrumGoerli,
+  base,
+  baseGoerli,
+  goerli,
+  mainnet,
+  polygon,
+  polygonMumbai,
+  sepolia,
+} from 'wagmi/chains';
 import {AlertProvider} from 'context/alert';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
@@ -21,52 +32,52 @@ import {TransactionDetailProvider} from 'context/transactionDetail';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
-import {walletConnectProjectID} from 'utils/constants';
+import {
+  AppMetadata,
+  SupportedChainID,
+  walletConnectProjectID,
+} from 'utils/constants';
 import {VocdoniClientProvider} from './hooks/useVocdoniSdk';
 
 import {App} from './app';
 import {aragonGateway} from 'utils/aragonGateway';
+import {HttpTransport} from 'viem';
 
-// const chains = [
-//   base,
-//   baseGoerli,
-//   goerli,
-//   mainnet,
-//   polygon,
-//   polygonMumbai,
-//   arbitrum,
-//   arbitrumGoerli,
-//   sepolia,
-// ];
+const chains = [
+  base,
+  baseGoerli,
+  goerli,
+  mainnet,
+  polygon,
+  polygonMumbai,
+  arbitrum,
+  arbitrumGoerli,
+  sepolia,
+] as [Chain, ...Chain[]];
 
-const metadata = {
-  name: 'Aragon DAO',
-  description: 'Aragon DAO',
-  url: 'https://aragon.org',
-  icons: [
-    'https://assets.website-files.com/5e997428d0f2eb13a90aec8c/635283b535e03c60d5aafe64_logo_aragon_isotype.png',
-  ],
-};
+const transports = chains.reduce(
+  (RPCs, value) => {
+    RPCs[value.id as SupportedChainID] = http(
+      aragonGateway.buildRpcUrl(value.id) ?? ''
+    );
+    return RPCs;
+  },
+  {} as Record<SupportedChainID, HttpTransport>
+);
 
 export const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia, base, polygon, arbitrum],
-  transports: {
-    [mainnet.id]: http(aragonGateway.buildRpcUrl(mainnet.id) ?? ''),
-    [sepolia.id]: http(aragonGateway.buildRpcUrl(sepolia.id) ?? ''),
-    [base.id]: http(aragonGateway.buildRpcUrl(base.id) ?? ''),
-    [polygon.id]: http(aragonGateway.buildRpcUrl(polygon.id) ?? ''),
-    [arbitrum.id]: http(aragonGateway.buildRpcUrl(arbitrum.id) ?? ''),
-  },
+  chains,
+  transports: transports,
   connectors: [
     walletConnect({
       projectId: walletConnectProjectID,
-      metadata,
+      metadata: AppMetadata,
       showQrModal: false,
     }),
     injected({shimDisconnect: true}),
     coinbaseWallet({
-      appName: metadata.name,
-      appLogoUrl: metadata.icons[0],
+      appName: AppMetadata.name,
+      appLogoUrl: AppMetadata.icons[0],
     }),
   ],
 });
@@ -146,11 +157,6 @@ root.render(
           </PrivacyContextProvider>
         </QueryClientProvider>
       </WagmiProvider>
-      {/* <Web3Modal
-        projectId={walletConnectProjectID}
-        ethereumClient={ethereumClient}
-        themeMode="light"
-      /> */}
     </StyleSheetManager>
   </React.StrictMode>
 );
