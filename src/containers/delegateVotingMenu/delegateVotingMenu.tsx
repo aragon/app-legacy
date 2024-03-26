@@ -4,7 +4,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useWallet} from 'hooks/useWallet';
 import {LoginRequired} from 'containers/walletMenu/LoginRequired';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {Address, useBalance, useEnsName} from 'wagmi';
+import {useEnsName, useReadContracts} from 'wagmi';
 import {useTranslation} from 'react-i18next';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
@@ -22,6 +22,7 @@ import {
 } from './delegateVotingUtils';
 import {aragonBackendQueryKeys} from 'services/aragon-backend/query-keys';
 import {PluginTypes} from '../../hooks/usePluginClient';
+import {Address, erc20Abi, formatUnits} from 'viem';
 
 const buildFormSettings = (
   delegateAddress = ''
@@ -75,11 +76,32 @@ export const DelegateVotingMenu: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress ?? ''
   );
 
-  const {data: tokenBalance, isLoading: isLoadingBalance} = useBalance({
-    address: address as Address,
-    token: daoToken?.address as Address,
-    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled: address != null && daoToken != null,
+  const {data: tokenBalance, isLoading: isLoadingBalance} = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [address as Address],
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'decimals',
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'symbol',
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+    ],
+    query: {
+      enabled: address != null && daoToken != null,
+    },
   });
 
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
@@ -96,7 +118,9 @@ export const DelegateVotingMenu: React.FC = () => {
 
   const {data: delegateEns} = useEnsName({
     address: currentDelegate as Address,
-    enabled: currentDelegate != null,
+    query: {
+      enabled: currentDelegate != null,
+    },
   });
   const currentDelegateEns = delegateEns ?? '';
 
@@ -227,17 +251,17 @@ export const DelegateVotingMenu: React.FC = () => {
       isOpen &&
       !isLoadingBalance &&
       !isOnWrongNetwork &&
-      tokenBalance?.value === 0n
+      tokenBalance?.[0] === 0n
     ) {
       open('cannotDelegate');
     }
   }, [
     isConnected,
-    tokenBalance?.value,
     isLoadingBalance,
     isOnWrongNetwork,
     isOpen,
     open,
+    tokenBalance,
   ]);
 
   if (!isConnected && isOpen) {
@@ -256,7 +280,10 @@ export const DelegateVotingMenu: React.FC = () => {
             <DelegateVotingSuccess
               txHash={txHash}
               delegate={delegate}
-              tokenBalance={tokenBalance?.formatted ?? '0'}
+              tokenBalance={formatUnits(
+                tokenBalance?.[0] ?? 0n,
+                tokenBalance?.[1] ?? 0
+              )}
               onClose={handleCloseMenu}
             />
           ) : (

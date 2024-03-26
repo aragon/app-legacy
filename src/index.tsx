@@ -1,7 +1,5 @@
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
-import {EthereumClient, w3mConnectors, w3mProvider} from '@web3modal/ethereum';
-import {Web3Modal} from '@web3modal/react';
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import {HashRouter as Router} from 'react-router-dom';
@@ -9,26 +7,11 @@ import '@aragon/ods/index.css';
 import './index.css';
 import isPropValid from '@emotion/is-prop-valid';
 import {StyleSheetManager} from 'styled-components';
-import {WagmiConfig, configureChains, createConfig} from 'wagmi';
-
-import {CoinbaseWalletConnector} from 'wagmi/connectors/coinbaseWallet';
-import {InjectedConnector} from 'wagmi/connectors/injected';
-import {walletConnectProvider, EIP6963Connector} from '@web3modal/wagmi';
 import {createWeb3Modal} from '@web3modal/wagmi/react';
-import {WalletConnectConnector} from 'wagmi/connectors/walletConnect';
+import {http, createConfig, WagmiProvider} from 'wagmi';
+import {walletConnect, injected, coinbaseWallet} from 'wagmi/connectors';
 
-import {
-  arbitrum,
-  arbitrumGoerli,
-  base,
-  baseGoerli,
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-  sepolia,
-} from 'wagmi/chains';
-import {jsonRpcProvider} from 'wagmi/providers/jsonRpc';
+import {arbitrum, base, mainnet, polygon, sepolia} from 'wagmi/chains';
 import {AlertProvider} from 'context/alert';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
@@ -44,17 +27,17 @@ import {VocdoniClientProvider} from './hooks/useVocdoniSdk';
 import {App} from './app';
 import {aragonGateway} from 'utils/aragonGateway';
 
-const chains = [
-  base,
-  baseGoerli,
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-  arbitrum,
-  arbitrumGoerli,
-  sepolia,
-];
+// const chains = [
+//   base,
+//   baseGoerli,
+//   goerli,
+//   mainnet,
+//   polygon,
+//   polygonMumbai,
+//   arbitrum,
+//   arbitrumGoerli,
+//   sepolia,
+// ];
 
 const metadata = {
   name: 'Aragon DAO',
@@ -65,45 +48,36 @@ const metadata = {
   ],
 };
 
-const {publicClient} = configureChains(chains, [
-  walletConnectProvider({projectId: walletConnectProjectID}),
-  jsonRpcProvider({
-    rpc: chain => ({http: aragonGateway.buildRpcUrl(chain.id) ?? ''}),
-  }),
-]);
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
+export const wagmiConfig = createConfig({
+  chains: [mainnet, sepolia, base, polygon, arbitrum],
+  transports: {
+    [mainnet.id]: http(aragonGateway.buildRpcUrl(mainnet.id) ?? ''),
+    [sepolia.id]: http(aragonGateway.buildRpcUrl(sepolia.id) ?? ''),
+    [base.id]: http(aragonGateway.buildRpcUrl(base.id) ?? ''),
+    [polygon.id]: http(aragonGateway.buildRpcUrl(polygon.id) ?? ''),
+    [arbitrum.id]: http(aragonGateway.buildRpcUrl(arbitrum.id) ?? ''),
+  },
   connectors: [
-    new WalletConnectConnector({
-      chains,
-      options: {
-        projectId: walletConnectProjectID,
-        showQrModal: false,
-        metadata,
-      },
+    walletConnect({
+      projectId: walletConnectProjectID,
+      metadata,
+      showQrModal: false,
     }),
-    new EIP6963Connector({chains}),
-    new InjectedConnector({chains, options: {shimDisconnect: true}}),
-    new CoinbaseWalletConnector({chains, options: {appName: 'Aragon app'}}),
+    injected({shimDisconnect: true}),
+    coinbaseWallet({
+      appName: metadata.name,
+      appLogoUrl: metadata.icons[0],
+    }),
   ],
-  publicClient,
 });
 
-// const wagmiConfig = createConfig({
-//   autoConnect: true,
-//   connectors: [
-//     ...w3mConnectors({
-//       projectId: walletConnectProjectID,
-//       version: 2,
-//       chains,
-//     }),
-//   ],
-
-//   publicClient,
-// });
-
-createWeb3Modal({wagmiConfig, projectId: walletConnectProjectID, chains});
+// 3. Create modal
+createWeb3Modal({
+  wagmiConfig,
+  projectId: walletConnectProjectID,
+  enableAnalytics: true, // Optional - defaults to your Cloud configuration
+  enableOnramp: true, // Optional - false as default
+});
 
 // React-Query client
 export const queryClient = new QueryClient({
@@ -144,11 +118,11 @@ root.render(
         typeof elementToBeRendered === 'string' ? isPropValid(propName) : true
       }
     >
-      <QueryClientProvider client={queryClient}>
-        <PrivacyContextProvider>
-          <Router>
-            <AlertProvider>
-              <WagmiConfig config={wagmiConfig}>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <PrivacyContextProvider>
+            <Router>
+              <AlertProvider>
                 <NetworkProvider>
                   <UseClientProvider>
                     <UseCacheProvider>
@@ -167,11 +141,11 @@ root.render(
                     </UseCacheProvider>
                   </UseClientProvider>
                 </NetworkProvider>
-              </WagmiConfig>
-            </AlertProvider>
-          </Router>
-        </PrivacyContextProvider>
-      </QueryClientProvider>
+              </AlertProvider>
+            </Router>
+          </PrivacyContextProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
       {/* <Web3Modal
         projectId={walletConnectProjectID}
         ethereumClient={ethereumClient}

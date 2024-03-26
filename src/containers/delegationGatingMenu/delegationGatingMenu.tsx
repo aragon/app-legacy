@@ -6,7 +6,7 @@ import {Link} from '@aragon/ods-old';
 import {Button, IconType, IllustrationObject} from '@aragon/ods';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {Address, useBalance} from 'wagmi';
+import {useReadContracts} from 'wagmi';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
 import {abbreviateTokenAmount} from 'utils/tokens';
@@ -16,6 +16,7 @@ import {useMember} from 'services/aragon-sdk/queries/use-member';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {PluginTypes} from '../../hooks/usePluginClient';
+import {Address, erc20Abi} from 'viem';
 
 export interface IDelegationGatingMenuState {
   proposal?: TokenVotingProposal;
@@ -52,14 +53,35 @@ export const DelegationGatingMenu: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress ?? ''
   );
 
-  const {data: tokenBalance} = useBalance({
-    address: address as Address,
-    token: daoToken?.address as Address,
-    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled: address != null && daoToken != null,
+  const {data: tokenBalance} = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [address as Address],
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'decimals',
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'symbol',
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+    ],
+    query: {
+      enabled: address != null && daoToken != null,
+    },
   });
 
-  const hasBalance = tokenBalance != null && tokenBalance.value > 0;
+  const hasBalance = tokenBalance != null && tokenBalance[0] > 0;
 
   const {data: daoMember} = useMember(
     {
