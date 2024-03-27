@@ -92,12 +92,6 @@ export const DelegateVotingMenu: React.FC = () => {
         functionName: 'decimals',
         chainId: CHAIN_METADATA[network as SupportedNetworks].id,
       },
-      {
-        address: daoToken?.address as Address,
-        abi: erc20Abi,
-        functionName: 'symbol',
-        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-      },
     ],
     query: {
       enabled: address != null && daoToken != null,
