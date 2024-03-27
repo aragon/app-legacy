@@ -207,18 +207,6 @@ export const useDaoMembers = (
         args: [address as Address],
         chainId: CHAIN_METADATA[network as SupportedNetworks].id,
       },
-      {
-        address: daoToken?.address as Address,
-        abi: erc20Abi,
-        functionName: 'decimals',
-        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-      },
-      {
-        address: daoToken?.address as Address,
-        abi: erc20Abi,
-        functionName: 'symbol',
-        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-      },
     ],
     query: {
       enabled:
