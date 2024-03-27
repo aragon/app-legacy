@@ -1364,7 +1364,7 @@
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",
-        "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
+        "desc": "You can interact with {{dappName}}. Actions you take will be added to this proposal.",
         "noActionsTag": "No actions received yet",
         "amountActionsTag": "{{amountActions}} actions received",
         "ctaLabel": "Add {{amountActions}} actions",
