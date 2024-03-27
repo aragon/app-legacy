@@ -12,11 +12,12 @@ export const useVotingPower = (
 ) => {
   const {api: provider} = useProviders();
 
-  return useQuery(
-    aragonSdkQueryKeys.votingPower(params),
-    () => getVotingPower(params.tokenAddress, params.address, provider),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.votingPower(params),
+    queryFn: () =>
+      getVotingPower(params.tokenAddress, params.address, provider),
+    ...options,
+  });
 };
 
 export const useVotingPowerAsync = () => {

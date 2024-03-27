@@ -45,12 +45,12 @@ const fetchTokenHolders = async (
 
 export const useTokenHolders = (
   params: IFetchTokenHoldersParams,
-  options: UseQueryOptions<TokenHoldersResponse> = {}
+  options: Omit<UseQueryOptions<TokenHoldersResponse>, 'queryKey'> = {}
 ) => {
   params.page = params.page || 0; // otherwise undefined & 0 are different query keys
-  return useQuery(
-    aragonBackendQueryKeys.tokenHolders(params),
-    () => fetchTokenHolders(params),
-    options
-  );
+  return useQuery({
+    queryKey: aragonBackendQueryKeys.tokenHolders(params),
+    queryFn: () => fetchTokenHolders(params),
+    ...options,
+  });
 };

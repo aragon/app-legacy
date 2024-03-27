@@ -159,8 +159,8 @@ export const Proposal: React.FC = () => {
       enabled: !!proposalId,
 
       // refetch active proposal data every minute
-      refetchInterval: data =>
-        data?.status === ProposalStatus.ACTIVE
+      refetchInterval: query =>
+        query.state.data?.status === ProposalStatus.ACTIVE
           ? PROPOSAL_STATUS_INTERVAL
           : false,
     }

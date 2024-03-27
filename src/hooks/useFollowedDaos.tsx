@@ -1,5 +1,5 @@
 import {
-  InfiniteData,
+  // InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
   UseQueryResult,
@@ -43,7 +43,6 @@ export const useFollowedDaosQuery = (
   return useQuery<NavigationDao[]>({
     queryKey: ['followedDaos'],
     queryFn: useCallback(() => getFollowedDaosFromCache({skip}), [skip]),
-    select: addAvatarToDaos,
     refetchOnWindowFocus: false,
   });
 };
@@ -65,7 +64,10 @@ const useFollowedDaosInfiniteQueryKey = (
 
 export const useFollowedDaosInfiniteQuery = (
   params: IFetchFollowedDaosParams,
-  options: UseInfiniteQueryOptions<IFetchInfiniteFollowedDaosResult> = {}
+  options: Omit<
+    UseInfiniteQueryOptions<IFetchInfiniteFollowedDaosResult>,
+    'queryKey' | 'initialPageParam' | 'getNextPageParam'
+  >
 ) => {
   const {limit = DEFAULT_QUERY_PARAMS.limit, pluginNames, networks} = params;
 
@@ -81,32 +83,30 @@ export const useFollowedDaosInfiniteQuery = (
     }
   });
 
-  return useInfiniteQuery(
-    useFollowedDaosInfiniteQueryKey(params),
-    ({pageParam = 0}) =>
+  return useInfiniteQuery({
+    queryKey: useFollowedDaosInfiniteQueryKey(params),
+    queryFn: ({pageParam}) =>
       getFollowedDaosFromCache({
-        skip: pageParam,
+        skip: pageParam as number,
         limit,
         includeTotal: true,
         pluginNames: pluginIds,
         networks,
       }),
-    {
-      ...options,
-      getNextPageParam: (
-        lastPage: IFetchInfiniteFollowedDaosResult,
-        allPages: IFetchInfiniteFollowedDaosResult[]
-      ) => {
-        const totalFetched = allPages.reduce(
-          (total, page) => total + page.data.length,
-          0
-        );
-        return totalFetched < lastPage.total ? totalFetched : undefined;
-      },
-      select: augmentCachedDaos,
-      refetchOnWindowFocus: false,
-    }
-  );
+    initialPageParam: 0,
+    getNextPageParam: (
+      lastPage: IFetchInfiniteFollowedDaosResult,
+      allPages: IFetchInfiniteFollowedDaosResult[]
+    ) => {
+      const totalFetched = allPages.reduce(
+        (total, page) => total + page.data.length,
+        0
+      );
+      return totalFetched < lastPage.total ? totalFetched : undefined;
+    },
+    refetchOnWindowFocus: false,
+    ...options,
+  });
 };
 
 /**
@@ -141,13 +141,15 @@ export const useUpdateFollowedDaoMutation = () => {
     onSuccess: (_, variables) => {
       const network = getSupportedNetworkByChainId(variables.dao.chain);
 
-      queryClient.invalidateQueries(['followedDaos']);
-      queryClient.invalidateQueries(['infiniteFollowedDaos']);
-      queryClient.invalidateQueries([
-        'followedDao',
-        variables.dao.address,
-        network,
-      ]);
+      queryClient.invalidateQueries({
+        queryKey: ['followedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['infiniteFollowedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['followedDao', variables.dao.address, network],
+      });
     },
   });
 };
@@ -199,8 +201,12 @@ export const useAddFollowedDaoMutation = (
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries(['followedDaos']);
-      queryClient.invalidateQueries(['infiniteFollowedDaos']);
+      queryClient.invalidateQueries({
+        queryKey: ['followedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['infiniteFollowedDaos'],
+      });
       params?.onSuccess?.();
     },
   });
@@ -243,44 +249,31 @@ export const useRemoveFollowedDaoMutation = (
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries(['followedDaos']);
-      queryClient.invalidateQueries(['infiniteFollowedDaos']);
+      queryClient.invalidateQueries({
+        queryKey: ['followedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['infiniteFollowedDaos'],
+      });
       params?.onSuccess?.();
     },
   });
 };
 
-/**
- * Augment DAOs by resolving the IPFS CID for each DAO's avatar.
- * @param data raw fetched data for the cached DAOs.
- * @returns list of DAOs augmented with the resolved IPFS CID avatars
- */
-function augmentCachedDaos(
-  data: InfiniteData<IFetchInfiniteFollowedDaosResult>
-): InfiniteData<IFetchInfiniteFollowedDaosResult> {
-  return {
-    pageParams: data.pageParams,
-    pages: data.pages.map(page => ({
-      data: addAvatarToDaos(page.data),
-      total: page.total,
-    })),
-  };
-}
-
-/**
- * Add resolved IPFS CID for each DAO's avatar to the metadata.
- * @param daos array of `NavigationDao` objects representing the DAOs to be processed.
- * @returns array of augmented NavigationDao objects with resolved avatar IPFS CIDs.
- */
-function addAvatarToDaos<T extends NavigationDao>(daos: T[]): T[] {
-  return daos.map(dao => {
-    const {metadata} = dao;
-    return {
-      ...dao,
-      metadata: {
-        ...metadata,
-        avatar: metadata.avatar,
-      },
-    } as T;
-  });
-}
+// /**
+//  * Add resolved IPFS CID for each DAO's avatar to the metadata.
+//  * @param daos array of `NavigationDao` objects representing the DAOs to be processed.
+//  * @returns array of augmented NavigationDao objects with resolved avatar IPFS CIDs.
+//  */
+// function addAvatarToDaos<T extends NavigationDao>(daos: T[]): T[] {
+//   return daos.map(dao => {
+//     const {metadata} = dao;
+//     return {
+//       ...dao,
+//       metadata: {
+//         ...metadata,
+//         avatar: metadata.avatar,
+//       },
+//     } as T;
+//   });
+// }

@@ -43,8 +43,8 @@ export const useCensus3DaoMembers = ({
     {tokenAddress: daoToken?.address ?? ''},
     {
       enabled: enableCensus3Token,
-      refetchInterval: token =>
-        token?.status.synced ? false : REFETCH_INTERVAL_MS,
+      refetchInterval: query =>
+        query.state.data?.status.synced ? false : REFETCH_INTERVAL_MS,
     }
   );
 

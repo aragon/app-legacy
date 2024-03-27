@@ -196,7 +196,10 @@ const fetchMemberDAOs = async (
 
 export const useMember = (
   params: IFetchMemberParams,
-  options: UseQueryOptions<TokenVotingMember | null> = {}
+  options: Omit<
+    UseQueryOptions<TokenVotingMember | null>,
+    'queryKey' | 'queryFn'
+  >
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
   const {network} = useNetwork();
@@ -209,16 +212,16 @@ export const useMember = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.getMember(baseParams, params),
-    () => fetchMember(params, client),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.getMember(baseParams, params),
+    queryFn: () => fetchMember(params, client),
+    ...options,
+  });
 };
 
 export const useMemberDAOs = (
   params: IFetchMemberParams,
-  options: UseQueryOptions<MemberDAOsType> = {}
+  options: Omit<UseQueryOptions<MemberDAOsType>, 'queryKey' | 'queryFn'>
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
   const {network} = useWallet();
@@ -231,9 +234,9 @@ export const useMemberDAOs = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.getMemberDAOs(baseParams),
-    () => fetchMemberDAOs(params, client),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.getMemberDAOs(baseParams),
+    queryFn: () => fetchMemberDAOs(params, client),
+    ...options,
+  });
 };

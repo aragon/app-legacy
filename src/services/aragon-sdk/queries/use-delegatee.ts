@@ -26,7 +26,7 @@ const fetchDelegatee = async (
 export const useDelegatee = (
   params: IFetchDelegateeParams,
   pluginType: PluginTypes,
-  options: UseQueryOptions<string | null> = {}
+  options: Omit<UseQueryOptions<string | null>, 'queryKey'> = {}
 ) => {
   const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
@@ -62,11 +62,9 @@ export const useDelegatee = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.delegatee(baseParams, params),
-    () => {
-      return fetchDelegatee(params, client);
-    },
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.delegatee(baseParams, params),
+    queryFn: () => fetchDelegatee(params, client),
+    ...options,
+  });
 };

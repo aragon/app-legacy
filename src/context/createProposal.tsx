@@ -23,7 +23,7 @@ import {
   TokenType,
   hexToBytes,
 } from '@aragon/sdk-client-common';
-import {useQueryClient} from '@tanstack/react-query';
+import {InvalidateQueryFilters, useQueryClient} from '@tanstack/react-query';
 import {
   CreateGasslessProposalParams,
   GaslessVotingClient,
@@ -135,7 +135,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
   const {data: votingPower} = useVotingPower(
     {tokenAddress: daoToken?.address as string, address: address as string},
-    {enabled: !!daoToken?.address && !!address}
+    {
+      enabled: !!daoToken?.address && !!address,
+      queryKey: ['votingPower', daoToken?.address, address],
+    }
   );
 
   const {data: versions} = useProtocolVersion(daoDetails?.address as string);
@@ -812,9 +815,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const invalidateQueries = useCallback(() => {
     // invalidating all infinite proposals query regardless of the
     // pagination state
-    queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
+    queryClient.invalidateQueries({
+      queryKey: [AragonSdkQueryItem.PROPOSALS],
+    });
     queryClient.invalidateQueries(
-      aragonSubgraphQueryKeys.totalProposalCount({pluginAddress, pluginType})
+      aragonSubgraphQueryKeys.totalProposalCount({
+        pluginAddress,
+        pluginType,
+      }) as InvalidateQueryFilters
     );
   }, [pluginAddress, pluginType, queryClient]);
 

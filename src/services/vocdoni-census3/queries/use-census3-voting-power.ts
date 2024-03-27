@@ -19,7 +19,7 @@ import {IFetchCensus3VotingPowerParams} from '../census3-service.api';
  */
 export const useCensus3VotingPower = (
   {holders, censusId, tokenId}: IFetchCensus3VotingPowerParams,
-  options?: UseQueryOptions<TokenDaoMember>
+  options: Omit<UseQueryOptions<TokenDaoMember>, 'queryKey'> = {}
 ) => {
   const {chainId} = useWallet();
   const {client: vocdoniClient} = useClient();

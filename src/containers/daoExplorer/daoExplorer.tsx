@@ -79,7 +79,11 @@ export const DaoExplorer = () => {
     {enabled: useFollowList === false}
   );
 
-  const newDaoList = newDaosResult.data?.pages.flatMap(page => page.data);
+  console.log('newDaosResult', newDaosResult);
+
+  const newDaoList = newDaosResult.data?.pages?.flatMap(dao => dao.data);
+
+  console.log('newDaoList', newDaoList);
 
   const filtersCount = useMemo(() => {
     let count = 0;

@@ -2,8 +2,7 @@ import request, {gql} from 'graphql-request';
 import {UseInfiniteQueryOptions, useInfiniteQuery} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchDaosParams} from '../aragon-backend-service.api';
-import {IPaginatedResponse} from '../domain/paginated-response';
-import {IDao} from '../domain/dao';
+import {IPaginatedDaoResponse} from '../domain/paginated-response';
 
 const daosQueryDocument = gql`
   query Daos(
@@ -52,8 +51,8 @@ const daosQueryDocument = gql`
 
 const fetchDaos = async (
   params: IFetchDaosParams
-): Promise<IPaginatedResponse<IDao>> => {
-  const {daos} = await request<{daos: IPaginatedResponse<IDao>}>(
+): Promise<IPaginatedDaoResponse> => {
+  const {daos} = await request<{daos: IPaginatedDaoResponse}>(
     `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     daosQueryDocument,
     params
@@ -64,23 +63,26 @@ const fetchDaos = async (
 
 export const useDaos = (
   params: IFetchDaosParams,
-  options: UseInfiniteQueryOptions<IPaginatedResponse<IDao>> = {}
+  options: Omit<
+    UseInfiniteQueryOptions<IPaginatedDaoResponse>,
+    'queryKey' | 'getNextPageParam' | 'initialPageParam'
+  >
 ) => {
-  return useInfiniteQuery(
-    aragonBackendQueryKeys.daos(params),
-    ({pageParam}) => fetchDaos({...params, ...pageParam}),
-    {
-      ...options,
-      getNextPageParam: (lastPage: IPaginatedResponse<IDao>) => {
-        const {skip, total, take} = lastPage;
-        const hasNextPage = skip + take < total;
+  return useInfiniteQuery({
+    queryKey: aragonBackendQueryKeys.daos(params),
+    queryFn: ({pageParam}) =>
+      fetchDaos({...params, ...(pageParam as IFetchDaosParams)}),
+    getNextPageParam: (lastPage: IPaginatedDaoResponse) => {
+      const {skip, total, take} = lastPage;
+      const hasNextPage = skip + take < total;
 
-        if (!hasNextPage) {
-          return undefined;
-        }
+      if (!hasNextPage) {
+        return undefined;
+      }
 
-        return {...params, skip: skip + take};
-      },
-    }
-  );
+      return {...params, skip: skip + take};
+    },
+    initialPageParam: 0,
+    ...options,
+  });
 };

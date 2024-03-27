@@ -52,9 +52,12 @@ export const FilteredAddressList = ({
     }
 
     // multisig
-    return (wallets as MultisigWalletField[])
-      .filter(filterValidator)
-      .map(({address, ensName}) => ({wallet: ensName || address}) as VoterType);
+    return (wallets as MultisigWalletField[]).filter(filterValidator).map(
+      ({address, ensName}) =>
+        ({
+          wallet: ensName || address,
+        }) as VoterType
+    );
   }, [filterValidator, wallets, t, tokenSymbol]);
 
   /*************************************************

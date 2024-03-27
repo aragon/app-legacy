@@ -23,8 +23,11 @@ async function fetchProposal(
 
 export const useProposal = (
   params: IFetchProposalParams,
-  options: UseQueryOptions<
-    MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
+  options: Omit<
+    UseQueryOptions<
+      MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
+    >,
+    'queryKey'
   > = {}
 ) => {
   const client = usePluginClient(params.pluginType);

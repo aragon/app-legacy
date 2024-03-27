@@ -7,13 +7,14 @@ import {BigNumber} from 'ethers';
 
 export const useTokenAllowance = (
   params: IFetchTokenAllowanceParams,
-  options?: UseQueryOptions<BigNumber>
+  options: Omit<UseQueryOptions<BigNumber>, 'queryKey'> = {}
 ) => {
   const {api: provider} = useProviders();
 
-  return useQuery(
-    aragonSdkQueryKeys.tokenAllowance(params),
-    () => getAllowance(params.token, params.owner, params.spender, provider),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.tokenAllowance(params),
+    queryFn: () =>
+      getAllowance(params.token, params.owner, params.spender, provider),
+    ...options,
+  });
 };

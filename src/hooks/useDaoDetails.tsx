@@ -139,7 +139,6 @@ export const useDaoQuery = (
   return useQuery<DaoDetails | null>({
     queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
     queryFn,
-    select: addAvatarToDao(),
     enabled,
     // useQuery will cache an empty data for ens names which is wrong, but this config
     // will disable caching for ens names in L2 the caching is enabled for
@@ -201,21 +200,4 @@ export const useDaoDetailsQuery = () => {
   ]);
 
   return apiResponse;
-};
-
-/**
- * Adds avatar to DAO
- * @param dao DAO details
- * @returns DAO details object augmented with a resolved IPFS avatar
- */
-const addAvatarToDao = () => (dao: DaoDetails | null) => {
-  if (!dao) return null;
-
-  return {
-    ...dao,
-    metadata: {
-      ...dao?.metadata,
-      avatar: dao?.metadata.avatar,
-    },
-  };
 };

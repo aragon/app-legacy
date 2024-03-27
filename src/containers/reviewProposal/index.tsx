@@ -414,7 +414,11 @@ function getReviewProposalTerminalProps(
       approvals: [],
       voters:
         daoMembers?.map(
-          m => ({wallet: m.address, option: 'none'}) as VoterType
+          m =>
+            ({
+              wallet: m.address,
+              option: 'none',
+            }) as VoterType
         ) || [],
     };
   }

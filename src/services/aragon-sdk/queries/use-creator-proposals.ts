@@ -135,7 +135,7 @@ const fetchCreatorProposals = async (
 
 export const useCreatorProposals = (
   params: IFetchCreatorProposalsParams,
-  options: UseQueryOptions<ProposalBase[]> = {}
+  options: Omit<UseQueryOptions<ProposalBase[]>, 'queryKey'> = {}
 ) => {
   const client = usePluginClient(params.pluginType);
   const {network} = useNetwork();
@@ -148,12 +148,12 @@ export const useCreatorProposals = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.getCreatorProposals(baseParams, params),
-    () =>
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.getCreatorProposals(baseParams, params),
+    queryFn: () =>
       params.pluginType === GaslessPluginName
         ? fetchCreatorGaslessProposals(params, client)
         : fetchCreatorProposals(params, client),
-    options
-  );
+    ...options,
+  });
 };

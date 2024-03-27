@@ -74,8 +74,8 @@ export const Dashboard: React.FC = () => {
 
   const enableFollowing =
     !followedDaosFetching &&
-    !addFollowedDaoMutation.isLoading &&
-    !removeFollowedDaoMutation.isLoading;
+    !addFollowedDaoMutation.isPending &&
+    !removeFollowedDaoMutation.isPending;
 
   // live DAO
   const {

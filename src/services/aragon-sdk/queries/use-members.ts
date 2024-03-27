@@ -29,7 +29,7 @@ const fetchMembers = async (
 
 export const useMembers = (
   params: IFetchMembersParams,
-  options: UseQueryOptions<Array<string | TokenVotingMember>> = {}
+  options: Omit<UseQueryOptions<Array<string | TokenVotingMember>>, 'queryKey'>
 ) => {
   const client = usePluginClient(params.pluginType);
 
@@ -37,9 +37,9 @@ export const useMembers = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.members(params),
-    () => fetchMembers(params, client),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.members(params),
+    queryFn: () => fetchMembers(params, client),
+    ...options,
+  });
 };
