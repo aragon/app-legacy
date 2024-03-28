@@ -26,11 +26,11 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
   const {client} = useClient();
 
   const {
-    // isPending: isPinDataLoading,
     isLoading: isPinDataLoading,
     isError: isPinDataError,
     isSuccess,
     mutate: pinData,
+    reset: resetPinData,
   } = usePinData({
     onSuccess: (_data, params) => onSuccess?.(params.cid),
     onError: error => onError?.(UploadIpfsDataStep.PIN_DATA, error),
@@ -39,10 +39,10 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
   const handleAddDataSuccess = (cid: string) => pinData({client: client!, cid});
 
   const {
-    // isPending: isAddDataLoading,
     isLoading: isAddDataLoading,
     isError: isAddDataError,
     mutate: addData,
+    reset: resetAddData,
   } = useAddData({
     onSuccess: handleAddDataSuccess,
     onError: error => onError?.(UploadIpfsDataStep.ADD_DATA, error),
@@ -54,9 +54,13 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
         return;
       }
 
+      // Reset previous states in case of retries
+      resetAddData();
+      resetPinData();
+
       addData({client, data});
     },
-    [addData, client]
+    [addData, resetAddData, resetPinData, client]
   );
 
   const isPending = isPinDataLoading || isAddDataLoading;

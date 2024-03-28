@@ -1,10 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useFormContext} from 'react-hook-form';
-// import {DAOFactory} from 'typechain';
-// TODO reintroduce this by adding back the postInstall script in packages.json
-// that executes the generate-abis-and-types command.
 import {Breadcrumb} from '@aragon/ods-old';
 import {Button, AlertCard, IconType} from '@aragon/ods';
 import {useNavigate} from 'react-router-dom';
@@ -15,11 +11,11 @@ import Community from './community';
 import Governance from './governance';
 import goLive from 'assets/images/goLive.svg';
 import {Landing} from 'utils/paths';
-import {useCreateDaoContext} from 'context/createDao';
 import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from 'context/globalModals';
 import {trackEvent} from 'services/analytics';
 import Committee from './committee';
+import {CreateDaoDialog} from 'containers/createDaoDialog';
 
 export const GoLiveHeader: React.FC = () => {
   const {t} = useTranslation();
@@ -46,7 +42,7 @@ export const GoLiveHeader: React.FC = () => {
             {t('createDAO.review.description')}
           </p>
         </div>
-        <ImageContainer src={goLive} />
+        <img className="hidden w-[200px] md:block" src={goLive} />
       </div>
     </div>
   );
@@ -59,14 +55,14 @@ const GoLive: React.FC = () => {
   const {votingType} = getValues();
 
   return (
-    <Container>
+    <div className="space-y-10 md:mx-auto md:w-3/4">
       <Blockchain />
       <DaoMetadata />
       <Community />
       <Governance />
       {votingType === 'gasless' && <Committee />}
       <AlertCard message={t('createDAO.review.daoUpdates')} variant="info" />
-    </Container>
+    </div>
   );
 };
 
@@ -74,12 +70,12 @@ export const GoLiveFooter: React.FC = () => {
   const {watch, setValue, getValues} = useFormContext();
   const {reviewCheck} = watch();
   const {t} = useTranslation();
-  const {handlePublishDao} = useCreateDaoContext();
   const {open} = useGlobalModalContext();
   const {isConnected, provider, isOnWrongNetwork} = useWallet();
 
-  const IsButtonDisabled = () =>
-    !Object.values(reviewCheck).every(v => v === true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const isButtonDisabled = !Object.values(reviewCheck).every(v => v === true);
 
   const publishDao = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -94,7 +90,7 @@ export const GoLiveFooter: React.FC = () => {
       if (isOnWrongNetwork) {
         open('network');
       } else {
-        handlePublishDao();
+        setIsDialogOpen(true);
       }
     } else {
       open('wallet');
@@ -102,7 +98,7 @@ export const GoLiveFooter: React.FC = () => {
   };
 
   const showInvalidFields = () => {
-    if (IsButtonDisabled()) {
+    if (isButtonDisabled) {
       setValue('reviewCheckError', true);
     }
   };
@@ -115,21 +111,17 @@ export const GoLiveFooter: React.FC = () => {
           variant="primary"
           iconRight={IconType.CHEVRON_RIGHT}
           onClick={publishDao}
-          disabled={IsButtonDisabled()}
+          disabled={isButtonDisabled}
         >
           {t('createDAO.review.title')}
         </Button>
+        <CreateDaoDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+        />
       </div>
     </div>
   );
 };
 
 export default GoLive;
-
-const Container = styled.div.attrs({
-  className: 'md:mx-auto md:w-3/4 space-y-10',
-})``;
-
-const ImageContainer = styled.img.attrs({
-  className: 'w-[200px] hidden md:block',
-})``;
