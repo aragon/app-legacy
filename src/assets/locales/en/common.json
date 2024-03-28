@@ -592,7 +592,7 @@
     "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on.",
     "changeMinimumApproval": "Change minimum approval",
     "changeMinimumApprovalSubtitle": "Modify minimum approval of this DAO.",
-    "connectdAppsTitle": "Connect verified dApp",
+    "connectdAppsTitle": "Connect dApp",
     "withdrawAddresses": {
       "subtitle": "Create a proposal to withdraw assets to a wallet."
     },
@@ -1364,7 +1364,7 @@
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",
-        "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
+        "desc": "You can interact with {{dappName}}. Actions you take will be added to this proposal.",
         "noActionsTag": "No actions received yet",
         "amountActionsTag": "{{amountActions}} actions received",
         "ctaLabel": "Add {{amountActions}} actions",

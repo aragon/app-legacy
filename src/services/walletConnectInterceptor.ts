@@ -98,12 +98,18 @@ class WalletConnectInterceptor {
     accountAddress: string,
     supportedChains: number[] | readonly number[] = []
   ): Promise<SessionTypes.Struct> | undefined {
+    const {requiredNamespaces, optionalNamespaces} = proposal.params;
+
+    const sessionMethods =
+      requiredNamespaces['eip155']?.methods ??
+      optionalNamespaces['eip155']?.methods;
+
     const approvedNamespaces = buildApprovedNamespaces({
       proposal: proposal.params,
       supportedNamespaces: {
         eip155: {
           chains: supportedChains.map(id => `eip155:${id}`),
-          methods: proposal.params.requiredNamespaces['eip155'].methods,
+          methods: sessionMethods,
           events: ['accountsChanged', 'chainChanged'],
           accounts: supportedChains.map(id => `eip155:${id}:${accountAddress}`),
         },
