@@ -27,7 +27,7 @@ export interface ModalProps {
   /**
    * Content
    */
-  children: ReactNode;
+  children?: ReactNode;
   /**
    * Styles
    */
