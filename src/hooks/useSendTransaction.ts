@@ -1,4 +1,4 @@
-import {useCallback, useEffect} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {ITransaction} from 'services/transactions/domain/transaction';
 import {FormattedTransactionReceipt, Hash, TransactionReceipt} from 'viem';
 import {SendTransactionErrorType} from '@wagmi/core';
@@ -40,6 +40,7 @@ export interface IUseSendTransactionResult {
   isWaitTransactionLoading: boolean;
   isSuccess: boolean;
   sendTransaction: () => void;
+  longWaitingTime?: boolean;
 }
 
 export enum SendTransactionStep {
@@ -48,10 +49,14 @@ export enum SendTransactionStep {
   WAIT_CONFIRMATIONS = 'WAIT_CONFIRMATIONS',
 }
 
+const LONG_WAIT_TIMEOUT = 20_000;
+
 export const useSendTransaction = (
   params: IUseSendTransactionParams
 ): IUseSendTransactionResult => {
   const {logContext, transaction, onError, onSuccess} = params;
+
+  const [longWaitingTime, setLongWaitingTime] = useState(false);
 
   const {
     isFetching: isEstimateGasLoading,
@@ -77,6 +82,7 @@ export const useSendTransaction = (
     error: sendTransactionError,
     isError: isSendTransactionError,
     isLoading: isSendTransactionLoading,
+    reset: resetSendTransactionWagmi,
   } = useSendTransactionWagmi({
     mutation: {
       onError: handleSendTransactionError(SendTransactionStep.SEND_TRANSACTION),
@@ -111,7 +117,7 @@ export const useSendTransaction = (
     }
   }, [isEstimateGasError, estimateGasError, handleSendTransactionError]);
 
-  // Handle estimate gas transaction error
+  // Handle wait transaction transaction error
   useEffect(() => {
     if (isWaitTransactionError) {
       handleSendTransactionError(SendTransactionStep.WAIT_CONFIRMATIONS)(
@@ -124,13 +130,38 @@ export const useSendTransaction = (
     handleSendTransactionError,
   ]);
 
+  // As soon as the transaction has been sent (txHash != null), check every second if the wait-transaction
+  // is successful. Set the longWaitingTime state to true if the transaction is not successful after the
+  // seconds defined in LONG_WAIT_TIMEOUT
+  useEffect(() => {
+    let waitTransactionInterval: NodeJS.Timer | undefined;
+
+    if (txHash != null && !isSuccess) {
+      const timerStart = new Date().getTime();
+      waitTransactionInterval = setInterval(() => {
+        const now = new Date().getTime();
+
+        if (now - timerStart > LONG_WAIT_TIMEOUT) {
+          setLongWaitingTime(true);
+        }
+      }, 1_000);
+    } else {
+      setLongWaitingTime(false);
+    }
+
+    return () => clearInterval(waitTransactionInterval);
+  }, [txHash, isSuccess]);
+
   const sendTransaction = useCallback(() => {
     if (transaction == null) {
       return;
     }
 
+    // Reset any previous state in case of retry
+    resetSendTransactionWagmi();
+
     sendTransactionWagmi(transaction);
-  }, [sendTransactionWagmi, transaction]);
+  }, [sendTransactionWagmi, resetSendTransactionWagmi, transaction]);
 
   return {
     isEstimateGasError,
@@ -144,5 +175,6 @@ export const useSendTransaction = (
     isWaitTransactionLoading,
     isSuccess,
     sendTransaction,
+    longWaitingTime,
   };
 };
