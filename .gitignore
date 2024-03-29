@@ -33,8 +33,6 @@ yarn-error.log*
 stats.html
 
 # e2e tests
-tests/e2e/videos/*
-test.http
 /test-results/
 /playwright-report/
 /blob-report/

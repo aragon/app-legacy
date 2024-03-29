@@ -4,7 +4,7 @@ import {
   unlockForFixture,
 } from '@synthetixio/synpress';
 
-import basicSetup from '../test/wallet-setup/basic.setup';
+import basicSetup from './basic.setup';
 
 export const testWithMetaMask = testWithSynpress(
   basicSetup,
