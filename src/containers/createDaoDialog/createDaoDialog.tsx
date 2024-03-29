@@ -40,10 +40,11 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     metadataCid
   );
 
-  const {data: transaction} = useCreateDaoTransaction(
-    {...createDaoParams, client} as IBuildCreateDaoTransactionParams,
-    {enabled: createDaoParams != null && client != null}
-  );
+  const {data: transaction, isFetching: isTransactionLoading} =
+    useCreateDaoTransaction(
+      {...createDaoParams, client} as IBuildCreateDaoTransactionParams,
+      {enabled: createDaoParams != null && client != null}
+    );
 
   const sendTransactionResults = useSendTransaction({transaction});
 
@@ -78,7 +79,7 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     isPinMetadataLoading,
   ]);
 
-  const isLoading = isPinMetadataLoading;
+  const isLoading = isPinMetadataLoading || isTransactionLoading;
   const isError = isPinMetadataError;
 
   const alertMessage = useMemo(() => {
@@ -96,7 +97,7 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     ? 'Pinning IPFS data'
     : isPinMetadataError
     ? 'Retry'
-    : 'Confirming';
+    : 'Preparing transaction';
 
   return (
     <TransactionDialog
@@ -110,7 +111,11 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
       }}
       {...otherProps}
     >
-      <Button isLoading={isLoading} onClick={buttonAction}>
+      <Button
+        isLoading={isLoading}
+        onClick={buttonAction}
+        className="self-stretch"
+      >
         {buttonLabel}
       </Button>
       {alertMessage && (
