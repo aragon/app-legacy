@@ -1,8 +1,8 @@
-import {DaoMetadata} from '@aragon/sdk-client';
 import {useUploadIpfsData} from 'hooks/useUploadIpfsData';
 import {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {CreateDaoFormData} from 'utils/types';
+import {createDaoUtils} from '../utils';
 
 export interface IUsePinDaoMetadataParams {
   /**
@@ -18,16 +18,6 @@ export interface IUsePinDaoMetadataParams {
    */
   onError?: (error: unknown) => void;
 }
-
-const formValuesToDaoMetadata = (
-  values: Omit<CreateDaoFormData, 'daoLogo'>,
-  logoCid?: string
-): DaoMetadata => ({
-  name: values.daoName,
-  description: values.daoSummary,
-  links: values.links.filter(({name, url}) => name != null && url != null),
-  avatar: `ipfs://${logoCid}`,
-});
 
 export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams) => {
   const {process, onSuccess, onError} = params;
@@ -49,7 +39,10 @@ export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams) => {
   });
 
   const handleUploadLogoSuccess = (logoCid: string) => {
-    const daoMetadata = formValuesToDaoMetadata(formValues, logoCid);
+    const daoMetadata = createDaoUtils.formValuesToDaoMetadata(
+      formValues,
+      logoCid
+    );
     uploadMetadata(JSON.stringify(daoMetadata));
   };
 
@@ -67,7 +60,7 @@ export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams) => {
     if (daoLogo) {
       uploadLogo(daoLogo as Blob);
     } else {
-      const daoMetadata = formValuesToDaoMetadata(formValues);
+      const daoMetadata = createDaoUtils.formValuesToDaoMetadata(formValues);
       uploadMetadata(JSON.stringify(daoMetadata));
     }
   }, [daoLogo, uploadLogo, formValues, uploadMetadata]);
