@@ -1,7 +1,5 @@
 import {testWithMetaMask as test} from '../testWithMetaMask';
 
-const {expect} = test;
-
 // Test is creating a Multisig DAO and opens the DAO dashboard
 test('Create Multisig DAO', async ({context, page, extensionId, metamask}) => {
   await page.goto('http://localhost:5173/');
