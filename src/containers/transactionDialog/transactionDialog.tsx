@@ -1,8 +1,11 @@
 import React from 'react';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {ModalProps} from '@aragon/ods-old';
-import {AlertInline, Button, IllustrationObject} from '@aragon/ods';
+import {AlertInline, Button, IconType, IllustrationObject} from '@aragon/ods';
 import {IUseSendTransactionResult} from 'hooks/useSendTransaction';
+import {transactionDialogErrorUtils} from './transactionDialogErrorUtils';
+import {useAccount, useChains} from 'wagmi';
+import {useNetwork} from 'context/network';
 
 export interface ITransactionDialogProps extends ModalProps {
   /**
@@ -28,6 +31,9 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     ...otherProps
   } = props;
 
+  const chains = useChains();
+  const {chain} = useAccount();
+
   const {
     isEstimateGasError,
     isEstimateGasLoading,
@@ -36,7 +42,9 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     isWaitTransactionLoading,
     isWaitTransactionError,
     isSuccess,
+    sendTransactionError,
     sendTransaction,
+    txHash,
   } = sendTransactionResult;
 
   const isLoading =
@@ -45,6 +53,8 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     isWaitTransactionLoading;
 
   const isError = isSendTransactionError || isWaitTransactionError;
+  const errorMessage =
+    transactionDialogErrorUtils.parseError(sendTransactionError);
 
   const loadingButtonLabel = isEstimateGasLoading
     ? 'Preparing transaction'
@@ -69,20 +79,32 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
 
   const buttonAction = isSuccess ? successButton.onClick : sendTransaction;
 
+  const blockExplorer = chains.find(({id}) => id === chain?.id)?.blockExplorers
+    ?.default.url;
+  const transactionLink = `${blockExplorer}/tx/${txHash}`;
+
   return (
     <ModalBottomSheetSwitcher {...otherProps}>
-      <IllustrationObject object="WALLET" />
-      <p className="text-xl font-semibold text-neutral-800">
-        Transaction required
-      </p>
-      <p className="text-sm font-normal text-neutral-600">
-        You will need to sign a transaction in your connected wallet.
-      </p>
-      <div className="px-4 py-6">
+      <div className="flex flex-col items-center gap-2 text-center">
+        <IllustrationObject object="WALLET" className="w-40" />
+        <div className="flex flex-col gap-3">
+          <p className="text-xl font-semibold text-neutral-800">
+            Transaction required
+          </p>
+          <p className="text-sm font-normal text-neutral-600">
+            You will need to sign a transaction in your connected wallet.
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-4 px-4 py-6">
         {!displayTransactionStatus && children}
         {displayTransactionStatus && (
           <>
-            <Button isLoading={isLoading} onClick={buttonAction}>
+            <Button
+              isLoading={isLoading}
+              onClick={buttonAction}
+              className="self-stretch"
+            >
               {buttonLabel}
             </Button>
             {isEstimateGasError && !isLoading && (
@@ -90,6 +112,20 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
                 message="Unable to estimate gas. This transaction may fail"
                 variant="warning"
               />
+            )}
+            {isSendTransactionError && errorMessage && !isLoading && (
+              <AlertInline message={errorMessage} variant="critical" />
+            )}
+            {isSuccess && (
+              <Button
+                href={transactionLink}
+                target="_blank"
+                variant="tertiary"
+                className="self-stretch"
+                iconRight={IconType.LINK_EXTERNAL}
+              >
+                See transaction
+              </Button>
             )}
           </>
         )}

@@ -31,7 +31,7 @@ class TransactionsService {
 
     const pluginInstallationData: DAOFactory.PluginSettingsStruct[] = [];
 
-    plugins.forEach(async plugin => {
+    for (const plugin of plugins) {
       const repo = PluginRepo__factory.connect(plugin.id, signer);
 
       const currentRelease = await repo.latestRelease();
@@ -45,7 +45,7 @@ class TransactionsService {
         },
         data: plugin.data,
       });
-    });
+    }
 
     const createDaoParams = {
       subdomain: ensSubdomain,

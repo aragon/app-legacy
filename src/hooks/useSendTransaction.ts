@@ -38,7 +38,7 @@ export const useSendTransaction = (
 ): IUseSendTransactionResult => {
   const {transaction, onError} = params;
 
-  const {isLoading: isEstimateGasLoading, isError: isEstimateGasError} =
+  const {isFetching: isEstimateGasLoading, isError: isEstimateGasError} =
     useEstimateGas(transaction);
 
   const handleSendTransactionError = (error: unknown) => {
@@ -59,15 +59,13 @@ export const useSendTransaction = (
   const {
     data: txReceipt,
     isError: isWaitTransactionError,
-    isLoading: isWaitTransactionLoading,
+    isFetching: isWaitTransactionLoading,
     isSuccess,
   } = useWaitForTransactionReceipt({
     hash: txHash,
     confirmations: 3,
     query: {enabled: txHash != null},
   });
-
-  console.log({isWaitTransactionLoading});
 
   const sendTransaction = useCallback(() => {
     if (transaction == null) {
