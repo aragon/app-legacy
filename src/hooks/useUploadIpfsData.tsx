@@ -3,8 +3,13 @@ import {useAddData} from 'services/ipfs/mutations/useAddData';
 import {usePinData} from 'services/ipfs/mutations/usePinData';
 import {useClient} from './useClient';
 import {IAddDataProps} from 'services/ipfs/ipfsService.api';
+import {ILoggerErrorContext, logger} from 'services/logger';
 
 interface IUseUploadIpfsDataParams {
+  /**
+   * Data used to log eventual errors.
+   */
+  logContext?: Omit<ILoggerErrorContext, 'step'>;
   /**
    * Callback called on ipfs upload success.
    */
@@ -12,7 +17,7 @@ interface IUseUploadIpfsDataParams {
   /**
    * Callback called on ipfs upload error.
    */
-  onError?: (step: UploadIpfsDataStep, error: unknown) => void;
+  onError?: (error: unknown) => void;
 }
 
 export enum UploadIpfsDataStep {
@@ -21,9 +26,19 @@ export enum UploadIpfsDataStep {
 }
 
 export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
-  const {onSuccess, onError} = params;
+  const {onSuccess, onError, logContext} = params;
 
   const {client} = useClient();
+
+  const handleUploadIpfsError =
+    (step: UploadIpfsDataStep) => (error: unknown) => {
+      if (logContext) {
+        const {stack, data} = logContext;
+        logger.error(error, {stack, step, data});
+      }
+
+      onError?.(error);
+    };
 
   const {
     isLoading: isPinDataLoading,
@@ -33,7 +48,7 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
     reset: resetPinData,
   } = usePinData({
     onSuccess: (_data, params) => onSuccess?.(params.cid),
-    onError: error => onError?.(UploadIpfsDataStep.PIN_DATA, error),
+    onError: handleUploadIpfsError(UploadIpfsDataStep.PIN_DATA),
   });
 
   const handleAddDataSuccess = (cid: string) => pinData({client: client!, cid});
@@ -45,7 +60,7 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
     reset: resetAddData,
   } = useAddData({
     onSuccess: handleAddDataSuccess,
-    onError: error => onError?.(UploadIpfsDataStep.ADD_DATA, error),
+    onError: handleUploadIpfsError(UploadIpfsDataStep.PIN_DATA),
   });
 
   const uploadIpfsData = useCallback(
