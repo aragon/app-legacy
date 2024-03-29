@@ -2,12 +2,12 @@ import {testWithMetaMask as test} from '../testWithMetaMask';
 
 const {expect} = test;
 
-// The `MetaMask` instance is now available in the test context.
+// Test is creating a Multisig DAO and opens the DAO dashboard
 test('Create Multisig DAO', async ({context, page, extensionId, metamask}) => {
-  await page.goto('http://localhost:3000/');
+  await page.goto('http://localhost:5173/');
   await page.getByRole('button', {name: 'Accept all'}).click();
   await page.getByRole('button', {name: 'Connect wallet'}).click();
-  await page.getByRole('button', {name: 'Metamask'}).click();
+  await page.getByRole('button', {name: 'MetaMask MetaMask'}).nth(0).click();
   await metamask.connectToDapp();
   await page.getByRole('button', {name: 'Create a DAO'}).click();
   await page.getByRole('button', {name: 'Build your DAO'}).click();
