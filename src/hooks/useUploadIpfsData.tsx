@@ -60,7 +60,7 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
     reset: resetAddData,
   } = useAddData({
     onSuccess: handleAddDataSuccess,
-    onError: handleUploadIpfsError(UploadIpfsDataStep.PIN_DATA),
+    onError: handleUploadIpfsError(UploadIpfsDataStep.ADD_DATA),
   });
 
   const uploadIpfsData = useCallback(
