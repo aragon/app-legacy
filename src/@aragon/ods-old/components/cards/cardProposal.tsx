@@ -223,7 +223,7 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
     case 'succeeded':
       return (
         <>
-          <Tag label={stateLabel[4]} colorScheme="success" />;
+          <Tag label={stateLabel[4]} colorScheme="success" />
           {alertMessage && (
             <AlertInline
               label={alertMessage}

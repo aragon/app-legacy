@@ -6,7 +6,8 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {useCallback} from 'react';
-import {useBalance, Address} from 'wagmi';
+import {useBalance} from 'wagmi';
+import {Address} from 'viem';
 
 import {CHAIN_METADATA} from 'utils/constants';
 import {Token} from '../domain';

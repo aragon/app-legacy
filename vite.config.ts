@@ -1,9 +1,8 @@
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig, loadEnv} from 'vite';
-import {resolve} from 'path';
-import analyze from 'rollup-plugin-analyzer';
 import {ViteDevServer} from 'vite';
+import {visualizer} from 'rollup-plugin-visualizer';
 
 const pluginWatchNodeModules = (modules: string[]) => {
   const pattern = `/node_modules\\/(?!${modules.join('|')}).*/`;
@@ -37,43 +36,35 @@ const htmlEnvPlugin = (mode: string) => {
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
   const watchMode = process.env.WATCH === 'true';
+  const analyze = process.env.ANALYZE === 'true';
 
   return {
     base: '',
-    server: {
-      port: 3000,
-    },
     plugins: [
       htmlEnvPlugin(mode),
       react(),
       tsconfigPaths(),
       watchMode ? pluginWatchNodeModules(['@aragon/ods']) : undefined,
+      analyze ? visualizer({open: true}) : undefined,
     ],
+
     optimizeDeps: {
       exclude: watchMode ? ['@aragon/ods'] : undefined,
       esbuildOptions: {
         target: 'es2020',
       },
     },
+
     resolve: {
       preserveSymlinks: !watchMode,
       alias: watchMode
         ? {'@aragon/ods': '@aragon/ods/dist/index.es'}
         : undefined,
     },
+
     build: {
       target: 'es2020',
       rollupOptions: {
-        input: {
-          main: resolve(__dirname, 'index.html'),
-          nested: resolve(__dirname, 'ipfs-404.html'),
-        },
-        plugins: [
-          analyze({
-            stdout: true,
-            summaryOnly: true,
-          }),
-        ],
         output: {
           manualChunks: {
             'osx-ethers': ['@aragon/osx-ethers'],
@@ -85,10 +76,6 @@ export default defineConfig(({mode}) => {
             ],
           },
         },
-      },
-      // Needed for build if using WalletConnect and other providers
-      commonjsOptions: {
-        transformMixedEsModules: true,
       },
     },
   };

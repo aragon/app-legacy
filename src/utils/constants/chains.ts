@@ -123,7 +123,6 @@ export type ChainData = {
   etherscanApiKey?: string;
   covalent?: ApiMetadata;
   coingecko?: ApiMetadata;
-  alchemyApi: string;
   supportsEns: boolean;
 };
 
@@ -157,7 +156,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       networkId: 'eth-mainnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
-    alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
   },
   polygon: {
@@ -185,7 +183,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       networkId: 'matic-mainnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
-    alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
   },
 
@@ -205,7 +202,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       decimals: 18,
     },
     etherscanApi: 'https://api.arbiscan.io/api',
-    alchemyApi: 'https://arb-mainnet.g.alchemy.com/v2',
     coingecko: {
       networkId: 'arbitrum-one',
       nativeTokenId: 'ethereum',
@@ -237,7 +233,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       networkId: 'base-mainnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
-    alchemyApi: '',
     supportsEns: false,
   },
   sepolia: {
@@ -262,7 +257,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       networkId: 'eth-sepolia',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
-    alchemyApi: 'https://eth-sepolia.g.alchemy.com/v2',
     supportsEns: false,
   },
   unsupported: {
@@ -281,7 +275,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       decimals: 18,
     },
     etherscanApi: '',
-    alchemyApi: '',
     supportsEns: false,
   },
   goerli: {
@@ -306,7 +299,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       networkId: 'eth-goerli',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
-    alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
     supportsEns: true,
   },
   mumbai: {
@@ -331,7 +323,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       networkId: 'matic-mumbai',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
-    alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
     supportsEns: false,
   },
   'arbitrum-goerli': {
@@ -351,7 +342,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       decimals: 18,
     },
     etherscanApi: 'https://api-goerli.arbiscan.io/api',
-    alchemyApi: 'https://arb-goerli.g.alchemy.com/v2',
     covalent: {
       networkId: 'arbitrum-goerli',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
@@ -380,7 +370,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       networkId: 'base-testnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
-    alchemyApi: '',
     supportsEns: false,
   },
 };

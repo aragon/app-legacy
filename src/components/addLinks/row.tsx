@@ -1,5 +1,5 @@
-import {Dropdown, Label, ListItemAction, TextInput} from '@aragon/ods-old';
-import {Button, AlertInline, IconType} from '@aragon/ods';
+import {Label, TextInput} from '@aragon/ods-old';
+import {AlertInline, Button, Dropdown, IconType} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
@@ -171,10 +171,9 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
 
       <Break />
       <ButtonContainer>
-        <Dropdown
+        <Dropdown.Container
           align="end"
-          sideOffset={8}
-          trigger={
+          customTrigger={
             <Button
               variant="tertiary"
               size="lg"
@@ -182,15 +181,11 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
               data-testid="trigger"
             />
           }
-          listItems={[
-            {
-              component: (
-                <ListItemAction title={t('labels.removeLink')} bgWhite />
-              ),
-              callback: () => onDelete?.(index),
-            },
-          ]}
-        />
+        >
+          <Dropdown.Item onClick={() => onDelete?.(index)}>
+            {t('labels.removeLink')}
+          </Dropdown.Item>
+        </Dropdown.Container>
       </ButtonContainer>
     </Container>
   );

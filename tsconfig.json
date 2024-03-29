@@ -20,6 +20,6 @@
       "test-utils": ["./utils/test-utils"]
     }
   },
-  "include": ["src", "typings/**/*.d.ts", ".jest/setup.ts"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

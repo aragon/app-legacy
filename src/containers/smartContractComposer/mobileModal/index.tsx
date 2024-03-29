@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button, EmptyState, IconType} from '@aragon/ods';
 
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -8,7 +8,6 @@ import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
-import {StateEmpty} from 'components/stateEmpty';
 import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
 import {SmartContract, SmartContractAction} from 'utils/types';
@@ -17,6 +16,8 @@ import ActionListGroup from '../components/actionListGroup';
 import InputForm from '../components/inputForm';
 import {ListHeaderContract} from '../components/listHeaderContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 
 type Props = {
   isOpen: boolean;
@@ -138,15 +139,16 @@ export default MobileModal;
 
 const MobileModalEmptyState: React.FC = () => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
 
   return (
     <Container>
-      <StateEmpty
-        mode="inline"
-        type="Object"
-        object="SMART_CONTRACT"
-        title={t('scc.selectionEmptyState.title')}
-        description={t('scc.selectionEmptyState.description')}
+      <EmptyState
+        objectIllustration={{object: 'SMART_CONTRACT'}}
+        heading={t('scc.selectionEmptyState.title')}
+        description={t('scc.selectionEmptyState.description', {
+          networkName: CHAIN_METADATA[network].name,
+        })}
       />
     </Container>
   );

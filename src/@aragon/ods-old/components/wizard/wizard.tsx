@@ -1,10 +1,13 @@
 import React from 'react';
 import {styled} from 'styled-components';
 import {LinearProgress} from '../progress';
+import {Button, IconType} from '@aragon/ods';
+import {t} from 'i18next';
 
 export type WizardProps = {
   title: string;
-  description: string | React.ReactNode;
+  description?: string | React.ReactNode;
+  descriptionLink?: string;
   includeStepper?: boolean;
   processName?: string;
   currentStep?: number;
@@ -19,9 +22,9 @@ export const Wizard: React.FC<WizardProps> = ({
   totalSteps,
   title,
   description,
+  descriptionLink,
   includeStepper = true,
   nav,
-  renderHtml,
 }) => {
   return (
     <StepCard data-testid="wizard">
@@ -45,13 +48,20 @@ export const Wizard: React.FC<WizardProps> = ({
       {/* Main */}
       <Wrapper>
         <StepTitle>{title}</StepTitle>
-        {renderHtml ? (
-          <StepSubTitle
-            dangerouslySetInnerHTML={{__html: description as string}}
-          />
-        ) : (
-          <StepSubTitle>{description}</StepSubTitle>
-        )}
+
+        <StepSubTitle>{description}</StepSubTitle>
+        <div className="max-w-fit">
+          <Button
+            className="mt-4"
+            size="md"
+            iconRight={IconType.LINK_EXTERNAL}
+            variant="secondary"
+            href={descriptionLink}
+            target="_blank"
+          >
+            {t('navLinks.guide')}
+          </Button>
+        </div>
       </Wrapper>
     </StepCard>
   );

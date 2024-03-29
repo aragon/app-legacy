@@ -7,13 +7,9 @@ coverage
 
 # production
 build
-build.txt
 dist
-dist-ssr
 *.local
 .cache
-storybook-static
-typechain
 
 # misc
 .vscode
@@ -30,22 +26,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 .env
-docker.env
-docker-compose.yml
-
-# deployments
-deployments
 
 # generated
-generated
-subgraph.yaml
 .bin
+stats.html
 
+# e2e tests
 tests/e2e/videos/*
 test.http
 /test-results/

@@ -13,7 +13,7 @@ import Blockchain from './blockchain';
 import DaoMetadata from './daoMetadata';
 import Community from './community';
 import Governance from './governance';
-import goLive from 'public/goLive.svg';
+import goLive from 'assets/images/goLive.svg';
 import {Landing} from 'utils/paths';
 import {useCreateDaoContext} from 'context/createDao';
 import {useWallet} from 'hooks/useWallet';

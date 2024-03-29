@@ -1,8 +1,8 @@
 import {CreateDAO} from 'utils/paths';
 
-import learnImg from '../../public/learnDao.svg';
-import buildFaster from '../../public/buildFaster.svg';
-import createDaoImg from '../../public/createDao.svg';
+import learnImg from '../../assets/images/learnDao.svg';
+import buildFaster from '../../assets/images/buildFaster.svg';
+import createDaoImg from '../../assets/images/createDao.svg';
 import {i18n} from '../../../i18n.config';
 
 // temporary for review

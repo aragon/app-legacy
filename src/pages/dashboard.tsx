@@ -1,11 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {HeaderDao} from '@aragon/ods-old';
-import {
-  Button,
-  IconType,
-  IllustrationHuman,
-  IllustrationObject,
-} from '@aragon/ods';
+import {CardEmptyState, IconType} from '@aragon/ods';
 
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -13,10 +8,7 @@ import styled from 'styled-components';
 
 import {Loading} from 'components/temporary';
 import {MembershipSnapshot} from 'containers/membershipSnapshot';
-import {
-  EmptyStateContainer,
-  EmptyStateHeading,
-} from 'containers/pageEmptyState';
+
 import ProposalSnapshot from 'containers/proposalSnapshot';
 import TreasurySnapshot from 'containers/treasurySnapshot';
 import {useAlertContext} from 'context/alert';
@@ -230,34 +222,21 @@ export const Dashboard: React.FC = () => {
 
     return (
       <Container>
-        <EmptyStateContainer>
-          <IllustrationHuman
-            body="BLOCKS"
-            expression="CASUAL"
-            sunglasses="BIG_ROUNDED"
-            hairs="SHORT"
-          />
-          <div className="absolute -translate-x-2/3">
-            <IllustrationObject object="BUILD" />
-          </div>
-
-          <EmptyStateHeading>
-            {t('dashboard.emptyState.title')}
-          </EmptyStateHeading>
-          <p className="mt-3 text-center text-base leading-normal">
-            {t('dashboard.emptyState.subtitle')}
-          </p>
-          <Button
-            size="lg"
-            variant="primary"
-            isLoading={daoCreationState === DaoCreationState.ASSEMBLING_DAO}
-            iconLeft={buttonIcon[daoCreationState]}
-            className={`mt-8 ${daoCreationState === 0 && 'bg-primary-800'}`}
-            onClick={handleOpenYourDaoClick}
-          >
-            {buttonLabel[daoCreationState]}
-          </Button>
-        </EmptyStateContainer>
+        <CardEmptyState
+          humanIllustration={{
+            body: 'BLOCKS',
+            expression: 'CASUAL',
+            sunglasses: 'BIG_ROUNDED',
+            hairs: 'SHORT',
+          }}
+          heading={t('dashboard.emptyState.title')}
+          description={t('dashboard.emptyState.subtitle')}
+          primaryButton={{
+            label: buttonLabel[daoCreationState],
+            iconLeft: buttonIcon[daoCreationState],
+            onClick: handleOpenYourDaoClick,
+          }}
+        />
       </Container>
     );
   }

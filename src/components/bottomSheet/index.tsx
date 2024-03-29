@@ -46,7 +46,11 @@ export default function BottomSheet({
   return (
     <>
       <Backdrop visible={isOpen} onClose={backdropClose} />
-      <BottomSheetContainer style={currentStyle} onTouchMove={onTouchMove}>
+      <BottomSheetContainer
+        style={currentStyle}
+        onTouchMove={onTouchMove}
+        isOpen={isOpen}
+      >
         {title && (
           <ModalTitleContainer>
             <ModalTitle>{title}</ModalTitle>
@@ -59,19 +63,19 @@ export default function BottomSheet({
   );
 }
 
-const BottomSheetContainer = styled.div.attrs({
+const BottomSheetContainer = styled.div.attrs<{isOpen: boolean}>({
   className:
     'bg-neutral-50 block left-0 fixed bottom-0 md:bottom-6 w-full md:w-max md:max-w-full rounded-t-xl md:rounded-xl md:left-0 md:right-0 md:mx-auto z-30',
 })`
   &:before {
     content: '';
-    display: inline-block;
+    display: ${props => (props.isOpen ? 'inline-block' : 'none')};
     background: #e4e7eb;
     width: 120px;
     height: 6px;
     border-radius: 8px;
     position: absolute;
-    margin: 0px auto 0px auto;
+    margin: 0 auto;
     left: 0;
     right: 0;
     top: -14px;

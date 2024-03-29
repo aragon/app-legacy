@@ -6,10 +6,11 @@ import {HookData} from 'utils/types';
 import {GaslessPluginName, PluginTypes} from './usePluginClient';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
-import {Address, useBalance} from 'wagmi';
+import {useReadContracts} from 'wagmi';
 import {useDaoToken} from './useDaoToken';
 import {useWallet} from './useWallet';
 import {useCensus3DaoMembers} from './useCensus3DaoMembers';
+import {Address, erc20Abi} from 'viem';
 
 export type MultisigDaoMember = {
   address: string;
@@ -95,7 +96,7 @@ const sdkToDaoMember = (
     address,
     balance: Number(formatUnits(balance, tokenDecimals)),
     votingPower: Number(formatUnits(votingPower, tokenDecimals)),
-    delegatee: delegatee === null ? address : delegatee,
+    delegatee: delegatee ?? address,
     delegators: delegators.map(delegator => delegator.address),
   };
 };
@@ -146,8 +147,31 @@ export const useDaoMembers = (
     network === 'base-goerli'
   );
 
+  const useGraphql =
+    isTokenBased &&
+    covalentSupportedNetwork &&
+    pluginType != null &&
+    daoToken != null &&
+    enabled;
+
+  const {
+    data: graphqlData,
+    isError: isGraphqlError,
+    isLoading: isGraphqlLoading,
+  } = useTokenHolders(
+    {
+      network,
+      tokenAddress: daoToken?.address as string,
+      page: opts?.page,
+    },
+    {enabled: useGraphql}
+  );
+
   const useSubgraph =
-    (pluginType != null && !isTokenBased) || !covalentSupportedNetwork;
+    (pluginType != null && !isTokenBased) ||
+    !covalentSupportedNetwork ||
+    (covalentSupportedNetwork && isGraphqlError);
+
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
@@ -173,39 +197,29 @@ export const useDaoMembers = (
     },
   });
 
-  const {data: userBalance} = useBalance({
-    address: address as Address,
-    token: daoToken?.address as Address,
-    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled:
-      address != null &&
-      daoToken != null &&
-      !countOnly &&
-      enabled &&
-      !enableCensus3,
-  });
-  const userBalanceNumber = Number(
-    formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
-  );
-
-  const useGraphql =
-    !useSubgraph &&
-    pluginType != null &&
-    daoToken != null &&
-    enabled &&
-    !enableCensus3;
-
-  const {
-    data: graphqlData,
-    isError: isGraphqlError,
-    isLoading: isGraphqlLoading,
-  } = useTokenHolders(
-    {
-      network,
-      tokenAddress: daoToken?.address as string,
-      page: opts?.page,
+  const {data: userBalance} = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [address as Address],
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+    ],
+    query: {
+      enabled:
+        address != null &&
+        daoToken != null &&
+        !countOnly &&
+        enabled &&
+        !enableCensus3,
     },
-    {enabled: useGraphql}
+  });
+
+  const userBalanceNumber = Number(
+    formatUnits(userBalance?.[0] ?? '0', daoToken?.decimals)
   );
 
   if (!enabled)
@@ -227,7 +241,7 @@ export const useDaoMembers = (
     if (useSubgraph) {
       memberCount = parsedSubgraphData?.length || 0;
     } else {
-      memberCount = graphqlData?.holders.totalHolders || 0;
+      memberCount = graphqlData?.holders.totalHolders ?? 0;
     }
     return {
       data: {

@@ -5,6 +5,15 @@ type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 export const AppVersion =
   import.meta.env.VITE_REACT_APP_DEPLOY_VERSION ?? '0.1.0';
 
+export const AppMetadata = {
+  name: 'Aragon DAO',
+  description: 'Aragon DAO',
+  url: 'https://aragon.org',
+  icons: [
+    'https://assets.website-files.com/5e997428d0f2eb13a90aec8c/635283b535e03c60d5aafe64_logo_aragon_isotype.png',
+  ],
+};
+
 // TODO: Remove this Goerli based network conditions
 export const FEEDBACK_FORM =
   'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
@@ -31,22 +40,6 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-arbitrumGoerli/version/v1.4.0/api',
   'base-goerli':
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseGoerli/version/v1.4.0/api',
-};
-
-type AlchemyApiKeys = Record<SupportedNetworks, string | undefined>;
-
-// TODO: Remove this Goerli based network conditions
-export const alchemyApiKeys: AlchemyApiKeys = {
-  arbitrum: import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
-  base: undefined,
-  ethereum: import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
-  polygon: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MAINNET as string,
-  sepolia: import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
-  unsupported: undefined,
-  goerli: import.meta.env.VITE_ALCHEMY_KEY_GOERLI as string,
-  mumbai: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MUMBAI as string,
-  'arbitrum-goerli': import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
-  'base-goerli': undefined,
 };
 
 export const walletConnectProjectID = import.meta.env

@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Link, Modal} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button, EmptyState, IconType} from '@aragon/ods';
 
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import Header from 'components/modalHeader/searchHeader';
-import {StateEmpty} from 'components/stateEmpty';
 import {useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
@@ -17,6 +16,8 @@ import ActionListGroup from '../components/actionListGroup';
 import InputForm from '../components/inputForm';
 import {ListHeaderContract} from '../components/listHeaderContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -122,17 +123,15 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
         </Aside>
 
         <Main>
-          {selectedSC ? (
-            selectedAction ? (
-              <InputForm
-                actionIndex={props.actionIndex}
-                onComposeButtonClicked={props.onComposeButtonClicked}
-              />
-            ) : (
-              <EmptyActionsState selectedSC={selectedSC} />
-            )
-          ) : (
-            <DesktopModalEmptyState />
+          {!selectedSC && <DesktopModalEmptyState />}
+          {selectedSC && selectedAction && (
+            <InputForm
+              actionIndex={props.actionIndex}
+              onComposeButtonClicked={props.onComposeButtonClicked}
+            />
+          )}
+          {selectedSC && !selectedAction && (
+            <EmptyActionsState selectedSC={selectedSC} />
           )}
         </Main>
       </Wrapper>
@@ -148,14 +147,32 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
   const {t} = useTranslation();
   const {setValue} = useFormContext<SccFormData>();
 
+  const handleWriteAsProxy = () => {
+    const contract: SmartContract = {
+      actions: [],
+      ...selectedSC.implementationData,
+      name: selectedSC.name,
+      address: selectedSC.address,
+    };
+
+    const selectedAction = (
+      selectedSC.implementationData?.actions ?? []
+    ).filter(
+      a =>
+        a.type === 'function' &&
+        (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable')
+    )?.[0];
+
+    setValue('selectedSC', contract);
+    setValue('selectedAction', selectedAction);
+  };
+
   return (
     <Container>
       <div>
-        <StateEmpty
-          mode="inline"
-          type="Object"
-          object="SMART_CONTRACT"
-          title={t('scc.writeContractEmptyState.title')}
+        <EmptyState
+          objectIllustration={{object: 'SMART_CONTRACT'}}
+          heading={t('scc.writeContractEmptyState.title')}
           description={t('scc.writeContractEmptyState.desc')}
         />
         {selectedSC.implementationData && (
@@ -164,21 +181,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
             size="md"
             variant="primary"
             iconLeft={IconType.BLOCKCHAIN_SMARTCONTRACT}
-            onClick={() => {
-              setValue(
-                'selectedSC',
-                selectedSC.implementationData as SmartContract
-              );
-              setValue(
-                'selectedAction',
-                (selectedSC.implementationData as SmartContract).actions.filter(
-                  a =>
-                    a.type === 'function' &&
-                    (a.stateMutability === 'payable' ||
-                      a.stateMutability === 'nonpayable')
-                )?.[0]
-              );
-            }}
+            onClick={handleWriteAsProxy}
           >
             {t('scc.writeContractEmptyState.ctaLabel')}
           </Button>
@@ -190,15 +193,16 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
 
 const DesktopModalEmptyState: React.FC = () => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
 
   return (
     <Container>
-      <StateEmpty
-        mode="inline"
-        type="Object"
-        object="SMART_CONTRACT"
-        title={t('scc.selectionEmptyState.title')}
-        description={t('scc.selectionEmptyState.description')}
+      <EmptyState
+        objectIllustration={{object: 'SMART_CONTRACT'}}
+        heading={t('scc.selectionEmptyState.title')}
+        description={t('scc.selectionEmptyState.description', {
+          networkName: CHAIN_METADATA[network].name,
+        })}
       />
     </Container>
   );
@@ -216,7 +220,8 @@ const Main = styled.div.attrs({
 })``;
 
 const Container = styled.div.attrs({
-  className: 'flex h-full bg-neutral-0 p-12 pt-0 justify-center items-center',
+  className:
+    'flex h-full bg-neutral-0 overflow-hidden pt-0 justify-center items-center',
 })``;
 
 const StyledModal = styled(Modal).attrs({

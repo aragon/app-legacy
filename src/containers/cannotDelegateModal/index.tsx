@@ -10,7 +10,7 @@ import {
   WarningTitle,
 } from 'containers/networkErrorMenu';
 import {useGlobalModalContext} from 'context/globalModals';
-import WalletIcon from 'public/wallet.svg';
+import WalletIcon from 'assets/images/wallet.svg';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {Button} from '@aragon/ods';

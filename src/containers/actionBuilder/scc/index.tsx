@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {ListItemAction} from '@aragon/ods-old';
-import {AlertInline} from '@aragon/ods';
+import {AlertInline, Dropdown} from '@aragon/ods';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
@@ -12,6 +11,7 @@ import {useAlertContext} from 'context/alert';
 import {ComponentForType} from 'containers/smartContractComposer/components/inputForm';
 import {useNetwork} from 'context/network';
 import {validateSCCAction} from 'utils/validators';
+import {CHAIN_METADATA} from 'utils/constants';
 
 const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   actionIndex,
@@ -39,15 +39,17 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
     const result = [];
 
     if (allowRemove) {
-      result.push({
-        component: (
-          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-        ),
-        callback: () => {
-          removeAction(actionIndex);
-          alert(t('alert.chip.removedAction'));
-        },
-      });
+      result.push(
+        <Dropdown.Item
+          onClick={() => {
+            removeAction(actionIndex);
+            alert(t('alert.chip.removedAction'));
+          }}
+          key={0}
+        >
+          {t('labels.removeEntireAction')}
+        </Dropdown.Item>
+      );
     }
 
     return result;
@@ -62,6 +64,12 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
         methodName={actionData.functionName}
         dropdownItems={methodActions}
         smartContractName={actionData.contractName}
+        smartContractAddress={actionData.contractAddress}
+        blockExplorerLink={
+          actionData.contractAddress
+            ? `${CHAIN_METADATA[network].explorer}address/${actionData.contractAddress}`
+            : undefined
+        }
         // TODO: How should we add verified badge? (Etherscan/Sourcify verification status)?
         verified
         methodDescription={actionData.notice}

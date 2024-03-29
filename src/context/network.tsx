@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import {useMatch, useNavigate} from 'react-router-dom';
-import {useAccount, useNetwork as useWagmiNetwork} from 'wagmi';
+import {useAccount} from 'wagmi';
 
 import {
   CHAIN_METADATA,
@@ -85,9 +85,8 @@ export function NetworkProvider({children}: NetworkProviderProps) {
   const navigate = useNavigate();
   const urlNetwork = useMatch('daos/:network/*');
   const networkUrlSegment = urlNetwork?.params?.network;
-  const {chain} = useWagmiNetwork();
+  const {status: wagmiStatus, chain} = useAccount();
   const chainId = chain?.id || 0;
-  const {status: wagmiStatus} = useAccount();
   const status = wagmiStatus === 'reconnecting' ? 'connecting' : wagmiStatus;
   const [networkState, setNetworkState] = useState<
     SupportedNetworks | 'unsupported'

@@ -1,12 +1,11 @@
 import React from 'react';
 import {
-  Dropdown,
   Link,
   ListItemAction,
   ListItemActionProps,
   shortenAddress,
 } from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {Icon, IconType, Dropdown} from '@aragon/ods';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -36,122 +35,125 @@ export const ListHeaderContract: React.FC<Props> = ({
   // @ts-ignore
   const contracts = getValues('contracts');
 
+  const handleDeleteContract = () => {
+    if (sc.implementationData) {
+      onRemoveContract(sc.address);
+    } else {
+      onRemoveContract(sc.proxyAddress ?? sc.address);
+    }
+  };
+
+  const handleWriteModeClick = () => {
+    if (sc.implementationData) {
+      writeAsProxy({
+        ...sc.implementationData,
+        name: sc.name,
+        address: sc.address,
+      });
+    } else {
+      writeAsImplementation();
+    }
+  };
+
+  const writeAsProxy = (
+    implementationData: NonNullable<SmartContract['implementationData']>
+  ) => {
+    const selectedAction = implementationData.actions.filter(
+      a =>
+        a.type === 'function' &&
+        (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable')
+    )?.[0];
+
+    setValue('selectedSC', implementationData);
+    setValue('selectedAction', selectedAction);
+  };
+
+  const writeAsImplementation = () => {
+    const contract = contracts.filter(c => c.address === sc.proxyAddress)[0];
+    const selectedAction = contract.actions.filter(
+      a =>
+        a.type === 'function' &&
+        (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable')
+    )?.[0];
+
+    setValue('selectedSC', contract);
+    setValue('selectedAction', selectedAction);
+  };
+
   const listItems = [
-    {
-      component: (
-        <Link
-          external
-          type="neutral"
-          iconRight={IconType.LINK_EXTERNAL}
-          href={chainExplorerAddressLink(network, sc.address) + '#code'}
-          label={t('scc.detailContract.dropdownExplorerLinkLabel', {
-            address: sc.address,
-          })}
-          className="my-2 w-full justify-between px-4"
-        />
-      ),
-      callback: () => {},
-    },
-    {
-      component: (
-        <Link
-          external
-          type="neutral"
-          iconRight={IconType.COPY}
-          label={t('scc.detailContract.dropdownCopyLabel')}
-          className="my-2 w-full justify-between px-4"
-        />
-      ),
-      callback: () => {
+    <Link
+      key={0}
+      external
+      type="neutral"
+      iconRight={IconType.LINK_EXTERNAL}
+      href={chainExplorerAddressLink(network, sc.address) + '#code'}
+      label={t('scc.detailContract.dropdownExplorerLinkLabel', {
+        address: sc.address,
+      })}
+      className="my-2 w-full justify-between px-4"
+    />,
+    <Link
+      key={1}
+      external
+      type="neutral"
+      iconRight={IconType.COPY}
+      label={t('scc.detailContract.dropdownCopyLabel')}
+      className="my-2 w-full justify-between px-4"
+      onClick={() => {
         handleClipboardActions(sc.address, () => {}, alert);
-      },
-    },
-    {
-      component: (
-        <Link
-          external
-          type="neutral"
-          iconRight={IconType.CLOSE}
-          label={t('scc.detailContract.dropdownRemoveLabel')}
-          className="my-2 w-full justify-between px-4"
-        />
-      ),
-      callback: () => {
-        if (sc.implementationData) {
-          onRemoveContract(sc.proxyAddress as string);
-        } else {
-          onRemoveContract(sc.address);
-        }
-      },
-    },
+      }}
+    />,
+    <Link
+      key={2}
+      external
+      type="neutral"
+      iconRight={IconType.CLOSE}
+      label={t('scc.detailContract.dropdownRemoveLabel')}
+      className="my-2 w-full justify-between px-4"
+      onClick={handleDeleteContract}
+    />,
   ];
 
   if (sc.proxyAddress || sc.implementationData) {
-    listItems.unshift({
-      component: (
-        <Link
-          external
-          type="neutral"
-          label={
-            sc.implementationData
-              ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
-              : t('scc.writeProxy.dropdownDontWriteLabel')
-          }
-          iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
-          className="my-2 w-full justify-between px-4"
-        />
-      ),
-      callback: () => {
-        if (sc.implementationData) {
-          setValue('selectedSC', sc.implementationData as SmartContract);
-          setValue(
-            'selectedAction',
-            (sc.implementationData as SmartContract).actions.filter(
-              a =>
-                a.type === 'function' &&
-                (a.stateMutability === 'payable' ||
-                  a.stateMutability === 'nonpayable')
-            )?.[0]
-          );
-        } else {
-          const contract = contracts.filter(
-            c => c.address === sc.proxyAddress
-          )[0];
-          setValue('selectedSC', contract);
-          setValue(
-            'selectedAction',
-            contract.actions.filter(
-              a =>
-                a.type === 'function' &&
-                (a.stateMutability === 'payable' ||
-                  a.stateMutability === 'nonpayable')
-            )?.[0]
-          );
+    listItems.unshift(
+      <Link
+        key={3}
+        external
+        type="neutral"
+        label={
+          sc.implementationData
+            ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
+            : t('scc.writeProxy.dropdownDontWriteLabel')
         }
-      },
-    });
+        iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
+        className="my-2 w-full justify-between px-4"
+        onClick={handleWriteModeClick}
+      />
+    );
   }
 
   const iconRight = (
-    <Dropdown
+    <Dropdown.Container
       align="start"
-      trigger={
+      customTrigger={
         <button>
           <Icon icon={IconType.DOTS_VERTICAL} />
         </button>
       }
-      sideOffset={8}
-      listItems={listItems}
-    />
+    >
+      {listItems}
+    </Dropdown.Container>
   );
+
+  const listItemSubtitle = sc.proxyAddress
+    ? `${t('scc.listContracts.proxyContractAddressLabel', {
+        contractAddress: shortenAddress(sc.address),
+      })}`
+    : shortenAddress(sc.address);
 
   const liaProps = {
     title: sc.name,
-    subtitle: sc.proxyAddress
-      ? `${t('scc.listContracts.proxyContractAddressLabel', {
-          contractAddress: shortenAddress(sc.address),
-        })}`
-      : shortenAddress(sc.address),
+    subtitle: listItemSubtitle,
     bgWhite: true,
     logo: sc.logo,
     iconRight,

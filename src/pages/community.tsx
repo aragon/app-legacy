@@ -1,17 +1,11 @@
 import React, {useCallback, useState} from 'react';
-import {
-  Dropdown,
-  ListItemAction,
-  Pagination,
-  SearchInput,
-} from '@aragon/ods-old';
-import {Button, Icon, IconType, IllustrationHuman} from '@aragon/ods';
+import {Pagination, SearchInput} from '@aragon/ods-old';
+import {Button, Card, EmptyState, Icon, IconType, Dropdown} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {MembersList} from 'components/membersList';
-import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
@@ -20,8 +14,6 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
-import PageEmptyState from 'containers/pageEmptyState';
-import {htmlIn} from 'utils/htmlIn';
 import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useExistingToken} from 'hooks/useExistingToken';
@@ -139,29 +131,35 @@ export const Community: React.FC = () => {
 
   if (!totalMemberCount && isDAOTokenWrapped) {
     return (
-      <PageEmptyState
-        title={t('community.emptyState.title')}
-        subtitle={htmlIn(t)('community.emptyState.desc', {
-          tokenSymbol:
-            (daoToken as Erc20WrapperTokenDetails)?.underlyingToken?.symbol ||
-            daoToken?.symbol,
-        })}
-        Illustration={
-          <div className="flex w-[320px] justify-center md:w-[640px]">
-            <IllustrationHuman
-              body="ELEVATING"
-              expression="SMILE_WINK"
-              hairs="MIDDLE"
-              sunglasses="BIG_ROUNDED"
-              accessory="BUDDHA"
-            />
-          </div>
-        }
-        primaryButton={{
-          label: t('community.emptyState.ctaLabel'),
-          onClick: handleOpenModal,
-        }}
-      />
+      <PageWrapper includeHeader={false}>
+        <Card className="mt-6 flex items-center justify-center md:mt-10">
+          <EmptyState
+            heading={t('community.emptyState.title')}
+            description={t('community.emptyState.desc', {
+              tokenSymbol:
+                (daoToken as Erc20WrapperTokenDetails)?.underlyingToken
+                  ?.symbol || daoToken?.symbol,
+            })}
+            humanIllustration={{
+              body: 'ELEVATING',
+              expression: 'SMILE_WINK',
+              hairs: 'MIDDLE',
+              sunglasses: 'BIG_ROUNDED',
+              accessory: 'BUDDHA',
+            }}
+            primaryButton={{
+              label: t('community.emptyState.ctaLabel'),
+              onClick: handleOpenModal,
+            }}
+            secondaryButton={{
+              label: t('navLinks.guide'),
+              href: t('community.emptyState.descLinkURL'),
+              target: '_blank',
+              iconRight: IconType.LINK_EXTERNAL,
+            }}
+          />
+        </Card>
+      </PageWrapper>
     );
   }
 
@@ -252,45 +250,8 @@ export const Community: React.FC = () => {
               />
             )}
             {!walletBased && enableSearchSort && enableDelegation && (
-              <Dropdown
-                align="end"
-                className="p-2"
-                style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
-                sideOffset={8}
-                listItems={[
-                  {
-                    callback: () => setSort('votingPower'),
-                    component: (
-                      <ListItemAction
-                        title={t('community.sortByVotingPower.default')}
-                        bgWhite={true}
-                        mode={sort === 'votingPower' ? 'selected' : 'default'}
-                        iconRight={
-                          sort === 'votingPower' ? (
-                            <Icon icon={IconType.CHECKMARK} />
-                          ) : undefined
-                        }
-                      />
-                    ),
-                  },
-                  {
-                    callback: () => setSort('delegations'),
-                    component: (
-                      <ListItemAction
-                        title={t('community.sortByDelegations.default')}
-                        bgWhite={true}
-                        mode={sort === 'delegations' ? 'selected' : 'default'}
-                        iconRight={
-                          sort === 'delegations' ? (
-                            <Icon icon={IconType.CHECKMARK} />
-                          ) : undefined
-                        }
-                      />
-                    ),
-                  },
-                ]}
-                side="bottom"
-                trigger={
+              <Dropdown.Container
+                customTrigger={
                   <Button
                     variant="tertiary"
                     iconLeft={IconType.SORT_ASC}
@@ -299,7 +260,25 @@ export const Community: React.FC = () => {
                     {sortLabel}
                   </Button>
                 }
-              />
+                align="end"
+              >
+                <Dropdown.Item
+                  icon={sort === 'votingPower' ? IconType.CHECKMARK : undefined}
+                  iconPosition="right"
+                  selected={sort === 'votingPower'}
+                  onClick={() => setSort('votingPower')}
+                >
+                  {t('community.sortByVotingPower.default')}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  icon={sort === 'delegations' ? IconType.CHECKMARK : undefined}
+                  iconPosition="right"
+                  selected={sort === 'delegations'}
+                  onClick={() => setSort('delegations')}
+                >
+                  {t('community.sortByDelegations.default')}
+                </Dropdown.Item>
+              </Dropdown.Container>
             )}
           </div>
 
@@ -309,11 +288,9 @@ export const Community: React.FC = () => {
           ) : (
             <>
               {debouncedTerm !== '' && !filteredMemberCount ? (
-                <StateEmpty
-                  type="Object"
-                  mode="inline"
-                  object="MAGNIFYING_GLASS"
-                  title={t('labels.noResults')}
+                <EmptyState
+                  objectIllustration={{object: 'MAGNIFYING_GLASS'}}
+                  heading={t('labels.noResults')}
                   description={t('labels.noResultsSubtitle')}
                 />
               ) : (

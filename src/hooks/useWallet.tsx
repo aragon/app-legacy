@@ -2,15 +2,15 @@ import {useMemo} from 'react';
 import {clearWagmiCache} from 'utils/library';
 import {JsonRpcSigner, Web3Provider} from '@ethersproject/providers';
 import {
-  useAccount,
   useDisconnect,
   useBalance,
   useEnsName,
   useEnsAvatar,
-  useNetwork as useWagmiNetwork,
+  useAccount,
 } from 'wagmi';
 
-import {useWeb3Modal} from '@web3modal/react';
+import {useWeb3Modal} from '@web3modal/wagmi/react';
+import {useWeb3ModalState} from '@web3modal/wagmi/react';
 
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -49,10 +49,17 @@ export interface IUseWallet {
 export const useWallet = (): IUseWallet => {
   const {network} = useNetwork();
 
-  const {chain} = useWagmiNetwork();
-  const {address, status: wagmiStatus, isConnected, connector} = useAccount();
+  const {
+    address,
+    status: wagmiStatus,
+    isConnected,
+    connector,
+    chain,
+  } = useAccount();
   const {disconnect} = useDisconnect();
-  const {open: openWeb3Modal, isOpen} = useWeb3Modal();
+  const {open: openWeb3Modal} = useWeb3Modal();
+  const {open} = useWeb3ModalState();
+
   const chainId = chain?.id || 0;
   const signer = useEthersSigner(chainId);
 
@@ -73,7 +80,7 @@ export const useWallet = (): IUseWallet => {
   });
 
   const {data: ensAvatarUrl} = useEnsAvatar({
-    name: ensName,
+    name: ensName as string,
   });
 
   const balance: bigint | null = wagmiBalance?.value || null;
@@ -110,7 +117,7 @@ export const useWallet = (): IUseWallet => {
     ensAvatarUrl: ensAvatarUrl as string,
     ensName: ensName as string,
     isConnected,
-    isModalOpen: isOpen,
+    isModalOpen: open,
     isOnWrongNetwork,
     methods,
     network,

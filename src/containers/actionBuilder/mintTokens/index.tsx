@@ -1,4 +1,4 @@
-import {ListItemAction, Label as FormLabel} from '@aragon/ods-old';
+import {Label as FormLabel} from '@aragon/ods-old';
 import Big from 'big.js';
 import {BigNumber} from '@ethersproject/bignumber';
 import {isAddress} from 'ethers/lib/utils';
@@ -28,7 +28,7 @@ import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
 import MintTokensToTreasuryMenu from 'containers/mintTokensToTreasuryMenu';
-import {Button} from '@aragon/ods';
+import {Button, Dropdown} from '@aragon/ods';
 
 type MintTokensProps = ActionIndex & {allowRemove?: boolean};
 
@@ -66,22 +66,23 @@ const MintTokens: React.FC<MintTokensProps> = ({
 
   const methodActions = (() => {
     const result = [
-      {
-        component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
-        callback: handleReset,
-      },
+      <Dropdown.Item onClick={handleReset} key={0}>
+        {t('labels.resetAction')}
+      </Dropdown.Item>,
     ];
 
     if (allowRemove) {
-      result.push({
-        component: (
-          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-        ),
-        callback: () => {
-          removeAction(actionIndex);
-          alert(t('alert.chip.removedAction'));
-        },
-      });
+      result.push(
+        <Dropdown.Item
+          onClick={() => {
+            removeAction(actionIndex);
+            alert(t('alert.chip.removedAction'));
+          }}
+          key={1}
+        >
+          {t('labels.removeEntireAction')}
+        </Dropdown.Item>
+      );
     }
 
     return result;

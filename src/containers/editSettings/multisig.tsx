@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
-import {ListItemAction} from '@aragon/ods-old';
-import {Button, AlertInline, IconType} from '@aragon/ods';
+import {Button, AlertInline, IconType, Dropdown} from '@aragon/ods';
 import {
   useFieldArray,
   useFormContext,
@@ -231,42 +230,33 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   ]);
 
   const metadataAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isMetadataChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentMetadata,
-    },
+    <Dropdown.Item
+      disabled={!isMetadataChanged}
+      onClick={setCurrentMetadata}
+      key={0}
+    >
+      {t('settings.resetChanges')}
+    </Dropdown.Item>,
   ];
 
   const communityAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isCommunityChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentCommunity,
-    },
+    <Dropdown.Item
+      disabled={!isCommunityChanged}
+      onClick={setCurrentCommunity}
+      key={0}
+    >
+      {t('settings.resetChanges')}
+    </Dropdown.Item>,
   ];
 
   const governanceAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isGovernanceChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentGovernance,
-    },
+    <Dropdown.Item
+      disabled={!isGovernanceChanged}
+      onClick={setCurrentGovernance}
+      key={0}
+    >
+      {t('settings.resetChanges')}
+    </Dropdown.Item>,
   ];
 
   if (isLoading) {

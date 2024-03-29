@@ -14,12 +14,6 @@ RPC Providers
 
 VITE_GATEWAY_RPC_API_KEY -> infuraApiKey -> jsonRpcProvider, CHAIN_METADATA[network].rpc -> getJsonRpcProvider, useClient, useSwitchNetwork, useWallet
 
-## Alchemy
-
-RPC Providers, ERC20 Transfers
-
-VITE_ALCHEMY_KEY_MAINNET, \_GOERLI etc -> AlchemyApiKeys -> getAlchemyProvider, fetchAlchemyErc20Deposits -> fetchErc20Deposits -> useErc20Deposits -> useDaoTransfers -> useDaoVault, useCategorizedTransfers
-
 ## Wallet Connect
 
 RPC Provider

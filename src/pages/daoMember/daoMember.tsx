@@ -47,19 +47,25 @@ export const DaoMember: React.FC = () => {
   const {data: fetchedMemberEnsName} = useEnsName({
     address: user as Address,
     chainId: CHAIN_METADATA[network].id,
-    enabled: !!user && isAddress(user),
+    query: {
+      enabled: !!user && isAddress(user),
+    },
   });
 
   const {data: fetchedMemberAddress, isError: isErrorFetchingAddress} =
     useEnsResolver({
       name: user as string,
       chainId: CHAIN_METADATA[network].id,
-      enabled: !!user && isEnsDomain(user),
+      query: {
+        enabled: !!user && isEnsDomain(user),
+      },
     });
 
   const {data: ensAvatar} = useEnsAvatar({
     name: fetchedMemberEnsName || user,
-    enabled: !!fetchedMemberEnsName || (!!user && isEnsDomain(user)),
+    query: {
+      enabled: !!fetchedMemberEnsName || (!!user && isEnsDomain(user)),
+    },
   });
 
   const memberAddress =

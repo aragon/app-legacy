@@ -2,6 +2,8 @@ import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Address} from 'viem';
+import {useEnsName} from 'wagmi';
 import {AlertInline} from '@aragon/ods';
 
 import {useAlertContext} from 'context/alert';
@@ -11,7 +13,6 @@ import {validateWeb3Address} from 'utils/validators';
 import {MultisigWalletField} from '../multisigWallets/row';
 import {useWallet} from 'hooks/useWallet';
 import {useNetwork} from 'context/network';
-import {Address, useEnsName} from 'wagmi';
 import {CHAIN_METADATA} from 'utils/constants';
 
 const AddCommittee: React.FC = () => {
