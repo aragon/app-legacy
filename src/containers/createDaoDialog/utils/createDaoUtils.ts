@@ -272,7 +272,6 @@ class CreateDaoUtils {
       name: tokenName,
       symbol: tokenSymbol,
       decimals: this.defaultTokenDecimals,
-      // minter: '0x...', // optionally, define a minter
       balances: wallets?.map(wallet => ({
         address: wallet.address,
         balance: parseUnits(
@@ -292,7 +291,7 @@ class CreateDaoUtils {
     const symbol = tokenType === 'ERC-20' ? `g${tokenSymbol}` : tokenSymbol;
 
     return {
-      tokenAddress: tokenAddress.address, // contract address of underlying token
+      tokenAddress: tokenAddress.address,
       wrappedToken: {name, symbol},
     };
   };
