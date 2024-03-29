@@ -12,6 +12,11 @@ export interface ITransactionDialogProps extends ModalProps {
    */
   sendTransactionResult: IUseSendTransactionResult;
   /**
+   * Label of the button when the transaction is ready to be sent.
+   * @default "Approve transaction"
+   */
+  sendTransactionLabel?: string;
+  /**
    * Displays the transaction status button and alerts when set to true.
    */
   displayTransactionStatus?: boolean;
@@ -27,6 +32,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     sendTransactionResult,
     displayTransactionStatus,
     successButton,
+    sendTransactionLabel = 'Approve transaction',
     ...otherProps
   } = props;
 
@@ -44,6 +50,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     sendTransactionError,
     sendTransaction,
     txHash,
+    longWaitingTime,
   } = sendTransactionResult;
 
   const isLoading =
@@ -66,7 +73,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     : 'Retry';
 
   const idleButtonLabel =
-    isEstimateGasError && !isLoading ? 'Proceed anyway' : 'Approve transaction';
+    isEstimateGasError && !isLoading ? 'Proceed anyway' : sendTransactionLabel;
 
   const buttonLabel = isLoading
     ? loadingButtonLabel
@@ -106,6 +113,12 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
             >
               {buttonLabel}
             </Button>
+            {longWaitingTime && isLoading && (
+              <AlertInline
+                message="Transaction is taking longer than expected"
+                variant="warning"
+              />
+            )}
             {isEstimateGasError && !isLoading && (
               <AlertInline
                 message="Unable to estimate gas. This transaction may fail"
