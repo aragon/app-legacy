@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ModalProps} from '@aragon/ods-old';
 import {TransactionDialog} from 'containers/transactionDialog';
 import {usePinDaoMetadata} from './hooks';
@@ -89,17 +89,10 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
   ]);
 
   const isLoading = isPinMetadataLoading || isTransactionLoading;
-  const isError = isPinMetadataError;
 
-  const alertMessage = useMemo(() => {
-    if (isPinMetadataError) {
-      return 'Unable to pin data to IPFS';
-    } else if (isPinMetadataSuccess) {
-      return 'Successfully pinned IPFS data';
-    }
-  }, [isPinMetadataError, isPinMetadataSuccess]);
-
-  const alertVariant = isError ? 'critical' : 'info';
+  const alertMessage = isPinMetadataError
+    ? 'Unable to pin data to IPFS'
+    : undefined;
 
   const buttonAction = isPinMetadataError ? pinDaoMetadata : () => null;
   const buttonLabel = isPinMetadataLoading
@@ -114,6 +107,7 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
       displayTransactionStatus={transaction != null}
+      sendTransactionLabel="Deploy DAO now"
       successButton={{
         label: 'Launch DAO Dashboard',
         onClick: onSuccessButtonClick,
@@ -128,7 +122,7 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
         {buttonLabel}
       </Button>
       {alertMessage && (
-        <AlertInline message={alertMessage} variant={alertVariant} />
+        <AlertInline message={alertMessage} variant="critical" />
       )}
     </TransactionDialog>
   );
