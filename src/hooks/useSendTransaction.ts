@@ -1,14 +1,19 @@
-import {useCallback} from 'react';
+import {useCallback, useEffect} from 'react';
 import {ITransaction} from 'services/transactions/domain/transaction';
-import {FormattedTransactionReceipt, Hash} from 'viem';
+import {FormattedTransactionReceipt, Hash, TransactionReceipt} from 'viem';
 import {SendTransactionErrorType} from '@wagmi/core';
 import {
   useEstimateGas,
   useSendTransaction as useSendTransactionWagmi,
   useWaitForTransactionReceipt,
 } from 'wagmi';
+import {ILoggerErrorContext, logger} from 'services/logger';
 
 export interface IUseSendTransactionParams {
+  /**
+   * Log context used to log eventual errors.
+   */
+  logContext?: Omit<ILoggerErrorContext, 'step'>;
   /**
    * Transaction to be sent.
    */
@@ -17,6 +22,10 @@ export interface IUseSendTransactionParams {
    * Callback called on send transaction error.
    */
   onError?: (error: unknown) => void;
+  /**
+   * Callback called when the transaction is successfully sent to the blockchain.
+   */
+  onSuccess?: (txReceipt: TransactionReceipt) => void;
 }
 
 export interface IUseSendTransactionResult {
@@ -33,18 +42,34 @@ export interface IUseSendTransactionResult {
   sendTransaction: () => void;
 }
 
+export enum SendTransactionStep {
+  ESTIMATE_GAS = 'ESTIMATE_GAS',
+  SEND_TRANSACTION = 'SEND_TRANSACTION',
+  WAIT_CONFIRMATIONS = 'WAIT_CONFIRMATIONS',
+}
+
 export const useSendTransaction = (
   params: IUseSendTransactionParams
 ): IUseSendTransactionResult => {
-  const {transaction, onError} = params;
+  const {logContext, transaction, onError, onSuccess} = params;
 
-  const {isFetching: isEstimateGasLoading, isError: isEstimateGasError} =
-    useEstimateGas(transaction);
+  const {
+    isFetching: isEstimateGasLoading,
+    isError: isEstimateGasError,
+    error: estimateGasError,
+  } = useEstimateGas(transaction);
 
-  const handleSendTransactionError = (error: unknown) => {
-    console.log('Error sending transaction');
-    onError?.(error);
-  };
+  const handleSendTransactionError = useCallback(
+    (step: SendTransactionStep) => (error: unknown) => {
+      if (logContext) {
+        const {stack, data} = logContext;
+        logger.error(error, {stack, step, data});
+      }
+
+      onError?.(error);
+    },
+    [logContext, onError]
+  );
 
   const {
     data: txHash,
@@ -53,19 +78,51 @@ export const useSendTransaction = (
     isError: isSendTransactionError,
     isLoading: isSendTransactionLoading,
   } = useSendTransactionWagmi({
-    mutation: {onError: handleSendTransactionError},
+    mutation: {
+      onError: handleSendTransactionError(SendTransactionStep.SEND_TRANSACTION),
+    },
   });
 
   const {
     data: txReceipt,
+    error: waitTransactionError,
     isError: isWaitTransactionError,
     isFetching: isWaitTransactionLoading,
     isSuccess,
   } = useWaitForTransactionReceipt({
     hash: txHash,
-    confirmations: 3,
+    confirmations: 2,
     query: {enabled: txHash != null},
   });
+
+  // Trigger onSuccess callback on transaction success
+  useEffect(() => {
+    if (isSuccess && txReceipt) {
+      onSuccess?.(txReceipt);
+    }
+  }, [isSuccess, txReceipt, onSuccess]);
+
+  // Handle estimate gas transaction error
+  useEffect(() => {
+    if (isEstimateGasError) {
+      handleSendTransactionError(SendTransactionStep.ESTIMATE_GAS)(
+        estimateGasError
+      );
+    }
+  }, [isEstimateGasError, estimateGasError, handleSendTransactionError]);
+
+  // Handle estimate gas transaction error
+  useEffect(() => {
+    if (isWaitTransactionError) {
+      handleSendTransactionError(SendTransactionStep.WAIT_CONFIRMATIONS)(
+        waitTransactionError
+      );
+    }
+  }, [
+    isWaitTransactionError,
+    waitTransactionError,
+    handleSendTransactionError,
+  ]);
 
   const sendTransaction = useCallback(() => {
     if (transaction == null) {

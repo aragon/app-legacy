@@ -1,11 +1,14 @@
 import {DaoMetadata} from '@aragon/sdk-client';
-import {UploadIpfsDataStep, useUploadIpfsData} from 'hooks/useUploadIpfsData';
+import {useUploadIpfsData} from 'hooks/useUploadIpfsData';
 import {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {CreateDaoFormData} from 'utils/types';
-import {CreateDaoProcess} from '../createDaoDialogDefinitions';
 
 export interface IUsePinDaoMetadataParams {
+  /**
+   * Process name for logging.
+   */
+  process: string;
   /**
    * Callback called on pin dao metadata success.
    */
@@ -26,20 +29,13 @@ const formValuesToDaoMetadata = (
   avatar: `ipfs://${logoCid}`,
 });
 
-export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams = {}) => {
-  const {onSuccess, onError} = params;
+export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams) => {
+  const {process, onSuccess, onError} = params;
 
   const {getValues} = useFormContext<CreateDaoFormData>();
 
   const formValues = getValues();
   const {daoLogo} = formValues;
-
-  const handlePinDaoMetadataError =
-    (metadataStep: string) => (step: UploadIpfsDataStep, error: unknown) => {
-      const logData = {CreateDaoProcess, metadataStep, step, error};
-      console.log('Error pinning DAO metadata', logData); // TODO log to Sentry
-      onError?.(error);
-    };
 
   const {
     uploadIpfsData: uploadMetadata,
@@ -47,7 +43,8 @@ export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams = {}) => {
     isError: isUploadMetadataError,
     isSuccess,
   } = useUploadIpfsData({
-    onError: handlePinDaoMetadataError('PIN_METADATA'),
+    logContext: {stack: [process, 'PIN_METADATA'], data: formValues},
+    onError,
     onSuccess,
   });
 
@@ -61,6 +58,7 @@ export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams = {}) => {
     isPending: isUploadingLogo,
     isError: isUploadLogoError,
   } = useUploadIpfsData({
+    logContext: {stack: [process, 'PIN_LOGO'], data: formValues},
     onSuccess: handleUploadLogoSuccess,
     onError,
   });
