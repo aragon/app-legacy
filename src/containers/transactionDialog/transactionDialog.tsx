@@ -5,7 +5,6 @@ import {AlertInline, Button, IconType, IllustrationObject} from '@aragon/ods';
 import {IUseSendTransactionResult} from 'hooks/useSendTransaction';
 import {transactionDialogErrorUtils} from './transactionDialogErrorUtils';
 import {useAccount, useChains} from 'wagmi';
-import {useNetwork} from 'context/network';
 
 export interface ITransactionDialogProps extends ModalProps {
   /**
