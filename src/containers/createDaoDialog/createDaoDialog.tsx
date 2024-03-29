@@ -5,7 +5,6 @@ import {usePinDaoMetadata} from './hooks';
 import {AlertInline, Button} from '@aragon/ods';
 import {useNetwork} from 'context/network';
 import {useCreateDaoTransaction} from 'services/transactions/queries/useCreateDaoTransaction';
-import {useSendTransaction} from 'hooks/useSendTransaction';
 import {createDaoUtils} from './utils';
 import {useFormContext} from 'react-hook-form';
 import {CreateDaoFormData} from 'utils/types';
@@ -13,6 +12,7 @@ import {IBuildCreateDaoTransactionParams} from 'services/transactions/transactio
 import {generatePath, useNavigate} from 'react-router-dom';
 import {Dashboard} from 'utils/paths';
 import {useClient} from 'hooks/useClient';
+import {useSendCreateDaoTransaction} from './hooks/useSendCreateDaoTransaction';
 
 export interface ICreateDaoDialogProps extends ModalProps {}
 
@@ -22,7 +22,9 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
   const {network} = useNetwork();
   const {client} = useClient();
   const navigate = useNavigate();
+
   const {getValues} = useFormContext<CreateDaoFormData>();
+  const formValues = getValues();
 
   const [metadataCid, setMetadataCid] = useState<string>();
 
@@ -32,11 +34,12 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     isError: isPinMetadataError,
     isSuccess: isPinMetadataSuccess,
   } = usePinDaoMetadata({
+    process: 'CREATE_DAO',
     onSuccess: setMetadataCid,
   });
 
   const createDaoParams = createDaoUtils.buildCreateDaoParams(
-    getValues(),
+    formValues,
     metadataCid
   );
 
@@ -46,14 +49,19 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
       {enabled: createDaoParams != null && client != null}
     );
 
-  const sendTransactionResults = useSendTransaction({transaction});
-
-  const newDaoAddress = createDaoUtils.getDaoAddressFromReceipt(
-    sendTransactionResults.txReceipt
-  );
+  const sendTransactionResults = useSendCreateDaoTransaction({
+    process: 'CREATE_DAO',
+    transaction,
+    metadataCid,
+    createDaoParams,
+  });
 
   const onSuccessButtonClick = () => {
-    const daoPathParams = {network, dao: newDaoAddress};
+    const {daoAddress} =
+      createDaoUtils.getDaoAddressesFromReceipt(
+        sendTransactionResults.txReceipt
+      ) ?? {};
+    const daoPathParams = {network, dao: daoAddress};
     const daoPath = generatePath(Dashboard, daoPathParams);
     navigate(daoPath);
 
@@ -63,12 +71,13 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
   };
 
   useEffect(() => {
-    if (
+    const shouldPinMetadata =
       isOpen &&
       !isPinMetadataError &&
       !isPinMetadataLoading &&
-      !isPinMetadataSuccess
-    ) {
+      !isPinMetadataSuccess;
+
+    if (shouldPinMetadata) {
       pinDaoMetadata();
     }
   }, [

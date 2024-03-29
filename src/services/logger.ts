@@ -1,50 +1,71 @@
-import * as Sentry from '@sentry/react';
-import {SeverityLevel} from '@sentry/types/types/severity';
+import {MonitoringLevel, monitoring} from './monitoring';
 
 export enum LogLevel {
-  debug = 'debug',
-  info = 'info',
-  warn = 'warn',
-  error = 'error',
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
 }
 
-const logWithLevel = (
-  level: LogLevel,
-  msg: string,
-  obj: Record<string, unknown> = {}
-) => {
-  const client = Sentry.getClient();
-  if (!client) {
-    return;
-  }
+export interface ILoggerErrorContext {
+  /**
+   * Stack of the log (e.g. [CREATE_DAO, PIN_METADATA])
+   */
+  stack: string[];
+  /**
+   * Current step where the application failed (e.g. [ADD_DATA]).
+   */
+  step: string;
+  /**
+   * Extra data to log.
+   */
+  data?: Record<string, unknown>;
+}
 
-  const sentryLevel = mapLogLevelToSentrySeverity(level);
+export type ILoggerErrorParams = [unknown, ILoggerErrorContext];
+export type ILoggerParams = [string, Record<string, unknown>];
 
-  if (sentryLevel === LogLevel.error) {
-    Sentry.captureException(new Error(msg), {extra: obj});
-  } else {
-    Sentry.captureEvent({
-      message: msg,
-      level: sentryLevel,
-      extra: obj,
+class Logger {
+  debug = (...params: ILoggerParams) =>
+    this.logMessage(LogLevel.DEBUG, ...params);
+
+  info = (...params: ILoggerParams) =>
+    this.logMessage(LogLevel.INFO, ...params);
+
+  warn = (...params: ILoggerParams) =>
+    this.logMessage(LogLevel.WARN, ...params);
+
+  error = (...params: ILoggerErrorParams) =>
+    this.logMessage(LogLevel.ERROR, params[0], {...params[1]});
+
+  private logMessage = (
+    level: LogLevel,
+    message?: string | unknown,
+    object?: Record<string, unknown>
+  ) => {
+    const isDev = import.meta.env.DEV;
+
+    if (isDev) {
+      console.log({level, message, object});
+    }
+
+    const monitoringLevel = this.logLevelToMonitoringLevel[level];
+    const parsedMessage = typeof message === 'string' ? message : undefined;
+
+    monitoring.captureMessage({
+      level: monitoringLevel,
+      message: parsedMessage,
+      error: message,
+      context: object,
     });
-  }
-};
+  };
 
-export const mapLogLevelToSentrySeverity = (level: LogLevel): SeverityLevel => {
-  if (level === LogLevel.warn) {
-    return 'warning';
-  }
-  return level;
-};
+  private logLevelToMonitoringLevel: Record<LogLevel, MonitoringLevel> = {
+    [LogLevel.DEBUG]: 'debug',
+    [LogLevel.ERROR]: 'error',
+    [LogLevel.INFO]: 'info',
+    [LogLevel.WARN]: 'warning',
+  };
+}
 
-export const logger = {
-  debug: (msg: string, obj: Record<string, unknown> = {}) =>
-    logWithLevel(LogLevel.debug, msg, obj),
-  info: (msg: string, obj: Record<string, unknown> = {}) =>
-    logWithLevel(LogLevel.info, msg, obj),
-  warn: (msg: string, obj: Record<string, unknown> = {}) =>
-    logWithLevel(LogLevel.warn, msg, obj),
-  error: (msg: string, obj: Record<string, unknown> = {}) =>
-    logWithLevel(LogLevel.error, msg, obj),
-};
+export const logger = new Logger();

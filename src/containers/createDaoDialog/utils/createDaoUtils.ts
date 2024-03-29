@@ -1,10 +1,14 @@
 import {
+  DaoMetadata,
   MultisigClient,
   TokenVotingClient,
   TokenVotingPluginInstall,
   VotingMode,
 } from '@aragon/sdk-client';
-import {DAORegistry__factory} from '@aragon/osx-ethers';
+import {
+  DAORegistry__factory,
+  PluginSetupProcessor__factory,
+} from '@aragon/osx-ethers';
 import {parseUnits} from 'ethers/lib/utils';
 import {
   PluginInstallItem,
@@ -25,8 +29,15 @@ import {id} from '@ethersproject/hash';
 class CreateDaoUtils {
   defaultTokenDecimals = 18;
 
-  getDaoAddressFromReceipt = (receipt?: TransactionReceipt) => {
+  getDaoAddressesFromReceipt = (receipt?: TransactionReceipt) => {
     const daoFactoryInterface = DAORegistry__factory.createInterface();
+    const pspInterface = PluginSetupProcessor__factory.createInterface();
+
+    const pluginLogs = receipt?.logs?.filter(
+      event =>
+        event.topics[0] ===
+        id(pspInterface.getEvent('InstallationApplied').format('sighash'))
+    );
 
     const daoCreationLog = receipt?.logs?.find(
       event =>
@@ -34,14 +45,29 @@ class CreateDaoUtils {
         id(daoFactoryInterface.getEvent('DAORegistered').format('sighash'))
     );
 
-    if (!daoCreationLog) {
+    if (!daoCreationLog || !pluginLogs) {
       return undefined;
     }
 
     const parsedLog = daoFactoryInterface.parseLog(daoCreationLog);
+    const daoAddress = parsedLog.args['dao'] as string;
 
-    return parsedLog.args['dao'];
+    const pluginAddresses = pluginLogs.map(
+      log => pspInterface.parseLog(log).args[1] as string
+    );
+
+    return {daoAddress, pluginAddresses};
   };
+
+  formValuesToDaoMetadata = (
+    values: Omit<CreateDaoFormData, 'daoLogo'>,
+    logoCid?: string
+  ): DaoMetadata => ({
+    name: values.daoName,
+    description: values.daoSummary,
+    links: values.links.filter(({name, url}) => name != null && url != null),
+    avatar: `ipfs://${logoCid}`,
+  });
 
   buildCreateDaoParams = (
     formValues: Omit<CreateDaoFormData, 'daoLogo'>,
