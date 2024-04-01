@@ -50,18 +50,20 @@ export const Wizard: React.FC<WizardProps> = ({
         <StepTitle>{title}</StepTitle>
 
         <StepSubTitle>{description}</StepSubTitle>
-        <div className="max-w-fit">
-          <Button
-            className="mt-4"
-            size="md"
-            iconRight={IconType.LINK_EXTERNAL}
-            variant="secondary"
-            href={descriptionLink}
-            target="_blank"
-          >
-            {t('navLinks.guide')}
-          </Button>
-        </div>
+        {!!descriptionLink && (
+          <div className="max-w-fit">
+            <Button
+              className="mt-4"
+              size="md"
+              iconRight={IconType.LINK_EXTERNAL}
+              variant="secondary"
+              href={descriptionLink}
+              target="_blank"
+            >
+              {t('navLinks.guide')}
+            </Button>
+          </div>
+        )}
       </Wrapper>
     </StepCard>
   );

@@ -102,7 +102,9 @@ const ProposalSnapshot: React.FC<Props> = ({
 
   if (proposalCountIsFetched && (proposalCount === 0 || proposalCountError)) {
     return (
+      // needs ODS adjustment & release long term
       <CardEmptyState
+        className="!w-fit"
         humanIllustration={{
           body: 'VOTING',
           expression: 'SMILE',
