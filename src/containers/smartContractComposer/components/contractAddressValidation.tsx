@@ -271,7 +271,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           });
         }
 
-        //prioritize sourcify over etherscan if sourcify data is available
+        //prioritize etherscan over sourcify to support proxy contracts for sourcify verified contracts
         if (
           etherscanData.result[0].ABI !== 'Contract source code not verified'
         ) {
