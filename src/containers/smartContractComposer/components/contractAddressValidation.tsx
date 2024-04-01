@@ -272,7 +272,15 @@ const ContractAddressValidation: React.FC<Props> = props => {
         }
 
         //prioritize sourcify over etherscan if sourcify data is available
-        if (sourcifyFullData || sourcifyPartialData) {
+        if (
+          etherscanData.result[0].ABI !== 'Contract source code not verified'
+        ) {
+          setVerifiedContract(
+            'etherscanMatch',
+            etherscanData.result[0],
+            tokenData?.imgUrl || ''
+          );
+        } else if (sourcifyFullData || sourcifyPartialData) {
           if (sourcifyFullData) {
             sourcifyFullData.output.devdoc.title =
               sourcifyFullData.output.devdoc.title ||
@@ -288,14 +296,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
           setVerifiedContract(
             'sourcifyMatch',
             sourcifyFullData || sourcifyPartialData,
-            tokenData?.imgUrl || ''
-          );
-        } else if (
-          etherscanData.result[0].ABI !== 'Contract source code not verified'
-        ) {
-          setVerifiedContract(
-            'etherscanMatch',
-            etherscanData.result[0],
             tokenData?.imgUrl || ''
           );
         } else {
