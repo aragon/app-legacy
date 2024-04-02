@@ -19,6 +19,7 @@ import {MAX_TOKEN_DECIMALS} from 'utils/constants';
 import {Web3Address} from 'utils/library';
 import {validateWeb3Address} from 'utils/validators';
 import {MultisigWalletField} from 'components/multisigWallets/row';
+import {Address, isAddressEqual} from 'viem';
 
 type WalletRowProps = {
   index: number;
@@ -81,7 +82,10 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
             wallet.ensName === web3Address.ensName &&
             web3Address.ensName !== null;
 
-          const isAddressMatch = wallet.address === web3Address.address;
+          const isAddressMatch = isAddressEqual(
+            wallet.address as Address,
+            web3Address.address as Address
+          );
 
           return (isAddressMatch || isEnsMatch) && walletIndex !== index;
         })
