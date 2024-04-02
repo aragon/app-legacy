@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {ModalProps} from '@aragon/ods-old';
 import {TransactionDialog} from 'containers/transactionDialog';
-import {usePinDaoMetadata} from './hooks';
-import {AlertInline, Button} from '@aragon/ods';
 import {useNetwork} from 'context/network';
 import {useCreateDaoTransaction} from 'services/transactions/queries/useCreateDaoTransaction';
 import {createDaoUtils} from './utils';
@@ -12,9 +10,12 @@ import {IBuildCreateDaoTransactionParams} from 'services/transactions/transactio
 import {generatePath, useNavigate} from 'react-router-dom';
 import {Dashboard} from 'utils/paths';
 import {useClient} from 'hooks/useClient';
-import {useSendCreateDaoTransaction} from './hooks/useSendCreateDaoTransaction';
+import {useSendCreateDaoTransaction} from './hooks';
+import {CreateDaoDialogSteps} from './createDaoDialogSteps';
 
 export interface ICreateDaoDialogProps extends ModalProps {}
+
+const createDaoProcess = 'CREATE_DAO';
 
 export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
   const {isOpen, ...otherProps} = props;
@@ -28,16 +29,6 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
 
   const [metadataCid, setMetadataCid] = useState<string>();
 
-  const {
-    pinDaoMetadata,
-    isPending: isPinMetadataLoading,
-    isError: isPinMetadataError,
-    isSuccess: isPinMetadataSuccess,
-  } = usePinDaoMetadata({
-    process: 'CREATE_DAO',
-    onSuccess: setMetadataCid,
-  });
-
   const createDaoParams = createDaoUtils.buildCreateDaoParams(
     formValues,
     metadataCid
@@ -50,17 +41,16 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     );
 
   const sendTransactionResults = useSendCreateDaoTransaction({
-    process: 'CREATE_DAO',
+    process: createDaoProcess,
     transaction,
     metadataCid,
     createDaoParams,
   });
 
   const onSuccessButtonClick = () => {
-    const {daoAddress} =
-      createDaoUtils.getDaoAddressesFromReceipt(
-        sendTransactionResults.txReceipt
-      ) ?? {};
+    const {daoAddress} = createDaoUtils.getDaoAddressesFromReceipt(
+      sendTransactionResults.txReceipt
+    )!;
     const daoPathParams = {network, dao: daoAddress};
     const daoPath = generatePath(Dashboard, daoPathParams);
     navigate(daoPath);
@@ -69,37 +59,6 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
       open('poapClaim');
     }
   };
-
-  useEffect(() => {
-    const shouldPinMetadata =
-      isOpen &&
-      !isPinMetadataError &&
-      !isPinMetadataLoading &&
-      !isPinMetadataSuccess;
-
-    if (shouldPinMetadata) {
-      pinDaoMetadata();
-    }
-  }, [
-    isOpen,
-    pinDaoMetadata,
-    isPinMetadataError,
-    isPinMetadataSuccess,
-    isPinMetadataLoading,
-  ]);
-
-  const isLoading = isPinMetadataLoading || isTransactionLoading;
-
-  const alertMessage = isPinMetadataError
-    ? 'Unable to pin data to IPFS'
-    : undefined;
-
-  const buttonAction = isPinMetadataError ? pinDaoMetadata : () => null;
-  const buttonLabel = isPinMetadataLoading
-    ? 'Pinning IPFS data'
-    : isPinMetadataError
-    ? 'Retry'
-    : 'Preparing transaction';
 
   return (
     <TransactionDialog
@@ -114,16 +73,12 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
       }}
       {...otherProps}
     >
-      <Button
-        isLoading={isLoading}
-        onClick={buttonAction}
-        className="self-stretch"
-      >
-        {buttonLabel}
-      </Button>
-      {alertMessage && (
-        <AlertInline message={alertMessage} variant="critical" />
-      )}
+      <CreateDaoDialogSteps
+        process={createDaoProcess}
+        isLoading={isTransactionLoading}
+        onPinDaoMetadataSuccess={setMetadataCid}
+        pinMetadata={isOpen}
+      />
     </TransactionDialog>
   );
 };
