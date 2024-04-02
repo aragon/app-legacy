@@ -9,7 +9,7 @@ type ModalBottomSheetSwitcherProps = ModalProps &
 const ModalBottomSheetSwitcher: React.FC<ModalBottomSheetSwitcherProps> = ({
   title,
   subtitle,
-  isOpen,
+  isOpen = false,
   onClose,
   children,
   closeOnDrag,
@@ -17,30 +17,30 @@ const ModalBottomSheetSwitcher: React.FC<ModalBottomSheetSwitcherProps> = ({
 }) => {
   const {isDesktop} = useScreen();
 
+  if (isDesktop) {
+    return (
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={title}
+        subtitle={subtitle}
+        onOpenAutoFocus={onOpenAutoFocus}
+      >
+        {children}
+      </Modal>
+    );
+  }
+
   return (
-    <>
-      {isDesktop ? (
-        <Modal
-          isOpen={isOpen}
-          onClose={() => onClose?.()}
-          title={title}
-          subtitle={subtitle}
-          onOpenAutoFocus={onOpenAutoFocus}
-        >
-          {children}
-        </Modal>
-      ) : (
-        <BottomSheet
-          isOpen={isOpen ?? false}
-          onClose={onClose}
-          title={title}
-          subtitle={subtitle}
-          closeOnDrag={closeOnDrag}
-        >
-          {children}
-        </BottomSheet>
-      )}
-    </>
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      subtitle={subtitle}
+      closeOnDrag={closeOnDrag}
+    >
+      {children}
+    </BottomSheet>
   );
 };
 
