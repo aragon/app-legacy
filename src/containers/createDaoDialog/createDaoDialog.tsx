@@ -12,6 +12,7 @@ import {Dashboard} from 'utils/paths';
 import {useClient} from 'hooks/useClient';
 import {useSendCreateDaoTransaction} from './hooks';
 import {CreateDaoDialogSteps} from './createDaoDialogSteps';
+import {useTranslation} from 'react-i18next';
 
 export interface ICreateDaoDialogProps extends ModalProps {}
 
@@ -20,6 +21,7 @@ const createDaoProcess = 'CREATE_DAO';
 export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
   const {isOpen, ...otherProps} = props;
 
+  const {t} = useTranslation();
   const {network} = useNetwork();
   const {client} = useClient();
   const navigate = useNavigate();
@@ -62,13 +64,13 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
 
   return (
     <TransactionDialog
-      title="Deploy your DAO"
+      title={t('createDaoDialog.title')}
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
       displayTransactionStatus={transaction != null}
-      sendTransactionLabel="Deploy DAO now"
+      sendTransactionLabel="createDaoDialog.button.approve"
       successButton={{
-        label: 'Launch DAO Dashboard',
+        label: 'createDaoDialog.button.success',
         onClick: onSuccessButtonClick,
       }}
       {...otherProps}
