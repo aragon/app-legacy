@@ -33,6 +33,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     displayTransactionStatus,
     successButton,
     sendTransactionLabel = 'Approve transaction',
+    onClose,
     ...otherProps
   } = props;
 
@@ -89,8 +90,12 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     ?.default.url;
   const transactionLink = `${blockExplorer}/tx/${txHash}`;
 
+  // Hide the close button by setting the onClose callback to undefined when
+  // waiting for the transaction to be confirmed
+  const onCloseDialog = isWaitTransactionLoading ? undefined : onClose;
+
   return (
-    <ModalBottomSheetSwitcher {...otherProps}>
+    <ModalBottomSheetSwitcher onClose={onCloseDialog} {...otherProps}>
       <div className="flex flex-col items-center gap-2 text-center">
         <IllustrationObject object="WALLET" className="w-40" />
         <div className="flex flex-col gap-3">
