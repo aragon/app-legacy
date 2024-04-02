@@ -19,7 +19,28 @@ export interface IUsePinDaoMetadataParams {
   onError?: (error: unknown) => void;
 }
 
-export const usePinDaoMetadata = (params: IUsePinDaoMetadataParams) => {
+export interface IUsePinDaoMetadataResult {
+  /**
+   * Function to initialize the pin metadata process
+   */
+  pinDaoMetadata: () => void;
+  /**
+   * The variable is set to true when pinning the DAO logo or metadata.
+   */
+  isPending: boolean;
+  /**
+   * The variable is set to true the DAO metadata pinning process is successful.
+   */
+  isSuccess: boolean;
+  /**
+   * The variable is set to true an error occurs during the pin metadata process.
+   */
+  isError: boolean;
+}
+
+export const usePinDaoMetadata = (
+  params: IUsePinDaoMetadataParams
+): IUsePinDaoMetadataResult => {
   const {process, onSuccess, onError} = params;
 
   const {getValues} = useFormContext<CreateDaoFormData>();
