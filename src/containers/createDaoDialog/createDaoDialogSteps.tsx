@@ -68,7 +68,7 @@ export const CreateDaoDialogSteps: React.FC<
   return (
     <>
       <Button
-        isLoading={isPinMetadataLoading ?? isLoading}
+        isLoading={isPinMetadataLoading || isLoading}
         onClick={buttonAction}
         className="self-stretch"
       >

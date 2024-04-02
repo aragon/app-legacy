@@ -72,14 +72,16 @@ export const Modal: React.FC<ModalProps> = ({
                 <ModalTitle>{title}</ModalTitle>
                 {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
               </ModalTitleContainer>
-              <ModalClose onClick={onClose}>
-                <Icon
-                  icon={IconType.CLOSE}
-                  height={10}
-                  width={10}
-                  className="mx-auto"
-                />
-              </ModalClose>
+              {onClose != null && (
+                <ModalClose onClick={onClose}>
+                  <Icon
+                    icon={IconType.CLOSE}
+                    height={10}
+                    width={10}
+                    className="mx-auto"
+                  />
+                </ModalClose>
+              )}
             </ModalHeader>
           )}
           {children}
