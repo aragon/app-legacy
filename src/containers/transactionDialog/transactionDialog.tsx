@@ -5,6 +5,7 @@ import {AlertInline, Button, IconType, IllustrationObject} from '@aragon/ods';
 import {IUseSendTransactionResult} from 'hooks/useSendTransaction';
 import {transactionDialogErrorUtils} from './transactionDialogErrorUtils';
 import {useAccount, useChains} from 'wagmi';
+import {useTranslation} from 'react-i18next';
 
 export interface ITransactionDialogProps extends ModalProps {
   /**
@@ -13,7 +14,7 @@ export interface ITransactionDialogProps extends ModalProps {
   sendTransactionResult: IUseSendTransactionResult;
   /**
    * Label of the button when the transaction is ready to be sent.
-   * @default "Approve transaction"
+   * @default "transactionDialog.button.approve"
    */
   sendTransactionLabel?: string;
   /**
@@ -32,13 +33,14 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     sendTransactionResult,
     displayTransactionStatus,
     successButton,
-    sendTransactionLabel = 'Approve transaction',
+    sendTransactionLabel = 'transactionDialog.button.approve',
     onClose,
     ...otherProps
   } = props;
 
   const chains = useChains();
   const {chain} = useAccount();
+  const {t} = useTranslation();
 
   const {
     isEstimateGasError,
@@ -64,17 +66,19 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     transactionDialogErrorUtils.parseError(sendTransactionError);
 
   const loadingButtonLabel = isEstimateGasLoading
-    ? 'Preparing transaction'
+    ? 'transactionDialog.button.preparing'
     : isSendTransactionLoading
-    ? 'Awaiting approval'
-    : 'Awaiting confirmations';
+    ? 'transactionDialog.button.waitingApproval'
+    : 'transactionDialog.button.waitingConfirmations';
 
   const errorButtonLabel = isSendTransactionError
-    ? 'Resend to wallet'
-    : 'Retry';
+    ? 'transactionDialog.button.resend'
+    : 'transactionDialog.button.retry';
 
   const idleButtonLabel =
-    isEstimateGasError && !isLoading ? 'Proceed anyway' : sendTransactionLabel;
+    isEstimateGasError && !isLoading
+      ? 'transactionDialog.button.proceed'
+      : sendTransactionLabel;
 
   const buttonLabel = isLoading
     ? loadingButtonLabel
@@ -100,10 +104,10 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
         <IllustrationObject object="WALLET" className="w-40" />
         <div className="flex flex-col gap-3">
           <p className="text-xl font-semibold text-neutral-800">
-            Transaction required
+            {t('transactionDialog.title')}
           </p>
           <p className="text-sm font-normal text-neutral-600">
-            You will need to sign a transaction in your connected wallet.
+            {t('transactionDialog.description')}
           </p>
         </div>
       </div>
@@ -116,22 +120,22 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
               onClick={buttonAction}
               className="self-stretch"
             >
-              {buttonLabel}
+              {t(buttonLabel)}
             </Button>
             {longWaitingTime && isLoading && (
               <AlertInline
-                message="Transaction is taking longer than expected"
+                message={t('transactionDialog.warnning.slowTransaction')}
                 variant="warning"
               />
             )}
             {isEstimateGasError && !isLoading && (
               <AlertInline
-                message="Unable to estimate gas. This transaction may fail"
+                message={t('transactionDialog.warnning.gasEstimation')}
                 variant="warning"
               />
             )}
             {isSendTransactionError && errorMessage && !isLoading && (
-              <AlertInline message={errorMessage} variant="critical" />
+              <AlertInline message={t(errorMessage)} variant="critical" />
             )}
             {isSuccess && (
               <Button
@@ -141,7 +145,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
                 className="self-stretch"
                 iconRight={IconType.LINK_EXTERNAL}
               >
-                See transaction
+                {t('transactionDialog.link.transaction')}
               </Button>
             )}
           </>

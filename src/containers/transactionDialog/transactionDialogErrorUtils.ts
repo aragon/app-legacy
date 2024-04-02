@@ -1,12 +1,12 @@
 import {SendTransactionErrorType} from '@wagmi/core';
 
 class TransactionDialogErrorUtils {
-  private defaultMessage = 'Transaction failed';
+  private defaultMessage = 'transactionDialog.error.default';
 
   private errors = [
     {
       pattern: /User rejected the request/,
-      message: 'Transaction rejected by the user.',
+      message: 'transactionDialog.error.rejected',
     },
   ];
 
