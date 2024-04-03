@@ -124,13 +124,13 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
             </Button>
             {longWaitingTime && isLoading && (
               <AlertInline
-                message={t('transactionDialog.warnning.slowTransaction')}
+                message={t('transactionDialog.warning.slowTransaction')}
                 variant="warning"
               />
             )}
             {isEstimateGasError && !isLoading && (
               <AlertInline
-                message={t('transactionDialog.warnning.gasEstimation')}
+                message={t('transactionDialog.warning.gasEstimation')}
                 variant="warning"
               />
             )}

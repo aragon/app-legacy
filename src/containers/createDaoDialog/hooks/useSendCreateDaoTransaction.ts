@@ -43,8 +43,8 @@ export const useSendCreateDaoTransaction = (
   const {blockchain, membership, votingType, isCustomToken, tokenAddress} =
     formValues;
 
-  const addFavoriteDaoMutation = useAddFollowedDaoMutation();
-  const addPendingDaoMutation = useAddPendingDaoMutation();
+  const {mutate: addFollowedDao} = useAddFollowedDaoMutation();
+  const {mutate: addPendingDao} = useAddPendingDaoMutation();
 
   const {createToken} = useCensus3CreateToken({
     chainId: blockchain.id,
@@ -64,7 +64,7 @@ export const useSendCreateDaoTransaction = (
 
     const {ensSubdomain = '', plugins = []} = createDaoParams!;
 
-    addPendingDaoMutation.mutateAsync({
+    addPendingDao({
       daoAddress: daoAddress.toLowerCase(),
       network,
       daoDetails: {
@@ -74,7 +74,7 @@ export const useSendCreateDaoTransaction = (
       },
     });
 
-    addFavoriteDaoMutation.mutateAsync({
+    addFollowedDao({
       dao: {
         address: daoAddress.toLowerCase(),
         chain: CHAIN_METADATA[network].id,
