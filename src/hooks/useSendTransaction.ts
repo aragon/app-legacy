@@ -93,7 +93,7 @@ export const useSendTransaction = (
     data: txReceipt,
     error: waitTransactionError,
     isError: isWaitTransactionError,
-    isFetching: isWaitTransactionLoading,
+    isInitialLoading: isWaitTransactionLoading,
     isSuccess,
   } = useWaitForTransactionReceipt({
     hash: txHash,
@@ -106,7 +106,9 @@ export const useSendTransaction = (
     if (isSuccess && txReceipt) {
       onSuccess?.(txReceipt);
     }
-  }, [isSuccess, txReceipt, onSuccess]);
+    // Do not rerun effect on onSuccess change to avoid rerenders caused by eventual onSuccess side effects
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, txReceipt]);
 
   // Handle estimate gas transaction error
   useEffect(() => {
