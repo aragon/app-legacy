@@ -9,7 +9,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import {StyleSheetManager} from 'styled-components';
 import {createWeb3Modal} from '@web3modal/wagmi/react';
 import {http, createConfig, WagmiProvider} from 'wagmi';
-import {walletConnect, injected, coinbaseWallet} from 'wagmi/connectors';
+import {walletConnect, coinbaseWallet} from 'wagmi/connectors';
 
 import {
   Chain,
