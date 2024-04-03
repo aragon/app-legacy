@@ -1617,8 +1617,12 @@
   "createDaoDialog": {
     "title": "Deploy your DAO",
     "button": {
+      "pinning": "Pinning IPFS data",
       "approve": "Deploy DAO now",
       "success": "Launch DAO Dashboard"
+    },
+    "error": {
+      "pinMetadata": "Unable to pin data to IPFS"
     }
   },
   "dao": {

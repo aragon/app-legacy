@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {AlertInline, Button} from '@aragon/ods';
 import {usePinDaoMetadata} from './hooks/usePinDaoMetadata';
+import {useTranslation} from 'react-i18next';
 
 export interface ICreateDaoDialogStepsProps {
   /**
@@ -25,6 +26,8 @@ export const CreateDaoDialogSteps: React.FC<
   ICreateDaoDialogStepsProps
 > = props => {
   const {process, isLoading, pinMetadata, onPinDaoMetadataSuccess} = props;
+
+  const {t} = useTranslation();
 
   const {
     pinDaoMetadata,
@@ -55,15 +58,15 @@ export const CreateDaoDialogSteps: React.FC<
   ]);
 
   const alertMessage = isPinMetadataError
-    ? 'Unable to pin data to IPFS'
+    ? 'createDaoDialog.error.pinMetadata'
     : undefined;
 
   const buttonAction = isPinMetadataError ? pinDaoMetadata : () => null;
   const buttonLabel = isPinMetadataLoading
-    ? 'Pinning IPFS data'
+    ? 'createDaoDialog.button.pinning'
     : isPinMetadataError
-    ? 'Retry'
-    : 'Preparing transaction';
+    ? 'transactionDialog.button.retry'
+    : 'transactionDialog.button.preparing';
 
   return (
     <>
@@ -72,10 +75,10 @@ export const CreateDaoDialogSteps: React.FC<
         onClick={buttonAction}
         className="self-stretch"
       >
-        {buttonLabel}
+        {t(buttonLabel)}
       </Button>
       {alertMessage && (
-        <AlertInline message={alertMessage} variant="critical" />
+        <AlertInline message={t(alertMessage)} variant="critical" />
       )}
     </>
   );
