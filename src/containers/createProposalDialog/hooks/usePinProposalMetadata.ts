@@ -61,6 +61,7 @@ export const usePinProposalMetadata = (
       resources: links.filter((r: ProposalResource) => r.name && r.url),
     };
 
+    // Gasless voting store metadata using Vocdoni support
     uploadIpfsData(JSON.stringify(metadata));
   }, [proposalTitle, proposalSummary, proposal, links, uploadIpfsData]);
 

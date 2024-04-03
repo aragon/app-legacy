@@ -1631,6 +1631,15 @@
       "false": "Follow"
     }
   },
+  "createProposalDialog": {
+    "title": "Create proposal",
+    "button": {
+      "pinning": "Pinning IPFS data"
+    },
+    "error": {
+      "pinMetadata": "Unable to pin data to IPFS"
+    }
+  },
   "update": {
     "banner": {
       "title": "Aragon OSx updates are available.",
