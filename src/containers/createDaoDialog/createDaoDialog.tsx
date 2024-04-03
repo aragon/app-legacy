@@ -19,7 +19,7 @@ export interface ICreateDaoDialogProps extends ModalProps {}
 const createDaoProcess = 'CREATE_DAO';
 
 export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
-  const {isOpen, ...otherProps} = props;
+  const {isOpen, onClose, ...otherProps} = props;
 
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -56,6 +56,7 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     const daoPathParams = {network, dao: daoAddress};
     const daoPath = generatePath(Dashboard, daoPathParams);
     navigate(daoPath);
+    onClose?.();
 
     if (network === 'ethereum') {
       open('poapClaim');
@@ -73,6 +74,7 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
         label: 'createDaoDialog.button.success',
         onClick: onSuccessButtonClick,
       }}
+      onClose={onClose}
       {...otherProps}
     >
       <CreateDaoDialogSteps
