@@ -95,8 +95,8 @@ export function NetworkProvider({children}: NetworkProviderProps) {
 
   useEffect(() => {
     /**
-     * isCreatePage will avoid side effects of redundant re-renders to effect selected network
-     * in creation flow
+     * isCreatePage will avoid side effects of redundant re-renders to
+     * effect selected network in creation flow
      */
     if (!isCreatePage)
       setNetworkState(determineNetwork(networkUrlSegment, chainId, status));
