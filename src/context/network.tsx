@@ -84,6 +84,7 @@ const determineNetwork = (
 export function NetworkProvider({children}: NetworkProviderProps) {
   const navigate = useNavigate();
   const urlNetwork = useMatch('daos/:network/*');
+  const isCreatePage = Boolean(useMatch('create'));
   const networkUrlSegment = urlNetwork?.params?.network;
   const {status: wagmiStatus, chain} = useAccount();
   const chainId = chain?.id || 0;
@@ -93,8 +94,13 @@ export function NetworkProvider({children}: NetworkProviderProps) {
   >(determineNetwork(networkUrlSegment, chainId, status));
 
   useEffect(() => {
-    setNetworkState(determineNetwork(networkUrlSegment, chainId, status));
-  }, [chainId, networkUrlSegment, status]);
+    /**
+     * isCreatePage will avoid side effects of redundant re-renders to effect selected network
+     * in creation flow
+     */
+    if (!isCreatePage)
+      setNetworkState(determineNetwork(networkUrlSegment, chainId, status));
+  }, [chainId, isCreatePage, networkUrlSegment, status]);
 
   const isL2Network = L2_NETWORKS.includes(networkState);
 
@@ -116,6 +122,8 @@ export function NetworkProvider({children}: NetworkProviderProps) {
       navigate(NotFound, {replace: true});
     }
   }, [networkState, navigate, networkUrlSegment]);
+
+  console.log('isCreatePage', isCreatePage);
 
   return (
     <NetworkContext.Provider
