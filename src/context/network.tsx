@@ -123,8 +123,6 @@ export function NetworkProvider({children}: NetworkProviderProps) {
     }
   }, [networkState, navigate, networkUrlSegment]);
 
-  console.log('isCreatePage', isCreatePage);
-
   return (
     <NetworkContext.Provider
       value={{
