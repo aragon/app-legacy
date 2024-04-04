@@ -3,7 +3,8 @@ import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {Address, useEnsName} from 'wagmi';
+import {useEnsName} from 'wagmi';
+import {Address} from 'viem';
 
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';

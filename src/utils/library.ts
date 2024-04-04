@@ -20,7 +20,9 @@ import {
   bytesToHex,
   resolveIpfsCid,
 } from '@aragon/sdk-client-common';
-import {fetchEnsAvatar} from '@wagmi/core';
+import {getEnsAvatar} from '@wagmi/core';
+import {normalize} from 'viem/ens';
+
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {
   formatUnits as ethersFormatUnits,
@@ -28,6 +30,11 @@ import {
   isAddress,
 } from 'ethers/lib/utils';
 import {TFunction} from 'i18next';
+import {
+  GaslessPluginVotingSettings,
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
+import {wagmiConfig} from 'index';
 
 import {daoFactoryABI} from 'abis/daoFactoryABI';
 import {MultisigWalletField} from 'components/multisigWallets/row';
@@ -65,10 +72,7 @@ import {Abi, addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
 import {daoABI} from 'abis/daoABI';
-import {
-  GaslessPluginVotingSettings,
-  GaslessVotingClient,
-} from '@vocdoni/gasless-voting';
+import {SupportedChainID} from './constants/chains';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -1105,9 +1109,9 @@ export class Web3Address {
         if (addressObj._ensName) {
           // fetch avatar
           const chainId = (await provider.getNetwork()).chainId;
-          addressObj._avatar = await fetchEnsAvatar({
-            name: addressObj._ensName,
-            chainId,
+          addressObj._avatar = await getEnsAvatar(wagmiConfig, {
+            name: normalize(addressObj._ensName),
+            chainId: chainId as SupportedChainID,
           });
         }
       }

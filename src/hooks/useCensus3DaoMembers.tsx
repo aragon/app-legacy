@@ -58,7 +58,6 @@ export const useCensus3DaoMembers = ({
   } = useCensus3Members(
     {
       tokenId: daoToken?.address,
-      page: options?.page,
     },
     {
       ...options,

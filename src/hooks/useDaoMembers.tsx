@@ -6,10 +6,11 @@ import {HookData} from 'utils/types';
 import {GaslessPluginName, PluginTypes} from './usePluginClient';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
-import {Address, useBalance} from 'wagmi';
+import {useReadContracts} from 'wagmi';
 import {useDaoToken} from './useDaoToken';
 import {useWallet} from './useWallet';
 import {useCensus3DaoMembers} from './useCensus3DaoMembers';
+import {Address, erc20Abi} from 'viem';
 
 export type MultisigDaoMember = {
   address: string;
@@ -196,19 +197,29 @@ export const useDaoMembers = (
     },
   });
 
-  const {data: userBalance} = useBalance({
-    address: address as Address,
-    token: daoToken?.address as Address,
-    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled:
-      address != null &&
-      daoToken != null &&
-      !countOnly &&
-      enabled &&
-      !enableCensus3,
+  const {data: userBalance} = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: daoToken?.address as Address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [address as Address],
+        chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+      },
+    ],
+    query: {
+      enabled:
+        address != null &&
+        daoToken != null &&
+        !countOnly &&
+        enabled &&
+        !enableCensus3,
+    },
   });
+
   const userBalanceNumber = Number(
-    formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
+    formatUnits(userBalance?.[0] ?? '0', daoToken?.decimals)
   );
 
   if (!enabled)

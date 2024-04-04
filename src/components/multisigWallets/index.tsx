@@ -4,6 +4,8 @@ import {Label} from '@aragon/ods-old';
 import {AlertInline} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Address} from 'viem';
+import {useEnsName} from 'wagmi';
 
 import {useAlertContext} from 'context/alert';
 import {useWallet} from 'hooks/useWallet';
@@ -13,7 +15,6 @@ import {Web3Address} from 'utils/library';
 import {validateWeb3Address} from 'utils/validators';
 
 import {useNetwork} from '../../context/network';
-import {Address, useEnsName} from 'wagmi';
 import {CHAIN_METADATA} from '../../utils/constants';
 
 export const MultisigWallets = () => {
