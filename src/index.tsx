@@ -68,6 +68,7 @@ const transports = chains.reduce(
 export const wagmiConfig = createConfig({
   chains,
   transports: transports,
+  syncConnectedChain: false,
   connectors: [
     walletConnect({
       projectId: walletConnectProjectID,
