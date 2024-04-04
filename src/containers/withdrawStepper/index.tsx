@@ -1,5 +1,5 @@
 import {DaoDetails} from '@aragon/sdk-client';
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormContext, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -23,15 +23,14 @@ import {toDisplayEns} from 'utils/library';
 import {Finance} from 'utils/paths';
 import {SupportedVotingSettings} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
+import {CreateProposalDialog} from 'containers/createProposalDialog';
 
 interface WithdrawStepperProps {
-  enableTxModal: () => void;
   daoDetails: DaoDetails;
   pluginSettings: SupportedVotingSettings;
 }
 
 const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
-  enableTxModal,
   daoDetails,
   pluginSettings,
 }) => {
@@ -42,12 +41,27 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
 
   const {control, getValues} = useFormContext();
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const {isConnected, isOnWrongNetwork} = useWallet();
+
   const {errors, dirtyFields} = useFormState({control: control});
 
   const formActions = useWatch({
     name: 'actions',
     control,
   });
+
+  const handlePublishProposalClick = () => {
+    if (isConnected) {
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        setIsDialogOpen(true);
+      }
+    } else {
+      open('wallet');
+    }
+  };
 
   /*************************************************
    *                    Render                     *
@@ -152,15 +166,14 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
           wizardTitle={t('newWithdraw.reviewProposal.heading')}
           wizardDescription={t('newWithdraw.reviewProposal.description')}
           nextButtonLabel={t('labels.submitProposal')}
-          onNextButtonClicked={() => {
-            trackEvent('newWithdraw_publishBtn_clicked', {
-              dao_address: daoDetails?.address,
-            });
-            enableTxModal();
-          }}
+          onNextButtonClicked={handlePublishProposalClick}
           fullWidth
         >
           <ReviewProposal defineProposalStepNumber={3} />
+          <CreateProposalDialog
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+          />
         </Step>
       </FullScreenStepper>
     </>

@@ -1634,7 +1634,9 @@
   "createProposalDialog": {
     "title": "Create proposal",
     "button": {
-      "pinning": "Pinning IPFS data"
+      "pinning": "Pinning IPFS data",
+      "approve": "Create proposal",
+      "success": "Open your proposal"
     },
     "error": {
       "pinMetadata": "Unable to pin data to IPFS"

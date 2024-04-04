@@ -1,8 +1,8 @@
-import {ProposalMetadata} from '@aragon/sdk-client-common';
 import {useUploadIpfsData} from 'hooks/useUploadIpfsData';
 import {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
-import {CreateProposalFormData, ProposalResource} from 'utils/types';
+import {CreateProposalFormData} from 'utils/types';
+import {createProposalUtils} from '../utils';
 
 export interface IUsePinProposalMetadataParams {
   /**
@@ -45,7 +45,6 @@ export const usePinProposalMetadata = (
 
   const {getValues} = useFormContext<CreateProposalFormData>();
   const formValues = getValues();
-  const {proposal, proposalSummary, proposalTitle, links} = formValues;
 
   const {uploadIpfsData, isPending, isError, isSuccess} = useUploadIpfsData({
     logContext: {stack: [process, 'PIN_METADATA'], data: formValues},
@@ -54,16 +53,13 @@ export const usePinProposalMetadata = (
   });
 
   const pinProposalMetadata = useCallback(() => {
-    const metadata: ProposalMetadata = {
-      title: proposalTitle,
-      summary: proposalSummary,
-      description: proposal,
-      resources: links.filter((r: ProposalResource) => r.name && r.url),
-    };
+    const metadata = createProposalUtils.formValuesToProposalMetadata(
+      formValues as CreateProposalFormData
+    );
 
     // Gasless voting store metadata using Vocdoni support
     uploadIpfsData(JSON.stringify(metadata));
-  }, [proposalTitle, proposalSummary, proposal, links, uploadIpfsData]);
+  }, [formValues, uploadIpfsData]);
 
   return {pinProposalMetadata, isPending, isError, isSuccess};
 };

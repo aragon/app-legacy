@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import {useParams} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
 import ProposalStepper from 'containers/proposalStepper';
 import {ActionsProvider} from 'context/actions';
-import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {CreateProposalFormData} from 'utils/types';
 import {UpdateProvider} from 'context/update';
@@ -23,8 +22,6 @@ export const NewProposal: React.FC = () => {
 
   const isUpdateProposal = type === 'os-update';
 
-  const [showTxModal, setShowTxModal] = useState(false);
-
   const formMethods = useForm<CreateProposalFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -36,10 +33,6 @@ export const NewProposal: React.FC = () => {
     },
   });
 
-  const enableTxModal = () => {
-    setShowTxModal(true);
-  };
-
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -50,14 +43,9 @@ export const NewProposal: React.FC = () => {
   return (
     <FormProvider {...formMethods}>
       <ActionsProvider daoId={data.address}>
-        <CreateProposalProvider
-          showTxModal={showTxModal}
-          setShowTxModal={setShowTxModal}
-        >
-          <UpdateProvider>
-            <ProposalStepper enableTxModal={enableTxModal} />
-          </UpdateProvider>
-        </CreateProposalProvider>
+        <UpdateProvider>
+          <ProposalStepper />
+        </UpdateProvider>
       </ActionsProvider>
     </FormProvider>
   );

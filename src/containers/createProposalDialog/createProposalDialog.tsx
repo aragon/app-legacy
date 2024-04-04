@@ -16,7 +16,13 @@ import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings
 import {useEncodeActions} from 'services/actionEncoder/queries/useEncodeActions';
 import {useClient} from 'hooks/useClient';
 import {useNetwork} from 'context/network';
-import {useCreateProposalTransaction} from './hooks/useCreateProposalTransaction';
+import {
+  useCreateProposalTransaction,
+  useSendCreateProposalTransaction,
+} from './hooks';
+import {generatePath, useNavigate} from 'react-router-dom';
+import {Proposal} from 'utils/paths';
+import {toDisplayEns} from 'utils/library';
 
 export interface ICreateProposalDialogProps extends ModalProps {}
 
@@ -30,6 +36,7 @@ export const CreateProposalDialog: React.FC<
   const {t} = useTranslation();
   const {client} = useClient();
   const {network} = useNetwork();
+  const navigate = useNavigate();
 
   const {getValues} = useFormContext();
   const formValues = getValues() as CreateProposalFormData;
@@ -68,10 +75,33 @@ export const CreateProposalDialog: React.FC<
   });
 
   const {transaction, isLoading: isTransactionLoading} =
-    useCreateProposalTransaction({createProposalParams});
+    useCreateProposalTransaction({createProposalParams, pluginType});
+
+  const sendTransactionResults = useSendCreateProposalTransaction({
+    process: createProposalProcess,
+    transaction,
+    votingSettings,
+  });
 
   const onSuccessButtonClick = () => {
-    // TODO: handle success
+    if (!sendTransactionResults.txReceipt || !pluginType || !pluginAddress) {
+      return;
+    }
+
+    const proposalId = createProposalUtils.getProposalIdFromReceipt(
+      sendTransactionResults.txReceipt,
+      pluginType,
+      pluginAddress
+    )!;
+
+    const proposalPathParams = {
+      network,
+      dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+      id: proposalId,
+    };
+    const proposalPath = generatePath(Proposal, proposalPathParams);
+    navigate(proposalPath);
+    onClose?.();
   };
 
   return (
@@ -80,9 +110,9 @@ export const CreateProposalDialog: React.FC<
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
       displayTransactionStatus={transaction != null}
-      sendTransactionLabel="Deploy DAO now"
+      sendTransactionLabel={t('createProposalDialog.button.approve')}
       successButton={{
-        label: 'Launch DAO Dashboard',
+        label: t('createProposalDialog.button.success'),
         onClick: onSuccessButtonClick,
       }}
       onClose={onClose}

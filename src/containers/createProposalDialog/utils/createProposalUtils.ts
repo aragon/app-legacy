@@ -1,5 +1,11 @@
 import {MajorityVotingSettings} from '@aragon/sdk-client';
-import {DaoAction} from '@aragon/sdk-client-common';
+import {id} from '@ethersproject/hash';
+import {
+  DaoAction,
+  ProposalMetadata,
+  encodeProposalId,
+} from '@aragon/sdk-client-common';
+import {TokenVoting__factory, Multisig__factory} from '@aragon/osx-ethers';
 import {
   daysToMills,
   getCanonicalDate,
@@ -11,6 +17,8 @@ import {
   offsetToMills,
 } from 'utils/date';
 import {CreateProposalFormData, SupportedVotingSettings} from 'utils/types';
+import {TransactionReceipt} from 'viem';
+import {PluginTypes} from 'hooks/usePluginClient';
 
 export interface IBuildCreateProposalParamsParams {
   values: CreateProposalFormData;
@@ -30,6 +38,42 @@ export interface ICreateProposalParams {
 }
 
 class CreateProposalUtils {
+  formValuesToProposalMetadata = (
+    values: CreateProposalFormData
+  ): ProposalMetadata => ({
+    title: values.proposalTitle,
+    summary: values.proposalSummary,
+    description: values.proposal,
+    resources: values.links.filter(
+      ({name, url}) => url != null && name != null
+    ),
+  });
+
+  getProposalIdFromReceipt = (
+    receipt: TransactionReceipt,
+    pluginType: PluginTypes,
+    pluginAddress: string
+  ) => {
+    const tokenVotingContractInterface = TokenVoting__factory.createInterface();
+    const multisigContractInterface = Multisig__factory.createInterface();
+
+    const contractInterface =
+      pluginType === 'multisig.plugin.dao.eth'
+        ? multisigContractInterface
+        : tokenVotingContractInterface;
+
+    const log = receipt?.logs?.find(
+      event =>
+        event.topics[0] ===
+        id(contractInterface.getEvent('ProposalCreated').format('sighash'))
+    );
+
+    const parsedLog = log ? contractInterface.parseLog(log) : undefined;
+    const proposalId = parsedLog?.args['proposalId'];
+
+    return encodeProposalId(pluginAddress, Number(proposalId));
+  };
+
   buildCreateProposalParams = (
     params: IBuildCreateProposalParamsParams
   ): ICreateProposalParams | undefined => {

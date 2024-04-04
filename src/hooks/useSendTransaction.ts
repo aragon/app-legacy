@@ -59,7 +59,7 @@ export const useSendTransaction = (
   const [longWaitingTime, setLongWaitingTime] = useState(false);
 
   const {
-    isFetching: isEstimateGasLoading,
+    isLoading: isEstimateGasLoading,
     isError: isEstimateGasError,
     error: estimateGasError,
   } = useEstimateGas(transaction);
