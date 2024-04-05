@@ -31,7 +31,9 @@ const TreasurySnapshot: React.FC<Props> = ({
 
   if (transfers.length === 0) {
     return (
+      // needs ODS adjustment & release long term
       <CardEmptyState
+        className="!w-fit"
         humanIllustration={{
           body: 'CHART',
           expression: 'EXCITED',

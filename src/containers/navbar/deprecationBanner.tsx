@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import {Icon, IconType} from '@aragon/ods';
 
 import {useNetwork} from 'context/network';
-import {featureFlags} from 'utils/featureFlags';
 import {GOERLI_BASED_NETWORKS} from 'utils/constants';
 import {useTranslation} from 'react-i18next';
 
@@ -17,20 +16,14 @@ const DeprecationBanner: React.FC = () => {
 
   const {network} = useNetwork();
 
-  const daoDeprecationWarningEnabled =
-    featureFlags.getValue('VITE_FEATURE_FLAG_DEPRECATE_GOERLI') === 'true';
-
   useEffect(() => {
     if (GOERLI_BASED_NETWORKS.includes(network)) setBannerHidden(false);
     else setBannerHidden(true);
   }, [network]);
 
-  if (
-    location.pathname.includes('create') ||
-    bannerHidden ||
-    !daoDeprecationWarningEnabled
-  )
+  if (location.pathname.includes('create') || bannerHidden) {
     return null;
+  }
 
   return (
     <UpdateContainer>

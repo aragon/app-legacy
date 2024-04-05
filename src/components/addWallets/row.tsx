@@ -19,6 +19,7 @@ import {MAX_TOKEN_DECIMALS} from 'utils/constants';
 import {Web3Address} from 'utils/library';
 import {validateWeb3Address} from 'utils/validators';
 import {MultisigWalletField} from 'components/multisigWallets/row';
+import {Address, isAddressEqual} from 'viem';
 
 type WalletRowProps = {
   index: number;
@@ -75,12 +76,19 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       setIsDuplicate(false);
 
       if (
-        walletFieldArray?.some(
-          (wallet, walletIndex) =>
-            (wallet.address === web3Address.address ||
-              wallet.ensName === web3Address.ensName) &&
-            walletIndex !== index
-        )
+        walletFieldArray?.some((wallet, walletIndex) => {
+          // check if the address is the same as the current address and address is not null
+          const isEnsMatch =
+            wallet.ensName === web3Address.ensName &&
+            web3Address.ensName !== null;
+
+          const isAddressMatch = isAddressEqual(
+            wallet.address as Address,
+            web3Address.address as Address
+          );
+
+          return (isAddressMatch || isEnsMatch) && walletIndex !== index;
+        })
       ) {
         setIsDuplicate(true);
         validationResult = t('errors.duplicateAddress');
