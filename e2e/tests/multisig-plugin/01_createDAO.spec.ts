@@ -1,4 +1,4 @@
-import {testWithMetaMask as test} from '../testWithMetaMask';
+import {testWithMetaMask as test} from '../../testWithMetaMask';
 
 // Test is creating a Multisig DAO and opens the DAO dashboard
 test('Create Multisig DAO', async ({context, page, extensionId, metamask}) => {
