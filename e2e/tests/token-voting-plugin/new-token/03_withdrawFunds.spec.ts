@@ -40,7 +40,7 @@ test('Withdraw DAO funds proposal', async ({
   await page.getByPlaceholder('Describe your proposal in 2-3').click();
   await page
     .getByPlaceholder('Describe your proposal in 2-3')
-    .fill('Withdraw funds');
+    .fill('Withdraw funds from the DAO vault');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Publish proposal'}).click();
   await page.getByRole('button', {name: 'Create proposal now'}).click();

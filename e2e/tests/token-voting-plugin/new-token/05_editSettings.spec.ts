@@ -52,7 +52,7 @@ test('Edit DAO settings Proposal', async ({
   await page.getByPlaceholder('Describe your proposal in 2-3').click();
   await page
     .getByPlaceholder('Describe your proposal in 2-3')
-    .fill('Edit settings');
+    .fill('Edit settings of the DAO');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Next'}).click();
 
