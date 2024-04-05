@@ -19,7 +19,7 @@ test('Publish signaling Proposal', async ({
     .getByRole('link', {name: 'MD Multisig DAO DAO generated'})
     .first()
     .click();
-  await page.getByRole('button', {name: 'New proposal'}).click();
+  await page.getByRole('button', {name: 'Create proposal'}).click();
   await page.getByRole('button', {name: 'Switch to Ethereum Sepolia'}).click();
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);

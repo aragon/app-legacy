@@ -39,7 +39,7 @@ test('Add DAO member Proposal', async ({
   await page.getByPlaceholder('Describe your proposal in 2-3').click();
   await page
     .getByPlaceholder('Describe your proposal in 2-3')
-    .fill('Add member to the DAO');
+    .fill('Add member');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Publish proposal'}).click();
   await page.getByRole('button', {name: 'Create proposal now'}).click();
