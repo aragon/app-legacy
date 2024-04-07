@@ -2,11 +2,18 @@ import {
   DAOFactory,
   DAOFactory__factory,
   PluginRepo__factory,
+  TokenVoting__factory,
+  Multisig__factory,
 } from '@aragon/osx-ethers';
 import {toUtf8Bytes} from 'ethers/lib/utils';
 import {zeroAddress} from 'viem';
-import {IBuildCreateDaoTransactionParams} from './transactionsService.api';
+import {
+  IBuildCreateDaoTransactionParams,
+  IBuildVoteOrApprovalTransactionParams,
+} from './transactionsService.api';
 import {ITransaction} from './domain/transaction';
+import {decodeProposalId} from '@aragon/sdk-client-common';
+import {isMultisigClient, isTokenVotingClient} from 'hooks/usePluginClient';
 
 class TransactionsService {
   buildCreateDaoTransaction = async (
@@ -60,6 +67,41 @@ class TransactionsService {
     );
 
     return transaction as ITransaction;
+  };
+  buildVoteOrApprovalTransaction = async (
+    params: IBuildVoteOrApprovalTransactionParams
+  ): Promise<ITransaction> => {
+    const {client, vote, proposalId, tryExecution = false} = params;
+
+    const signer = client.web3.getConnectedSigner();
+
+    const {pluginAddress, id} = decodeProposalId(proposalId);
+
+    if (isTokenVotingClient(client)) {
+      const tokenVotingContract = TokenVoting__factory.connect(
+        pluginAddress,
+        signer
+      );
+
+      const transaction = await tokenVotingContract.populateTransaction.vote(
+        id,
+        vote,
+        false
+      );
+
+      return transaction as ITransaction;
+    } else if (isMultisigClient(client)) {
+      const multisigContract = Multisig__factory.connect(pluginAddress, signer);
+
+      const transaction = await multisigContract.populateTransaction.approve(
+        id,
+        tryExecution
+      );
+
+      return transaction as ITransaction;
+    } else {
+      throw new Error('Unsupported plugin type');
+    }
   };
 }
 
