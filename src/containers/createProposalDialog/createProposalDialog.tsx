@@ -11,7 +11,10 @@ import {
 } from 'hooks/usePluginClient';
 import {createProposalUtils} from './utils';
 import {useFormContext} from 'react-hook-form';
-import {CreateProposalFormData} from 'utils/types';
+import {
+  CreateProposalFormData,
+  GaslessProposalCreationParams,
+} from 'utils/types';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {useEncodeActions} from 'services/actionEncoder/queries/useEncodeActions';
 import {useClient} from 'hooks/useClient';
@@ -23,10 +26,14 @@ import {
 import {generatePath, useNavigate} from 'react-router-dom';
 import {Proposal} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
+import {CreateProposalDialogGaslessSteps} from './createProposalDialogGaslessSteps';
+import {useCreateVocdoniProposalTransaction} from './hooks/useCreateVocdoniProposalTransaction';
+import {ICreateProposalParams} from './utils/createProposalUtils';
 
 export interface ICreateProposalDialogProps extends ModalProps {}
 
 const createProposalProcess = 'CREATE_PROPOSAL';
+const createGaslessProposalProcess = 'CREATE_GASLESS_PROPOSAL';
 
 export const CreateProposalDialog: React.FC<
   ICreateProposalDialogProps
@@ -39,7 +46,7 @@ export const CreateProposalDialog: React.FC<
   const navigate = useNavigate();
 
   const {getValues} = useFormContext();
-  const formValues = getValues() as CreateProposalFormData;
+  const formValues = getValues();
   const {actions} = formValues;
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -66,7 +73,7 @@ export const CreateProposalDialog: React.FC<
   });
 
   const createProposalParams = createProposalUtils.buildCreateProposalParams({
-    values: formValues,
+    values: formValues as CreateProposalFormData,
     isGaslessProposal,
     actions: encodedActions,
     votingSettings,
@@ -75,11 +82,26 @@ export const CreateProposalDialog: React.FC<
   });
 
   const {transaction, isLoading: isTransactionLoading} =
-    useCreateProposalTransaction({createProposalParams, pluginType});
+    useCreateProposalTransaction({
+      createProposalParams: createProposalParams as
+        | ICreateProposalParams
+        | undefined,
+      pluginType,
+    });
+
+  const createGaslessTransactionResult = useCreateVocdoniProposalTransaction({
+    initializeProcess: isOpen,
+    createProposalParams: createProposalParams as
+      | GaslessProposalCreationParams
+      | undefined,
+    pluginType,
+    pluginAddress,
+    logContext: {stack: [createGaslessProposalProcess], data: formValues},
+  });
 
   const sendTransactionResults = useSendCreateProposalTransaction({
     process: createProposalProcess,
-    transaction,
+    transaction: transaction ?? createGaslessTransactionResult.transaction,
     votingSettings,
   });
 
@@ -118,12 +140,19 @@ export const CreateProposalDialog: React.FC<
       onClose={onClose}
       {...otherProps}
     >
-      <CreateProposalDialogSteps
-        process={createProposalProcess}
-        isLoading={isTransactionLoading}
-        onPinProposalMetadataSuccess={setMetadataCid}
-        pinMetadata={isOpen}
-      />
+      {!isGaslessProposal ? (
+        <CreateProposalDialogSteps
+          process={createProposalProcess}
+          isLoading={isTransactionLoading}
+          onPinProposalMetadataSuccess={setMetadataCid}
+          pinMetadata={isOpen}
+        />
+      ) : (
+        <CreateProposalDialogGaslessSteps
+          process={createProposalProcess}
+          createTransactionResult={createGaslessTransactionResult}
+        />
+      )}
     </TransactionDialog>
   );
 };

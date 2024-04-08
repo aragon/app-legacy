@@ -7,12 +7,13 @@ import {
 import {ICreateProposalParams} from '../utils/createProposalUtils';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useCreateTokenVotingProposalTransaction} from 'services/transactions/queries/useCreateTokenVotingProposalTransaction';
+import {GaslessProposalCreationParams} from 'utils/types';
 
 export interface IUseCreateProposalTransactionParams {
   /**
    * Parameters to create a proposal transaction.
    */
-  createProposalParams?: ICreateProposalParams;
+  createProposalParams?: ICreateProposalParams | GaslessProposalCreationParams;
   /**
    * Governance plugin type.
    */

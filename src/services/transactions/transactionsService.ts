@@ -5,14 +5,17 @@ import {
   Multisig__factory,
   TokenVoting__factory,
 } from '@aragon/osx-ethers';
+import {VocdoniVoting__factory} from '@vocdoni/gasless-voting-ethers';
 import {toUtf8Bytes} from 'ethers/lib/utils';
 import {zeroAddress} from 'viem';
 import {
   IBuildCreateDaoTransactionParams,
+  IBuildCreateGaslessProposalTransactionParams,
   IBuildCreateMultisigProposalTransactionParams,
   IBuildCreateTokenVotingProposalTransactionParams,
 } from './transactionsService.api';
 import {ITransaction} from './domain/transaction';
+import {hexToBytes} from '@aragon/sdk-client-common';
 
 class TransactionsService {
   buildCreateDaoTransaction = async (
@@ -113,6 +116,7 @@ class TransactionsService {
       endDate,
       creatorVote = 0,
       executeOnPass = false,
+      metadataUri,
     } = params;
 
     const signer = client.web3.getConnectedSigner();
@@ -127,13 +131,58 @@ class TransactionsService {
 
     const transaction =
       await multisigContract.populateTransaction.createProposal(
-        toUtf8Bytes(params.metadataUri),
+        toUtf8Bytes(metadataUri),
         actions,
         BigInt(0),
         Math.round(startTimestamp / 1000),
         Math.round(endTimestamp / 1000),
         creatorVote,
         executeOnPass
+      );
+
+    return transaction as ITransaction;
+  };
+
+  buildCreateGaslessProposalTransaction = async (
+    params: IBuildCreateGaslessProposalTransactionParams
+  ): Promise<ITransaction> => {
+    const {
+      client,
+      actions = [],
+      pluginAddress,
+      startDate,
+      endDate,
+      tokenCensus,
+      electionId,
+    } = params;
+
+    const signer = client.web3.getConnectedSigner();
+
+    const gaslessVotingContract = VocdoniVoting__factory.connect(
+      pluginAddress,
+      signer
+    );
+
+    const startTimestamp = startDate?.getTime() || 0;
+    const endTimestamp = endDate?.getTime() || 0;
+    const minTallyDurationTimestamp = 0;
+
+    const votingParams = {
+      startDate: BigInt(Math.round(startTimestamp / 1000)),
+      voteEndDate: BigInt(Math.round(endTimestamp / 1000)),
+      tallyEndDate: BigInt(Math.round(minTallyDurationTimestamp / 1000)),
+      securityBlock: BigInt(0),
+      totalVotingPower: tokenCensus.weight!,
+      censusURI: tokenCensus.censusURI!,
+      censusRoot: hexToBytes(tokenCensus.censusId!),
+    };
+
+    const transaction =
+      await gaslessVotingContract.populateTransaction.createProposal(
+        hexToBytes(electionId),
+        BigInt(0),
+        votingParams,
+        actions
       );
 
     return transaction as ITransaction;

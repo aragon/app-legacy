@@ -16,7 +16,11 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {CreateProposalFormData, SupportedVotingSettings} from 'utils/types';
+import {
+  CreateProposalFormData,
+  GaslessProposalCreationParams,
+  SupportedVotingSettings,
+} from 'utils/types';
 import {TransactionReceipt} from 'viem';
 import {PluginTypes} from 'hooks/usePluginClient';
 
@@ -76,7 +80,7 @@ class CreateProposalUtils {
 
   buildCreateProposalParams = (
     params: IBuildCreateProposalParamsParams
-  ): ICreateProposalParams | undefined => {
+  ): ICreateProposalParams | GaslessProposalCreationParams | undefined => {
     const {
       values,
       votingSettings,
@@ -88,7 +92,7 @@ class CreateProposalUtils {
 
     if (
       votingSettings == null ||
-      metadataCid == null ||
+      (metadataCid == null && !isGaslessProposal) ||
       pluginAddress == null ||
       actions == null
     ) {
@@ -215,12 +219,44 @@ class CreateProposalUtils {
      */
     const finalStartDate = startSwitch === 'now' ? undefined : startDateTime;
 
-    return {
+    const createProposalParams = {
       pluginAddress,
       metadataUri: `ipfs://${metadataCid}`,
       startDate: finalStartDate,
       endDate: endDateTime,
       actions,
+    };
+
+    return isGaslessProposal
+      ? this.buildCreateGaslessProposalParams(createProposalParams)
+      : createProposalParams;
+  };
+
+  private buildCreateGaslessProposalParams = (
+    params: ICreateProposalParams
+  ): GaslessProposalCreationParams => {
+    // The offchain offset is used to ensure that the offchain proposal is enough long to don't overlap the onchain proposal
+    // limits. As both chains don't use the same clock, and we are calculating the times using blocks, we ensure that
+    // the times will be properly set to let the voters vote between the onchain proposal limits.
+    const offchainOffsets = 1; // Minutes
+    const gaslessEndDate = new Date(params.endDate!);
+    gaslessEndDate.setMinutes(params.endDate!.getMinutes() + offchainOffsets);
+    let gaslessStartDate;
+    if (params.startDate) {
+      gaslessStartDate = new Date(params.startDate);
+      gaslessStartDate.setMinutes(
+        params.startDate.getMinutes() - offchainOffsets
+      );
+    }
+
+    return {
+      ...params,
+      // We ensure that the onchain endate is not undefined, during the calculation of the CreateMajorityVotingProposalParams
+      endDate: params.endDate!,
+      // Add offset to the end date to avoid onchain proposal finish before the offchain proposal
+      gaslessEndDate,
+      // Add offset to ensure offchain is started when proposal starts
+      gaslessStartDate,
     };
   };
 }
