@@ -1,11 +1,20 @@
 import {IDao} from 'services/aragon-backend/domain/dao';
-
-export interface IDaoPage {
-  data: IDao[];
+export interface IPaginatedResponse<TItem> {
+  pages: TItem[];
   total: number;
   skip: number;
   take: number;
 }
-export interface IPaginatedDaoResponse {
-  pages: IDaoPage[];
+
+export interface IInfiniteODAOPagesResponse {
+  page: IDaoPages[];
+  skip: number;
+  take: number;
+  total: number;
+}
+export interface IDaoPages {
+  data: IDao;
+  skip: number;
+  take: number;
+  total: number;
 }

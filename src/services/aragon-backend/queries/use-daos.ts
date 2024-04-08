@@ -1,8 +1,11 @@
+import {
+  IDaoPages,
+  IPaginatedResponse,
+} from 'services/aragon-backend/domain/paginated-response';
 import request, {gql} from 'graphql-request';
 import {UseInfiniteQueryOptions, useInfiniteQuery} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
-import type {IFetchDaosParams} from '../aragon-backend-service.api';
-import {IPaginatedDaoResponse} from '../domain/paginated-response';
+import {IFetchDaosParams} from 'services/aragon-backend/aragon-backend-service.api';
 
 const daosQueryDocument = gql`
   query Daos(
@@ -51,8 +54,8 @@ const daosQueryDocument = gql`
 
 const fetchDaos = async (
   params: IFetchDaosParams
-): Promise<IPaginatedDaoResponse> => {
-  const {daos} = await request<{daos: IPaginatedDaoResponse}>(
+): Promise<IPaginatedResponse<IDaoPages>> => {
+  const {daos} = await request<{daos: IPaginatedResponse<IDaoPages>}>(
     `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     daosQueryDocument,
     params
@@ -62,16 +65,17 @@ const fetchDaos = async (
 };
 
 export const useDaos = (
-  params: IFetchDaosParams,
+  initialParams: IFetchDaosParams,
   options: Omit<
-    UseInfiniteQueryOptions<IPaginatedDaoResponse>,
+    UseInfiniteQueryOptions<IPaginatedResponse<IDaoPages>>,
     'queryKey' | 'getNextPageParam' | 'initialPageParam'
   >
 ) => {
   return useInfiniteQuery({
-    queryKey: aragonBackendQueryKeys.daos(params),
-    queryFn: () => fetchDaos({...params}),
-    getNextPageParam: (lastPage: IPaginatedDaoResponse) => {
+    queryKey: aragonBackendQueryKeys.daos(initialParams),
+    queryFn: ({pageParam = initialParams}) =>
+      fetchDaos(pageParam as IFetchDaosParams),
+    getNextPageParam: (lastPage: IPaginatedResponse<IDaoPages>) => {
       const {skip, total, take} = lastPage;
       const hasNextPage = skip + take < total;
 
@@ -79,9 +83,9 @@ export const useDaos = (
         return undefined;
       }
 
-      return {...params, skip: skip + take};
+      return {...initialParams, skip: skip + take};
     },
-    initialPageParam: 0,
+    initialPageParam: initialParams,
     ...options,
   });
 };

@@ -1,5 +1,5 @@
 import {
-  // InfiniteData,
+  InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
   UseQueryResult,
@@ -93,10 +93,10 @@ export const useFollowedDaosInfiniteQuery = (
         pluginNames: pluginIds,
         networks,
       });
-      console.log('result', result);
+
       return result;
     },
-    initialPageParam: 0,
+    ...options,
     getNextPageParam: (
       lastPage: IFetchInfiniteFollowedDaosResult,
       allPages: IFetchInfiniteFollowedDaosResult[]
@@ -264,6 +264,23 @@ export const useRemoveFollowedDaoMutation = (
     },
   });
 };
+
+// /**
+//  * Augment DAOs by resolving the IPFS CID for each DAO's avatar.
+//  * @param data raw fetched data for the cached DAOs.
+//  * @returns list of DAOs augmented with the resolved IPFS CID avatars
+//  */
+// function augmentCachedDaos(
+//   data: InfiniteData<IFetchInfiniteFollowedDaosResult>
+// ): InfiniteData<IFetchInfiniteFollowedDaosResult> {
+//   return {
+//     pageParams: data.pageParams,
+//     pages: data.pages.map(page => ({
+//       data: addAvatarToDaos(page.data),
+//       total: page.total,
+//     })),
+//   };
+// }
 
 // /**
 //  * Add resolved IPFS CID for each DAO's avatar to the metadata.
