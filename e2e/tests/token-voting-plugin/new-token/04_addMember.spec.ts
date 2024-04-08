@@ -1,4 +1,4 @@
-import {testWithMetaMask as test} from '../../testWithMetaMask';
+import {testWithMetaMask as test} from '../../../testWithMetaMask';
 
 // // Test is publishing, approving, and executing a proposal to add a DAO member
 test('Add DAO member Proposal', async ({

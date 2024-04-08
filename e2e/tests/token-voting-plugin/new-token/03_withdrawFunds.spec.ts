@@ -1,4 +1,4 @@
-import {testWithMetaMask as test} from '../../testWithMetaMask';
+import {testWithMetaMask as test} from '../../../testWithMetaMask';
 
 // Test is publishing, approving, and executing a withdrawal of DAO funds
 test('Withdraw DAO funds proposal', async ({

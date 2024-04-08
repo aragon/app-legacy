@@ -1,4 +1,4 @@
-import {testWithMetaMask as test} from '../../testWithMetaMask';
+import {testWithMetaMask as test} from '../../../testWithMetaMask';
 
 // Test is publishing a signaling Proposal and voting on it
 test('Publish signaling Proposal', async ({
