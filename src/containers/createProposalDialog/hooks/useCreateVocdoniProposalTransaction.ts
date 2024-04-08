@@ -18,6 +18,7 @@ import {useFormContext} from 'react-hook-form';
 import {createProposalUtils} from '../utils';
 import {ITransaction} from 'services/transactions/domain/transaction';
 import {ILoggerErrorContext, logger} from 'services/logger';
+import {UseMutationResult} from '@tanstack/react-query';
 
 export interface IUseCreateVocdoniProposalTransactionParams {
   /**
@@ -44,13 +45,9 @@ export interface IUseCreateVocdoniProposalTransactionParams {
 
 export interface IUseCreateVocdoniProposalTransationResult {
   transaction?: ITransaction;
-  isCreateAccountLoading?: boolean;
-  isCreateAccountSuccess?: boolean;
-  isCreateAccountError?: boolean;
-  isCreateElectionLoading?: boolean;
-  isCreateElectionSuccess?: boolean;
-  isCreateElectionError?: boolean;
-  isCreateTransactionLoading?: boolean;
+  createAccountStatus: UseMutationResult['status'];
+  createElectionStatus: UseMutationResult['status'];
+  isCreateTransactionLoading: boolean;
   retry: () => void;
 }
 
@@ -99,9 +96,7 @@ export const useCreateVocdoniProposalTransaction = (
   const {
     data: electionResult,
     mutate: createVocdoniElection,
-    isLoading: isCreateElectionLoading,
-    isSuccess: isCreateElectionSuccess,
-    isError: isCreateElectionError,
+    status: createElectionStatus,
   } = useCreateVocdoniElection({
     onError: handleCreateProposalError(
       CreateVocdoniProposalStep.CREATE_OFFCHAIN_ELECTION
@@ -144,10 +139,8 @@ export const useCreateVocdoniProposalTransaction = (
 
   const {
     mutate: createAccount,
-    isLoading: isCreateAccountLoading,
-    isError: isCreateAccountError,
-    isSuccess: isCreateAccountSuccess,
     reset: resetCreateAccount,
+    status: createAccountStatus,
   } = useCreateAccount({
     onSuccess: () => handleCreateAccountSuccess(),
     onError: handleCreateProposalError(
@@ -184,13 +177,7 @@ export const useCreateVocdoniProposalTransaction = (
   }, [createTransactionError, handleCreateProposalError]);
 
   useEffect(() => {
-    if (
-      initializeProcess &&
-      isGasless &&
-      !isCreateAccountLoading &&
-      !isCreateAccountError &&
-      !isCreateAccountSuccess
-    ) {
+    if (initializeProcess && isGasless && createAccountStatus === 'idle') {
       createAccount({vocdoniClient});
     }
   }, [
@@ -198,22 +185,20 @@ export const useCreateVocdoniProposalTransaction = (
     initializeProcess,
     vocdoniClient,
     createAccount,
-    isCreateAccountError,
-    isCreateAccountLoading,
-    isCreateAccountSuccess,
+    createAccountStatus,
   ]);
 
   const retry = useCallback(() => {
-    if (isCreateAccountError) {
+    if (createAccountStatus === 'error') {
       resetCreateAccount();
       createAccount({vocdoniClient});
-    } else if (isCreateElectionError) {
+    } else if (createElectionStatus === 'error') {
       handleCreateAccountSuccess();
     }
   }, [
     resetCreateAccount,
-    isCreateAccountError,
-    isCreateElectionError,
+    createAccountStatus,
+    createElectionStatus,
     createAccount,
     vocdoniClient,
     handleCreateAccountSuccess,
@@ -221,12 +206,8 @@ export const useCreateVocdoniProposalTransaction = (
 
   return {
     transaction,
-    isCreateAccountLoading,
-    isCreateAccountSuccess,
-    isCreateAccountError,
-    isCreateElectionLoading,
-    isCreateElectionSuccess,
-    isCreateElectionError,
+    createAccountStatus,
+    createElectionStatus,
     isCreateTransactionLoading,
     retry,
   };

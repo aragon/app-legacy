@@ -141,6 +141,7 @@ async function getCensus3Token({
   while (attempts < maxAttempts) {
     try {
       const censusToken = await census3.getToken(tokenAddress, chainId);
+
       if (censusToken.status.synced) {
         return censusToken; // early exit if the object has sync set to true
       }

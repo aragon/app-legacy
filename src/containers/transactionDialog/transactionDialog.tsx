@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {ModalProps} from '@aragon/ods-old';
 import {AlertInline, Button, IconType, IllustrationObject} from '@aragon/ods';
@@ -22,9 +22,18 @@ export interface ITransactionDialogProps extends ModalProps {
    */
   displayTransactionStatus?: boolean;
   /**
+   * Only render the transaction status component when set to true.
+   * @default true
+   */
+  onlyTransactionStatus?: boolean;
+  /**
    * Button displayed on transaction success
    */
   successButton: {label: string; onClick: () => void};
+  /**
+   * Children of the component, only displayed when displayTransactionStatus is not set or set to false.
+   */
+  children?: ReactNode;
 }
 
 export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
@@ -32,6 +41,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     children,
     sendTransactionResult,
     displayTransactionStatus,
+    onlyTransactionStatus = true,
     successButton,
     sendTransactionLabel = 'transactionDialog.button.approve',
     onClose,
@@ -98,6 +108,8 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
   // waiting for the transaction to be confirmed
   const onCloseDialog = isWaitTransactionLoading ? undefined : onClose;
 
+  const hideChildren = onlyTransactionStatus && displayTransactionStatus;
+
   return (
     <ModalBottomSheetSwitcher onClose={onCloseDialog} {...otherProps}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -112,7 +124,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
         </div>
       </div>
       <div className="flex flex-col items-center gap-4 px-4 py-6">
-        {!displayTransactionStatus && children}
+        {!hideChildren && children}
         {displayTransactionStatus && (
           <>
             <Button

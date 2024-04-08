@@ -5,6 +5,7 @@ import {StepStatus, StepsMap} from 'hooks/useFunctionStepper';
 import {TFunction} from 'i18next';
 import {useTranslation} from 'react-i18next';
 import {Button} from '@aragon/ods';
+import {UseMutationResult} from '@tanstack/react-query';
 
 export interface ICreateProposalDialogGaslessStepsProps {
   /**
@@ -38,46 +39,37 @@ const getStepLabels = (t: TFunction): StepperLabels<GaslessProposalStepId> => ({
   },
 });
 
+const queryStatusToStepStatus: Record<UseMutationResult['status'], StepStatus> =
+  {
+    error: StepStatus.ERROR,
+    idle: StepStatus.WAITING,
+    loading: StepStatus.LOADING,
+    success: StepStatus.SUCCESS,
+  };
+
 const hookResultsToSteps = (
   result: IUseCreateVocdoniProposalTransationResult
 ): StepsMap<GaslessProposalStepId> => {
-  const {LOADING, SUCCESS, WAITING, ERROR} = StepStatus;
   const {
-    isCreateAccountLoading,
-    isCreateAccountSuccess,
-    isCreateAccountError,
-    isCreateElectionLoading,
-    isCreateElectionSuccess,
-    isCreateElectionError,
-    isCreateTransactionLoading,
+    createAccountStatus,
+    createElectionStatus,
     transaction,
+    isCreateTransactionLoading,
   } = result;
 
   return {
     REGISTER_VOCDONI_ACCOUNT: {
-      status: isCreateAccountLoading
-        ? LOADING
-        : isCreateAccountSuccess
-        ? SUCCESS
-        : isCreateAccountError
-        ? ERROR
-        : WAITING,
+      status: queryStatusToStepStatus[createAccountStatus],
     },
     CREATE_VOCDONI_ELECTION: {
-      status: isCreateElectionLoading
-        ? LOADING
-        : isCreateElectionSuccess
-        ? SUCCESS
-        : isCreateElectionError
-        ? ERROR
-        : WAITING,
+      status: queryStatusToStepStatus[createElectionStatus],
     },
     CREATE_ONCHAIN_PROPOSAL: {
       status: isCreateTransactionLoading
-        ? LOADING
+        ? StepStatus.LOADING
         : transaction != null
-        ? SUCCESS
-        : WAITING,
+        ? StepStatus.SUCCESS
+        : StepStatus.WAITING,
     },
   };
 };
@@ -86,7 +78,7 @@ export const CreateProposalDialogGaslessSteps: React.FC<
   ICreateProposalDialogGaslessStepsProps
 > = props => {
   const {createTransactionResult} = props;
-  const {isCreateAccountError, isCreateElectionError, retry} =
+  const {createAccountStatus, createElectionStatus, retry} =
     createTransactionResult;
 
   const {t} = useTranslation();
@@ -94,11 +86,16 @@ export const CreateProposalDialogGaslessSteps: React.FC<
   const steps = hookResultsToSteps(createTransactionResult);
   const stepLabels = getStepLabels(t);
 
-  const isError = isCreateAccountError || isCreateElectionError;
+  const isError =
+    createAccountStatus === 'error' || createElectionStatus === 'error';
 
   return (
     <>
-      <StepperModalProgress steps={steps} labels={stepLabels} />
+      <StepperModalProgress
+        steps={steps}
+        labels={stepLabels}
+        className="self-stretch"
+      />
       {isError && (
         <Button onClick={retry} className="self-stretch">
           {t('transactionDialog.button.retry')}

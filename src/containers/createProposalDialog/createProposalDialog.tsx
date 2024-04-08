@@ -132,6 +132,7 @@ export const CreateProposalDialog: React.FC<
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
       displayTransactionStatus={transaction != null}
+      onlyTransactionStatus={!isGaslessProposal}
       sendTransactionLabel={t('createProposalDialog.button.approve')}
       successButton={{
         label: t('createProposalDialog.button.success'),
