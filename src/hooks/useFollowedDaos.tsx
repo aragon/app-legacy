@@ -85,24 +85,29 @@ export const useFollowedDaosInfiniteQuery = (
 
   return useInfiniteQuery({
     queryKey: useFollowedDaosInfiniteQueryKey(params),
-    queryFn: ({pageParam}) =>
-      getFollowedDaosFromCache({
+    queryFn: async ({pageParam}) => {
+      const result = await getFollowedDaosFromCache({
         skip: pageParam as number,
         limit,
         includeTotal: true,
         pluginNames: pluginIds,
         networks,
-      }),
+      });
+      console.log('result', result);
+      return result;
+    },
     initialPageParam: 0,
     getNextPageParam: (
       lastPage: IFetchInfiniteFollowedDaosResult,
       allPages: IFetchInfiniteFollowedDaosResult[]
     ) => {
       const totalFetched = allPages.reduce(
-        (total, page) => total + page.data.length,
+        (total, page) => total + page.pages?.[0].total,
         0
       );
-      return totalFetched < lastPage.total ? totalFetched : undefined;
+      return totalFetched < lastPage.pages?.[0].total
+        ? totalFetched
+        : undefined;
     },
     refetchOnWindowFocus: false,
     ...options,

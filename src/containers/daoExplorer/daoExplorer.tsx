@@ -119,6 +119,9 @@ export const DaoExplorer = () => {
       ? followedDaosResult.data?.pages[0].total
       : newDaosResult.data?.pages[0].total) ?? 0;
 
+  console.log('totalDaos', followedDaosResult.data?.pages[0].total);
+  console.log('totalDaos222', newDaosResult.data?.pages[0].data);
+
   const toggleQuickFilters = (value?: string | string[]) => {
     if (value && !Array.isArray(value)) {
       dispatch({

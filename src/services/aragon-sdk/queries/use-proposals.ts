@@ -77,7 +77,6 @@ export const useProposals = (
     transformInfiniteProposals(chainId, data);
 
   return useInfiniteQuery({
-    ...options,
     queryKey: aragonSdkQueryKeys.proposals(params),
     queryFn: async context => {
       // adjust the skip to take into account proposals that have already been merged
@@ -132,6 +131,7 @@ export const useProposals = (
         return allPages.length;
       }
     },
+    ...options,
     select: defaultSelect,
   });
 };

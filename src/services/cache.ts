@@ -22,9 +22,13 @@ import {SmartContract, VerifiedContracts} from 'utils/types';
 export const FOLLOWED_DAOS_KEY = 'favoriteDaos';
 export const PENDING_DAOS_KEY = 'pendingDaos';
 
-export type FollowedDaosResultWithTotal = {
+export type PageWithDaos = {
   data: NavigationDao[];
   total: number;
+};
+
+export type FollowedDaosResultWithTotal = {
+  pages: PageWithDaos[];
 };
 
 export type FollowedDaosReturnObject = {
@@ -49,7 +53,7 @@ type GetFollowedDaosFromCacheOptions = {
 // Overload signatures
 export function getFollowedDaosFromCache(
   options: GetFollowedDaosFromCacheOptions & {includeTotal: true}
-): Promise<FollowedDaosResultWithTotal>;
+): Promise<PageWithDaos>;
 
 export function getFollowedDaosFromCache(
   options: GetFollowedDaosFromCacheOptions & {includeTotal?: false}
@@ -57,7 +61,7 @@ export function getFollowedDaosFromCache(
 
 export async function getFollowedDaosFromCache(
   options: GetFollowedDaosFromCacheOptions
-): Promise<FollowedDaosResultWithTotal | NavigationDao[]> {
+): Promise<PageWithDaos | NavigationDao[]> {
   const {skip, limit, includeTotal, pluginNames, networks} = options;
 
   const favoriteDaos = JSON.parse(
