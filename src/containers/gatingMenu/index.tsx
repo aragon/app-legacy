@@ -114,7 +114,7 @@ export const GatingMenu: React.FC = () => {
         )}
         {isTokenBasedDao && !isDAOTokenWrapped && (
           <WarningContainer>
-            <WarningTitle>{t('alert.gatingUsers.walletTitle')}</WarningTitle>
+            <WarningTitle>{t('alert.gatingUsers.tokenTitle')}</WarningTitle>
             <WarningDescription>
               {t('alert.gatingUsers.tokenDescription', {
                 daoName: daoName,
