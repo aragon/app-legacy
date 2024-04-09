@@ -96,6 +96,13 @@ createWeb3Modal({
   ],
 });
 
+// Add toJSON method to BigInt interface to properly serialize bigint types
+// on react-query query keys
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 // React-Query client
 export const queryClient = new QueryClient({
   defaultOptions: {
