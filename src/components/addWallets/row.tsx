@@ -209,7 +209,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                 name={name}
               />
             </InputContainer>
-            {console.log('error', error)}
           </AddressWrapper>
         )}
       />
