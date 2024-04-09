@@ -75,8 +75,8 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       // check if address is duplicated
       setIsDuplicate(false);
 
-      if (
-        walletFieldArray?.some((wallet, walletIndex) => {
+      const duplicateCheck = walletFieldArray?.some((wallet, walletIndex) => {
+        try {
           // check if the address is the same as the current address and address is not null
           const isEnsMatch =
             wallet.ensName === web3Address.ensName &&
@@ -88,8 +88,12 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
           );
 
           return (isAddressMatch || isEnsMatch) && walletIndex !== index;
-        })
-      ) {
+        } catch {
+          return false;
+        }
+      });
+
+      if (duplicateCheck) {
         setIsDuplicate(true);
         validationResult = t('errors.duplicateAddress');
       }
@@ -205,6 +209,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                 name={name}
               />
             </InputContainer>
+            {console.log('error', error)}
           </AddressWrapper>
         )}
       />
