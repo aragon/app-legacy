@@ -61,6 +61,7 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     isWaitTransactionError,
     isSuccess,
     sendTransactionError,
+    waitTransactionError,
     sendTransaction,
     txHash,
     longWaitingTime,
@@ -72,8 +73,9 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     isWaitTransactionLoading;
 
   const isError = isSendTransactionError || isWaitTransactionError;
-  const errorMessage =
-    transactionDialogErrorUtils.parseError(sendTransactionError);
+  const errorMessage = transactionDialogErrorUtils.parseError(
+    sendTransactionError ?? waitTransactionError
+  );
 
   const loadingButtonLabel = isEstimateGasLoading
     ? 'transactionDialog.button.preparing'
@@ -110,6 +112,14 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
 
   const hideChildren = onlyTransactionStatus && displayTransactionStatus;
 
+  const displayErrorMessage =
+    (isSendTransactionError || isWaitTransactionError) &&
+    errorMessage &&
+    !isLoading;
+
+  const displayGasEstimationWarning =
+    isEstimateGasError && !isLoading && !displayErrorMessage;
+
   return (
     <ModalBottomSheetSwitcher onClose={onCloseDialog} {...otherProps}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -140,13 +150,13 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
                 variant="warning"
               />
             )}
-            {isEstimateGasError && !isLoading && (
+            {displayGasEstimationWarning && (
               <AlertInline
                 message={t('transactionDialog.warning.gasEstimation')}
                 variant="warning"
               />
             )}
-            {isSendTransactionError && errorMessage && !isLoading && (
+            {displayErrorMessage && (
               <AlertInline message={t(errorMessage)} variant="critical" />
             )}
             {isSuccess && (

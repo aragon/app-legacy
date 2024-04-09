@@ -1,7 +1,10 @@
 import {useCallback, useEffect, useState} from 'react';
 import {ITransaction} from 'services/transactions/domain/transaction';
 import {FormattedTransactionReceipt, Hash, TransactionReceipt} from 'viem';
-import {SendTransactionErrorType} from '@wagmi/core';
+import {
+  SendTransactionErrorType,
+  WaitForTransactionReceiptErrorType,
+} from '@wagmi/core';
 import {
   useEstimateGas,
   useSendTransaction as useSendTransactionWagmi,
@@ -38,6 +41,7 @@ export interface IUseSendTransactionResult {
   txReceipt?: FormattedTransactionReceipt;
   isWaitTransactionError: boolean;
   isWaitTransactionLoading: boolean;
+  waitTransactionError?: WaitForTransactionReceiptErrorType | null;
   isSuccess: boolean;
   sendTransaction: () => void;
   longWaitingTime?: boolean;
@@ -117,7 +121,9 @@ export const useSendTransaction = (
         estimateGasError
       );
     }
-  }, [isEstimateGasError, estimateGasError, handleSendTransactionError]);
+    // Do not rerun effect on handleSendTransactionError change to only trigger the handler once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEstimateGasError, estimateGasError]);
 
   // Handle wait transaction transaction error
   useEffect(() => {
@@ -126,11 +132,9 @@ export const useSendTransaction = (
         waitTransactionError
       );
     }
-  }, [
-    isWaitTransactionError,
-    waitTransactionError,
-    handleSendTransactionError,
-  ]);
+    // Do not rerun effect on handleSendTransactionError change to only trigger the handler once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isWaitTransactionError, waitTransactionError]);
 
   // As soon as the transaction has been sent (txHash != null), check every second if the wait-transaction
   // is successful. Set the longWaitingTime state to true if the transaction is not successful after the
@@ -162,8 +166,16 @@ export const useSendTransaction = (
     // Reset any previous state in case of retry
     resetSendTransactionWagmi();
 
-    sendTransactionWagmi(transaction);
-  }, [sendTransactionWagmi, resetSendTransactionWagmi, transaction]);
+    // Set gas to null to skip wagmi gas estimation and allow users to still
+    // send the transaction to their wallet when gas-estimation fails
+    const gas = isEstimateGasError ? null : undefined;
+    sendTransactionWagmi({...transaction, gas});
+  }, [
+    sendTransactionWagmi,
+    resetSendTransactionWagmi,
+    transaction,
+    isEstimateGasError,
+  ]);
 
   return {
     isEstimateGasError,
@@ -175,6 +187,7 @@ export const useSendTransaction = (
     txReceipt,
     isWaitTransactionError,
     isWaitTransactionLoading,
+    waitTransactionError,
     isSuccess,
     sendTransaction,
     longWaitingTime,
