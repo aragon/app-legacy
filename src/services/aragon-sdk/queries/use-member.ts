@@ -199,7 +199,7 @@ export const useMember = (
   options: Omit<
     UseQueryOptions<TokenVotingMember | null>,
     'queryKey' | 'queryFn'
-  >
+  > = {}
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
   const {network} = useNetwork();

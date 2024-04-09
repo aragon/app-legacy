@@ -21,7 +21,7 @@ import type {
 
 export const useToken = (
   params: IFetchTokenParams,
-  options: Omit<UseQueryOptions<Token | null>, 'queryKey'> = {}
+  options: Omit<UseQueryOptions<Token | null>, 'queryKey'>
 ) => {
   return useQuery({
     queryKey: tokenQueryKeys.token(params),

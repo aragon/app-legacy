@@ -28,11 +28,7 @@ export type PageWithDaos = {
 };
 
 export type FollowedDaosResultWithTotal = {
-  pages: PageWithDaos[];
-};
-
-export type FollowedDaosReturnObject = {
-  pages: NavigationDao[];
+  data: NavigationDao[];
   total: number;
 };
 

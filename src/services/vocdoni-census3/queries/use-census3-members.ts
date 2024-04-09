@@ -36,7 +36,7 @@ export const useCensus3Members = (
   return useQuery({
     queryKey: Census3QueryKeys.holdersList(strategyId ?? 0, page ?? 0),
     queryFn: getHolders,
-    ...options,
     enabled: hookEnabled && !!strategyId,
+    ...options,
   });
 };

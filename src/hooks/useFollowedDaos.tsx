@@ -1,5 +1,4 @@
 import {
-  InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
   UseQueryResult,
@@ -85,7 +84,7 @@ export const useFollowedDaosInfiniteQuery = (
 
   return useInfiniteQuery({
     queryKey: useFollowedDaosInfiniteQueryKey(params),
-    queryFn: async ({pageParam}) => {
+    queryFn: async ({pageParam = 0}) => {
       const result = await getFollowedDaosFromCache({
         skip: pageParam as number,
         limit,
@@ -102,15 +101,13 @@ export const useFollowedDaosInfiniteQuery = (
       allPages: IFetchInfiniteFollowedDaosResult[]
     ) => {
       const totalFetched = allPages.reduce(
-        (total, page) => total + page.pages?.[0].total,
+        (total, page) => total + page.data.length,
         0
       );
-      return totalFetched < lastPage.pages?.[0].total
-        ? totalFetched
-        : undefined;
+      return totalFetched < lastPage.data.length ? totalFetched : undefined;
     },
+    initialPageParam: 0,
     refetchOnWindowFocus: false,
-    ...options,
   });
 };
 

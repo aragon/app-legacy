@@ -135,7 +135,7 @@ const fetchCreatorProposals = async (
 
 export const useCreatorProposals = (
   params: IFetchCreatorProposalsParams,
-  options: Omit<UseQueryOptions<ProposalBase[]>, 'queryKey'>
+  options: Omit<UseQueryOptions<ProposalBase[]>, 'queryKey'> = {}
 ) => {
   const client = usePluginClient(params.pluginType);
   const {network} = useNetwork();

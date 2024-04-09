@@ -29,7 +29,10 @@ const fetchMembers = async (
 
 export const useMembers = (
   params: IFetchMembersParams,
-  options: Omit<UseQueryOptions<Array<string | TokenVotingMember>>, 'queryKey'>
+  options: Omit<
+    UseQueryOptions<Array<string | TokenVotingMember>>,
+    'queryKey'
+  > = {}
 ) => {
   const client = usePluginClient(params.pluginType);
 

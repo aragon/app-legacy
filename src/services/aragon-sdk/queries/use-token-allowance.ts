@@ -7,7 +7,7 @@ import {BigNumber} from 'ethers';
 
 export const useTokenAllowance = (
   params: IFetchTokenAllowanceParams,
-  options: Omit<UseQueryOptions<BigNumber>, 'queryKey'> = {}
+  options: Omit<UseQueryOptions<BigNumber>, 'queryKey'>
 ) => {
   const {api: provider} = useProviders();
 
