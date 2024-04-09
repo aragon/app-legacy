@@ -16,10 +16,10 @@ test('Publish signaling Proposal', async ({
   await page.locator('[id="radix-\\:r16\\:"]').click();
   await page.getByText('Sort by recently created').click();
   await page
-    .getByRole('link', {name: 'MD Multisig DAO DAO generated'})
+    .getByRole('link', {name: 'TB Token Based DAO (new token'})
     .first()
     .click();
-  await page.getByRole('button', {name: 'Create proposal'}).click();
+  await page.getByRole('button', {name: 'New proposal'}).click();
   await page.getByRole('button', {name: 'Switch to Ethereum Sepolia'}).click();
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);
@@ -40,7 +40,10 @@ test('Publish signaling Proposal', async ({
   await page.getByRole('button', {name: 'Create proposal now'}).click();
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Open your proposal'}).click();
-  await page.getByRole('button', {name: 'Approve'}).click();
-  await page.getByRole('button', {name: 'Approve'}).click();
-  await page.getByRole('button', {name: 'Continue to proposal'}).click();
+  await page.getByRole('button', {name: 'Vote now'}).click();
+  await page.getByText('YesYour choice will be').click();
+  await page.getByRole('button', {name: 'Submit your vote'}).click();
+  await page.getByRole('button', {name: 'Vote now'}).click();
+  await metamask.confirmTransaction();
+  await page.getByRole('button', {name: 'Open your proposal'}).click();
 });
