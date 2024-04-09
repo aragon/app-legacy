@@ -16,14 +16,14 @@ test('Add DAO member Proposal', async ({
   await page.locator('[id="radix-\\:r16\\:"]').click();
   await page.getByText('Sort by recently created').click();
   await page
-    .getByRole('link', {name: 'MD Multisig DAO DAO generated'})
+    .getByRole('link', {name: 'TB Token Based DAO (new token'})
     .first()
     .click();
   await page
     .getByTestId('navLinks')
     .getByRole('button', {name: 'Members'})
     .click();
-  await page.getByRole('button', {name: 'Manage members'}).click();
+  await page.getByRole('button', {name: 'Mint tokens'}).click();
   await page.getByRole('button', {name: 'Switch to Ethereum Sepolia'}).click();
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);
@@ -31,7 +31,9 @@ test('Add DAO member Proposal', async ({
   await page
     .getByPlaceholder('0x…')
     .fill('0xe0238Bb3efedf9c2ec581835D54122293740fC01');
-
+  await page.getByTestId('number-input').getByPlaceholder('0').click();
+  await page.getByTestId('number-input').getByPlaceholder('0').fill('1');
+  await page.waitForTimeout(1000);
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByPlaceholder('Give your proposal a title').click();
@@ -45,7 +47,14 @@ test('Add DAO member Proposal', async ({
   await page.getByRole('button', {name: 'Create proposal now'}).click();
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Open your proposal'}).click();
-  await page.getByRole('button', {name: 'Approve and execute'}).click();
-  await page.getByRole('button', {name: 'Approve and execute'}).click();
-  await page.getByRole('button', {name: 'Continue to proposal'}).click();
+  await page.getByRole('button', {name: 'Vote now'}).click();
+  await page.getByText('YesYour choice will be').click();
+  await page.getByRole('button', {name: 'Submit your vote'}).click();
+  await page.getByRole('button', {name: 'Vote now'}).click();
+  await metamask.confirmTransaction();
+  await page.getByRole('button', {name: 'Open your proposal'}).click();
+  await page.getByRole('button', {name: 'Execute now'}).click();
+  await page.getByRole('button', {name: 'Execute now'}).click();
+  await metamask.confirmTransaction();
+  await page.getByRole('button', {name: 'Open your proposal'}).click();
 });

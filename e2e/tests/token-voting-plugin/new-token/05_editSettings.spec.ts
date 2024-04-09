@@ -16,7 +16,7 @@ test('Edit DAO settings Proposal', async ({
   await page.locator('[id="radix-\\:r16\\:"]').click();
   await page.getByText('Sort by recently created').click();
   await page
-    .getByRole('link', {name: 'MD Multisig DAO DAO generated'})
+    .getByRole('link', {name: 'TB Token Based DAO (new token'})
     .first()
     .click();
   await page
@@ -35,12 +35,12 @@ test('Edit DAO settings Proposal', async ({
   await page.getByRole('button', {name: 'Add link'}).click();
 
   await page.getByPlaceholder('Lens').click();
-  await page.getByPlaceholder('Lens').fill('Multisig DAO');
+  await page.getByPlaceholder('Lens').fill('Token Based DAO');
   await page.getByPlaceholder('Lens').click();
   await page
     .getByPlaceholder('https://')
     .fill(
-      'https://app.aragon.org/#/daos/sepolia/0xba6b77465aa80dcaab3077b9c295e85a377fa6ae/dashboard'
+      'https://app.aragon.org/#/daos/sepolia/0x7099c93700419c2f78f1f94b61dd7b28a9e0cb9a/dashboard'
     );
   await page.getByRole('button', {name: 'Review proposal'}).click();
 
@@ -60,7 +60,14 @@ test('Edit DAO settings Proposal', async ({
   await page.getByRole('button', {name: 'Create proposal now'}).click();
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Open your proposal'}).click();
-  await page.getByRole('button', {name: 'Approve and execute'}).click();
-  await page.getByRole('button', {name: 'Approve and execute'}).click();
-  await page.getByRole('button', {name: 'Continue to proposal'}).click();
+  await page.getByRole('button', {name: 'Vote now'}).click();
+  await page.getByText('YesYour choice will be').click();
+  await page.getByRole('button', {name: 'Submit your vote'}).click();
+  await page.getByRole('button', {name: 'Vote now'}).click();
+  await metamask.confirmTransaction();
+  await page.getByRole('button', {name: 'Open your proposal'}).click();
+  await page.getByRole('button', {name: 'Execute now'}).click();
+  await page.getByRole('button', {name: 'Execute now'}).click();
+  await metamask.confirmTransaction();
+  await page.getByRole('button', {name: 'Open your proposal'}).click();
 });

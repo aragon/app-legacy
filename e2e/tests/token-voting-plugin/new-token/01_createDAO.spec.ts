@@ -45,7 +45,7 @@ test('Create Token Based DAO (new token)', async ({
     .locator('div')
     .filter({hasText: /^AddressPasteTokensAllocation$/})
     .getByPlaceholder('0', {exact: true})
-    .fill('1000');
+    .fill('100');
   await page.locator('textarea[name="wallets\\.1"]').click();
   await page
     .locator('textarea[name="wallets\\.1"]')
