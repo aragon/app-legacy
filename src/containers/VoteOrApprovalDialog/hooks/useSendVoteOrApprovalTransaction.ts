@@ -1,0 +1,83 @@
+import {useSendTransaction} from 'hooks/useSendTransaction';
+import {ITransaction} from 'services/transactions/domain/transaction';
+import {TransactionReceipt} from 'viem';
+import {createDaoUtils} from '../utils';
+import {CreateDaoFormData} from 'utils/types';
+import {useFormContext} from 'react-hook-form';
+import {IBuildCreateDaoTransactionParams} from 'services/transactions/transactionsService.api';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useAddFollowedDaoMutation} from 'hooks/useFollowedDaos';
+import {useAddPendingDaoMutation} from 'hooks/usePendingDao';
+import {useNetwork} from 'context/network';
+import {useCensus3CreateToken} from 'hooks/useCensus3';
+import {GaslessPluginName} from 'hooks/usePluginClient';
+
+export interface IUseSendCreateDaoTransactionParams {
+  /**
+   * Process name for logging.
+   */
+  process: string;
+  /**
+   * CreateDao transaction to be sent.
+   */
+  transaction?: ITransaction;
+  /**
+   * IPFS id of the DAO metadata.
+   */
+  metadataCid?: string;
+  /**
+   * Parameters for the CreateDao transaction.
+   */
+  createDaoParams?: Omit<IBuildCreateDaoTransactionParams, 'client'>;
+}
+
+export const useSendCreateDaoTransaction = (
+  params: IUseSendCreateDaoTransactionParams
+) => {
+  const {process, transaction, metadataCid, createDaoParams} = params;
+
+  const {network} = useNetwork();
+
+  const {getValues} = useFormContext<CreateDaoFormData>();
+  const formValues = getValues();
+  const {blockchain, membership, votingType, isCustomToken, tokenAddress} =
+    formValues;
+
+  const {mutate: addFollowedDao} = useAddFollowedDaoMutation();
+  const {mutate: addPendingDao} = useAddPendingDaoMutation();
+
+  const {createToken} = useCensus3CreateToken({
+    chainId: blockchain.id,
+    pluginType:
+      membership === 'token' && votingType === 'gasless'
+        ? GaslessPluginName
+        : undefined,
+  });
+
+  const handleCreateDaoSuccess = (txReceipt: TransactionReceipt) => {
+    const {daoAddress, pluginAddresses} =
+      createDaoUtils.getDaoAddressesFromReceipt(txReceipt)!;
+    const metadata = createDaoUtils.formValuesToDaoMetadata(
+      formValues,
+      metadataCid
+    );
+
+    const {ensSubdomain = '', plugins = []} = createDaoParams!;
+
+
+    if (votingType === 'gasless' && membership === 'token') {
+      createToken(
+        pluginAddresses[0],
+        !isCustomToken ? tokenAddress?.address : undefined
+      );
+    }
+  };
+
+  const sendTransactionResults = useSendTransaction({
+    logContext: {stack: [process], data: formValues},
+    transaction,
+    onSuccess: handleCreateDaoSuccess,
+  });
+
+  return sendTransactionResults;
+};
