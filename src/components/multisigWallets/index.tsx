@@ -4,7 +4,7 @@ import {Label} from '@aragon/ods-old';
 import {AlertInline} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {Address} from 'viem';
+import {Address, isAddress, isAddressEqual} from 'viem';
 import {useEnsName} from 'wagmi';
 
 import {useAlertContext} from 'context/alert';
@@ -96,11 +96,17 @@ export const MultisigWallets = () => {
     if (multisigWallets) {
       multisigWallets.forEach(
         ({address, ensName}: MultisigWalletField, itemIndex: number) => {
-          if (
-            (address === wallet.address || ensName === wallet.ensName) &&
-            itemIndex !== index
-          ) {
-            validationResult = t('errors.duplicateAddress');
+          const isEnsMatch = ensName === wallet.ensName && ensName !== null;
+
+          if (isAddress(wallet.address || '') && isAddress(address || '')) {
+            const isAddressMatch = isAddressEqual(
+              wallet.address as Address,
+              address as Address
+            );
+
+            if ((isAddressMatch || isEnsMatch) && itemIndex !== index) {
+              validationResult = t('errors.duplicateAddress');
+            }
           }
         }
       );

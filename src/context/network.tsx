@@ -59,7 +59,6 @@ const determineNetwork = (
         ([, v]) => v.id === chainId
       )?.[0] as SupportedNetworks;
     } else {
-      console.log('*NETWORK UNSUPPORTED');
       return 'unsupported';
     }
   }
@@ -118,7 +117,6 @@ export function NetworkProvider({children}: NetworkProviderProps) {
   useEffect(() => {
     // unsupported network based on the networkUrlSegment network
     if (networkState === 'unsupported' && networkUrlSegment) {
-      console.warn('network unsupported');
       navigate(NotFound, {replace: true});
     }
   }, [networkState, navigate, networkUrlSegment]);
