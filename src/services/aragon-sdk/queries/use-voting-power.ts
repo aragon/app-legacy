@@ -8,7 +8,7 @@ import {useCallback} from 'react';
 
 export const useVotingPower = (
   params: IFetchVotingPowerParams,
-  options?: UseQueryOptions<BigNumber>
+  options?: Omit<UseQueryOptions<BigNumber>, 'queryKey'>
 ) => {
   const {api: provider} = useProviders();
 

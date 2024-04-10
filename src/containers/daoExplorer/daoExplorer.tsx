@@ -254,16 +254,14 @@ export const DaoExplorer = () => {
           />
         ) : (
           <CardsWrapper>
-            {filteredDaoList?.map(
-              (dao: IDao, index: React.Key | null | undefined) => (
-                <DaoCard key={index} dao={dao} />
-              )
-            )}
+            {filteredDaoList?.map((dao: IDao, index: React.Key) => (
+              <DaoCard key={index} dao={dao} />
+            ))}
             {isLoading && <Spinner size="xl" variant="primary" />}
           </CardsWrapper>
         )}
       </MainContainer>
-      {totalDaos != null && totalDaos > 0 && totalDaosShown > 0 && (
+      {totalDaos > 0 && totalDaosShown > 0 && (
         <div className="flex items-center lg:gap-x-6">
           {hasNextPage && (
             <Button

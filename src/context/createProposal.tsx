@@ -137,7 +137,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     {tokenAddress: daoToken?.address as string, address: address as string},
     {
       enabled: !!daoToken?.address && !!address,
-      queryKey: ['votingPower', daoToken?.address, address],
     }
   );
 
