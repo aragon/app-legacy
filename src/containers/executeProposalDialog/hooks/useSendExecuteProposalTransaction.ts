@@ -3,9 +3,13 @@ import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {useSendTransaction} from 'hooks/useSendTransaction';
 import {useParams} from 'react-router-dom';
-import {aragonSdkQueryKeys} from 'services/aragon-sdk/query-keys';
+import {
+  AragonSdkQueryItem,
+  aragonSdkQueryKeys,
+} from 'services/aragon-sdk/query-keys';
 import {ITransaction} from 'services/transactions/domain/transaction';
 import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
@@ -34,6 +38,7 @@ export const useSendExecuteProposalTransaction = (
   const {id: proposalId} = useParams();
 
   const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
   const daoAddressOrEns =
     toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address;
 
@@ -69,6 +74,15 @@ export const useSendExecuteProposalTransaction = (
         aragonSdkQueryKeys.protocolVersion(daoDetails?.address)
       );
     }
+
+    const allProposalsQuery = [AragonSdkQueryItem.PROPOSALS];
+    const currentProposal = aragonSdkQueryKeys.proposal({
+      id: proposalId!,
+      pluginType,
+    });
+
+    queryClient.invalidateQueries(allProposalsQuery);
+    queryClient.invalidateQueries(currentProposal);
   };
 
   const sendTransactionResults = useSendTransaction({

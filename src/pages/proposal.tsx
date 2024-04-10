@@ -92,6 +92,7 @@ import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {ExecuteProposalDialog} from 'containers/executeProposalDialog';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -129,6 +130,8 @@ export const Proposal: React.FC = () => {
   const {api: provider} = useProviders();
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
+  const [showExecuteDialog, setShowExecuteDialog] = useState(false);
+
   const [voteStatus, setVoteStatus] = useState('');
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
@@ -136,12 +139,9 @@ export const Proposal: React.FC = () => {
   const {
     handlePrepareVote,
     handlePrepareApproval,
-    handlePrepareExecution,
     handleGaslessVoting,
     isLoading: paramsAreLoading,
     voteOrApprovalSubmitted,
-    executionFailed,
-    executionTxHash,
   } = useProposalTransactionContext();
 
   const {
@@ -558,7 +558,7 @@ export const Proposal: React.FC = () => {
   const executionStatus = getProposalExecutionStatus(
     proposalStatus,
     canExecuteEarly,
-    executionFailed,
+    false,
     undefined
   );
 
@@ -674,7 +674,7 @@ export const Proposal: React.FC = () => {
       // don't allow execution on wrong network
       open('network');
     } else {
-      handlePrepareExecution();
+      setShowExecuteDialog(true);
     }
   };
 
@@ -713,7 +713,7 @@ export const Proposal: React.FC = () => {
         proposal.creationBlockNumber
           ? NumberFormatter.format(proposal.creationBlockNumber)
           : '',
-        executionFailed,
+        false,
         isSuccessfulMultisigSignalingProposal,
         proposal.executionBlockNumber
           ? NumberFormatter.format(proposal.executionBlockNumber!)
@@ -878,9 +878,7 @@ export const Proposal: React.FC = () => {
                   actions={decodedActions}
                   status={executionStatus}
                   onExecuteClicked={handleExecuteNowClicked}
-                  txhash={
-                    executionTxHash || proposal.executionTxHash || undefined
-                  }
+                  txhash={proposal.executionTxHash || undefined}
                 />
               </>
             )
@@ -891,6 +889,10 @@ export const Proposal: React.FC = () => {
           <WidgetStatus steps={proposalSteps} />
         </AdditionalInfoContainer>
       </ContentContainer>
+      <ExecuteProposalDialog
+        isOpen={showExecuteDialog}
+        onClose={() => setShowExecuteDialog(false)}
+      />
     </Container>
   );
 };

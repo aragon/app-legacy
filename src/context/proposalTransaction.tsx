@@ -1,7 +1,6 @@
 import {
   ApproveMultisigProposalParams,
   ApproveProposalStep,
-  ExecuteProposalStep,
   VoteProposalParams,
   VoteProposalStep,
   VoteValues,
@@ -60,16 +59,12 @@ type ProposalTransactionContextType = {
   /** handles voting on proposal */
   handlePrepareVote: (params: SubmitVoteParams) => void;
   handlePrepareApproval: (params: ApproveMultisigProposalParams) => void;
-  handlePrepareExecution: () => void;
   handleGaslessVoting: (params: SubmitVoteParams) => void;
   handleExecutionMultisigApprove: (
     params: ApproveMultisigProposalParams
   ) => void;
   isLoading: boolean;
   voteOrApprovalSubmitted: boolean;
-  executionSubmitted: boolean;
-  executionFailed: boolean;
-  executionTxHash: string;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -87,7 +82,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const {id: urlId} = useParams();
   const proposalId = new ProposalId(urlId!).export();
 
-  const {address, isConnected} = useWallet();
+  const {address} = useWallet();
   const {network} = useNetwork();
   const queryClient = useQueryClient();
   const {api: provider} = useProviders();
@@ -99,7 +94,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // state values
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showGaslessModal, setShowGaslessModal] = useState(false);
-  const [showExecutionModal, setShowExecutionModal] = useState(false);
   const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
   const [showCommitteeApprovalModal, setShowCommitteeApprovalModal] =
     useState(false);
@@ -112,11 +106,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [replacingVote, setReplacingVote] = useState(false);
   const [voteOrApprovalSubmitted, setVoteOrApprovalSubmitted] = useState(false);
   const [voteOrApprovalProcessState, setVoteOrApprovalProcessState] =
-    useState<TransactionState>();
-
-  const [executionFailed, setExecutionFailed] = useState(false);
-  const [executionSubmitted, setExecuteSubmitted] = useState(false);
-  const [executionProcessState, setExecutionProcessState] =
     useState<TransactionState>();
 
   const [executionTxHash, setExecutionTxHash] = useState<string>('');
@@ -140,16 +129,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     (voteParams != null || approvalParams != null) &&
     voteOrApprovalProcessState === TransactionState.WAITING;
 
-  const isWaitingForExecution =
-    !!proposalId && executionProcessState === TransactionState.WAITING;
-
   const notInSuccessState =
-    executionProcessState !== TransactionState.SUCCESS &&
     voteOrApprovalProcessState !== TransactionState.SUCCESS;
 
   const noActionsPending = !voteParams && !approvalParams && !proposalId;
 
-  const shouldPollFees = isWaitingForVoteOrApproval || isWaitingForExecution;
+  const shouldPollFees = isWaitingForVoteOrApproval;
   const shouldDisableModalCta = noActionsPending && notInSuccessState;
 
   /*************************************************
@@ -195,11 +180,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     []
   );
 
-  const handlePrepareExecution = useCallback(() => {
-    setShowExecutionModal(true);
-    setExecutionProcessState(TransactionState.WAITING);
-  }, []);
-
   /*************************************************
    *                  Estimations                  *
    *************************************************/
@@ -228,11 +208,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     isGaslessVotingPluginClient,
   ]);
 
-  // estimate proposal execution fees
-  const estimateExecutionFees = useCallback(async () => {
-    return pluginClient?.estimation.executeProposal(proposalId);
-  }, [pluginClient?.estimation, proposalId]);
-
   // estimation fees for voting on proposal/executing proposal
   const {
     tokenPrice,
@@ -240,10 +215,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     averageFee,
     stopPolling,
     error: gasEstimationError,
-  } = usePollGasFee(
-    showExecutionModal ? estimateExecutionFees : estimateVoteOrApprovalFees,
-    shouldPollFees
-  );
+  } = usePollGasFee(estimateVoteOrApprovalFees, shouldPollFees);
 
   /*************************************************
    *               Cleanup & Cache                 *
@@ -438,23 +410,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
   }, [invalidateProposalQueries, stopPolling, voteOrApprovalProcessState]);
 
-  // handles closing execute modal
-  const handleCloseExecuteModal = useCallback(() => {
-    switch (executionProcessState) {
-      case TransactionState.LOADING:
-        break;
-      case TransactionState.SUCCESS:
-        setShowExecutionModal(false);
-        setExecuteSubmitted(true);
-        invalidateProposalQueries();
-        break;
-      default: {
-        setShowExecutionModal(false);
-        stopPolling();
-      }
-    }
-  }, [executionProcessState, invalidateProposalQueries, stopPolling]);
-
   /*************************************************
    *              Submit Transactions              *
    *************************************************/
@@ -597,89 +552,23 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     ]
   );
 
-  // handles proposal execution
-  const handleProposalExecution = useCallback(async () => {
-    if (executionProcessState === TransactionState.SUCCESS) {
-      handleCloseExecuteModal();
-      return;
-    }
-    if (!proposalId || executionProcessState === TransactionState.LOADING) {
-      console.log('Transaction is running');
-      return;
-    }
-
-    if (!pluginAddress) {
-      console.error('Plugin address is required');
-      return;
-    }
-
-    if (!isConnected) {
-      open('wallet');
-      return;
-    }
-
-    // start proposal execution
-    setExecutionProcessState(TransactionState.LOADING);
-
-    const executeSteps = pluginClient?.methods.executeProposal(proposalId);
-    if (!executeSteps) {
-      throw new Error('Voting function is not initialized correctly');
-    }
-
-    try {
-      let txHash = '';
-
-      for await (const step of executeSteps) {
-        switch (step.key) {
-          case ExecuteProposalStep.EXECUTING:
-            setExecutionTxHash(step.txHash);
-            txHash = step.txHash;
-            break;
-          case ExecuteProposalStep.DONE:
-            onExecutionSuccess(proposalId, txHash);
-            setExecutionFailed(false);
-            setExecutionProcessState(TransactionState.SUCCESS);
-            break;
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      setExecutionFailed(true);
-      setExecutionProcessState(TransactionState.ERROR);
-    }
-  }, [
-    executionProcessState,
-    proposalId,
-    pluginAddress,
-    isConnected,
-    handleCloseExecuteModal,
-    pluginClient?.methods,
-    onExecutionSuccess,
-  ]);
-
   const value = useMemo(
     () => ({
       handlePrepareVote,
       handlePrepareApproval,
-      handlePrepareExecution,
       handleGaslessVoting,
       handleExecutionMultisigApprove,
       isLoading,
       voteOrApprovalSubmitted,
-      executionSubmitted,
-      executionFailed,
       executionTxHash,
     }),
     [
       handlePrepareVote,
       handlePrepareApproval,
-      handlePrepareExecution,
       handleGaslessVoting,
       handleExecutionMultisigApprove,
       isLoading,
       voteOrApprovalSubmitted,
-      executionSubmitted,
-      executionFailed,
       executionTxHash,
     ]
   );
@@ -687,27 +576,17 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   /*************************************************
    *                    Render                     *
    *************************************************/
-  // modal values
-  const isExecutionContext = showExecutionModal;
-  const isVotingContext = showVoteModal || showCommitteeApprovalModal;
+  const state = voteOrApprovalProcessState ?? TransactionState.WAITING;
 
-  const state =
-    (isExecutionContext ? executionProcessState : voteOrApprovalProcessState) ??
-    TransactionState.WAITING;
-
-  let title = isVotingContext
-    ? t('labels.signVote')
-    : t('labels.signExecuteProposal');
+  let title = t('labels.signVote');
 
   const labels: TransactionStateLabels = {
-    [TransactionState.WAITING]: isVotingContext
-      ? t('governance.proposals.buttons.vote')
-      : t('governance.proposals.buttons.execute'),
+    [TransactionState.WAITING]: t('governance.proposals.buttons.vote'),
   };
 
   if (
-    (isVotingContext && pluginType === 'multisig.plugin.dao.eth') ||
-    (isVotingContext && pluginType === GaslessPluginName)
+    pluginType === 'multisig.plugin.dao.eth' ||
+    pluginType === GaslessPluginName
   ) {
     title = t('transactionModal.multisig.title.approveProposal');
     labels.WAITING = t('transactionModal.multisig.ctaApprove');
@@ -720,20 +599,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
   }
 
-  const isOpen =
-    showVoteModal || showExecutionModal || showCommitteeApprovalModal;
-
-  const onClose = isExecutionContext
-    ? handleCloseExecuteModal
-    : handleCloseVoteModal;
-
-  const closeOnDrag = isExecutionContext
-    ? executionProcessState !== TransactionState.LOADING
-    : voteOrApprovalProcessState !== TransactionState.LOADING;
-
-  const callback = isExecutionContext
-    ? handleProposalExecution
-    : handleVoteOrApprovalTx;
+  const isOpen = showVoteModal || showCommitteeApprovalModal;
 
   return (
     <ProposalTransactionContext.Provider value={value}>
@@ -751,9 +617,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         buttonStateLabels={labels}
         state={state}
         isOpen={isOpen}
-        onClose={onClose}
-        callback={callback}
-        closeOnDrag={closeOnDrag}
+        onClose={handleCloseVoteModal}
+        callback={handleVoteOrApprovalTx}
+        closeOnDrag={voteOrApprovalProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}
         tokenPrice={tokenPrice}
