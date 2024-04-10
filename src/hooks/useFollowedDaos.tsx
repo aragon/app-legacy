@@ -1,4 +1,5 @@
 import {
+  InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
   UseQueryResult,
@@ -65,7 +66,7 @@ export const useFollowedDaosInfiniteQuery = (
   params: IFetchFollowedDaosParams,
   options: Omit<
     UseInfiniteQueryOptions<IFetchInfiniteFollowedDaosResult>,
-    'queryKey' | 'initialPageParam' | 'getNextPageParam'
+    'queryKey' | 'initialPageParam' | 'getNextPageParam' | 'select'
   >
 ) => {
   const {limit = DEFAULT_QUERY_PARAMS.limit, pluginNames, networks} = params;
@@ -95,7 +96,6 @@ export const useFollowedDaosInfiniteQuery = (
 
       return result;
     },
-    ...options,
     getNextPageParam: (
       lastPage: IFetchInfiniteFollowedDaosResult,
       allPages: IFetchInfiniteFollowedDaosResult[]
@@ -106,8 +106,10 @@ export const useFollowedDaosInfiniteQuery = (
       );
       return totalFetched < lastPage.data.length ? totalFetched : undefined;
     },
+    select: augmentCachedDaos,
     initialPageParam: 0,
     refetchOnWindowFocus: false,
+    ...options,
   });
 };
 
@@ -267,32 +269,32 @@ export const useRemoveFollowedDaoMutation = (
 //  * @param data raw fetched data for the cached DAOs.
 //  * @returns list of DAOs augmented with the resolved IPFS CID avatars
 //  */
-// function augmentCachedDaos(
-//   data: InfiniteData<IFetchInfiniteFollowedDaosResult>
-// ): InfiniteData<IFetchInfiniteFollowedDaosResult> {
-//   return {
-//     pageParams: data.pageParams,
-//     pages: data.pages.map(page => ({
-//       data: addAvatarToDaos(page.data),
-//       total: page.total,
-//     })),
-//   };
-// }
+function augmentCachedDaos(
+  data: InfiniteData<IFetchInfiniteFollowedDaosResult>
+): InfiniteData<IFetchInfiniteFollowedDaosResult> {
+  return {
+    pageParams: data.pageParams,
+    pages: data.pages.map(page => ({
+      data: addAvatarToDaos(page.data),
+      total: page.total,
+    })),
+  };
+}
 
 // /**
 //  * Add resolved IPFS CID for each DAO's avatar to the metadata.
 //  * @param daos array of `NavigationDao` objects representing the DAOs to be processed.
 //  * @returns array of augmented NavigationDao objects with resolved avatar IPFS CIDs.
 //  */
-// function addAvatarToDaos<T extends NavigationDao>(daos: T[]): T[] {
-//   return daos.map(dao => {
-//     const {metadata} = dao;
-//     return {
-//       ...dao,
-//       metadata: {
-//         ...metadata,
-//         avatar: metadata.avatar,
-//       },
-//     } as T;
-//   });
-// }
+function addAvatarToDaos<T extends NavigationDao>(daos: T[]): T[] {
+  return daos.map(dao => {
+    const {metadata} = dao;
+    return {
+      ...dao,
+      metadata: {
+        ...metadata,
+        avatar: metadata.avatar,
+      },
+    } as T;
+  });
+}

@@ -111,7 +111,7 @@ export const DaoExplorer = () => {
     useFollowList ? followedDaosResult : newDaosResult;
 
   const totalDaos = useFollowList
-    ? followedDaosResult.data?.total
+    ? followedDaosResult.data?.pages[0].total ?? 0
     : newDaosResult.data?.pages[0].total ?? 0;
 
   const toggleQuickFilters = (value?: string | string[]) => {

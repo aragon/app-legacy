@@ -145,7 +145,7 @@ export const useDaoQuery = (
     // none l2 networks and l2 networks that are not ens names
     ...{
       ...(isL2NetworkEns
-        ? {cacheTime: 0, refetchOnWindowFocus: true}
+        ? {gcTime: 0, refetchOnWindowFocus: true}
         : {refetchOnWindowFocus: false}),
     },
     refetchInterval,
