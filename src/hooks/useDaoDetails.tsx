@@ -149,6 +149,7 @@ export const useDaoQuery = (
         : {refetchOnWindowFocus: false}),
     },
     refetchInterval,
+    select: addAvatarToDao(),
   });
 };
 
@@ -200,4 +201,21 @@ export const useDaoDetailsQuery = () => {
   ]);
 
   return apiResponse;
+};
+
+/**
+ * Adds avatar to DAO
+ * @param dao DAO details
+ * @returns DAO details object augmented with a resolved IPFS avatar
+ */
+const addAvatarToDao = () => (dao: DaoDetails | null) => {
+  if (!dao) return null;
+
+  return {
+    ...dao,
+    metadata: {
+      ...dao?.metadata,
+      avatar: dao?.metadata.avatar,
+    },
+  };
 };
