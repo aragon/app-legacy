@@ -196,10 +196,7 @@ const fetchMemberDAOs = async (
 
 export const useMember = (
   params: IFetchMemberParams,
-  options: Omit<
-    UseQueryOptions<TokenVotingMember | null>,
-    'queryKey' | 'queryFn'
-  > = {}
+  options: Omit<UseQueryOptions<TokenVotingMember | null>, 'queryKey'> = {}
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
   const {network} = useNetwork();
@@ -221,7 +218,7 @@ export const useMember = (
 
 export const useMemberDAOs = (
   params: IFetchMemberParams,
-  options: Omit<UseQueryOptions<MemberDAOsType>, 'queryKey' | 'queryFn'>
+  options: Omit<UseQueryOptions<MemberDAOsType>, 'queryKey' | 'queryFn'> = {}
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
   const {network} = useWallet();

@@ -12,7 +12,7 @@ import {
 import {NavigationDao} from 'context/apolloClient';
 import {useCallback} from 'react';
 import {
-  FollowedDaosResultWithTotal,
+  PageWithDaos,
   addFollowedDaoToCache,
   getFollowedDaoFromCache,
   getFollowedDaosFromCache,
@@ -44,6 +44,7 @@ export const useFollowedDaosQuery = (
     queryKey: ['followedDaos'],
     queryFn: useCallback(() => getFollowedDaosFromCache({skip}), [skip]),
     refetchOnWindowFocus: false,
+    select: addAvatarToDaos,
   });
 };
 
@@ -54,7 +55,7 @@ type IFetchFollowedDaosParams = {
   skip?: number;
 };
 
-type IFetchInfiniteFollowedDaosResult = FollowedDaosResultWithTotal;
+type IFetchInfiniteFollowedDaosResult = PageWithDaos;
 
 const useFollowedDaosInfiniteQueryKey = (
   params: IFetchFollowedDaosParams
@@ -65,7 +66,7 @@ const useFollowedDaosInfiniteQueryKey = (
 export const useFollowedDaosInfiniteQuery = (
   params: IFetchFollowedDaosParams,
   options: Omit<
-    UseInfiniteQueryOptions<IFetchInfiniteFollowedDaosResult>,
+    UseInfiniteQueryOptions<PageWithDaos>,
     'queryKey' | 'initialPageParam' | 'getNextPageParam' | 'select'
   >
 ) => {
@@ -264,11 +265,11 @@ export const useRemoveFollowedDaoMutation = (
   });
 };
 
-// /**
-//  * Augment DAOs by resolving the IPFS CID for each DAO's avatar.
-//  * @param data raw fetched data for the cached DAOs.
-//  * @returns list of DAOs augmented with the resolved IPFS CID avatars
-//  */
+/**
+ * Augment DAOs by resolving the IPFS CID for each DAO's avatar.
+ * @param data raw fetched data for the cached DAOs.
+ * @returns list of DAOs augmented with the resolved IPFS CID avatars
+ */
 function augmentCachedDaos(
   data: InfiniteData<IFetchInfiniteFollowedDaosResult>
 ): InfiniteData<IFetchInfiniteFollowedDaosResult> {
@@ -281,11 +282,11 @@ function augmentCachedDaos(
   };
 }
 
-// /**
-//  * Add resolved IPFS CID for each DAO's avatar to the metadata.
-//  * @param daos array of `NavigationDao` objects representing the DAOs to be processed.
-//  * @returns array of augmented NavigationDao objects with resolved avatar IPFS CIDs.
-//  */
+/**
+ * Add resolved IPFS CID for each DAO's avatar to the metadata.
+ * @param daos array of `NavigationDao` objects representing the DAOs to be processed.
+ * @returns array of augmented NavigationDao objects with resolved avatar IPFS CIDs.
+ */
 function addAvatarToDaos<T extends NavigationDao>(daos: T[]): T[] {
   return daos.map(dao => {
     const {metadata} = dao;

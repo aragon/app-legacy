@@ -11,7 +11,7 @@ import {CHAIN_METADATA} from '../../../utils/constants';
  */
 export const useCensus3Token = (
   {tokenAddress}: ICensus3TokenProps,
-  options: Omit<UseQueryOptions<Token>, 'queryKey'>
+  options?: Omit<UseQueryOptions<Token>, 'queryKey'>
 ) => {
   const census3 = useCensus3Client();
   const {network} = useNetwork();

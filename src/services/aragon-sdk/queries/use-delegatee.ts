@@ -26,7 +26,7 @@ const fetchDelegatee = async (
 export const useDelegatee = (
   params: IFetchDelegateeParams,
   pluginType: PluginTypes,
-  options: Omit<UseQueryOptions<string | null>, 'queryKey'> = {}
+  options: Omit<UseQueryOptions<string | null>, 'queryKey'>
 ) => {
   const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 

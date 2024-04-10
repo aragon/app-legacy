@@ -21,7 +21,7 @@ import type {
 
 export const useToken = (
   params: IFetchTokenParams,
-  options: Omit<UseQueryOptions<Token | null>, 'queryKey'>
+  options?: Omit<UseQueryOptions<Token | null>, 'queryKey'>
 ) => {
   return useQuery({
     queryKey: tokenQueryKeys.token(params),
@@ -47,7 +47,7 @@ export const useTokenAsync = () => {
 
 export const useTokenList = (
   paramsList: IFetchTokenParams[],
-  options: Omit<UseQueryOptions<Token | null>, 'queryKey'> = {}
+  options?: Omit<UseQueryOptions<Token | null>, 'queryKey'>
 ) => {
   const queries = paramsList.map(params => ({
     queryKey: tokenQueryKeys.token(params),
@@ -90,7 +90,7 @@ export const useTokenBalances = (
 
 export const useErc20Deposits = (
   params: FetchErc20DepositParams,
-  options: Omit<UseQueryOptions<Deposit[] | null>, 'queryKey'> = {}
+  options?: Omit<UseQueryOptions<Deposit[] | null>, 'queryKey'>
 ) => {
   const {data: assets, isFetched: areAssetsFetched} = useTokenBalances(
     {...params, ignoreZeroBalances: false},

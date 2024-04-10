@@ -1,11 +1,9 @@
-import {
-  IDaoPages,
-  IPaginatedResponse,
-} from 'services/aragon-backend/domain/paginated-response';
+import {IPaginatedResponse} from 'services/aragon-backend/domain/paginated-response';
 import request, {gql} from 'graphql-request';
 import {UseInfiniteQueryOptions, useInfiniteQuery} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
 import {IFetchDaosParams} from 'services/aragon-backend/aragon-backend-service.api';
+import {IDao} from 'services/aragon-backend/domain/dao';
 
 const daosQueryDocument = gql`
   query Daos(
@@ -54,8 +52,8 @@ const daosQueryDocument = gql`
 
 const fetchDaos = async (
   params: IFetchDaosParams
-): Promise<IPaginatedResponse<IDaoPages>> => {
-  const {daos} = await request<{daos: IPaginatedResponse<IDaoPages>}>(
+): Promise<IPaginatedResponse<IDao>> => {
+  const {daos} = await request<{daos: IPaginatedResponse<IDao>}>(
     `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     daosQueryDocument,
     params
@@ -65,17 +63,16 @@ const fetchDaos = async (
 };
 
 export const useDaos = (
-  initialParams: IFetchDaosParams,
+  params: IFetchDaosParams,
   options: Omit<
-    UseInfiniteQueryOptions<IPaginatedResponse<IDaoPages>>,
+    UseInfiniteQueryOptions<IPaginatedResponse<IDao>>,
     'queryKey' | 'getNextPageParam' | 'initialPageParam'
   >
 ) => {
   return useInfiniteQuery({
-    queryKey: aragonBackendQueryKeys.daos(initialParams),
-    queryFn: ({pageParam = initialParams}) =>
-      fetchDaos(pageParam as IFetchDaosParams),
-    getNextPageParam: (lastPage: IPaginatedResponse<IDaoPages>) => {
+    queryKey: aragonBackendQueryKeys.daos(params),
+    queryFn: ({pageParam}) => fetchDaos(pageParam as IFetchDaosParams),
+    getNextPageParam: (lastPage: IPaginatedResponse<IDao>) => {
       const {skip, total, take} = lastPage;
       const hasNextPage = skip + take < total;
 
@@ -83,9 +80,13 @@ export const useDaos = (
         return undefined;
       }
 
-      return {...initialParams, skip: skip + take};
+      return {...params, skip: skip + take};
     },
-    initialPageParam: initialParams,
+    select: data => ({
+      data: data.pages.flatMap(page => page.data),
+      total: data.pages[0]?.total,
+    }),
+    initialPageParam: params,
     ...options,
   });
 };

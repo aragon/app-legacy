@@ -27,11 +27,6 @@ export type PageWithDaos = {
   total: number;
 };
 
-export type FollowedDaosResultWithTotal = {
-  data: NavigationDao[];
-  total: number;
-};
-
 type GetFollowedDaosFromCacheOptions = {
   skip: number;
   limit?: number;

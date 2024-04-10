@@ -15,13 +15,10 @@ const delegateTokens = async (
 };
 
 export const useDelegateTokens = (
-  options?: Omit<
-    UseMutationOptions<
-      AsyncGenerator<DelegateTokensStepValue>,
-      unknown,
-      IDelegateTokensParams
-    >,
-    'mutationKey'
+  options?: UseMutationOptions<
+    AsyncGenerator<DelegateTokensStepValue>,
+    unknown,
+    IDelegateTokensParams
   >
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');

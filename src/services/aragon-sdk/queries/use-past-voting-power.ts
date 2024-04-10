@@ -15,7 +15,7 @@ import {useDaoDetailsQuery} from '../../../hooks/useDaoDetails';
 
 export const usePastVotingPower = (
   params: IFetchPastVotingPowerParams,
-  options: Omit<UseQueryOptions<BigNumber>, 'queryKey'>
+  options?: Omit<UseQueryOptions<BigNumber>, 'queryKey'>
 ) => {
   const {api: provider} = useProviders();
   const {network} = useNetwork();

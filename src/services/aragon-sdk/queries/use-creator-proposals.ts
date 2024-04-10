@@ -139,7 +139,6 @@ export const useCreatorProposals = (
 ) => {
   const client = usePluginClient(params.pluginType);
   const {network} = useNetwork();
-
   const baseParams = {
     network: network,
   };

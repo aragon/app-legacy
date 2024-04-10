@@ -45,7 +45,7 @@ const fetchTokenHolders = async (
 
 export const useTokenHolders = (
   params: IFetchTokenHoldersParams,
-  options: Omit<UseQueryOptions<TokenHoldersResponse>, 'queryKey'> = {}
+  options?: Omit<UseQueryOptions<TokenHoldersResponse>, 'queryKey'>
 ) => {
   params.page = params.page || 0; // otherwise undefined & 0 are different query keys
   return useQuery({

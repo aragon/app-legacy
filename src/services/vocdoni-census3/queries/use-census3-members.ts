@@ -8,7 +8,7 @@ import {StrategyHolders} from '@vocdoni/sdk';
 
 export const useCensus3Members = (
   {tokenId, page}: ICensus3VotingPowerProps,
-  options: Omit<UseQueryOptions<StrategyHolders>, 'queryKey'> = {}
+  options?: Omit<UseQueryOptions<StrategyHolders>, 'queryKey'>
 ) => {
   const hookEnabled = options?.enabled ?? false;
   const enableCensus3Token = hookEnabled && !!tokenId;
