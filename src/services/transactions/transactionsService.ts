@@ -13,10 +13,9 @@ import {
   IBuildCreateGaslessProposalTransactionParams,
   IBuildCreateMultisigProposalTransactionParams,
   IBuildCreateTokenVotingProposalTransactionParams,
-  IBuildExecuteMultisigProposalTransactionParams,
 } from './transactionsService.api';
 import {ITransaction} from './domain/transaction';
-import {decodeProposalId, hexToBytes} from '@aragon/sdk-client-common';
+import {hexToBytes} from '@aragon/sdk-client-common';
 
 class TransactionsService {
   buildCreateDaoTransaction = async (
@@ -185,34 +184,6 @@ class TransactionsService {
         votingParams,
         actions
       );
-
-    return transaction as ITransaction;
-  };
-
-  buildExecuteMultisigProposalTransaction = async (
-    params: IBuildExecuteMultisigProposalTransactionParams
-  ): Promise<ITransaction> => {
-    const {proposalId, client} = params;
-
-    const signer = client.web3.getConnectedSigner();
-    const {pluginAddress, id} = decodeProposalId(proposalId);
-    const multisigContract = Multisig__factory.connect(pluginAddress, signer);
-
-    const transaction = await multisigContract.populateTransaction.execute(id);
-
-    return transaction as ITransaction;
-  };
-
-  buildExecuteTokenVotingProposalTransaction = async (
-    params: IBuildExecuteMultisigProposalTransactionParams
-  ): Promise<ITransaction> => {
-    const {proposalId, client} = params;
-
-    const signer = client.web3.getConnectedSigner();
-    const {pluginAddress, id} = decodeProposalId(proposalId);
-    const multisigContract = Multisig__factory.connect(pluginAddress, signer);
-
-    const transaction = await multisigContract.populateTransaction.execute(id);
 
     return transaction as ITransaction;
   };

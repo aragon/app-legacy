@@ -42,13 +42,3 @@ export interface IBuildCreateGaslessProposalTransactionParams {
   tokenCensus: TokenCensus;
   electionId: string;
 }
-
-export interface IBuildExecuteMultisigProposalTransactionParams {
-  client: Client;
-  proposalId: string;
-}
-
-export interface IBuildExecuteTokenVotingProposalTransactionParams {
-  client: Client;
-  proposalId: string;
-}

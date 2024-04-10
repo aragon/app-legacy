@@ -1590,6 +1590,41 @@
       "ctaApproveExecute": "Approve and execute"
     }
   },
+  "transactionDialog": {
+    "title": "Transaction required",
+    "description": "You will need to sign a transaction in your connected wallet.",
+    "button": {
+      "preparing": "Preparing transaction",
+      "waitingApproval": "Awaiting approval",
+      "waitingConfirmations": "Awaiting confirmations",
+      "retry": "Retry",
+      "resend": "Resend to wallet",
+      "proceed": "Proceed anyway",
+      "approve": "Approve transaction"
+    },
+    "link": {
+      "transaction": "See transaction"
+    },
+    "warning": {
+      "slowTransaction": "Transaction is taking longer than expected",
+      "gasEstimation": "Unable to estimate gas. This transaction may fail"
+    },
+    "error": {
+      "rejected": "Transaction rejected by the user.",
+      "default": "Transaction failed."
+    }
+  },
+  "createDaoDialog": {
+    "title": "Deploy your DAO",
+    "button": {
+      "pinning": "Pinning IPFS data",
+      "approve": "Deploy DAO now",
+      "success": "Launch DAO Dashboard"
+    },
+    "error": {
+      "pinMetadata": "Unable to pin data to IPFS"
+    }
+  },
   "dao": {
     "follow": {
       "true": "Following",
@@ -1846,13 +1881,6 @@
     },
     "error": {
       "pinMetadata": "Unable to pin data to IPFS"
-    }
-  },
-  "executeTransactionDialog": {
-    "title": "Execute proposal",
-    "button": {
-      "approve": "Execute now",
-      "success": "Continue to proposal"
     }
   }
 }
