@@ -107,7 +107,10 @@ export const Proposal: React.FC = () => {
 
   const {dao, id: proposalId} = useParams();
 
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+  const {
+    data: daoDetails,
+    // isLoading: detailsAreLoading
+  } = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
   const isMultisigPlugin = pluginType === 'multisig.plugin.dao.eth';
@@ -138,7 +141,7 @@ export const Proposal: React.FC = () => {
     handlePrepareApproval,
     handlePrepareExecution,
     handleGaslessVoting,
-    isLoading: paramsAreLoading,
+    // isLoading: paramsAreLoading,
     voteOrApprovalSubmitted,
     executionFailed,
     executionTxHash,
@@ -148,7 +151,7 @@ export const Proposal: React.FC = () => {
     data: proposal,
     error: proposalError,
     isFetched: proposalIsFetched,
-    isLoading: proposalIsLoading,
+    // isLoading: proposalIsLoading,
     refetch,
   } = useProposal(
     {
@@ -729,16 +732,7 @@ export const Proposal: React.FC = () => {
     return <Loading />;
   }
 
-  const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
-
-  console.log(
-    'isLoading',
-    isLoading,
-    paramsAreLoading,
-    proposalIsLoading,
-    detailsAreLoading
-  );
-  console.log('proposal', proposal);
+  // const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
 
   // the last check is to make sure Typescript narrows the type properly
   const hasInvalidProposal =
