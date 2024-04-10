@@ -23,7 +23,7 @@ import {
   TokenType,
   hexToBytes,
 } from '@aragon/sdk-client-common';
-import {InvalidateQueryFilters, useQueryClient} from '@tanstack/react-query';
+import {useQueryClient} from '@tanstack/react-query';
 import {
   CreateGasslessProposalParams,
   GaslessVotingClient,
@@ -818,12 +818,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
     queryClient.invalidateQueries({
       queryKey: [AragonSdkQueryItem.PROPOSALS],
     });
-    queryClient.invalidateQueries(
-      aragonSubgraphQueryKeys.totalProposalCount({
+    queryClient.invalidateQueries({
+      queryKey: aragonSubgraphQueryKeys.totalProposalCount({
         pluginAddress,
         pluginType,
-      }) as InvalidateQueryFilters
-    );
+      }),
+    });
   }, [pluginAddress, pluginType, queryClient]);
 
   const handlePublishProposal = useCallback(
