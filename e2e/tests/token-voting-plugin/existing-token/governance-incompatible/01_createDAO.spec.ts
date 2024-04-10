@@ -1,6 +1,6 @@
 import {testWithMetaMask as test} from '../../../../testWithMetaMask';
 
-// Test is creating a Token Based DAO (governance incompatible token) and opens the DAO dashboard
+// Test is creating a Token Based DAO (governance incompatible token), opens the DAO dashboard, and adds the first member
 test('Create Token Based DAO (new token)', async ({
   context,
   page,
@@ -31,8 +31,8 @@ test('Create Token Based DAO (new token)', async ({
   await page
     .getByPlaceholder('0x…')
     .fill('0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14');
-  // await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Next'}).click();
+  await page.getByText('Any walletAny connected').click();
   await page.getByRole('button', {name: 'Next'}).click();
   await page.locator('.sc-FjLsS > .w-4').first().click();
   await page
@@ -59,4 +59,17 @@ test('Create Token Based DAO (new token)', async ({
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Launch DAO Dashboard'}).click();
   await page.getByRole('button', {name: 'Open your DAO'}).click();
+  await page
+    .getByTestId('navLinks')
+    .getByRole('button', {name: 'Members'})
+    .click();
+  await page.getByRole('button', {name: 'Join the DAO'}).click();
+  await page.getByPlaceholder('0').click();
+  await page.getByPlaceholder('0').fill('0.001');
+  await page.getByRole('button', {name: 'Approve tokens'}).click();
+  await metamask.approveTokenPermission();
+  await page.waitForTimeout(1000);
+  await page.getByRole('button', {name: 'Wrap tokens'}).click();
+  await metamask.confirmTransaction();
+  await page.getByRole('button', {name: 'See community'}).click();
 });

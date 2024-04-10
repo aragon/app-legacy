@@ -19,7 +19,9 @@ test('Publish signaling Proposal', async ({
     .getByRole('link', {name: 'TB Token Based DAO (new token'})
     .first()
     .click();
-  await page.getByRole('button', {name: 'New proposal'}).click();
+  await page
+    .getByRole('button', {name: /New proposal|Create proposal/})
+    .click();
   await page.getByRole('button', {name: 'Switch to Ethereum Sepolia'}).click();
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);
