@@ -3,14 +3,13 @@ import {ModalProps} from '@aragon/ods-old';
 import {TransactionDialog} from 'containers/transactionDialog';
 import {useNetwork} from 'context/network';
 import {useVoteOrApprovalTransaction} from 'services/transactions/queries/useVoteOrApprovalTransaction';
-import {createDaoUtils} from './utils';
+import {VoteOrApprovalUtils} from './utils/index';
 import {useFormContext} from 'react-hook-form';
 import {CreateDaoFormData} from 'utils/types';
 import {IBuildVoteOrApprovalTransactionParams} from 'services/transactions/transactionsService.api';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {Dashboard} from 'utils/paths';
-import {useClient} from 'hooks/useClient';
-import {useSendCreateDaoTransaction} from './hooks';
+import {useSendVoteOrApprovalTransaction} from './hooks';
 import {useTranslation} from 'react-i18next';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 
@@ -18,7 +17,7 @@ export interface IVoteOrApprovalDialogProps extends ModalProps {
   pluginType: PluginTypes;
 }
 
-const createDaoProcess = 'CREATE_DAO';
+const VoteOrApprovalProcess = 'VOTE_OR_APPROVAL';
 
 export const VoteOrApprovalDialog: React.FC<
   IVoteOrApprovalDialogProps
@@ -33,29 +32,26 @@ export const VoteOrApprovalDialog: React.FC<
   const {getValues} = useFormContext<CreateDaoFormData>();
   const formValues = getValues();
 
-  const createDaoParams = createDaoUtils.buildCreateDaoParams(
-    formValues,
-    metadataCid
-  );
+  const VoteOrApprovalParams =
+    VoteOrApprovalUtils.buildVoteOrApprovalParams(pluginType);
 
   const {data: transaction, isInitialLoading: isTransactionLoading} =
     useVoteOrApprovalTransaction(
       {
-        ...createDaoParams,
+        ...VoteOrApprovalParams,
         pluginClient,
       } as IBuildVoteOrApprovalTransactionParams,
-      {enabled: createDaoParams != null && pluginClient != null}
+      {enabled: VoteOrApprovalParams != null && pluginClient != null}
     );
 
-  const sendTransactionResults = useSendCreateDaoTransaction({
-    process: createDaoProcess,
+  const sendTransactionResults = useSendVoteOrApprovalTransaction({
+    process: VoteOrApprovalProcess,
     transaction,
-    metadataCid,
-    createDaoParams,
+    VoteOrApprovalParams,
   });
 
   const onSuccessButtonClick = () => {
-    const {daoAddress} = createDaoUtils.getDaoAddressesFromReceipt(
+    const {daoAddress} = VoteOrApprovalUtils.getDaoAddressesFromReceipt(
       sendTransactionResults.txReceipt
     )!;
     const daoPathParams = {network, dao: daoAddress};

@@ -70,6 +70,18 @@ type ProposalTransactionContextType = {
   executionSubmitted: boolean;
   executionFailed: boolean;
   executionTxHash: string;
+  onVoteSuccess: (
+    proposalId: string,
+    vote: VoteValues,
+    voteReplaced?: boolean
+  ) => Promise<void>;
+  onApprovalSuccess: (
+    proposalId: string,
+    executedWithApproval: boolean,
+    txHash: string
+  ) => Promise<void>;
+  approvalParams?: ApproveMultisigProposalParams;
+  voteParams?: VoteProposalParams;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -669,6 +681,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       executionSubmitted,
       executionFailed,
       executionTxHash,
+      approvalParams,
+      voteParams,
+      onVoteSuccess,
+      onApprovalSuccess,
     }),
     [
       handlePrepareVote,
@@ -681,6 +697,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       executionSubmitted,
       executionFailed,
       executionTxHash,
+      approvalParams,
+      voteParams,
+      onVoteSuccess,
+      onApprovalSuccess,
     ]
   );
 

@@ -85,6 +85,7 @@ export const wagmiConfig = createConfig({
 // 3. Create modal
 createWeb3Modal({
   wagmiConfig,
+  defaultChain: mainnet,
   projectId: walletConnectProjectID,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
   enableOnramp: true, // Optional
