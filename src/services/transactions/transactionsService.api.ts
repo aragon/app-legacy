@@ -9,3 +9,13 @@ export interface IBuildCreateDaoTransactionParams {
   trustedForwarder?: string;
   plugins: PluginInstallItem[];
 }
+
+export interface IBuildExecuteMultisigProposalTransactionParams {
+  client: Client;
+  proposalId: string;
+}
+
+export interface IBuildExecuteTokenVotingProposalTransactionParams {
+  client: Client;
+  proposalId: string;
+}
