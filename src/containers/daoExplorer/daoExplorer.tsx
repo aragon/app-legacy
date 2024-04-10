@@ -54,8 +54,6 @@ export const DaoExplorer = () => {
     {enabled: useFollowList}
   );
 
-  console.log('followedDaosResult', followedDaosResult);
-
   const newDaosResult = useDaos(
     {
       direction: OrderDirection.DESC,
@@ -83,8 +81,6 @@ export const DaoExplorer = () => {
 
   const newDaoList = newDaosResult.data?.pages.flatMap(page => page.data);
 
-  console.log('newDaoList', newDaoList);
-
   const filtersCount = useMemo(() => {
     let count = 0;
 
@@ -109,8 +105,6 @@ export const DaoExplorer = () => {
     [followedDaosResult]
   );
 
-  console.log('followedDaoList', followedDaoList);
-
   const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
 
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
@@ -119,8 +113,6 @@ export const DaoExplorer = () => {
   const totalDaos = useFollowList
     ? followedDaosResult.data?.total
     : newDaosResult.data?.pages[0].total ?? 0;
-
-  console.log('newDaosResult', newDaosResult.data?.pages[0].total);
 
   const toggleQuickFilters = (value?: string | string[]) => {
     if (value && !Array.isArray(value)) {

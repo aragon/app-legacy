@@ -44,8 +44,9 @@ export const Dashboard: React.FC = () => {
   const {isDesktop} = useScreen();
 
   const navigate = useNavigate();
-  const {network} = useNetwork();
+  const {network} = useNetwork(); // queries the SDK
   const {dao: urlAddressOrEns} = useParams();
+
   const {open} = useGlobalModalContext();
 
   const [pollInterval, setPollInterval] = useState(0);
@@ -67,7 +68,7 @@ export const Dashboard: React.FC = () => {
   });
 
   const {
-    data: fallowedDaos,
+    data: followedDaos,
     isLoading: followedDaosLoading,
     isFetching: followedDaosFetching,
   } = useFollowedDaosQuery();
@@ -82,12 +83,20 @@ export const Dashboard: React.FC = () => {
     data: liveDao,
     isLoading: liveDaoLoading,
     isSuccess,
+    isError: liveDaoError,
+    isFetched: liveDaoFetched,
   } = useDaoQuery(urlAddressOrEns, pollInterval);
   const liveAddressOrEns = toDisplayEns(liveDao?.ensDomain) || liveDao?.address;
 
   // pending DAO
-  const {data: pendingDao, isLoading: pendingDaoLoading} =
-    usePendingDao(urlAddressOrEns);
+  const {
+    data: pendingDao,
+    isLoading: pendingDaoLoading,
+    isError: pendingDaoError,
+    isFetched: pendingDaoFetched,
+  } = usePendingDao(urlAddressOrEns);
+
+  const isLoading = liveDaoLoading || pendingDaoLoading || followedDaosLoading;
 
   const removePendingDaoMutation = useRemovePendingDaoMutation(() => {
     navigate(
@@ -115,10 +124,10 @@ export const Dashboard: React.FC = () => {
   );
 
   const isFollowedDao = useMemo(() => {
-    if (liveDao?.address && fallowedDaos)
-      return Boolean(fallowedDaos.some(followedDaoMatchPredicate));
+    if (liveDao?.address && followedDaos)
+      return Boolean(followedDaos.some(followedDaoMatchPredicate));
     else return false;
-  }, [followedDaoMatchPredicate, fallowedDaos, liveDao?.address]);
+  }, [followedDaoMatchPredicate, followedDaos, liveDao?.address]);
 
   /*************************************************
    *                    Hooks                      *
@@ -141,6 +150,37 @@ export const Dashboard: React.FC = () => {
       setTimeout(() => setDaoCreationState(DaoCreationState.OPEN_DAO), 2000);
     }
   }, [liveDao, daoCreationState, pendingDao]);
+
+  useEffect(() => {
+    // Wait until all data is loaded
+    if (!isLoading) {
+      // Check if there is no liveDao and no pendingDao
+      if (
+        !liveDao &&
+        !pendingDao &&
+        pendingDaoFetched &&
+        liveDaoFetched &&
+        !pendingDaoError &&
+        !liveDaoError
+      ) {
+        // Redirect to the 404 Not Found page
+        navigate(NotFound, {
+          replace: true,
+          state: {incorrectDao: urlAddressOrEns},
+        });
+      }
+    }
+  }, [
+    isLoading,
+    liveDao,
+    pendingDao,
+    navigate,
+    urlAddressOrEns,
+    pendingDaoFetched,
+    liveDaoFetched,
+    pendingDaoError,
+    liveDaoError,
+  ]);
 
   /*************************************************
    *                    Handlers                   *
@@ -203,7 +243,7 @@ export const Dashboard: React.FC = () => {
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (pendingDaoLoading || liveDaoLoading || followedDaosLoading) {
+  if (isLoading) {
     return <Loading />;
   }
 
@@ -309,13 +349,6 @@ export const Dashboard: React.FC = () => {
         )}
       </>
     );
-  } else if (!pendingDao && !liveDao) {
-    // if DAO isn't loading and there is no pending or live DAO, then
-    // navigate to notFound
-    navigate(NotFound, {
-      replace: true,
-      state: {incorrectDao: urlAddressOrEns},
-    });
   }
 
   return null;
@@ -354,7 +387,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
 
-  if (isTokensLoading || isLoading) {
+  if (isTokensLoading && isLoading && !data) {
     return <Loading />;
   }
 
@@ -456,8 +489,13 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue, isTokensLoading} = useDaoVault();
+  const {data, isLoading} = useProposals({
+    daoAddressOrEns,
+    pluginType,
+    pluginAddress,
+  });
 
-  if (isTokensLoading) {
+  if (isTokensLoading && isLoading && !data) {
     return <Loading />;
   }
 

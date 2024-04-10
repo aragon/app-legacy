@@ -725,15 +725,24 @@ export const Proposal: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
+  if (!proposal) {
+    return <Loading />;
+  }
+
   const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
+
+  console.log(
+    'isLoading',
+    isLoading,
+    paramsAreLoading,
+    proposalIsLoading,
+    detailsAreLoading
+  );
+  console.log('proposal', proposal);
 
   // the last check is to make sure Typescript narrows the type properly
   const hasInvalidProposal =
-    proposalError || (proposalIsFetched && !proposal) || proposal == null;
-
-  if (isLoading) {
-    return <Loading />;
-  }
+    proposalError || (proposalIsFetched && proposal == null);
 
   if (hasInvalidProposal) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});

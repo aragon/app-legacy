@@ -96,7 +96,7 @@ const ProposalSnapshot: React.FC<Props> = ({
       );
     });
 
-  if (proposalsAreLoading || proposalCountIsLoading) {
+  if (proposalsAreLoading && proposalCountIsLoading && !data) {
     return <Loading />;
   }
 
