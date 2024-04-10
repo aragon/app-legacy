@@ -83,7 +83,6 @@ export const Dashboard: React.FC = () => {
     data: liveDao,
     isLoading: liveDaoLoading,
     isSuccess,
-    isError: liveDaoError,
     isFetched: liveDaoFetched,
   } = useDaoQuery(urlAddressOrEns, pollInterval);
   const liveAddressOrEns = toDisplayEns(liveDao?.ensDomain) || liveDao?.address;
@@ -92,7 +91,6 @@ export const Dashboard: React.FC = () => {
   const {
     data: pendingDao,
     isLoading: pendingDaoLoading,
-    isError: pendingDaoError,
     isFetched: pendingDaoFetched,
   } = usePendingDao(urlAddressOrEns);
 
@@ -152,34 +150,19 @@ export const Dashboard: React.FC = () => {
   }, [liveDao, daoCreationState, pendingDao]);
 
   useEffect(() => {
-    // Wait until all data is loaded
-    if (!isLoading) {
-      // Check if there is no liveDao and no pendingDao
-      if (
-        !liveDao &&
-        !pendingDao &&
-        pendingDaoFetched &&
-        liveDaoFetched &&
-        !pendingDaoError &&
-        !liveDaoError
-      ) {
-        // Redirect to the 404 Not Found page
-        navigate(NotFound, {
-          replace: true,
-          state: {incorrectDao: urlAddressOrEns},
-        });
-      }
+    if (pendingDaoFetched && liveDaoFetched && !liveDao && !pendingDao) {
+      navigate(NotFound, {
+        replace: true,
+        state: {incorrectDao: urlAddressOrEns},
+      });
     }
   }, [
-    isLoading,
     liveDao,
-    pendingDao,
-    navigate,
-    urlAddressOrEns,
-    pendingDaoFetched,
     liveDaoFetched,
-    pendingDaoError,
-    liveDaoError,
+    navigate,
+    pendingDao,
+    pendingDaoFetched,
+    urlAddressOrEns,
   ]);
 
   /*************************************************
@@ -387,7 +370,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
 
-  if (isTokensLoading && isLoading && !data) {
+  if (isTokensLoading || isLoading) {
     return <Loading />;
   }
 
