@@ -1,7 +1,7 @@
 import {testWithMetaMask as test} from '../../../../testWithMetaMask';
 
 // Test is creating a Token Based DAO (governance incompatible token), opens the DAO dashboard, and adds the first member
-test('Create Token Based DAO (new token)', async ({
+test('Create Token Based DAO (governance incompatible token)', async ({
   context,
   page,
   extensionId,

@@ -23,17 +23,14 @@ test('Edit DAO settings Proposal', async ({
     .getByTestId('navLinks')
     .getByRole('button', {name: 'Settings'})
     .click();
-
   await page
     .getByTestId('header-page')
     .getByRole('button', {name: 'Edit settings'})
     .click();
-
   await page.getByRole('button', {name: 'Switch to Ethereum Sepolia'}).click();
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);
   await page.getByRole('button', {name: 'Add link'}).click();
-
   await page.getByPlaceholder('Lens').click();
   await page.getByPlaceholder('Lens').fill('Token Based DAO');
   await page.getByPlaceholder('Lens').click();
@@ -43,7 +40,6 @@ test('Edit DAO settings Proposal', async ({
       'https://app.aragon.org/#/daos/sepolia/0x7099c93700419c2f78f1f94b61dd7b28a9e0cb9a/dashboard'
     );
   await page.getByRole('button', {name: 'Review proposal'}).click();
-
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByPlaceholder('Give your proposal a title').click();
   await page
@@ -55,7 +51,6 @@ test('Edit DAO settings Proposal', async ({
     .fill('Edit settings');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Next'}).click();
-
   await page.getByRole('button', {name: 'Publish proposal'}).click();
   await page.getByRole('button', {name: 'Create proposal now'}).click();
   await metamask.confirmTransaction();

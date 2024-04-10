@@ -1,4 +1,4 @@
-import {testWithMetaMask as test} from '../../../testWithMetaMask';
+import {testWithMetaMask as test} from '../../../../testWithMetaMask';
 
 // Test is publishing, approving, and executing a withdrawal of DAO funds
 test('Withdraw DAO funds proposal', async ({
@@ -8,7 +8,7 @@ test('Withdraw DAO funds proposal', async ({
   metamask,
 }) => {
   await page.goto(
-    'http://localhost:5173/#/daos/sepolia/0x7099c93700419c2f78f1f94b61dd7b28a9e0cb9a/dashboard'
+    'http://localhost:5173/#/daos/sepolia/0xf4795943aa64031d6d32b6e76899dbb9bced91b6/dashboard'
   );
   await page.getByRole('button', {name: 'Accept all'}).click();
   await page.getByRole('button', {name: 'Connect wallet'}).click();
