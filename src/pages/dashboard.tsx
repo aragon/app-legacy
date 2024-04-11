@@ -150,7 +150,13 @@ export const Dashboard: React.FC = () => {
   }, [liveDao, daoCreationState, pendingDao]);
 
   useEffect(() => {
-    if (pendingDaoFetched && liveDaoFetched && !liveDao && !pendingDao) {
+    if (
+      pendingDaoFetched &&
+      liveDaoFetched &&
+      !liveDao &&
+      !pendingDao &&
+      !isLoading
+    ) {
       navigate(NotFound, {
         replace: true,
         state: {incorrectDao: urlAddressOrEns},
@@ -163,6 +169,7 @@ export const Dashboard: React.FC = () => {
     pendingDao,
     pendingDaoFetched,
     urlAddressOrEns,
+    isLoading,
   ]);
 
   /*************************************************

@@ -1,6 +1,10 @@
 import {IPaginatedResponse} from 'services/aragon-backend/domain/paginated-response';
 import request, {gql} from 'graphql-request';
-import {UseInfiniteQueryOptions, useInfiniteQuery} from '@tanstack/react-query';
+import {
+  InfiniteData,
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
 import {IFetchDaosParams} from 'services/aragon-backend/aragon-backend-service.api';
 import {IDao} from 'services/aragon-backend/domain/dao';
@@ -65,7 +69,11 @@ const fetchDaos = async (
 export const useDaos = (
   params: IFetchDaosParams,
   options: Omit<
-    UseInfiniteQueryOptions<IPaginatedResponse<IDao>>,
+    UseInfiniteQueryOptions<
+      IPaginatedResponse<IDao>,
+      unknown,
+      InfiniteData<IPaginatedResponse<IDao>>
+    >,
     'queryKey' | 'getNextPageParam' | 'initialPageParam'
   >
 ) => {
@@ -82,10 +90,6 @@ export const useDaos = (
 
       return {...params, skip: skip + take};
     },
-    select: data => ({
-      data: data.pages.flatMap(page => page.data),
-      total: data.pages[0]?.total,
-    }),
     initialPageParam: params,
     ...options,
   });
