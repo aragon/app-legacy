@@ -18,16 +18,14 @@ export const ExecuteProposalDialog: React.FC<
   const {t} = useTranslation();
 
   const {transaction, isLoading: isTransactionLoading} =
-    useCreateExecuteTransactionProposal();
+    useCreateExecuteTransactionProposal({enabled: isOpen});
 
   const sendTransactionResults = useSendExecuteProposalTransaction({
     process: executeProposalProcess,
     transaction,
   });
 
-  const onSuccessButtonClick = () => {
-    //
-  };
+  const onSuccessButtonClick = () => onClose?.();
 
   return (
     <TransactionDialog

@@ -6,13 +6,25 @@ import {useParams} from 'react-router-dom';
 import {useCreateExecuteMultisigProposalTransaction} from 'services/transactions/queries/useCreateExecuteMultisigProposalTransaction';
 import {useCreateExecuteTokenVotingProposalTransaction} from 'services/transactions/queries/useCreateExecuteTokenVotingProposalTransaction';
 
-export const useCreateExecuteTransactionProposal = () => {
+export interface IUseCreateExecuteTransactionProposalParams {
+  /**
+   * Disables the create transaction hook when set to false.
+   */
+  enabled?: boolean;
+}
+
+export const useCreateExecuteTransactionProposal = (
+  params: IUseCreateExecuteTransactionProposalParams
+) => {
+  const {enabled} = params;
   const {id: proposalId} = useParams();
 
   const {client} = useClient();
 
   const {data: daoDetails} = useDaoDetailsQuery();
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+
+  const enableHook = enabled !== false && client != null && proposalId != null;
 
   const {data: multisigTransaction, isLoading: isMultisigTransactionLoading} =
     useCreateExecuteMultisigProposalTransaction(
@@ -21,10 +33,7 @@ export const useCreateExecuteTransactionProposal = () => {
         proposalId: proposalId as string,
       },
       {
-        enabled:
-          client != null &&
-          proposalId != null &&
-          pluginType === 'multisig.plugin.dao.eth',
+        enabled: enableHook && pluginType === 'multisig.plugin.dao.eth',
       }
     );
 
@@ -37,10 +46,7 @@ export const useCreateExecuteTransactionProposal = () => {
       proposalId: proposalId as string,
     },
     {
-      enabled:
-        client != null &&
-        proposalId != null &&
-        pluginType === 'token-voting.plugin.dao.eth',
+      enabled: enableHook && pluginType === 'token-voting.plugin.dao.eth',
     }
   );
 
