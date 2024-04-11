@@ -77,6 +77,8 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
     sendTransactionError ?? waitTransactionError
   );
 
+  const dialogContext = isSuccess ? 'success' : 'idle';
+
   const loadingButtonLabel = isEstimateGasLoading
     ? 'transactionDialog.button.preparing'
     : isSendTransactionLoading
@@ -126,10 +128,10 @@ export const TransactionDialog: React.FC<ITransactionDialogProps> = props => {
         <IllustrationObject object="WALLET" className="w-40" />
         <div className="flex flex-col gap-3">
           <p className="text-xl font-semibold text-neutral-800">
-            {t('transactionDialog.title')}
+            {t(`transactionDialog.title.${dialogContext}`)}
           </p>
           <p className="text-sm font-normal text-neutral-600">
-            {t('transactionDialog.description')}
+            {t(`transactionDialog.description.${dialogContext}`)}
           </p>
         </div>
       </div>

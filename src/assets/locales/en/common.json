@@ -1849,8 +1849,14 @@
     }
   },
   "transactionDialog": {
-    "title": "Transaction required",
-    "description": "You will need to sign a transaction in your connected wallet.",
+    "title": {
+      "idle": "Transaction required",
+      "success": "Transaction successful"
+    },
+    "description": {
+      "idle": "You will need to sign a transaction in your connected wallet.",
+      "success": "Your transaction has been successfully confirmed."
+    },
     "button": {
       "preparing": "Preparing transaction",
       "waitingApproval": "Awaiting approval",
