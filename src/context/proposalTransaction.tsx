@@ -58,10 +58,7 @@ type SubmitVoteParams = {
 
 type ProposalTransactionContextType = {
   /** handles voting on proposal */
-  handlePrepareVote: (params: SubmitVoteParams) => void;
-  handlePrepareApproval: (params: ApproveMultisigProposalParams) => void;
   handlePrepareExecution: () => void;
-  handleGaslessVoting: (params: SubmitVoteParams) => void;
   handleExecutionMultisigApprove: (
     params: ApproveMultisigProposalParams
   ) => void;
@@ -167,36 +164,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   /*************************************************
    *              Prepare Transactions             *
    *************************************************/
-  const handlePrepareApproval = useCallback(
-    (params: ApproveMultisigProposalParams) => {
-      setApprovalParams(params);
-      setShowVoteModal(true);
-      setVoteOrApprovalProcessState(TransactionState.WAITING);
-    },
-    []
-  );
-
-  const handlePrepareVote = useCallback(
-    (params: SubmitVoteParams) => {
-      setVotingPower(params.votingPower);
-      setReplacingVote(!!params.replacement);
-      setVoteTokenAddress(params.voteTokenAddress);
-
-      setVoteParams({proposalId, vote: params.vote});
-      setShowVoteModal(true);
-      setVoteOrApprovalProcessState(TransactionState.WAITING);
-    },
-    [proposalId]
-  );
-
-  const handleGaslessVoting = useCallback(
-    (params: SubmitVoteParams) => {
-      setVoteParams({proposalId, vote: params.vote});
-      setVoteTokenAddress(params.voteTokenAddress);
-      setShowGaslessModal(true);
-    },
-    [proposalId]
-  );
 
   const handleExecutionMultisigApprove = useCallback(
     (params: ApproveMultisigProposalParams) => {
@@ -671,10 +638,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   const value = useMemo(
     () => ({
-      handlePrepareVote,
-      handlePrepareApproval,
       handlePrepareExecution,
-      handleGaslessVoting,
       handleExecutionMultisigApprove,
       isLoading,
       voteOrApprovalSubmitted,
@@ -687,10 +651,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       onApprovalSuccess,
     }),
     [
-      handlePrepareVote,
-      handlePrepareApproval,
       handlePrepareExecution,
-      handleGaslessVoting,
       handleExecutionMultisigApprove,
       isLoading,
       voteOrApprovalSubmitted,

@@ -1,30 +1,41 @@
 import {
   ApproveMultisigProposalParams,
   VoteProposalParams,
+  VoteValues,
 } from '@aragon/sdk-client';
-import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useParams} from 'react-router-dom';
+import {ProposalId} from 'utils/types';
 
 class VoteOrApprovalUtils {
   defaultTokenDecimals = 18;
 
-  buildVoteOrApprovalParams = (PluginType: PluginTypes) => {
+  buildVoteOrApprovalParams = (
+    PluginType: PluginTypes,
+    tryExecution: boolean,
+    vote?: VoteValues
+  ) => {
     let param: VoteProposalParams | ApproveMultisigProposalParams | undefined =
       undefined;
-    const {approvalParams, voteParams} = useProposalTransactionContext();
+    const {id: urlId} = useParams();
+    const proposalId = new ProposalId(urlId!).export();
 
     switch (PluginType) {
-      case 'token-voting.plugin.dao.eth': {
-        param = voteParams;
+      case 'token-voting.plugin.dao.eth':
+      case 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth': {
+        param = {
+          proposalId,
+          vote: vote as VoteValues,
+        };
         break;
       }
       case 'multisig.plugin.dao.eth': {
-        param = approvalParams;
+        param = {
+          proposalId,
+          tryExecution,
+        };
         break;
       }
-      // case 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth': {
-      //   const param =
-      // }
       default:
         throw new Error(`Unknown plugin type`);
     }

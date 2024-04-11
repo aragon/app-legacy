@@ -1629,6 +1629,20 @@
       "pinMetadata": "Unable to pin data to IPFS"
     }
   },
+  "voteDialog": {
+    "title": "Sign Vote",
+    "button": {
+      "success": "Continue to proposal",
+      "approve": "Vote now"
+    }
+  },
+  "approvalDialog": {
+    "title": "Approve",
+    "button": {
+      "success": "Continue to proposal",
+      "approve": "Approve proposal"
+    }
+  },
   "dao": {
     "follow": {
       "true": "Following",

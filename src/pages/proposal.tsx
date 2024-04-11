@@ -6,6 +6,7 @@ import {
   MultisigProposal,
   TokenVotingClient,
   TokenVotingProposal,
+  VoteValues,
   VotingMode,
 } from '@aragon/sdk-client';
 import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
@@ -58,7 +59,7 @@ import {
   GaslessVotingClient,
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
-import {constants} from 'ethers';
+import {BigNumber, constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
@@ -92,6 +93,7 @@ import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {VoteOrApprovalDialog} from 'containers/VoteOrApprovalDialog/VoteOrApprovalDialog';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -132,12 +134,18 @@ export const Proposal: React.FC = () => {
   const [voteStatus, setVoteStatus] = useState('');
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [tryExecution, setTryExecution] = useState(false);
+  const [vote, setVote] = useState<VoteValues>();
+  const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
+  const [voteTokenAddress, setVoteTokenAddress] = useState<
+    string | undefined
+  >();
+  const [replacingVote, setReplacingVote] = useState(false);
+
 
   const {
-    handlePrepareVote,
-    handlePrepareApproval,
     handlePrepareExecution,
-    handleGaslessVoting,
     isLoading: paramsAreLoading,
     voteOrApprovalSubmitted,
     executionFailed,
@@ -631,17 +639,11 @@ export const Proposal: React.FC = () => {
         open('network');
         statusRef.current.wasOnWrongNetwork = true;
       } else if (canVote && proposal?.id) {
-        handlePrepareApproval({tryExecution, proposalId: proposal.id});
+        setIsDialogOpen(true);
+        setTryExecution(tryExecution);
       }
     },
-    [
-      address,
-      canVote,
-      handlePrepareApproval,
-      isOnWrongNetwork,
-      open,
-      proposal?.id,
-    ]
+    [address, canVote, isOnWrongNetwork, open, proposal?.id]
   );
 
   const handleVoteClick = useCallback(() => {
@@ -764,19 +766,17 @@ export const Proposal: React.FC = () => {
     votingInProcess,
     voted: voted,
     executableWithNextApproval,
-    onVoteSubmitClicked: vote =>
-      isGaslessProposal(proposal)
-        ? handleGaslessVoting({
-            vote,
-            votingPower: pastVotingPower,
-            voteTokenAddress: proposal.token?.address,
-          })
-        : handlePrepareVote({
-            vote,
-            replacement: voted || voteOrApprovalSubmitted,
-            votingPower: pastVotingPower,
-            voteTokenAddress: (proposal as TokenVotingProposal).token?.address,
-          }),
+    onVoteSubmitClicked: vote => {
+      setVote(vote);
+      setVotingPower(pastVotingPower);
+      if (isGaslessProposal(proposal)) {
+        setVote(vote);
+        setVoteTokenAddress(proposal.token?.address);
+      } else {
+        setVoteTokenAddress((proposal as TokenVotingProposal).token?.address);
+        setReplacingVote(!!(voted || voteOrApprovalSubmitted));
+      }
+    },
   };
 
   return (
@@ -891,6 +891,17 @@ export const Proposal: React.FC = () => {
           <WidgetStatus steps={proposalSteps} />
         </AdditionalInfoContainer>
       </ContentContainer>
+
+      <VoteOrApprovalDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        tryExecution={tryExecution}
+        pluginType={pluginType}
+        vote={vote}
+        votingPower={votingPower}
+        replacingVote={replacingVote}
+        voteTokenAddress={voteTokenAddress}
+      />
     </Container>
   );
 };

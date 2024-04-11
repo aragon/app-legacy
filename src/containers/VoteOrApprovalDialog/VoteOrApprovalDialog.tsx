@@ -1,20 +1,25 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {ModalProps} from '@aragon/ods-old';
 import {TransactionDialog} from 'containers/transactionDialog';
-import {useNetwork} from 'context/network';
 import {useVoteOrApprovalTransaction} from 'services/transactions/queries/useVoteOrApprovalTransaction';
-import {VoteOrApprovalUtils} from './utils/index';
-import {useFormContext} from 'react-hook-form';
-import {CreateDaoFormData} from 'utils/types';
+import {voteOrApprovalUtils} from './utils/index';
 import {IBuildVoteOrApprovalTransactionParams} from 'services/transactions/transactionsService.api';
-import {generatePath, useNavigate} from 'react-router-dom';
-import {Dashboard} from 'utils/paths';
 import {useSendVoteOrApprovalTransaction} from './hooks';
 import {useTranslation} from 'react-i18next';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {VoteValues} from '@aragon/sdk-client';
+import {BigNumber} from 'ethers';
 
+/**
+ * Represents the props for the VoteOrApprovalDialog component.
+ */
 export interface IVoteOrApprovalDialogProps extends ModalProps {
   pluginType: PluginTypes;
+  tryExecution: boolean;
+  vote?: VoteValues;
+  votingPower?: BigNumber;
+  replacingVote?: boolean;
+  voteTokenAddress?: string;
 }
 
 const VoteOrApprovalProcess = 'VOTE_OR_APPROVAL';
@@ -22,46 +27,57 @@ const VoteOrApprovalProcess = 'VOTE_OR_APPROVAL';
 export const VoteOrApprovalDialog: React.FC<
   IVoteOrApprovalDialogProps
 > = props => {
-  const {isOpen, onClose, pluginType, ...otherProps} = props;
+  const {
+    isOpen,
+    onClose,
+    pluginType,
+    tryExecution,
+    replacingVote,
+    vote,
+    votingPower,
+    ...otherProps
+  } = props;
+
+  const DialogTexts =
+    pluginType === 'multisig.plugin.dao.eth' ? 'approvalDialog' : 'voteDialog';
 
   const {t} = useTranslation();
-  const {network} = useNetwork();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
-  const navigate = useNavigate();
 
-  const {getValues} = useFormContext<CreateDaoFormData>();
-  const formValues = getValues();
+  const VoteOrApprovalParams = voteOrApprovalUtils.buildVoteOrApprovalParams(
+    pluginType,
+    tryExecution,
+    vote
+  );
 
-  const VoteOrApprovalParams =
-    VoteOrApprovalUtils.buildVoteOrApprovalParams(pluginType);
-
-  const {data: transaction, isInitialLoading: isTransactionLoading} =
-    useVoteOrApprovalTransaction(
-      {
-        ...VoteOrApprovalParams,
-        pluginClient,
-      } as IBuildVoteOrApprovalTransactionParams,
-      {enabled: VoteOrApprovalParams != null && pluginClient != null}
-    );
+  const {data: transaction} = useVoteOrApprovalTransaction(
+    {
+      ...VoteOrApprovalParams,
+      pluginClient,
+    } as IBuildVoteOrApprovalTransactionParams,
+    {enabled: VoteOrApprovalParams != null && pluginClient != null}
+  );
 
   const sendTransactionResults = useSendVoteOrApprovalTransaction({
     process: VoteOrApprovalProcess,
     transaction,
-    VoteOrApprovalParams,
+    votingPower,
+    replacingVote,
+    vote,
   });
-
-  const onSuccessButtonClick = () => {};
 
   return (
     <TransactionDialog
-      title={t('createDaoDialog.title')}
+      title={t(`${DialogTexts}.title`)}
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
       displayTransactionStatus={transaction != null}
-      sendTransactionLabel="createDaoDialog.button.approve"
+      sendTransactionLabel={`${DialogTexts}.button.approve`}
       successButton={{
-        label: 'createDaoDialog.button.success',
-        onClick: onSuccessButtonClick,
+        label: `${DialogTexts}.button.success`,
+        onClick: () => {
+          onClose?.();
+        },
       }}
       onClose={onClose}
       {...otherProps}

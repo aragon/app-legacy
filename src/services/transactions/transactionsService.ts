@@ -71,13 +71,13 @@ class TransactionsService {
   buildVoteOrApprovalTransaction = async (
     params: IBuildVoteOrApprovalTransactionParams
   ): Promise<ITransaction> => {
-    const {client, vote, proposalId, tryExecution = false} = params;
+    const {pluginClient, vote, proposalId, tryExecution = false} = params;
 
-    const signer = client.web3.getConnectedSigner();
+    const signer = pluginClient.web3.getConnectedSigner();
 
     const {pluginAddress, id} = decodeProposalId(proposalId);
 
-    if (isTokenVotingClient(client)) {
+    if (isTokenVotingClient(pluginClient)) {
       const tokenVotingContract = TokenVoting__factory.connect(
         pluginAddress,
         signer
@@ -90,7 +90,7 @@ class TransactionsService {
       );
 
       return transaction as ITransaction;
-    } else if (isMultisigClient(client)) {
+    } else if (isMultisigClient(pluginClient)) {
       const multisigContract = Multisig__factory.connect(pluginAddress, signer);
 
       const transaction = await multisigContract.populateTransaction.approve(

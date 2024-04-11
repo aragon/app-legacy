@@ -1,12 +1,15 @@
 import {useSendTransaction} from 'hooks/useSendTransaction';
 import {ITransaction} from 'services/transactions/domain/transaction';
-import {TransactionReceipt} from 'viem';
 
-import {CreateDaoFormData} from 'utils/types';
-import {useFormContext} from 'react-hook-form';
+import {ProposalId} from 'utils/types';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useProposalTransactionContext} from 'context/proposalTransaction';
+import {useWallet} from 'hooks/useWallet';
+import {voteStorage} from 'utils/localStorage';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useParams} from 'react-router-dom';
+import {BigNumber} from 'ethers';
+import {VoteValues} from '@aragon/sdk-client';
 
 export type ApproveMultisigProposalParams = {
   proposalId: string;
@@ -19,39 +22,66 @@ export interface IUseSendVoteOrApprovalTransaction {
    */
   process: string;
   /**
-   * CreateDao transaction to be sent.
+   * Vote transaction to be sent.
    */
   transaction?: ITransaction;
   /**
-   * IPFS id of the DAO metadata.
+   * The type of plugin installed.
    */
   PluginType?: PluginTypes;
+  /**
+   * VoteParams
+   */
+  votingPower?: BigNumber;
+  replacingVote?: boolean;
+  vote?: VoteValues;
 }
 
 export const useSendVoteOrApprovalTransaction = (
   params: IUseSendVoteOrApprovalTransaction
 ) => {
-  const {process, transaction, PluginType} = params;
-
+  const {process, transaction, PluginType, votingPower, replacingVote, vote} =
+    params;
   const {network} = useNetwork();
+  const {address} = useWallet();
 
-  const {getValues} = useFormContext<CreateDaoFormData>();
-  const formValues = getValues();
-  const {onApprovalSuccess, approvalParams, onVoteSuccess, voteParams} =
-    useProposalTransactionContext();
+  const {id: urlId} = useParams();
+  const proposalId = new ProposalId(urlId!).export();
 
-  const handleVoteOrApprovalSuccess = (txReceipt: TransactionReceipt) => {
+  const handleVoteOrApprovalSuccess = () => {
     switch (PluginType) {
       case 'token-voting.plugin.dao.eth': {
-        onVoteSuccess(voteParams.proposalId, voteParams.vote, replacingVote);
+        // cache token-voting vote
+        if (address != null && votingPower && vote) {
+          // fetch token user balance, ie vote weight
+          try {
+            const voteToPersist = {
+              address: address.toLowerCase(),
+              vote: vote,
+              weight: votingPower.toBigInt(),
+              voteReplaced: !!replacingVote,
+            };
+
+            // store in local storage
+            voteStorage.addVote(
+              CHAIN_METADATA[network].id,
+              proposalId.toString(),
+              voteToPersist
+            );
+          } catch (error) {
+            console.error(error);
+          }
+        }
         break;
       }
       case 'multisig.plugin.dao.eth': {
-        onApprovalSuccess(
-          VoteOrApprovalParams.proposalId,
-          VoteOrApprovalParams.tryExecution,
-          txReceipt.transactionHash
-        );
+        if (address) {
+          voteStorage.addVote(
+            CHAIN_METADATA[network].id,
+            proposalId,
+            address.toLowerCase()
+          );
+        }
         break;
       }
       default: {
@@ -61,7 +91,7 @@ export const useSendVoteOrApprovalTransaction = (
   };
 
   const sendTransactionResults = useSendTransaction({
-    logContext: {stack: [process], data: formValues},
+    logContext: {stack: [process]},
     transaction,
     onSuccess: handleVoteOrApprovalSuccess,
   });
