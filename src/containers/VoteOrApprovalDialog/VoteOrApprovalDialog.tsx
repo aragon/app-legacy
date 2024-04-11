@@ -50,19 +50,7 @@ export const VoteOrApprovalDialog: React.FC<
     VoteOrApprovalParams,
   });
 
-  const onSuccessButtonClick = () => {
-    const {daoAddress} = VoteOrApprovalUtils.getDaoAddressesFromReceipt(
-      sendTransactionResults.txReceipt
-    )!;
-    const daoPathParams = {network, dao: daoAddress};
-    const daoPath = generatePath(Dashboard, daoPathParams);
-    navigate(daoPath);
-    onClose?.();
-
-    if (network === 'ethereum') {
-      open('poapClaim');
-    }
-  };
+  const onSuccessButtonClick = () => {};
 
   return (
     <TransactionDialog

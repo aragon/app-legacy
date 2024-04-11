@@ -1,24 +1,35 @@
-import {PluginInstallItem} from '@aragon/sdk-client-common';
+import {
+  ApproveMultisigProposalParams,
+  VoteProposalParams,
+} from '@aragon/sdk-client';
+import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {PluginTypes} from 'hooks/usePluginClient';
 
 class VoteOrApprovalUtils {
   defaultTokenDecimals = 18;
 
   buildVoteOrApprovalParams = (PluginType: PluginTypes) => {
-    const plugins: PluginInstallItem[] = [];
+    let param: VoteProposalParams | ApproveMultisigProposalParams | undefined =
+      undefined;
+    const {approvalParams, voteParams} = useProposalTransactionContext();
 
-    switch(PluginType){
+    switch (PluginType) {
       case 'token-voting.plugin.dao.eth': {
-        const param = 
+        param = voteParams;
+        break;
       }
       case 'multisig.plugin.dao.eth': {
-        const param = 
+        param = approvalParams;
+        break;
       }
-      case 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth': {
-        const param = 
-      }
+      // case 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth': {
+      //   const param =
+      // }
+      default:
+        throw new Error(`Unknown plugin type`);
     }
-    
+
+    return param;
   };
 }
 
