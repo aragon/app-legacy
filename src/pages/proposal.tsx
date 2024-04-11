@@ -143,7 +143,6 @@ export const Proposal: React.FC = () => {
   >();
   const [replacingVote, setReplacingVote] = useState(false);
 
-
   const {
     handlePrepareExecution,
     isLoading: paramsAreLoading,
@@ -776,6 +775,7 @@ export const Proposal: React.FC = () => {
         setVoteTokenAddress((proposal as TokenVotingProposal).token?.address);
         setReplacingVote(!!(voted || voteOrApprovalSubmitted));
       }
+      setIsDialogOpen(true);
     },
   };
 
