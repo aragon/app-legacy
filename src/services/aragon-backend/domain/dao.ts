@@ -8,11 +8,6 @@ export interface IDaoStats {
   members: number;
 }
 
-export interface IDaoPages {
-  pages: IDao[];
-  pageParams: [];
-}
-
 export interface IDao {
   creatorAddress: Address;
   daoAddress: Address;

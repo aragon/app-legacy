@@ -479,13 +479,8 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue, isTokensLoading} = useDaoVault();
-  const {data, isLoading} = useProposals({
-    daoAddressOrEns,
-    pluginType,
-    pluginAddress,
-  });
 
-  if (isTokensLoading && isLoading && !data) {
+  if (isTokensLoading) {
     return <Loading />;
   }
 
