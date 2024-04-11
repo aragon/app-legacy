@@ -75,8 +75,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     notBegan,
   } = useGaslessCommitteeVotes(pluginAddress, pluginType, proposal);
 
-  const {handleExecutionMultisigApprove, executionFailed, executionTxHash} =
-    useProposalTransactionContext();
+  const {handleExecutionMultisigApprove} = useProposalTransactionContext();
 
   const mappedProps = useMemo(() => {
     if (!proposal) return;
@@ -210,10 +209,10 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     return getProposalExecutionStatus(
       proposal?.status,
       false,
-      executionFailed,
+      false,
       canBeExecuted
     );
-  }, [canBeExecuted, executionFailed, proposal?.status]);
+  }, [canBeExecuted, proposal?.status]);
 
   let defaultAccordion = '';
   if (new Date() < proposal?.parameters.endDate) {
@@ -265,7 +264,7 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
         actions={actions}
         status={executionStatus}
         onExecuteClicked={onExecuteClicked}
-        txhash={executionTxHash || proposal?.executionTxHash || undefined}
+        txhash={proposal?.executionTxHash || undefined}
       />
     </>
   );
