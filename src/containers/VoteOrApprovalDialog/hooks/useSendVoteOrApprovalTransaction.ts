@@ -10,6 +10,11 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {useParams} from 'react-router-dom';
 import {BigNumber} from 'ethers';
 import {VoteValues} from '@aragon/sdk-client';
+import {useQueryClient} from '@tanstack/react-query';
+import {
+  AragonSdkQueryItem,
+  aragonSdkQueryKeys,
+} from 'services/aragon-sdk/query-keys';
 
 export type ApproveMultisigProposalParams = {
   proposalId: string;
@@ -28,28 +33,39 @@ export interface IUseSendVoteOrApprovalTransaction {
   /**
    * The type of plugin installed.
    */
-  PluginType?: PluginTypes;
+  pluginType?: PluginTypes;
   /**
    * VoteParams
    */
   votingPower?: BigNumber;
   replacingVote?: boolean;
   vote?: VoteValues;
+  setVoteOrApprovalSubmitted: (value: boolean) => void;
 }
 
 export const useSendVoteOrApprovalTransaction = (
   params: IUseSendVoteOrApprovalTransaction
 ) => {
-  const {process, transaction, PluginType, votingPower, replacingVote, vote} =
-    params;
+  const {
+    process,
+    transaction,
+    pluginType,
+    votingPower,
+    replacingVote,
+    vote,
+    setVoteOrApprovalSubmitted,
+  } = params;
   const {network} = useNetwork();
   const {address} = useWallet();
+  const queryClient = useQueryClient();
 
   const {id: urlId} = useParams();
   const proposalId = new ProposalId(urlId!).export();
 
   const handleVoteOrApprovalSuccess = () => {
-    switch (PluginType) {
+    setVoteOrApprovalSubmitted(true);
+
+    switch (pluginType) {
       case 'token-voting.plugin.dao.eth': {
         // cache token-voting vote
         if (address != null && votingPower && vote) {
@@ -88,6 +104,15 @@ export const useSendVoteOrApprovalTransaction = (
         break;
       }
     }
+
+    const allProposalsQuery = [AragonSdkQueryItem.PROPOSALS];
+    const currentProposal = aragonSdkQueryKeys.proposal({
+      id: proposalId,
+      pluginType,
+    });
+
+    queryClient.invalidateQueries(allProposalsQuery);
+    queryClient.invalidateQueries(currentProposal);
   };
 
   const sendTransactionResults = useSendTransaction({

@@ -20,6 +20,7 @@ export interface IVoteOrApprovalDialogProps extends ModalProps {
   votingPower?: BigNumber;
   replacingVote?: boolean;
   voteTokenAddress?: string;
+  setVoteOrApprovalSubmitted: (value: boolean) => void;
 }
 
 const VoteOrApprovalProcess = 'VOTE_OR_APPROVAL';
@@ -35,6 +36,7 @@ export const VoteOrApprovalDialog: React.FC<
     replacingVote,
     vote,
     votingPower,
+    setVoteOrApprovalSubmitted,
     ...otherProps
   } = props;
 
@@ -60,10 +62,12 @@ export const VoteOrApprovalDialog: React.FC<
 
   const sendTransactionResults = useSendVoteOrApprovalTransaction({
     process: VoteOrApprovalProcess,
+    pluginType,
     transaction,
     votingPower,
     replacingVote,
     vote,
+    setVoteOrApprovalSubmitted,
   });
 
   return (

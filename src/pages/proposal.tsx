@@ -142,11 +142,11 @@ export const Proposal: React.FC = () => {
     string | undefined
   >();
   const [replacingVote, setReplacingVote] = useState(false);
+  const [voteOrApprovalSubmitted, setVoteOrApprovalSubmitted] = useState(false);
 
   const {
     handlePrepareExecution,
     isLoading: paramsAreLoading,
-    voteOrApprovalSubmitted,
     executionFailed,
     executionTxHash,
   } = useProposalTransactionContext();
@@ -901,6 +901,7 @@ export const Proposal: React.FC = () => {
         votingPower={votingPower}
         replacingVote={replacingVote}
         voteTokenAddress={voteTokenAddress}
+        setVoteOrApprovalSubmitted={setVoteOrApprovalSubmitted}
       />
     </Container>
   );
