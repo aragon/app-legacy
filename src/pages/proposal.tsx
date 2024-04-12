@@ -726,13 +726,13 @@ export const Proposal: React.FC = () => {
    *************************************************/
   const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
 
+  if (isLoading || proposal == null) {
+    return <Loading />;
+  }
+
   if (proposalError || (!isLoading && proposal == null)) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
     return null;
-  }
-
-  if (isLoading || proposal == null) {
-    return <Loading />;
   }
 
   if (proposal) {
