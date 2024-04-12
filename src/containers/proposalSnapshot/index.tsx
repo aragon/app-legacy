@@ -102,7 +102,9 @@ const ProposalSnapshot: React.FC<Props> = ({
 
   if (proposalCountIsFetched && (proposalCount === 0 || proposalCountError)) {
     return (
+      // TODO: remove this when fixed on ODS (APP-2994)
       <CardEmptyState
+        className="!w-fit"
         humanIllustration={{
           body: 'VOTING',
           expression: 'SMILE',
