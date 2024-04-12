@@ -146,7 +146,6 @@ export const Proposal: React.FC = () => {
 
   const {
     data: proposal,
-    isFetched: proposalIsFetched,
     isLoading: proposalIsLoading,
     isError: proposalError,
     refetch,
@@ -727,16 +726,13 @@ export const Proposal: React.FC = () => {
    *************************************************/
   const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  // the last check is to make sure Typescript narrows the type properly
-  const hasInvalidProposal = proposalError || (proposalIsFetched && !proposal);
-
-  if (hasInvalidProposal) {
+  if (proposalError || (!isLoading && proposal == null)) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
     return null;
+  }
+
+  if (isLoading || proposal == null) {
+    return <Loading />;
   }
 
   if (proposal) {
