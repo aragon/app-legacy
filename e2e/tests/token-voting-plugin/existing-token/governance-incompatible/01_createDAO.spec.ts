@@ -30,9 +30,15 @@ test('Create Token Based DAO (governance incompatible token)', async ({
   await page.getByPlaceholder('0x…').click();
   await page
     .getByPlaceholder('0x…')
-    .fill('0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14');
+    .fill('0xea3eed8616877F5d3c4aEbf5A799F2e8D6DE9A5E');
   await page.getByRole('button', {name: 'Next'}).click();
-  await page.getByText('Any walletAny connected').click();
+  await page
+    .locator('div')
+    .filter({hasText: /^Minimum requirement≥$/})
+    .getByTestId('number-input')
+    .click();
+  await page.getByPlaceholder('≥').press('ArrowRight');
+  await page.getByPlaceholder('≥').fill('0.001');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.locator('.sc-FjLsS > .w-4').first().click();
   await page
@@ -67,6 +73,7 @@ test('Create Token Based DAO (governance incompatible token)', async ({
   await page.getByPlaceholder('0').click();
   await page.getByPlaceholder('0').fill('0.001');
   await page.getByRole('button', {name: 'Approve tokens'}).click();
+  await page.waitForTimeout(5000);
   await metamask.approveTokenPermission();
   await page.waitForTimeout(1000);
   await page.getByRole('button', {name: 'Wrap tokens'}).click();
