@@ -735,163 +735,159 @@ export const Proposal: React.FC = () => {
     return null;
   }
 
-  if (proposal) {
-    // Store voting terminal props
-    const votingTerminalProps: VotingTerminalProps = {
-      ...mappedProps,
-      title: isMultisigProposal(proposal)
-        ? t('votingTerminal.multisig.title')
-        : isTokenVotingPlugin
-        ? t('votingTerminal.title')
-        : undefined, // Title will be shown on the GaslessVotingTerminal
-      status: proposalStatus,
-      pluginType,
-      daoToken,
-      blockNumber: proposal.creationBlockNumber,
-      statusLabel: isGaslessProposal(proposal) ? undefined : voteStatus, // Status will be shown on the GaslessVotingTerminal,
-      selectedTab: terminalTab,
-      alertMessage,
-      onTabSelected: setTerminalTab,
-      onVoteClicked: handleVoteClick,
-      onApprovalClicked: handleApprovalClick,
-      onCancelClicked: () => setVotingInProcess(false),
-      voteButtonLabel,
-      voteNowDisabled: votingDisabled,
-      votingInProcess,
-      voted: voted,
-      executableWithNextApproval,
-      onVoteSubmitClicked: vote =>
-        isGaslessProposal(proposal)
-          ? handleGaslessVoting({
-              vote,
-              votingPower: pastVotingPower,
-              voteTokenAddress: proposal.token?.address,
-            })
-          : handlePrepareVote({
-              vote,
-              replacement: voted || voteOrApprovalSubmitted,
-              votingPower: pastVotingPower,
-              voteTokenAddress: (proposal as TokenVotingProposal).token
-                ?.address,
-            }),
-    };
+  // Store voting terminal props
+  const votingTerminalProps: VotingTerminalProps = {
+    ...mappedProps,
+    title: isMultisigProposal(proposal)
+      ? t('votingTerminal.multisig.title')
+      : isTokenVotingPlugin
+      ? t('votingTerminal.title')
+      : undefined, // Title will be shown on the GaslessVotingTerminal
+    status: proposalStatus,
+    pluginType,
+    daoToken,
+    blockNumber: proposal.creationBlockNumber,
+    statusLabel: isGaslessProposal(proposal) ? undefined : voteStatus, // Status will be shown on the GaslessVotingTerminal,
+    selectedTab: terminalTab,
+    alertMessage,
+    onTabSelected: setTerminalTab,
+    onVoteClicked: handleVoteClick,
+    onApprovalClicked: handleApprovalClick,
+    onCancelClicked: () => setVotingInProcess(false),
+    voteButtonLabel,
+    voteNowDisabled: votingDisabled,
+    votingInProcess,
+    voted: voted,
+    executableWithNextApproval,
+    onVoteSubmitClicked: vote =>
+      isGaslessProposal(proposal)
+        ? handleGaslessVoting({
+            vote,
+            votingPower: pastVotingPower,
+            voteTokenAddress: proposal.token?.address,
+          })
+        : handlePrepareVote({
+            vote,
+            replacement: voted || voteOrApprovalSubmitted,
+            votingPower: pastVotingPower,
+            voteTokenAddress: (proposal as TokenVotingProposal).token?.address,
+          }),
+  };
 
-    return (
-      <Container>
-        <HeaderContainer>
-          {!isDesktop && (
-            <Breadcrumb
-              onClick={(path: string) =>
-                navigate(
-                  generatePath(path, {
-                    network,
-                    dao: toDisplayEns(daoDetails?.ensDomain) || dao,
-                  })
-                )
-              }
-              crumbs={breadcrumbs}
-              icon={IconType.APP_PROPOSALS}
-              tag={tag}
-            />
-          )}
-          <ProposalTitle>{proposal.metadata.title}</ProposalTitle>
-          <ContentWrapper>
-            <ProposerLink>
-              {t('governance.proposals.publishedBy')}{' '}
-              <Link
-                to={generatePath(DaoMember, {
+  return (
+    <Container>
+      <HeaderContainer>
+        {!isDesktop && (
+          <Breadcrumb
+            onClick={(path: string) =>
+              navigate(
+                generatePath(path, {
                   network,
-                  dao,
-                  user: proposal.creatorAddress,
-                })}
-                className="inline-flex max-w-full cursor-pointer items-center space-x-3 truncate rounded font-semibold text-primary-500 hover:text-primary-700 focus:outline-none focus-visible:ring focus-visible:ring-primary active:text-primary-800"
-              >
-                {proposal.creatorAddress.toLowerCase() ===
-                address?.toLowerCase()
-                  ? t('labels.you')
-                  : shortenAddress(proposal.creatorAddress)}
-              </Link>
-            </ProposerLink>
-          </ContentWrapper>
-          <SummaryText>{proposal.metadata.summary}</SummaryText>
-          {proposal.metadata.description && !expandedProposal && (
-            <Button
-              className="w-full md:w-max"
-              size="lg"
-              variant="tertiary"
-              iconRight={IconType.CHEVRON_DOWN}
-              onClick={() => setExpandedProposal(true)}
+                  dao: toDisplayEns(daoDetails?.ensDomain) || dao,
+                })
+              )
+            }
+            crumbs={breadcrumbs}
+            icon={IconType.APP_PROPOSALS}
+            tag={tag}
+          />
+        )}
+        <ProposalTitle>{proposal.metadata.title}</ProposalTitle>
+        <ContentWrapper>
+          <ProposerLink>
+            {t('governance.proposals.publishedBy')}{' '}
+            <Link
+              to={generatePath(DaoMember, {
+                network,
+                dao,
+                user: proposal.creatorAddress,
+              })}
+              className="inline-flex max-w-full cursor-pointer items-center space-x-3 truncate rounded font-semibold text-primary-500 hover:text-primary-700 focus:outline-none focus-visible:ring focus-visible:ring-primary active:text-primary-800"
             >
-              {t('governance.proposals.buttons.readFullProposal')}
-            </Button>
-          )}
-        </HeaderContainer>
+              {proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
+                ? t('labels.you')
+                : shortenAddress(proposal.creatorAddress)}
+            </Link>
+          </ProposerLink>
+        </ContentWrapper>
+        <SummaryText>{proposal.metadata.summary}</SummaryText>
+        {proposal.metadata.description && !expandedProposal && (
+          <Button
+            className="w-full md:w-max"
+            size="lg"
+            variant="tertiary"
+            iconRight={IconType.CHEVRON_DOWN}
+            onClick={() => setExpandedProposal(true)}
+          >
+            {t('governance.proposals.buttons.readFullProposal')}
+          </Button>
+        )}
+      </HeaderContainer>
 
-        <ContentContainer expandedProposal={expandedProposal}>
-          <ProposalContainer>
-            {proposal.metadata.description && expandedProposal && (
-              <>
-                <StyledEditorContent editor={editor} />
-                <Button
-                  className="mt-6 w-full md:w-max"
-                  variant="tertiary"
-                  size="md"
-                  iconRight={IconType.CHEVRON_UP}
-                  onClick={() => setExpandedProposal(false)}
-                >
-                  {t('governance.proposals.buttons.closeFullProposal')}
-                </Button>
-              </>
-            )}
-
-            {proposal &&
-              (proposalStatus === ProposalStatus.ACTIVE ||
-                proposalStatus === ProposalStatus.SUCCEEDED) &&
-              featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
-                'true' && <UpdateVerificationCard proposalId={proposalId} />}
-            {votingSettings && isGaslessProposal(proposal) ? (
-              <GaslessVotingTerminal
-                proposal={proposal}
-                votingStatusLabel={voteStatus}
-                pluginAddress={pluginAddress}
-                statusRef={statusRef}
-                onExecuteClicked={handleExecuteNowClicked}
-                actions={decodedActions}
-                connectedToRightNetwork={connectedToRightNetwork}
-                pluginType={pluginType}
+      <ContentContainer expandedProposal={expandedProposal}>
+        <ProposalContainer>
+          {proposal.metadata.description && expandedProposal && (
+            <>
+              <StyledEditorContent editor={editor} />
+              <Button
+                className="mt-6 w-full md:w-max"
+                variant="tertiary"
+                size="md"
+                iconRight={IconType.CHEVRON_UP}
+                onClick={() => setExpandedProposal(false)}
               >
-                <VotingTerminal
-                  {...votingTerminalProps}
-                  className={
-                    'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
+                {t('governance.proposals.buttons.closeFullProposal')}
+              </Button>
+            </>
+          )}
+
+          {proposal &&
+            (proposalStatus === ProposalStatus.ACTIVE ||
+              proposalStatus === ProposalStatus.SUCCEEDED) &&
+            featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+              'true' && <UpdateVerificationCard proposalId={proposalId} />}
+          {votingSettings && isGaslessProposal(proposal) ? (
+            <GaslessVotingTerminal
+              proposal={proposal}
+              votingStatusLabel={voteStatus}
+              pluginAddress={pluginAddress}
+              statusRef={statusRef}
+              onExecuteClicked={handleExecuteNowClicked}
+              actions={decodedActions}
+              connectedToRightNetwork={connectedToRightNetwork}
+              pluginType={pluginType}
+            >
+              <VotingTerminal
+                {...votingTerminalProps}
+                className={
+                  'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
+                }
+              />
+            </GaslessVotingTerminal>
+          ) : (
+            votingSettings && (
+              <>
+                <VotingTerminal {...votingTerminalProps} />
+                <ExecutionWidget
+                  pluginType={pluginType}
+                  actions={decodedActions}
+                  status={executionStatus}
+                  onExecuteClicked={handleExecuteNowClicked}
+                  txhash={
+                    executionTxHash || proposal.executionTxHash || undefined
                   }
                 />
-              </GaslessVotingTerminal>
-            ) : (
-              votingSettings && (
-                <>
-                  <VotingTerminal {...votingTerminalProps} />
-                  <ExecutionWidget
-                    pluginType={pluginType}
-                    actions={decodedActions}
-                    status={executionStatus}
-                    onExecuteClicked={handleExecuteNowClicked}
-                    txhash={
-                      executionTxHash || proposal.executionTxHash || undefined
-                    }
-                  />
-                </>
-              )
-            )}
-          </ProposalContainer>
-          <AdditionalInfoContainer>
-            <ResourceList links={proposal.metadata.resources} />
-            <WidgetStatus steps={proposalSteps} />
-          </AdditionalInfoContainer>
-        </ContentContainer>
-      </Container>
-    );
-  }
+              </>
+            )
+          )}
+        </ProposalContainer>
+        <AdditionalInfoContainer>
+          <ResourceList links={proposal.metadata.resources} />
+          <WidgetStatus steps={proposalSteps} />
+        </AdditionalInfoContainer>
+      </ContentContainer>
+    </Container>
+  );
 };
 
 const Container = styled.div.attrs({
