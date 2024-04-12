@@ -42,7 +42,8 @@
     "@walletconnect/core": "^2.8.3",
     "@walletconnect/utils": "^2.8.3",
     "@walletconnect/web3wallet": "^1.8.2",
-    "@web3modal/wagmi": "^4.1.1",
+    "@web3modal/siwe": "^4.1.5",
+    "@web3modal/wagmi": "^4.1.5",
     "big.js": "^6.2.1",
     "date-fns": "^2.28.0",
     "date-fns-tz": "^2.0.0",
@@ -68,8 +69,8 @@
     "styled-components": "^6.0.8",
     "tiptap-markdown": "^0.8.4",
     "use-react-router-breadcrumbs": "^3.0.1",
-    "viem": "^2.9.2",
-    "wagmi": "^2.5.12"
+    "viem": "^2.9.9",
+    "wagmi": "^2.5.18"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -98,7 +99,6 @@
     "babel-jest": "^29.7.0",
     "babel-preset-vite": "^1.0.4",
     "cross-env": "^7.0.3",
-    "cypress": "^13.2.0",
     "env-cmd": "^10.1.0",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^9.0.0",

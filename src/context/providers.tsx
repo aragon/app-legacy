@@ -13,10 +13,6 @@ export const ProvidersContextProvider = (props: {children: ReactNode}) => {
   const {network} = useNetwork();
   const apiProvider = aragonGateway.getRpcProvider(network);
 
-  if (apiProvider == null) {
-    throw new Error('ProvidersContextProvider: unsupported chain');
-  }
-
   const contextValue = useMemo(() => ({api: apiProvider}), [apiProvider]);
 
   return (
