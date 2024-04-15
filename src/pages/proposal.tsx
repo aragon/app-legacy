@@ -147,6 +147,7 @@ export const Proposal: React.FC = () => {
   const {
     data: proposal,
     isLoading: proposalIsLoading,
+    isFetched: proposalIsFetched,
     isError: proposalError,
     refetch,
   } = useProposal(
@@ -726,13 +727,13 @@ export const Proposal: React.FC = () => {
    *************************************************/
   const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
 
-  if (isLoading || proposal == null) {
-    return <Loading />;
-  }
-
-  if (proposalError || (!isLoading && proposal == null)) {
+  if (proposalError || (proposalIsFetched && proposal == null)) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
     return null;
+  }
+
+  if (isLoading || proposal == null) {
+    return <Loading />;
   }
 
   // Store voting terminal props
