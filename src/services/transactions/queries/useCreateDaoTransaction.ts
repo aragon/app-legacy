@@ -6,11 +6,11 @@ import {ITransaction} from '../domain/transaction';
 
 export const useCreateDaoTransaction = (
   params: IBuildCreateDaoTransactionParams,
-  options: UseQueryOptions<ITransaction> = {}
+  options: Omit<UseQueryOptions<ITransaction>, 'queryKey'>
 ) => {
-  return useQuery(
-    transactionsQueryKeys.createDao(params),
-    () => transactionsService.buildCreateDaoTransaction(params),
-    options
-  );
+  return useQuery({
+    queryKey: transactionsQueryKeys.createDao(params),
+    queryFn: () => transactionsService.buildCreateDaoTransaction(params),
+    ...options,
+  });
 };
