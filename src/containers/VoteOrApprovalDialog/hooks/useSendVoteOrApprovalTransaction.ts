@@ -100,6 +100,9 @@ export const useSendVoteOrApprovalTransaction = (
         }
         break;
       }
+      case 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth': {
+        break;
+      }
       default: {
         break;
       }
