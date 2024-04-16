@@ -103,9 +103,6 @@ type SelectableNetworks = Record<
   }
 >;
 
-const ShowGoerliBasedNetworks =
-  import.meta.env.VITE_FEATURE_FLAG_HIDE_GOERLIBASED_NETWORKS === 'false';
-
 const networks: SelectableNetworks = {
   main: {
     cost: ['polygon', 'base', 'arbitrum', 'ethereum'],
@@ -113,14 +110,8 @@ const networks: SelectableNetworks = {
     security: ['ethereum', 'base', 'arbitrum', 'polygon'],
   },
   test: {
-    cost: ShowGoerliBasedNetworks
-      ? ['mumbai', 'base-goerli', 'arbitrum-goerli', 'sepolia', 'goerli']
-      : ['sepolia'],
-    popularity: ShowGoerliBasedNetworks
-      ? ['goerli', 'sepolia', 'mumbai', 'arbitrum-goerli', 'base-goerli']
-      : ['sepolia'],
-    security: ShowGoerliBasedNetworks
-      ? ['goerli', 'sepolia', 'base-goerli', 'arbitrum-goerli', 'mumbai']
-      : ['sepolia'],
+    cost: ['sepolia'],
+    popularity: ['sepolia'],
+    security: ['sepolia'],
   },
 };

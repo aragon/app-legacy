@@ -102,7 +102,7 @@ export async function getPastVotingPower(
     // "Historical" data is being fetched by directing the provider to a
     // specific block
     // TODO: Remove this Goerli based network conditions
-    if (network === 'arbitrum' || network === 'arbitrum-goerli') {
+    if (network === 'arbitrum') {
       const functionName = 'getVotes';
       const iface = new ethers.utils.Interface(votesUpgradeableABI);
       const data = iface.encodeFunctionData(functionName, [account]);

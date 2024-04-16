@@ -315,7 +315,6 @@ export function isDaoEnsNameValid(
   const pattern = /^[a-z0-9-]+$/;
   if (!pattern.test(value)) return i18n.t('errors.ensNameInvalidFormat');
 
-  // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
   // don't check and allow name collision failure to happen when trying to run transaction
   if (!provider.network.ensAddress) {
     console.warn(

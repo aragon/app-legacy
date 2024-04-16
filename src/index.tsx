@@ -11,18 +11,7 @@ import {createWeb3Modal} from '@web3modal/wagmi/react';
 import {http, createConfig, WagmiProvider} from 'wagmi';
 import {walletConnect, coinbaseWallet} from 'wagmi/connectors';
 
-import {
-  Chain,
-  arbitrum,
-  arbitrumGoerli,
-  base,
-  baseGoerli,
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-  sepolia,
-} from 'wagmi/chains';
+import {Chain, arbitrum, base, mainnet, polygon, sepolia} from 'wagmi/chains';
 import {AlertProvider} from 'context/alert';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
@@ -43,17 +32,10 @@ import {App} from './app';
 import {aragonGateway} from 'utils/aragonGateway';
 import {HttpTransport} from 'viem';
 
-const chains = [
-  base,
-  baseGoerli,
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-  arbitrum,
-  arbitrumGoerli,
-  sepolia,
-] as [Chain, ...Chain[]];
+const chains = [base, mainnet, polygon, arbitrum, sepolia] as [
+  Chain,
+  ...Chain[],
+];
 
 const transports = chains.reduce(
   (RPCs, value) => {

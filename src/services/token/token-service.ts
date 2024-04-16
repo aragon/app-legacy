@@ -9,7 +9,6 @@ import {
   CHAIN_METADATA,
   COVALENT_API_KEY,
   SupportedNetworks,
-  supportedNetworksToBackendMap,
 } from 'utils/constants';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 import {isNativeToken} from 'utils/tokens';
@@ -105,7 +104,7 @@ class TokenService {
       const {token: resp} = await request(
         `${import.meta.env.VITE_BACKEND_URL}/graphql`,
         this.tokenQueryDocument,
-        {network: supportedNetworksToBackendMap[network], tokenAddress}
+        {network: network, tokenAddress}
       );
       const currPriceUsd = resp.priceUsd || 0;
       const prevPriceUsd = currPriceUsd - (resp.priceChangeOnDayUsd || 0);
@@ -127,11 +126,7 @@ class TokenService {
         },
       };
 
-      // TODO: Remove this Goerli based network conditions
-      if (
-        (network === 'base' || network === 'base-goerli') &&
-        token.address === constants.AddressZero
-      ) {
+      if (network === 'base' && token.address === constants.AddressZero) {
         token.imgUrl = REPLACEMENT_BASE_ETHER_LOGO_URL;
       }
     } catch {
@@ -184,7 +179,7 @@ class TokenService {
       `${import.meta.env.VITE_BACKEND_URL}/graphql`,
       this.tokenBalanceQueryDocument,
       {
-        network: supportedNetworksToBackendMap[network],
+        network: network,
         address,
         currency: this.defaultCurrency,
       }
