@@ -1590,56 +1590,10 @@
       "ctaApproveExecute": "Approve and execute"
     }
   },
-  "transactionDialog": {
-    "title": "Transaction required",
-    "description": "You will need to sign a transaction in your connected wallet.",
-    "button": {
-      "preparing": "Preparing transaction",
-      "waitingApproval": "Awaiting approval",
-      "waitingConfirmations": "Awaiting confirmations",
-      "retry": "Retry",
-      "resend": "Resend to wallet",
-      "proceed": "Proceed anyway",
-      "approve": "Approve transaction"
-    },
-    "link": {
-      "transaction": "See transaction"
-    },
-    "warning": {
-      "slowTransaction": "Transaction is taking longer than expected",
-      "gasEstimation": "Unable to estimate gas. This transaction may fail"
-    },
-    "error": {
-      "rejected": "Transaction rejected by the user.",
-      "default": "Transaction failed."
-    }
-  },
-  "createDaoDialog": {
-    "title": "Deploy your DAO",
-    "button": {
-      "pinning": "Pinning IPFS data",
-      "approve": "Deploy DAO now",
-      "success": "Launch DAO Dashboard"
-    },
-    "error": {
-      "pinMetadata": "Unable to pin data to IPFS"
-    }
-  },
   "dao": {
     "follow": {
       "true": "Following",
       "false": "Follow"
-    }
-  },
-  "createProposalDialog": {
-    "title": "Create proposal",
-    "button": {
-      "pinning": "Pinning IPFS data",
-      "approve": "Create proposal",
-      "success": "Open your proposal"
-    },
-    "error": {
-      "pinMetadata": "Unable to pin data to IPFS"
     }
   },
   "update": {
@@ -1849,14 +1803,6 @@
     }
   },
   "transactionDialog": {
-    "title": {
-      "idle": "Transaction required",
-      "success": "Transaction successful"
-    },
-    "description": {
-      "idle": "You will need to sign a transaction in your connected wallet.",
-      "success": "Your transaction has been successfully confirmed."
-    },
     "button": {
       "preparing": "Preparing transaction",
       "waitingApproval": "Awaiting approval",
@@ -1876,6 +1822,14 @@
     "error": {
       "rejected": "Transaction rejected by the user.",
       "default": "Transaction failed."
+    },
+    "title": {
+      "idle": "Transaction required",
+      "success": "Transaction successful"
+    },
+    "description": {
+      "idle": "You will need to sign a transaction in your connected wallet.",
+      "success": "Your transaction has been successfully confirmed."
     }
   },
   "createDaoDialog": {
@@ -1884,6 +1838,17 @@
       "approve": "Deploy DAO now",
       "success": "Launch DAO Dashboard",
       "pinning": "Pinning IPFS data"
+    },
+    "error": {
+      "pinMetadata": "Unable to pin data to IPFS"
+    }
+  },
+  "createProposalDialog": {
+    "title": "Create proposal",
+    "button": {
+      "pinning": "Pinning IPFS data",
+      "approve": "Create proposal",
+      "success": "Open your proposal"
     },
     "error": {
       "pinMetadata": "Unable to pin data to IPFS"
