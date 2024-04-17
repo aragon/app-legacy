@@ -66,13 +66,15 @@ export const useSendExecuteProposalTransaction = (
     );
 
     if (isPluginUpdate) {
-      queryClient.invalidateQueries(['daoDetails', daoAddressOrEns, network]);
+      queryClient.invalidateQueries({
+        queryKey: ['daoDetails', daoAddressOrEns, network],
+      });
     }
 
     if (isProtocolUpdate && daoDetails) {
-      queryClient.invalidateQueries(
-        aragonSdkQueryKeys.protocolVersion(daoDetails?.address)
-      );
+      queryClient.invalidateQueries({
+        queryKey: aragonSdkQueryKeys.protocolVersion(daoDetails?.address),
+      });
     }
 
     const allProposalsQuery = [AragonSdkQueryItem.PROPOSALS];
@@ -81,8 +83,8 @@ export const useSendExecuteProposalTransaction = (
       pluginType,
     });
 
-    queryClient.invalidateQueries(allProposalsQuery);
-    queryClient.invalidateQueries(currentProposal);
+    queryClient.invalidateQueries({queryKey: allProposalsQuery});
+    queryClient.invalidateQueries({queryKey: currentProposal});
   };
 
   const sendTransactionResults = useSendTransaction({

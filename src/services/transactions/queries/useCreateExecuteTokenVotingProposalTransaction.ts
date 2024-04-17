@@ -6,12 +6,12 @@ import {ITransaction} from '../domain/transaction';
 
 export const useCreateExecuteTokenVotingProposalTransaction = (
   params: IBuildExecuteTokenVotingProposalTransactionParams,
-  options: UseQueryOptions<ITransaction> = {}
+  options?: Omit<UseQueryOptions<ITransaction>, 'queryKey'>
 ) => {
-  return useQuery(
-    transactionsQueryKeys.createExecuteTokenVotingProposal(params),
-    () =>
+  return useQuery({
+    queryKey: transactionsQueryKeys.createExecuteTokenVotingProposal(params),
+    queryFn: () =>
       transactionsService.buildExecuteTokenVotingProposalTransaction(params),
-    options
-  );
+    ...options,
+  });
 };
