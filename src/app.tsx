@@ -39,13 +39,27 @@ import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
 import DeprecationBanner from 'containers/navbar/deprecationBanner';
 import {ActionsProvider} from './context/actions';
+import {useConnectors} from 'wagmi';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
   const {methods, status, network, address, provider} = useWallet();
+  const connectors = useConnectors();
+
+  // Update WalletConnect's preapproved multichain to the current chainId of the app's current network
+  useEffect(() => {
+    connectors[0].switchChain &&
+      connectors[0]?.switchChain({
+        chainId: CHAIN_METADATA[network as SupportedNetworks]?.id,
+      });
+  }, [connectors, network]);
+
   useMonitoring();
+
+  console.log('provider', provider);
 
   // Initialize feature flags using the initial URL
   useEffect(() => featureFlags.initializeFeatureFlags(), []);

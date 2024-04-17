@@ -71,6 +71,18 @@ export const useWallet = (): IUseWallet => {
     [network, signer?.provider]
   );
 
+  // console.log left for PR conversation purposes
+  console.log(
+    'chainId',
+    chainId,
+    'network',
+    network,
+    'provider',
+    signer?.provider,
+    'connector',
+    connector?.name
+  );
+
   const {data: wagmiBalance} = useBalance({
     address,
   });
