@@ -6,11 +6,11 @@ import {DaoAction} from '@aragon/sdk-client-common';
 
 export const useEncodeActions = (
   params: IEncodeActionParams,
-  options: UseQueryOptions<DaoAction[] | null> = {}
+  options?: Omit<UseQueryOptions<DaoAction[] | null>, 'queryKey'>
 ) => {
-  return useQuery(
-    actionEncoderQueryKeys.encodeActions(params),
-    () => actionEncoderService.encodeActions(params),
-    options
-  );
+  return useQuery({
+    queryKey: actionEncoderQueryKeys.encodeActions(params),
+    queryFn: () => actionEncoderService.encodeActions(params),
+    ...options,
+  });
 };

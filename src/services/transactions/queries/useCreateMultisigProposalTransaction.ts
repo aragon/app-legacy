@@ -6,11 +6,12 @@ import {ITransaction} from '../domain/transaction';
 
 export const useCreateMultisigProposalTransaction = (
   params: IBuildCreateMultisigProposalTransactionParams,
-  options: UseQueryOptions<ITransaction> = {}
+  options?: Omit<UseQueryOptions<ITransaction>, 'queryKey'>
 ) => {
-  return useQuery(
-    transactionsQueryKeys.createMultisigProposal(params),
-    () => transactionsService.buildCreateMultisigProposalTransaction(params),
-    options
-  );
+  return useQuery({
+    queryKey: transactionsQueryKeys.createMultisigProposal(params),
+    queryFn: () =>
+      transactionsService.buildCreateMultisigProposalTransaction(params),
+    ...options,
+  });
 };

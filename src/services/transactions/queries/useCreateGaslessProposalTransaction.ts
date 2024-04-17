@@ -6,11 +6,12 @@ import {ITransaction} from '../domain/transaction';
 
 export const useCreateGaslessProposalTransaction = (
   params: IBuildCreateGaslessProposalTransactionParams,
-  options: UseQueryOptions<ITransaction> = {}
+  options?: Omit<UseQueryOptions<ITransaction>, 'queryKey'>
 ) => {
-  return useQuery(
-    transactionsQueryKeys.createGaslessProposal(params),
-    () => transactionsService.buildCreateGaslessProposalTransaction(params),
-    options
-  );
+  return useQuery({
+    queryKey: transactionsQueryKeys.createGaslessProposal(params),
+    queryFn: () =>
+      transactionsService.buildCreateGaslessProposalTransaction(params),
+    ...options,
+  });
 };

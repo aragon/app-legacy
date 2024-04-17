@@ -43,7 +43,7 @@ const queryStatusToStepStatus: Record<UseMutationResult['status'], StepStatus> =
   {
     error: StepStatus.ERROR,
     idle: StepStatus.WAITING,
-    loading: StepStatus.LOADING,
+    pending: StepStatus.LOADING,
     success: StepStatus.SUCCESS,
   };
 

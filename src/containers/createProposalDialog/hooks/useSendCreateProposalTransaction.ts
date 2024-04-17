@@ -181,10 +181,13 @@ export const useSendCreateProposalTransaction = (
       proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
     }
 
-    queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
-    queryClient.invalidateQueries(
-      aragonSubgraphQueryKeys.totalProposalCount({pluginAddress, pluginType})
-    );
+    queryClient.invalidateQueries({queryKey: [AragonSdkQueryItem.PROPOSALS]});
+    queryClient.invalidateQueries({
+      queryKey: aragonSubgraphQueryKeys.totalProposalCount({
+        pluginAddress,
+        pluginType,
+      }),
+    });
   };
 
   const sendTransactionResults = useSendTransaction({
