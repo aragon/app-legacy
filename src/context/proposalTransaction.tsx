@@ -255,19 +255,23 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       pluginType,
     });
 
-    queryClient.invalidateQueries(allProposalsQuery);
-    queryClient.invalidateQueries(currentProposal);
+    queryClient.invalidateQueries({
+      queryKey: allProposalsQuery,
+    });
+    queryClient.invalidateQueries({queryKey: currentProposal});
   }, [pluginType, proposalId, queryClient]);
 
   const invalidatePluginQueries = useCallback(() => {
-    queryClient.invalidateQueries(['daoDetails', daoAddressOrEns, network]);
+    queryClient.invalidateQueries({
+      queryKey: ['daoDetails', daoAddressOrEns, network],
+    });
   }, [daoAddressOrEns, network, queryClient]);
 
   const invalidateProtocolQueries = useCallback(() => {
     if (daoDetails?.address) {
-      queryClient.invalidateQueries(
-        aragonSdkQueryKeys.protocolVersion(daoDetails?.address)
-      );
+      queryClient.invalidateQueries({
+        queryKey: aragonSdkQueryKeys.protocolVersion(daoDetails?.address),
+      });
     }
   }, [daoDetails?.address, queryClient]);
 

@@ -23,7 +23,7 @@ export interface IDelegateVotingFormProps {
   initialMode?: 'delegate' | 'reclaim';
   onDelegateTokens: () => void;
   onCancel: () => void;
-  status: 'idle' | 'loading' | 'error' | 'success';
+  status: 'idle' | 'pending' | 'error' | 'success';
 }
 
 const getDelegateLabel = (
@@ -102,7 +102,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
     formState.errors[DelegateVotingFormField.TOKEN_DELEGATE] == null;
 
   const isReclaimMode = delegateSelection === 'reclaim';
-  const isLoading = status === 'loading';
+  const isLoading = status === 'pending';
   const isError = status === 'error';
 
   const delegateLabel = getDelegateLabel(isReclaimMode, isLoading, isError);

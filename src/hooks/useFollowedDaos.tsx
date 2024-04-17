@@ -12,7 +12,7 @@ import {
 import {NavigationDao} from 'context/apolloClient';
 import {useCallback} from 'react';
 import {
-  FollowedDaosResultWithTotal,
+  PageWithDaos,
   addFollowedDaoToCache,
   getFollowedDaoFromCache,
   getFollowedDaosFromCache,
@@ -43,8 +43,8 @@ export const useFollowedDaosQuery = (
   return useQuery<NavigationDao[]>({
     queryKey: ['followedDaos'],
     queryFn: useCallback(() => getFollowedDaosFromCache({skip}), [skip]),
-    select: addAvatarToDaos,
     refetchOnWindowFocus: false,
+    select: addAvatarToDaos,
   });
 };
 
@@ -55,7 +55,7 @@ type IFetchFollowedDaosParams = {
   skip?: number;
 };
 
-type IFetchInfiniteFollowedDaosResult = FollowedDaosResultWithTotal;
+type IFetchInfiniteFollowedDaosResult = PageWithDaos;
 
 const useFollowedDaosInfiniteQueryKey = (
   params: IFetchFollowedDaosParams
@@ -65,7 +65,10 @@ const useFollowedDaosInfiniteQueryKey = (
 
 export const useFollowedDaosInfiniteQuery = (
   params: IFetchFollowedDaosParams,
-  options: UseInfiniteQueryOptions<IFetchInfiniteFollowedDaosResult> = {}
+  options: Omit<
+    UseInfiniteQueryOptions<PageWithDaos>,
+    'queryKey' | 'initialPageParam' | 'getNextPageParam' | 'select'
+  >
 ) => {
   const {limit = DEFAULT_QUERY_PARAMS.limit, pluginNames, networks} = params;
 
@@ -81,32 +84,34 @@ export const useFollowedDaosInfiniteQuery = (
     }
   });
 
-  return useInfiniteQuery(
-    useFollowedDaosInfiniteQueryKey(params),
-    ({pageParam = 0}) =>
-      getFollowedDaosFromCache({
-        skip: pageParam,
+  return useInfiniteQuery({
+    queryKey: useFollowedDaosInfiniteQueryKey(params),
+    queryFn: async ({pageParam = 0}) => {
+      const result = await getFollowedDaosFromCache({
+        skip: pageParam as number,
         limit,
         includeTotal: true,
         pluginNames: pluginIds,
         networks,
-      }),
-    {
-      ...options,
-      getNextPageParam: (
-        lastPage: IFetchInfiniteFollowedDaosResult,
-        allPages: IFetchInfiniteFollowedDaosResult[]
-      ) => {
-        const totalFetched = allPages.reduce(
-          (total, page) => total + page.data.length,
-          0
-        );
-        return totalFetched < lastPage.total ? totalFetched : undefined;
-      },
-      select: augmentCachedDaos,
-      refetchOnWindowFocus: false,
-    }
-  );
+      });
+
+      return result;
+    },
+    getNextPageParam: (
+      lastPage: IFetchInfiniteFollowedDaosResult,
+      allPages: IFetchInfiniteFollowedDaosResult[]
+    ) => {
+      const totalFetched = allPages.reduce(
+        (total, page) => total + page.data.length,
+        0
+      );
+      return totalFetched < lastPage.data.length ? totalFetched : undefined;
+    },
+    select: augmentCachedDaos,
+    initialPageParam: 0,
+    refetchOnWindowFocus: false,
+    ...options,
+  });
 };
 
 /**
@@ -141,13 +146,15 @@ export const useUpdateFollowedDaoMutation = () => {
     onSuccess: (_, variables) => {
       const network = getSupportedNetworkByChainId(variables.dao.chain);
 
-      queryClient.invalidateQueries(['followedDaos']);
-      queryClient.invalidateQueries(['infiniteFollowedDaos']);
-      queryClient.invalidateQueries([
-        'followedDao',
-        variables.dao.address,
-        network,
-      ]);
+      queryClient.invalidateQueries({
+        queryKey: ['followedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['infiniteFollowedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['followedDao', variables.dao.address, network],
+      });
     },
   });
 };
@@ -199,8 +206,12 @@ export const useAddFollowedDaoMutation = (
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries(['followedDaos']);
-      queryClient.invalidateQueries(['infiniteFollowedDaos']);
+      queryClient.invalidateQueries({
+        queryKey: ['followedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['infiniteFollowedDaos'],
+      });
       params?.onSuccess?.();
     },
   });
@@ -243,8 +254,12 @@ export const useRemoveFollowedDaoMutation = (
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries(['followedDaos']);
-      queryClient.invalidateQueries(['infiniteFollowedDaos']);
+      queryClient.invalidateQueries({
+        queryKey: ['followedDaos'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['infiniteFollowedDaos'],
+      });
       params?.onSuccess?.();
     },
   });

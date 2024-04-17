@@ -215,20 +215,24 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   // Invalidate wagmi balance cache to display the correct token balances after
   // the wrap / unwrap processes
   const invalidateDaoTokenBalanceCache = useCallback(() => {
-    queryClient.invalidateQueries([
-      {
-        entity: 'balance',
-        address: userAddress,
-        token: wrappedDaoToken?.address,
-      },
-    ]);
-    queryClient.invalidateQueries([
-      {
-        entity: 'balance',
-        address: userAddress,
-        token: daoTokenData?.address,
-      },
-    ]);
+    queryClient.invalidateQueries({
+      queryKey: [
+        {
+          entity: 'balance',
+          address: userAddress,
+          token: wrappedDaoToken?.address,
+        },
+      ],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [
+        {
+          entity: 'balance',
+          address: userAddress,
+          token: daoTokenData?.address,
+        },
+      ],
+    });
   }, [
     queryClient,
     userAddress,

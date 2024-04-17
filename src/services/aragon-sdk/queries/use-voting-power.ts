@@ -8,15 +8,16 @@ import {useCallback} from 'react';
 
 export const useVotingPower = (
   params: IFetchVotingPowerParams,
-  options?: UseQueryOptions<BigNumber>
+  options?: Omit<UseQueryOptions<BigNumber>, 'queryKey'>
 ) => {
   const {api: provider} = useProviders();
 
-  return useQuery(
-    aragonSdkQueryKeys.votingPower(params),
-    () => getVotingPower(params.tokenAddress, params.address, provider),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.votingPower(params),
+    queryFn: () =>
+      getVotingPower(params.tokenAddress, params.address, provider),
+    ...options,
+  });
 };
 
 export const useVotingPowerAsync = () => {

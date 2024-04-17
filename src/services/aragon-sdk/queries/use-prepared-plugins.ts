@@ -60,7 +60,10 @@ async function fetchPreparedPlugins(
 
 export const usePreparedPlugins = (
   params: IFetchPreparedPluginsParams,
-  options: UseQueryOptions<Map<string, PluginPreparationListItem>> = {}
+  options: Omit<
+    UseQueryOptions<Map<string, PluginPreparationListItem>>,
+    'queryKey'
+  > = {}
 ) => {
   const {client} = useClient();
   const {network} = useNetwork();
@@ -81,15 +84,15 @@ export const usePreparedPlugins = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.preparedPlugins(params),
-    () =>
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.preparedPlugins(params),
+    queryFn: () =>
       fetchPreparedPlugins(
         client,
         params.daoAddressOrEns,
         params.pluginAddress,
         pluginRepoAddress
       ),
-    options
-  );
+    ...options,
+  });
 };

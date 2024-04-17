@@ -68,7 +68,7 @@ export const useDaosInfiniteQuery = (
       const skip = limit * pageParam;
       return fetchDaos(client, {skip, limit, direction, sortBy});
     },
-
+    initialPageParam: 0,
     // calculate next page value
     getNextPageParam: (lastPage: DaoListItem[], allPages: DaoListItem[][]) =>
       lastPage.length === limit ? allPages.length : undefined,

@@ -63,7 +63,7 @@ export const useSendTransaction = (
   const [longWaitingTime, setLongWaitingTime] = useState(false);
 
   const {
-    isLoading: isEstimateGasLoading,
+    isFetching: isEstimateGasLoading,
     isError: isEstimateGasError,
     error: estimateGasError,
   } = useEstimateGas(transaction);
@@ -85,7 +85,7 @@ export const useSendTransaction = (
     sendTransaction: sendTransactionWagmi,
     error: sendTransactionError,
     isError: isSendTransactionError,
-    isLoading: isSendTransactionLoading,
+    isPending: isSendTransactionLoading,
     reset: resetSendTransactionWagmi,
   } = useSendTransactionWagmi({
     mutation: {
@@ -97,7 +97,7 @@ export const useSendTransaction = (
     data: txReceipt,
     error: waitTransactionError,
     isError: isWaitTransactionError,
-    isInitialLoading: isWaitTransactionLoading,
+    isLoading: isWaitTransactionLoading,
     isSuccess,
   } = useWaitForTransactionReceipt({
     hash: txHash,
