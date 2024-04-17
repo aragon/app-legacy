@@ -32,14 +32,3 @@ jobs:
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_GATEWAY_IPFS_API_KEY: ${{secrets.VITE_GATEWAY_IPFS_API_KEY}}
           VITE_ETHERSCAN_API_KEY: ${{secrets.VITE_ETHERSCAN_API_KEY}}
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        with:
-          args: >
-            -Dsonar.organization=aragon
-            -Dsonar.projectKey=aragon_zaragoza
-            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
-            -Dsonar.sources=src/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

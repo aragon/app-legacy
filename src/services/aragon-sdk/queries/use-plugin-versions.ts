@@ -43,7 +43,7 @@ async function fetchPluginVersions(
 
 export const usePluginVersions = (
   params: IFetchPluginVersionsParams,
-  options: UseQueryOptions<PluginVersions> = {}
+  options: Omit<UseQueryOptions<PluginVersions>, 'queryKey'> = {}
 ) => {
   const {client} = useClient();
   const {network} = useNetwork();
@@ -64,12 +64,13 @@ export const usePluginVersions = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.pluginVersions(
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.pluginVersions(
       {network},
       {daoAddress: params.daoAddress}
     ),
-    () => fetchPluginVersions(client, pluginRepoAddress),
-    options
-  );
+
+    queryFn: () => fetchPluginVersions(client, pluginRepoAddress),
+    ...options,
+  });
 };

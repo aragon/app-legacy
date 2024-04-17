@@ -99,10 +99,10 @@ export const DaoExplorer = () => {
 
   const followedDaoList = useMemo(
     () =>
-      followedDaosResult.data?.pages.flatMap(page =>
-        page.data.map(followedDaoToDao)
-      ) ?? [],
-    [followedDaosResult.data]
+      followedDaosResult.data?.pages
+        .flatMap(page => page.data)
+        .map(followedDaoToDao),
+    [followedDaosResult]
   );
 
   const filteredDaoList = useFollowList ? followedDaoList : newDaoList;
@@ -110,10 +110,9 @@ export const DaoExplorer = () => {
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 
-  const totalDaos =
-    (useFollowList
-      ? followedDaosResult.data?.pages[0].total
-      : newDaosResult.data?.pages[0].total) ?? 0;
+  const totalDaos = useFollowList
+    ? followedDaosResult.data?.pages[0].total ?? 0
+    : newDaosResult.data?.pages[0].total ?? 0;
 
   const toggleQuickFilters = (value?: string | string[]) => {
     if (value && !Array.isArray(value)) {
@@ -255,14 +254,16 @@ export const DaoExplorer = () => {
           />
         ) : (
           <CardsWrapper>
-            {filteredDaoList?.map((dao, index) => (
-              <DaoCard key={index} dao={dao} />
-            ))}
+            {filteredDaoList?.map(
+              (dao: IDao, index: React.Key | null | undefined) => (
+                <DaoCard key={index} dao={dao} />
+              )
+            )}
             {isLoading && <Spinner size="xl" variant="primary" />}
           </CardsWrapper>
         )}
       </MainContainer>
-      {totalDaos > 0 && totalDaosShown > 0 && (
+      {totalDaos != null && totalDaos > 0 && totalDaosShown > 0 && (
         <div className="flex items-center lg:gap-x-6">
           {hasNextPage && (
             <Button

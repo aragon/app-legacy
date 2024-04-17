@@ -15,7 +15,7 @@ import {useDaoDetailsQuery} from '../../../hooks/useDaoDetails';
 
 export const usePastVotingPower = (
   params: IFetchPastVotingPowerParams,
-  options?: UseQueryOptions<BigNumber>
+  options?: Omit<UseQueryOptions<BigNumber>, 'queryKey'>
 ) => {
   const {api: provider} = useProviders();
   const {network} = useNetwork();
@@ -28,9 +28,9 @@ export const usePastVotingPower = (
     enable: pluginType === GaslessPluginName,
   });
 
-  return useQuery(
-    aragonSdkQueryKeys.pastVotingPower(params),
-    () =>
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.pastVotingPower(params),
+    queryFn: () =>
       censusId !== null
         ? BigNumber.from(
             fetchVotingPowerByCensusId({
@@ -46,8 +46,8 @@ export const usePastVotingPower = (
             provider,
             network
           ),
-    options
-  );
+    ...options,
+  });
 };
 
 export const usePastVotingPowerAsync = () => {

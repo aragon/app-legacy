@@ -11,15 +11,15 @@ import {CHAIN_METADATA} from '../../../utils/constants';
  */
 export const useCensus3Token = (
   {tokenAddress}: ICensus3TokenProps,
-  options?: UseQueryOptions<Token>
+  options?: Omit<UseQueryOptions<Token>, 'queryKey'>
 ) => {
   const census3 = useCensus3Client();
   const {network} = useNetwork();
   const chainId = CHAIN_METADATA[network].id;
 
-  return useQuery(
-    Census3QueryKeys.token(tokenAddress),
-    async () => await census3.getToken(tokenAddress, chainId),
-    options
-  );
+  return useQuery({
+    queryKey: Census3QueryKeys.token(tokenAddress),
+    queryFn: async () => await census3.getToken(tokenAddress, chainId),
+    ...options,
+  });
 };

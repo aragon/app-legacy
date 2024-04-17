@@ -889,8 +889,7 @@ export function isEarlyExecutable(
 
   return (
     // participation reached
-    missingParticipation === 0 &&
-    // support threshold met even if absentees show up and all vote against, still cannot change outcome
+    missingParticipation === 0 && // support threshold met even if absentees show up and all vote against, still cannot change outcome
     votes.yes.div(votes.yes.add(votes.no).add(absentee)).gt(supportThreshold)
   );
 }

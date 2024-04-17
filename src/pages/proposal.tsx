@@ -146,9 +146,9 @@ export const Proposal: React.FC = () => {
 
   const {
     data: proposal,
-    error: proposalError,
-    isFetched: proposalIsFetched,
     isLoading: proposalIsLoading,
+    isFetched: proposalIsFetched,
+    isError: proposalError,
     refetch,
   } = useProposal(
     {
@@ -159,8 +159,8 @@ export const Proposal: React.FC = () => {
       enabled: !!proposalId,
 
       // refetch active proposal data every minute
-      refetchInterval: data =>
-        data?.status === ProposalStatus.ACTIVE
+      refetchInterval: query =>
+        query.state.data?.status === ProposalStatus.ACTIVE
           ? PROPOSAL_STATUS_INTERVAL
           : false,
     }
@@ -727,17 +727,13 @@ export const Proposal: React.FC = () => {
    *************************************************/
   const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
 
-  // the last check is to make sure Typescript narrows the type properly
-  const hasInvalidProposal =
-    proposalError || (proposalIsFetched && !proposal) || proposal == null;
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (hasInvalidProposal) {
+  if (proposalError || (proposalIsFetched && proposal == null)) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
     return null;
+  }
+
+  if (isLoading || proposal == null) {
+    return <Loading />;
   }
 
   // Store voting terminal props

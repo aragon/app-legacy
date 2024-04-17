@@ -23,8 +23,11 @@ async function fetchProposal(
 
 export const useProposal = (
   params: IFetchProposalParams,
-  options: UseQueryOptions<
-    MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
+  options: Omit<
+    UseQueryOptions<
+      MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
+    >,
+    'queryKey'
   > = {}
 ) => {
   const client = usePluginClient(params.pluginType);
@@ -41,12 +44,12 @@ export const useProposal = (
   ) => transformProposal(chainId, data);
 
   return useQuery({
-    ...options,
     queryKey: aragonSdkQueryKeys.proposal(params),
     queryFn: async () => {
       const serverData = await fetchProposal(params, client);
       return syncProposalData(chainId, params.id, serverData);
     },
     select: options.select ?? defaultSelect,
+    ...options,
   });
 };

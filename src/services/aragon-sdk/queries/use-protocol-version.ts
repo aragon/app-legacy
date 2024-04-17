@@ -22,7 +22,7 @@ async function fetchProtocolVersion(
  */
 export const useProtocolVersion = (
   daoAddressOrEns: string,
-  options: UseQueryOptions<[number, number, number]> = {}
+  options: Omit<UseQueryOptions<[number, number, number]>, 'queryKey'> = {}
 ) => {
   const {client} = useClient();
 
@@ -30,9 +30,9 @@ export const useProtocolVersion = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.protocolVersion(daoAddressOrEns),
-    () => fetchProtocolVersion(client, daoAddressOrEns),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.protocolVersion(daoAddressOrEns),
+    queryFn: () => fetchProtocolVersion(client, daoAddressOrEns),
+    ...options,
+  });
 };

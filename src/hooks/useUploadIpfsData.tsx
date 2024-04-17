@@ -41,7 +41,7 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
     };
 
   const {
-    isLoading: isPinDataLoading,
+    isPending: isPinDataLoading,
     isError: isPinDataError,
     isSuccess,
     mutate: pinData,
@@ -54,7 +54,7 @@ export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
   const handleAddDataSuccess = (cid: string) => pinData({client: client!, cid});
 
   const {
-    isLoading: isAddDataLoading,
+    isPending: isAddDataLoading,
     isError: isAddDataError,
     mutate: addData,
     reset: resetAddData,

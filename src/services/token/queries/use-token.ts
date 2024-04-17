@@ -21,13 +21,13 @@ import type {
 
 export const useToken = (
   params: IFetchTokenParams,
-  options?: UseQueryOptions<Token | null>
+  options?: Omit<UseQueryOptions<Token | null>, 'queryKey'>
 ) => {
-  return useQuery(
-    tokenQueryKeys.token(params),
-    () => tokenService.fetchToken(params),
-    options
-  );
+  return useQuery({
+    queryKey: tokenQueryKeys.token(params),
+    queryFn: () => tokenService.fetchToken(params),
+    ...options,
+  });
 };
 
 export const useTokenAsync = () => {
@@ -47,7 +47,7 @@ export const useTokenAsync = () => {
 
 export const useTokenList = (
   paramsList: IFetchTokenParams[],
-  options?: UseQueryOptions<Token | null>
+  options?: Omit<UseQueryOptions<Token | null>, 'queryKey'>
 ) => {
   const queries = paramsList.map(params => ({
     queryKey: tokenQueryKeys.token(params),
@@ -60,7 +60,7 @@ export const useTokenList = (
 
 export const useTokenBalances = (
   params: IFetchTokenBalancesParams,
-  options: UseQueryOptions<AssetBalance[] | null> = {}
+  options: Omit<UseQueryOptions<AssetBalance[] | null>, 'queryKey'> = {}
 ) => {
   // Because the external api (covalent) sometimes does
   // not index a native balance, fetch the native token balance for
@@ -76,29 +76,32 @@ export const useTokenBalances = (
     options.enabled = false;
   }
 
-  return useQuery(
-    tokenQueryKeys.balances(params),
-    () =>
+  return useQuery({
+    queryKey: tokenQueryKeys.balances(params),
+
+    queryFn: () =>
       tokenService.fetchTokenBalances({
         ...params,
         nativeTokenBalance: nativeToken?.value ?? BigInt(0),
       }),
-    options
-  );
+    ...options,
+  });
 };
 
 export const useErc20Deposits = (
   params: FetchErc20DepositParams,
-  options?: UseQueryOptions<Deposit[] | null>
+  options?: Omit<UseQueryOptions<Deposit[] | null>, 'queryKey'>
 ) => {
   const {data: assets, isFetched: areAssetsFetched} = useTokenBalances(
     {...params, ignoreZeroBalances: false},
     {enabled: !!params.address}
   );
 
-  return useQuery(
-    tokenQueryKeys.transfers(params),
-    () => tokenService.fetchErc20Deposits({...params, assets: assets ?? []}),
-    {...options, enabled: options?.enabled !== false && areAssetsFetched}
-  );
+  return useQuery({
+    queryKey: tokenQueryKeys.transfers(params),
+    queryFn: () =>
+      tokenService.fetchErc20Deposits({...params, assets: assets ?? []}),
+    ...options,
+    enabled: options?.enabled !== false && areAssetsFetched,
+  });
 };

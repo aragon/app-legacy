@@ -81,7 +81,7 @@ export const useSendTransaction = (
     sendTransaction: sendTransactionWagmi,
     error: sendTransactionError,
     isError: isSendTransactionError,
-    isLoading: isSendTransactionLoading,
+    isPending: isSendTransactionLoading,
     reset: resetSendTransactionWagmi,
   } = useSendTransactionWagmi({
     mutation: {
