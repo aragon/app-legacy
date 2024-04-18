@@ -36,7 +36,7 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     metadataCid
   );
 
-  const {data: transaction, isInitialLoading: isTransactionLoading} =
+  const {data: transaction, isLoading: isTransactionLoading} =
     useCreateDaoTransaction(
       {...createDaoParams, client} as IBuildCreateDaoTransactionParams,
       {enabled: createDaoParams != null && client != null}

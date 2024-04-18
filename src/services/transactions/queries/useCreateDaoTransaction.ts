@@ -6,7 +6,7 @@ import {ITransaction} from '../domain/transaction';
 
 export const useCreateDaoTransaction = (
   params: IBuildCreateDaoTransactionParams,
-  options?: Omit<UseQueryOptions<ITransaction>, 'queryKey'>
+  options: Omit<UseQueryOptions<ITransaction>, 'queryKey'>
 ) => {
   return useQuery({
     queryKey: transactionsQueryKeys.createDao(params),
