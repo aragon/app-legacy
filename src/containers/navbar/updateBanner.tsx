@@ -18,7 +18,6 @@ import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
 import {featureFlags} from 'utils/featureFlags';
 import {NewProposal} from 'utils/paths';
 import {ProposalTypes} from 'utils/types';
-import {GOERLI_BASED_NETWORKS} from 'utils/constants';
 
 const UpdateBanner: React.FC = () => {
   const [bannerHidden, setBannerHidden] = useState(false);
@@ -42,8 +41,6 @@ const UpdateBanner: React.FC = () => {
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
-  const isDeprecationAlertShown = GOERLI_BASED_NETWORKS.includes(network);
-
   const showBanner = !!(
     !bannerHidden &&
     isMember &&
@@ -55,8 +52,7 @@ const UpdateBanner: React.FC = () => {
     location.pathname.includes('new-proposal') ||
     location.pathname.includes('settings') ||
     location.pathname.includes('create') ||
-    showBanner === false ||
-    isDeprecationAlertShown
+    showBanner === false
   )
     return null;
 

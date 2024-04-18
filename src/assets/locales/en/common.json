@@ -1064,11 +1064,8 @@
           "polygon": "Polygon",
           "tokenVoting": "Token-based",
           "ethereum": "Ethereum",
-          "baseGoerli": "Base Goerli",
-          "polygonMumbai": "Polygon Mumbai",
           "member": "Wallet-based",
           "governanceType": "Governance type",
-          "arbitrumGoerli": "Arbitrum Goerli",
           "arbitrum": "Arbitrum",
           "ethereumSepolia": "Ethereum Sepolia"
         },
@@ -1793,13 +1790,6 @@
       "labelViewMore": "View more",
       "votingApprove": "Approve",
       "labelDaysAgo": "days ago"
-    }
-  },
-  "deprecation": {
-    "banner": {
-      "title": "This DAO will no longer be usable once support for Goerli and related testnets ends in 2024.",
-      "ctaLabel": "Learn more",
-      "ctaLink": "https://blog.ethereum.org/2023/11/30/goerli-lts-update"
     }
   },
   "transactionDialog": {

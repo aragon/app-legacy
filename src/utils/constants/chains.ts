@@ -17,7 +17,6 @@ export function isSupportedChainId(
 // Networks supported by the Gasless voting plugin
 export const GASLESS_SUPPORTED_NETWORKS: SupportedNetworks[] = ['sepolia'];
 
-// TODO: Remove this Goerli based network conditions
 export const ENS_SUPPORTED_NETWORKS: SupportedNetworks[] = ['ethereum'];
 export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'arbitrum',
@@ -28,7 +27,6 @@ export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
 
 export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
 
-// TODO: Remove this Goerli based network conditions
 const SUPPORTED_NETWORKS = [
   'arbitrum',
   'base',
@@ -36,13 +34,6 @@ const SUPPORTED_NETWORKS = [
   'polygon',
   'sepolia',
 ] as const;
-
-export const GOERLI_BASED_NETWORKS: string[] = [
-  'goerli',
-  'base-goerli',
-  'arbitrum-goerli',
-  'mumbai',
-];
 
 export type SupportedNetworks =
   | (typeof SUPPORTED_NETWORKS)[number]
