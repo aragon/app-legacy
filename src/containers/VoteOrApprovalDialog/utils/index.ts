@@ -1,1 +1,1 @@
-export {voteOrApprovalUtils} from './VoteOrApprovalUtils';
+export {voteOrApprovalUtils} from './voteOrApprovalUtils';
