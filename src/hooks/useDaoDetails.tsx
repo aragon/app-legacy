@@ -139,17 +139,17 @@ export const useDaoQuery = (
   return useQuery<DaoDetails | null>({
     queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
     queryFn,
-    select: addAvatarToDao(),
     enabled,
     // useQuery will cache an empty data for ens names which is wrong, but this config
     // will disable caching for ens names in L2 the caching is enabled for
     // none l2 networks and l2 networks that are not ens names
     ...{
       ...(isL2NetworkEns
-        ? {cacheTime: 0, refetchOnWindowFocus: true}
+        ? {gcTime: 0, refetchOnWindowFocus: true}
         : {refetchOnWindowFocus: false}),
     },
     refetchInterval,
+    select: addAvatarToDao(),
   });
 };
 

@@ -33,7 +33,7 @@ interface IUseIsMemberParams extends IFetchIsMemberParams {
  */
 export const useIsMember = (
   params: IUseIsMemberParams,
-  options: UseQueryOptions<boolean | undefined> = {}
+  options: Omit<UseQueryOptions<boolean | undefined>, 'queryKey'> = {}
 ) => {
   const {network} = useNetwork();
   const client = usePluginClient(params.pluginType);
@@ -145,15 +145,16 @@ export const useIsMember = (
     address: params.address,
   };
 
-  return useQuery(
-    aragonSdkQueryKeys.isMember(
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.isMember(
       {
         network,
         address: params.address,
       },
       queryParams
     ),
-    () => fetchIsMember(),
-    options
-  );
+
+    queryFn: () => fetchIsMember(),
+    ...options,
+  });
 };

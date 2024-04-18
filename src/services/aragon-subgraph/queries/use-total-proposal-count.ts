@@ -108,7 +108,7 @@ const fetchTotalProposalCount = async (
 
 export const useTotalProposalCount = (
   params: IFetchTotalProposalCountParams,
-  options: UseQueryOptions<number> = {}
+  options: Omit<UseQueryOptions<number>, 'queryKey'> = {}
 ) => {
   const client = usePluginClient(params.pluginType);
 
@@ -116,9 +116,9 @@ export const useTotalProposalCount = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSubgraphQueryKeys.totalProposalCount(params),
-    () => fetchTotalProposalCount(params, client),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSubgraphQueryKeys.totalProposalCount(params),
+    queryFn: () => fetchTotalProposalCount(params, client),
+    ...options,
+  });
 };

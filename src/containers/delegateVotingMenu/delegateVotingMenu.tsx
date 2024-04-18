@@ -153,10 +153,10 @@ export const DelegateVotingMenu: React.FC = () => {
       network: network as SupportedNetworks,
       tokenAddress: daoToken?.address as string,
     });
-    queryClient.invalidateQueries(delegateKey);
-    queryClient.invalidateQueries(votingPowerKey);
-    queryClient.invalidateQueries(membersKey);
-    queryClient.invalidateQueries(graphQlKey);
+    queryClient.invalidateQueries({queryKey: delegateKey});
+    queryClient.invalidateQueries({queryKey: votingPowerKey});
+    queryClient.invalidateQueries({queryKey: membersKey});
+    queryClient.invalidateQueries({queryKey: graphQlKey});
   };
 
   const handleDelegateTokensSuccess = async (

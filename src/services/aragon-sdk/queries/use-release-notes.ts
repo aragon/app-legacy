@@ -23,11 +23,11 @@ const fetchReleaseNotes = async (): Promise<IReleaseNote[]> => {
 };
 
 export const useReleaseNotes = (
-  options: UseQueryOptions<IReleaseNote[]> = {}
+  options?: Omit<UseQueryOptions<IReleaseNote[]>, 'queryKey'>
 ) => {
-  return useQuery(
-    aragonSdkQueryKeys.releaseNotes(),
-    () => fetchReleaseNotes(),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.releaseNotes(),
+    queryFn: () => fetchReleaseNotes(),
+    ...options,
+  });
 };

@@ -46,7 +46,10 @@ async function fetchProposals(
 
 export const useProposals = (
   userParams: Partial<IFetchProposalsParams> & {pluginAddress: string},
-  options: UseInfiniteQueryOptions<FetchProposalsResponseTypes> = {}
+  options: Omit<
+    UseInfiniteQueryOptions<FetchProposalsResponseTypes>,
+    'queryKey' | 'getNextPageParam' | 'initialPageParam'
+  > = {}
 ) => {
   const params = {...DEFAULT_PARAMS, ...userParams};
   const client = usePluginClient(params.pluginType);
@@ -76,11 +79,10 @@ export const useProposals = (
   return useInfiniteQuery({
     ...options,
     queryKey: aragonSdkQueryKeys.proposals(params),
-
     queryFn: async context => {
       // adjust the skip to take into account proposals that have already been merged
       const skip = context.pageParam
-        ? (context.pageParam * params.limit ?? DEFAULT_PARAMS.limit) -
+        ? (Number(context.pageParam) * params.limit ?? DEFAULT_PARAMS.limit) -
           previouslyMergedStoredProposals.size
         : params.skip;
 
@@ -121,7 +123,7 @@ export const useProposals = (
         params.limit
       ) as FetchProposalsResponseTypes;
     },
-
+    initialPageParam: 0,
     // If the length of the last page is equal to the limit from params,
     // it's likely there's more data to fetch. Can't be certain since
     // the SDK doesn't return a max length
@@ -131,7 +133,7 @@ export const useProposals = (
       }
     },
 
-    select: options.select ?? defaultSelect,
+    select: defaultSelect,
   });
 };
 

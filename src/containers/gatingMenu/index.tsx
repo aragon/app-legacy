@@ -102,11 +102,13 @@ export const GatingMenu: React.FC = () => {
           <WarningContainer>
             <WarningTitle>{t('modalAlert.wrapToken.title')}</WarningTitle>
             <WarningDescription>
-              <span>
-                {t('modalAlert.wrapToken.desc', {
-                  tokenSymbol: wrapTokenSymbol,
-                })}
-              </span>
+              {t('modalAlert.wrapToken.desc', {
+                daoName: daoName,
+                tokenName: daoToken?.name,
+                amount: minProposalThreshold,
+                tokenSymbol: wrapTokenSymbol,
+                wrappedTokenSymbol: daoToken?.symbol,
+              })}
             </WarningDescription>
           </WarningContainer>
         )}

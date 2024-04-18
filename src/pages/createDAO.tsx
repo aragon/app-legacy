@@ -212,16 +212,26 @@ export const CreateDAO: React.FC = () => {
    *
    * @returns True if custom token values are valid, false otherwise.
    */
-  const validateCustomTokenCommunity = () =>
-    tokenWallets?.length > 0 &&
-    isFieldValid(errors.wallets) &&
-    hasValue(tokenName) &&
-    isFieldValid(errors.tokenName) &&
-    hasValue(tokenSymbol) &&
-    isFieldValid(errors.tokenSymbol) &&
-    ['anyone', 'token'].includes(eligibilityType) &&
-    isFieldValid(errors.eligibilityTokenAmount) &&
-    tokenTotalSupply > 0;
+  const validateCustomTokenCommunity = () => {
+    if (tokenWallets?.length > 0) {
+      for (const wallet of tokenWallets) {
+        if (wallet.address === '' && wallet.ensName === '') {
+          return false;
+        }
+      }
+    } else return false;
+
+    return (
+      isFieldValid(errors.wallets) &&
+      hasValue(tokenName) &&
+      isFieldValid(errors.tokenName) &&
+      hasValue(tokenSymbol) &&
+      isFieldValid(errors.tokenSymbol) &&
+      ['anyone', 'token'].includes(eligibilityType) &&
+      isFieldValid(errors.eligibilityTokenAmount) &&
+      tokenTotalSupply > 0
+    );
+  };
 
   /**
    * Validates existing token values for DAO community.

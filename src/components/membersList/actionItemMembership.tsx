@@ -53,7 +53,7 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
 
   const handleDaoClicked = (dao: string, network: string) => {
     const memberskey = aragonSdkQueryKeys.getMemberDAOs(baseParams);
-    queryClient.invalidateQueries(memberskey);
+    queryClient.invalidateQueries({queryKey: memberskey});
     navigate(
       generatePath(DaoMember, {
         network,

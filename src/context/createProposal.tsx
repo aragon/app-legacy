@@ -135,7 +135,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
   const {data: votingPower} = useVotingPower(
     {tokenAddress: daoToken?.address as string, address: address as string},
-    {enabled: !!daoToken?.address && !!address}
+    {
+      enabled: !!daoToken?.address && !!address,
+    }
   );
 
   const {data: versions} = useProtocolVersion(daoDetails?.address as string);
@@ -812,10 +814,15 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const invalidateQueries = useCallback(() => {
     // invalidating all infinite proposals query regardless of the
     // pagination state
-    queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
-    queryClient.invalidateQueries(
-      aragonSubgraphQueryKeys.totalProposalCount({pluginAddress, pluginType})
-    );
+    queryClient.invalidateQueries({
+      queryKey: [AragonSdkQueryItem.PROPOSALS],
+    });
+    queryClient.invalidateQueries({
+      queryKey: aragonSubgraphQueryKeys.totalProposalCount({
+        pluginAddress,
+        pluginType,
+      }),
+    });
   }, [pluginAddress, pluginType, queryClient]);
 
   const handlePublishProposal = useCallback(

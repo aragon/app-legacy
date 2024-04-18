@@ -27,9 +27,7 @@ const AddExistingToken: React.FC = () => {
     name: ['tokenAddress', 'blockchain'],
   });
 
-  // non-null assertion because blockchain comes from the list of
-  // supported chains
-  const provider = aragonGateway.getRpcProvider(blockchain.id)!;
+  const provider = aragonGateway.getRpcProvider(blockchain.id);
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const tokenAddressBlockExplorerURL =
     CHAIN_METADATA[network].explorer + 'token/';

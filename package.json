@@ -6,6 +6,7 @@
   "author": "Aragon Association",
   "homepage": ".",
   "license": "GPL-3.0",
+  "type": "module",
   "scripts": {
     "dev": "vite --host",
     "dev:watch": "cross-env WATCH=true vite --host",
@@ -15,8 +16,7 @@
     "lint": "eslint src --max-warnings=0 && yarn check-types",
     "lint:fix": "eslint src --fix",
     "check-types": "tsc --noemit",
-    "e2e": "env-cmd -f .env npx synpress run --configFile synpress.config.js",
-    "e2e:reset": "cd tests/e2e && cpx default/runContext.json .",
+    "e2e": "playwright test --ui",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org aragonorg --project app-react ./dist && sentry-cli sourcemaps upload --org aragonorg --project app-react ./dist"
   },
   "dependencies": {
@@ -24,12 +24,13 @@
     "@aragon/ods": "^1.0.20",
     "@aragon/sdk-client": "^1.22.1",
     "@aragon/sdk-client-common": "^1.14.1",
+    "@playwright/test": "^1.42.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.4",
     "@sentry/react": "^7.103.0",
     "@tailwindcss/typography": "^0.5.10",
-    "@tanstack/react-query": "^4.32.1",
-    "@tanstack/react-query-devtools": "^4.32.1",
+    "@tanstack/react-query": "^5.28.8",
+    "@tanstack/react-query-devtools": "^5.28.8",
     "@tiptap/extension-link": "^2.0.3",
     "@tiptap/extension-placeholder": "^2.0.3",
     "@tiptap/pm": "^2.0.3",
@@ -41,7 +42,8 @@
     "@walletconnect/core": "^2.8.3",
     "@walletconnect/utils": "^2.8.3",
     "@walletconnect/web3wallet": "^1.8.2",
-    "@web3modal/wagmi": "^4.1.1",
+    "@web3modal/siwe": "^4.1.5",
+    "@web3modal/wagmi": "^4.1.5",
     "big.js": "^6.2.1",
     "date-fns": "^2.28.0",
     "date-fns-tz": "^2.0.0",
@@ -66,8 +68,8 @@
     "styled-components": "^6.0.8",
     "tiptap-markdown": "^0.8.4",
     "use-react-router-breadcrumbs": "^3.0.1",
-    "viem": "^2.9.2",
-    "wagmi": "^2.5.12"
+    "viem": "^2.9.9",
+    "wagmi": "^2.5.18"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -75,7 +77,7 @@
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.14.5",
     "@sentry/cli": "^2.28.6",
-    "@synthetixio/synpress": "^3.5.1",
+    "@synthetixio/synpress": "^4.0.0-alpha.3",
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/react": "^14.0.0",
     "@types/big.js": "^6.1.5",
@@ -96,7 +98,6 @@
     "babel-jest": "^29.7.0",
     "babel-preset-vite": "^1.0.4",
     "cross-env": "^7.0.3",
-    "cypress": "^13.2.0",
     "env-cmd": "^10.1.0",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^9.0.0",
@@ -112,7 +113,7 @@
     "tailwindcss": "3.4.0",
     "tailwindcss-fluid-type": "^2.0.3",
     "typescript": "^5.1.3",
-    "vite": "^4.5.2",
+    "vite": "^4.5.3",
     "vite-tsconfig-paths": "^4.2.0"
   },
   "engines": {

@@ -128,6 +128,8 @@ export type ChainData = {
 
 const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
 const polygonscanApiKey = import.meta.env.VITE_POLYGONSCAN_API_KEY;
+const arbiscanApiKey = import.meta.env.VITE_ARBISCAN_API_KEY;
+const basecanApiKey = import.meta.env.VITE_BASESCAN_API_KEY;
 
 // TODO: Remove this Goerli based network conditions
 export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
@@ -202,6 +204,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       decimals: 18,
     },
     etherscanApi: 'https://api.arbiscan.io/api',
+    etherscanApiKey: arbiscanApiKey,
     coingecko: {
       networkId: 'arbitrum-one',
       nativeTokenId: 'ethereum',
@@ -228,7 +231,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       decimals: 18,
     },
     etherscanApi: 'https://api.basescan.org/api',
-    etherscanApiKey: '',
+    etherscanApiKey: basecanApiKey,
     covalent: {
       networkId: 'base-mainnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',

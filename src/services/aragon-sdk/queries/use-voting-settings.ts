@@ -68,7 +68,10 @@ export function isGaslessVotingSettings(
  */
 export function useVotingSettings(
   params: IFetchVotingSettingsParams,
-  options: UseQueryOptions<SupportedVotingSettings | null> = {}
+  options: Omit<
+    UseQueryOptions<SupportedVotingSettings | null>,
+    'queryKey'
+  > = {}
 ) {
   const client = usePluginClient(params.pluginType);
 
@@ -76,9 +79,9 @@ export function useVotingSettings(
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.votingSettings(params),
-    () => fetchVotingSettingsAsync(params, client),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.votingSettings(params),
+    queryFn: () => fetchVotingSettingsAsync(params, client),
+    ...options,
+  });
 }

@@ -117,11 +117,9 @@ export const useRemovePendingDaoMutation = (onSuccess?: () => void) => {
 
     onSuccess: (_, variables) => {
       onSuccess?.();
-      queryClient.invalidateQueries([
-        'pendingDao',
-        variables.daoAddress,
-        variables.network,
-      ]);
+      queryClient.invalidateQueries({
+        queryKey: ['pendingDao', variables.daoAddress, variables.network],
+      });
     },
   });
 };
