@@ -44,10 +44,10 @@ import {aragonGateway} from 'utils/aragonGateway';
 import {HttpTransport} from 'viem';
 
 const chains = [
+  mainnet,
   base,
   baseGoerli,
   goerli,
-  mainnet,
   polygon,
   polygonMumbai,
   arbitrum,
