@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import {Loading} from 'components/temporary';
 import {ActionsProvider} from 'context/actions';
-import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
@@ -17,8 +16,6 @@ const defaultValues = {
 };
 
 export const NewWithdraw: React.FC = () => {
-  const [showTxModal, setShowTxModal] = useState(false);
-
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings({
     pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
@@ -46,16 +43,10 @@ export const NewWithdraw: React.FC = () => {
     <>
       <FormProvider {...formMethods}>
         <ActionsProvider daoId={daoDetails.address}>
-          <CreateProposalProvider
-            showTxModal={showTxModal}
-            setShowTxModal={setShowTxModal}
-          >
-            <WithdrawStepper
-              daoDetails={daoDetails}
-              pluginSettings={pluginSettings}
-              enableTxModal={() => setShowTxModal(true)}
-            />
-          </CreateProposalProvider>
+          <WithdrawStepper
+            daoDetails={daoDetails}
+            pluginSettings={pluginSettings}
+          />
         </ActionsProvider>
       </FormProvider>
     </>

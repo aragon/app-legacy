@@ -13,6 +13,5 @@ export interface IFetchDaosParams
   extends IOrderedRequest<OrderByValue>,
     IPaginatedRequest {
   pluginNames?: string[];
-  // TODO: Remove this Goerli based network conditions
-  networks?: Array<SupportedNetworks | 'arbitrumGoerli' | 'baseGoerli'>;
+  networks?: Array<SupportedNetworks>;
 }

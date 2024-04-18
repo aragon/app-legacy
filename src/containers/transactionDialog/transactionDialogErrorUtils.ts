@@ -1,4 +1,7 @@
-import {SendTransactionErrorType} from '@wagmi/core';
+import {
+  SendTransactionErrorType,
+  WaitForTransactionReceiptErrorType,
+} from '@wagmi/core';
 
 class TransactionDialogErrorUtils {
   private defaultMessage = 'transactionDialog.error.default';
@@ -11,7 +14,7 @@ class TransactionDialogErrorUtils {
   ];
 
   parseError = (
-    error?: SendTransactionErrorType | null
+    error?: SendTransactionErrorType | WaitForTransactionReceiptErrorType | null
   ): string | undefined => {
     if (!error) {
       return undefined;

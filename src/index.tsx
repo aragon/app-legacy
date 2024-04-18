@@ -11,18 +11,7 @@ import {createWeb3Modal} from '@web3modal/wagmi/react';
 import {http, createConfig, WagmiProvider} from 'wagmi';
 import {walletConnect, coinbaseWallet} from 'wagmi/connectors';
 
-import {
-  Chain,
-  arbitrum,
-  arbitrumGoerli,
-  base,
-  baseGoerli,
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-  sepolia,
-} from 'wagmi/chains';
+import {Chain, arbitrum, base, mainnet, polygon, sepolia} from 'wagmi/chains';
 import {AlertProvider} from 'context/alert';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
@@ -43,17 +32,10 @@ import {App} from './app';
 import {aragonGateway} from 'utils/aragonGateway';
 import {HttpTransport} from 'viem';
 
-const chains = [
-  base,
-  baseGoerli,
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-  arbitrum,
-  arbitrumGoerli,
-  sepolia,
-] as [Chain, ...Chain[]];
+const chains = [base, mainnet, polygon, arbitrum, sepolia] as [
+  Chain,
+  ...Chain[],
+];
 
 const transports = chains.reduce(
   (RPCs, value) => {
@@ -95,6 +77,13 @@ createWeb3Modal({
     '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1',
   ],
 });
+
+// Add toJSON method to BigInt interface to properly serialize bigint types
+// on react-query query keys
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
 
 // React-Query client
 export const queryClient = new QueryClient({
