@@ -86,7 +86,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showGaslessModal, setShowGaslessModal] = useState(false);
   const [showExecutionModal, setShowExecutionModal] = useState(false);
-  const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
+  const [voteTokenAddress] = useState<string>();
   const [showCommitteeApprovalModal, setShowCommitteeApprovalModal] =
     useState(false);
 

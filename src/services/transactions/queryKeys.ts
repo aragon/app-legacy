@@ -15,7 +15,7 @@ export const transactionsQueryKeys = {
     TransactionsQueryItem.CREATE_DAO,
     params,
   ],
-  VoteOrApproval: (params: IBuildVoteOrApprovalTransactionParams): QueryKey => [
+  voteOrApproval: (params: IBuildVoteOrApprovalTransactionParams): QueryKey => [
     TransactionsQueryItem.VOTE_OR_APPROVAL,
     params,
   ],

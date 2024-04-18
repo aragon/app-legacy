@@ -8,8 +8,6 @@ import {useParams} from 'react-router-dom';
 import {ProposalId} from 'utils/types';
 
 class VoteOrApprovalUtils {
-  defaultTokenDecimals = 18;
-
   buildVoteOrApprovalParams = (
     PluginType: PluginTypes,
     tryExecution: boolean,

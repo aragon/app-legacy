@@ -138,9 +138,6 @@ export const Proposal: React.FC = () => {
   const [tryExecution, setTryExecution] = useState(false);
   const [vote, setVote] = useState<VoteValues>();
   const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
-  const [voteTokenAddress, setVoteTokenAddress] = useState<
-    string | undefined
-  >();
   const [replacingVote, setReplacingVote] = useState(false);
   const [voteOrApprovalSubmitted, setVoteOrApprovalSubmitted] = useState(false);
 
@@ -766,9 +763,7 @@ export const Proposal: React.FC = () => {
       setVotingPower(pastVotingPower);
       if (isGaslessProposal(proposal)) {
         setVote(vote);
-        setVoteTokenAddress(proposal.token?.address);
       } else {
-        setVoteTokenAddress((proposal as TokenVotingProposal).token?.address);
         setReplacingVote(!!(voted || voteOrApprovalSubmitted));
       }
       setIsDialogOpen(true);
@@ -896,7 +891,7 @@ export const Proposal: React.FC = () => {
         vote={vote}
         votingPower={votingPower}
         replacingVote={replacingVote}
-        voteTokenAddress={voteTokenAddress}
+        voteTokenAddress={(proposal as TokenVotingProposal).token?.address}
         setVoteOrApprovalSubmitted={setVoteOrApprovalSubmitted}
       />
     </Container>

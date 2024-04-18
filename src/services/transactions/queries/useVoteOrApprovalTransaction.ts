@@ -6,11 +6,11 @@ import {ITransaction} from '../domain/transaction';
 
 export const useVoteOrApprovalTransaction = (
   params: IBuildVoteOrApprovalTransactionParams,
-  options: UseQueryOptions<ITransaction> = {}
+  options?: Omit<UseQueryOptions<ITransaction>, 'queryKey'>
 ) => {
-  return useQuery(
-    transactionsQueryKeys.VoteOrApproval(params),
-    () => transactionsService.buildVoteOrApprovalTransaction(params),
-    options
-  );
+  return useQuery({
+    queryKey: transactionsQueryKeys.voteOrApproval(params),
+    queryFn: () => transactionsService.buildVoteOrApprovalTransaction(params),
+    ...options,
+  });
 };
