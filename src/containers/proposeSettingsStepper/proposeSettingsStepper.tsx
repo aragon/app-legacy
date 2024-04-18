@@ -9,7 +9,7 @@ import {
 } from '../defineProposal';
 import SetupVotingForm from '../setupVotingForm';
 import ReviewProposal from '../reviewProposal';
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';
 import {useDaoDetailsQuery} from '../../hooks/useDaoDetails';
 import {
@@ -37,20 +37,19 @@ import {useTranslation} from 'react-i18next';
 import {useNetwork} from '../../context/network';
 import {Loading} from '../../components/temporary';
 import {getNewMultisigMembers, getNonEmptyActions} from '../../utils/proposals';
+import {useWallet} from 'hooks/useWallet';
+import {CreateProposalDialog} from 'containers/createProposalDialog';
 
-type ProposalStepperType = {
-  enableTxModal: () => void;
-};
-
-export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
-  enableTxModal,
-}) => {
+export const ProposeSettingsStepper: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {getValues, setValue, control} = useFormContext();
   const {errors, dirtyFields} = useFormState({
     control,
   });
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const {isConnected, isOnWrongNetwork} = useWallet();
 
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings({
@@ -63,6 +62,18 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
     daoToken?.address || ''
   );
+
+  const handlePublishProposalClick = () => {
+    if (isConnected) {
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        setIsDialogOpen(true);
+      }
+    } else {
+      open('wallet');
+    }
+  };
 
   // filter actions making sure unchanged information is not bundled
   // into the list of actions
@@ -336,10 +347,14 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
         wizardTitle={t('newWithdraw.reviewProposal.heading')}
         wizardDescription={t('newWithdraw.reviewProposal.description')}
         nextButtonLabel={t('labels.submitProposal')}
-        onNextButtonClicked={enableTxModal}
+        onNextButtonClicked={handlePublishProposalClick}
         fullWidth
       >
         <ReviewProposal defineProposalStepNumber={2} />
+        <CreateProposalDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+        />
       </Step>
     </FullScreenStepper>
   );

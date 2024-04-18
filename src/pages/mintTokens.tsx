@@ -23,7 +23,6 @@ import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
 import {ActionsProvider} from 'context/actions';
-import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
@@ -35,6 +34,8 @@ import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {MintTokensFormData} from 'utils/types';
 import {useGaslessGovernanceEnabled} from '../hooks/useGaslessGovernanceEnabled';
+import {CreateProposalDialog} from 'containers/createProposalDialog';
+import {useWallet} from 'hooks/useWallet';
 
 export const MintToken: React.FC = () => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
@@ -46,8 +47,11 @@ export const MintToken: React.FC = () => {
   });
   const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {isConnected, isOnWrongNetwork} = useWallet();
 
   const formMethods = useForm<MintTokensFormData>({
     mode: 'onChange',
@@ -68,10 +72,18 @@ export const MintToken: React.FC = () => {
     control: formMethods.control,
   });
 
-  const [showTxModal, setShowTxModal] = useState(false);
-  const enableTxModal = () => {
-    setShowTxModal(true);
+  const handlePublishProposalClick = () => {
+    if (isConnected) {
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        setIsDialogOpen(true);
+      }
+    } else {
+      open('wallet');
+    }
   };
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -91,60 +103,59 @@ export const MintToken: React.FC = () => {
   return (
     <FormProvider {...formMethods}>
       <ActionsProvider daoId={daoDetails.address}>
-        <CreateProposalProvider
-          showTxModal={showTxModal}
-          setShowTxModal={setShowTxModal}
+        <FullScreenStepper
+          wizardProcessName={t('newProposal.title')}
+          processType="ProposalCreation"
+          navLabel={t('labels.addMember')}
+          returnPath={generatePath(Community, {
+            network,
+            dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+          })}
         >
-          <FullScreenStepper
-            wizardProcessName={t('newProposal.title')}
-            processType="ProposalCreation"
-            navLabel={t('labels.addMember')}
-            returnPath={generatePath(Community, {
-              network,
-              dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
-            })}
+          <Step
+            wizardTitle={t('labels.mintTokens')}
+            wizardDescription={t('newProposal.mintTokens.methodDescription')}
+            isNextButtonDisabled={!actionIsValid(errors, formActions)}
+            onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
           >
-            <Step
-              wizardTitle={t('labels.mintTokens')}
-              wizardDescription={t('newProposal.mintTokens.methodDescription')}
-              isNextButtonDisabled={!actionIsValid(errors, formActions)}
-              onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
-            >
-              <div className="space-y-4">
-                <AlertInline
-                  message={t('newProposal.mintTokens.additionalInfo')}
-                  variant="info"
-                />
-                <MintTokenForm actionIndex={0} standAlone />
-              </div>
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.setupVoting.title')}
-              wizardDescription={t('newWithdraw.setupVoting.description')}
-              isNextButtonDisabled={!setupVotingIsValid(errors)}
-            >
-              <SetupVotingForm
-                pluginSettings={votingSettings as MajorityVotingSettings}
+            <div className="space-y-4">
+              <AlertInline
+                message={t('newProposal.mintTokens.additionalInfo')}
+                variant="info"
               />
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.defineProposal.heading')}
-              wizardDescription={t('newWithdraw.defineProposal.description')}
-              isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
-            >
-              <DefineProposal />
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.reviewProposal.heading')}
-              wizardDescription={t('newWithdraw.reviewProposal.description')}
-              nextButtonLabel={t('labels.submitProposal')}
-              onNextButtonClicked={enableTxModal}
-              fullWidth
-            >
-              <ReviewProposal defineProposalStepNumber={3} />
-            </Step>
-          </FullScreenStepper>
-        </CreateProposalProvider>
+              <MintTokenForm actionIndex={0} standAlone />
+            </div>
+          </Step>
+          <Step
+            wizardTitle={t('newWithdraw.setupVoting.title')}
+            wizardDescription={t('newWithdraw.setupVoting.description')}
+            isNextButtonDisabled={!setupVotingIsValid(errors)}
+          >
+            <SetupVotingForm
+              pluginSettings={votingSettings as MajorityVotingSettings}
+            />
+          </Step>
+          <Step
+            wizardTitle={t('newWithdraw.defineProposal.heading')}
+            wizardDescription={t('newWithdraw.defineProposal.description')}
+            isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
+          >
+            <DefineProposal />
+          </Step>
+          <Step
+            wizardTitle={t('newWithdraw.reviewProposal.heading')}
+            wizardDescription={t('newWithdraw.reviewProposal.description')}
+            nextButtonLabel={t('labels.submitProposal')}
+            onNextButtonClicked={handlePublishProposalClick}
+            fullWidth
+          >
+            <ReviewProposal defineProposalStepNumber={3} />
+            <CreateProposalDialog
+              isOpen={isDialogOpen}
+              onClose={() => setIsDialogOpen(false)}
+            />
+          </Step>
+        </FullScreenStepper>
       </ActionsProvider>
     </FormProvider>
   );

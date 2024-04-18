@@ -1064,11 +1064,8 @@
           "polygon": "Polygon",
           "tokenVoting": "Token-based",
           "ethereum": "Ethereum",
-          "baseGoerli": "Base Goerli",
-          "polygonMumbai": "Polygon Mumbai",
           "member": "Wallet-based",
           "governanceType": "Governance type",
-          "arbitrumGoerli": "Arbitrum Goerli",
           "arbitrum": "Arbitrum",
           "ethereumSepolia": "Ethereum Sepolia"
         },
@@ -1795,22 +1792,7 @@
       "labelDaysAgo": "days ago"
     }
   },
-  "deprecation": {
-    "banner": {
-      "title": "This DAO will no longer be usable once support for Goerli and related testnets ends in 2024.",
-      "ctaLabel": "Learn more",
-      "ctaLink": "https://blog.ethereum.org/2023/11/30/goerli-lts-update"
-    }
-  },
   "transactionDialog": {
-    "title": {
-      "idle": "Transaction required",
-      "success": "Transaction successful"
-    },
-    "description": {
-      "idle": "You will need to sign a transaction in your connected wallet.",
-      "success": "Your transaction has been successfully confirmed."
-    },
     "button": {
       "preparing": "Preparing transaction",
       "waitingApproval": "Awaiting approval",
@@ -1830,6 +1812,14 @@
     "error": {
       "rejected": "Transaction rejected by the user.",
       "default": "Transaction failed."
+    },
+    "title": {
+      "idle": "Transaction required",
+      "success": "Transaction successful"
+    },
+    "description": {
+      "idle": "You will need to sign a transaction in your connected wallet.",
+      "success": "Your transaction has been successfully confirmed."
     }
   },
   "createDaoDialog": {
@@ -1838,6 +1828,17 @@
       "approve": "Deploy DAO now",
       "success": "Launch DAO Dashboard",
       "pinning": "Pinning IPFS data"
+    },
+    "error": {
+      "pinMetadata": "Unable to pin data to IPFS"
+    }
+  },
+  "createProposalDialog": {
+    "title": "Create proposal",
+    "button": {
+      "pinning": "Pinning IPFS data",
+      "approve": "Create proposal",
+      "success": "Open your proposal"
     },
     "error": {
       "pinMetadata": "Unable to pin data to IPFS"

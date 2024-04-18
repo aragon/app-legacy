@@ -31,21 +31,18 @@ import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
 import {Action, ProposalTypes} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
+import {CreateProposalDialog} from 'containers/createProposalDialog';
 
-type ProposalStepperType = {
-  enableTxModal: () => void;
-};
-
-const ProposalStepper: React.FC<ProposalStepperType> = ({
-  enableTxModal,
-}: ProposalStepperType) => {
+const ProposalStepper: React.FC = () => {
   const [areActionsValid, setAreActionsValid] = useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {type} = useParams();
   const {network} = useNetwork();
-  const {address, isConnected} = useWallet();
+  const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
@@ -63,6 +60,21 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
 
   const isUpdateProposal = type === ProposalTypes.OSUpdates;
+
+  const handlePublishProposalClick = () => {
+    if (isConnected) {
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        trackEvent('newProposal_publishBtn_clicked', {
+          dao_address: daoDetails?.address,
+        });
+        setIsDialogOpen(true);
+      }
+    } else {
+      open('wallet');
+    }
+  };
 
   /*************************************************
    *                    Effects                    *
@@ -196,19 +208,14 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardTitle={t('newWithdraw.reviewProposal.heading')}
         wizardDescription={t('newWithdraw.reviewProposal.description')}
         nextButtonLabel={t('labels.submitProposal')}
-        onNextButtonClicked={() => {
-          if (!isConnected) {
-            open('wallet');
-          } else {
-            trackEvent('newProposal_publishBtn_clicked', {
-              dao_address: daoDetails.address,
-            });
-            enableTxModal();
-          }
-        }}
+        onNextButtonClicked={handlePublishProposalClick}
         fullWidth
       >
         <ReviewProposal defineProposalStepNumber={1} addActionsStepNumber={3} />
+        <CreateProposalDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+        />
       </Step>
     </FullScreenStepper>
   );

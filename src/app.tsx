@@ -37,7 +37,6 @@ import {ProposalSettingsFormData} from 'utils/types';
 import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
-import DeprecationBanner from 'containers/navbar/deprecationBanner';
 import {ActionsProvider} from './context/actions';
 import {useConnectors} from 'wagmi';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
@@ -216,7 +215,6 @@ const DaoWrapper: React.FC = () => {
 
   return (
     <GovTokensWrappingProvider>
-      <DeprecationBanner />
       <UpdateBanner />
       <Navbar />
       <div className="min-h-screen">

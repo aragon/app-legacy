@@ -824,25 +824,16 @@ export function sleepFor(time = 600) {
  * @param sdkNetwork supported network returned by the SDK
  * @returns translated equivalent app supported network
  */
-// TODO: Remove this Goerli based network conditions
 export const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
   switch (sdkNetwork.name as SdkSupportedNetworks) {
     case SdkSupportedNetworks.ARBITRUM:
       return 'arbitrum';
-    case SdkSupportedNetworks.ARBITRUM_GOERLI:
-      return 'arbitrum-goerli';
     case SdkSupportedNetworks.BASE:
       return 'base';
-    case SdkSupportedNetworks.BASE_GOERLI:
-      return 'base-goerli';
     case SdkSupportedNetworks.MAINNET:
       return 'ethereum';
-    case SdkSupportedNetworks.GOERLI:
-      return 'goerli';
-    case SdkSupportedNetworks.MUMBAI:
-      return 'mumbai';
     case SdkSupportedNetworks.POLYGON:
       return 'polygon';
     case SdkSupportedNetworks.SEPOLIA:
@@ -858,7 +849,7 @@ export const translateToAppNetwork = (
  * @returns translated equivalent SDK supported network
  */
 export function translateToNetworkishName(
-  appNetwork: SupportedNetworks
+  appNetwork: string
 ): SdkSupportedNetworks | 'unsupported' {
   if (typeof appNetwork !== 'string') {
     return 'unsupported';

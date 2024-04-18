@@ -5,6 +5,7 @@ import {Client} from 'viem';
 
 function walletClientToSigner(walletClient: Client) {
   const {account, chain, transport} = walletClient;
+
   const network = {
     chainId: chain?.id ?? 1,
     name: chain?.name ?? 'ethereum',

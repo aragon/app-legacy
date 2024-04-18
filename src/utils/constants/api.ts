@@ -14,7 +14,6 @@ export const AppMetadata = {
   ],
 };
 
-// TODO: Remove this Goerli based network conditions
 export const FEEDBACK_FORM =
   'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
 
@@ -32,14 +31,6 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   sepolia:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-sepolia/version/v1.4.0/api',
   unsupported: undefined,
-  goerli:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.4.0/api',
-  mumbai:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mumbai/version/v1.4.0/api',
-  'arbitrum-goerli':
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-arbitrumGoerli/version/v1.4.0/api',
-  'base-goerli':
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseGoerli/version/v1.4.0/api',
 };
 
 export const walletConnectProjectID = import.meta.env
