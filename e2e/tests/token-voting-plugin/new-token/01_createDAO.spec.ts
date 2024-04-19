@@ -1,3 +1,4 @@
+import {LOCALHOST_URL} from '../../../basic.setup';
 import {testWithMetaMask as test} from '../../../testWithMetaMask';
 
 // Test is creating a Token Based DAO (new token) and opens the DAO dashboard

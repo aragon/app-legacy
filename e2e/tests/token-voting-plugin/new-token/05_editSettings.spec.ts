@@ -1,3 +1,4 @@
+import {LOCALHOST_URL} from '../../../basic.setup';
 import {testWithMetaMask as test} from '../../../testWithMetaMask';
 
 // // Test is publishing, approving, and executing a proposal to edit a DAO settings

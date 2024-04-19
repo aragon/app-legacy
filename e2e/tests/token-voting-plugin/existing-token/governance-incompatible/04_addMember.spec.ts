@@ -1,3 +1,4 @@
+import {LOCALHOST_URL} from '../../../../basic.setup';
 import {testWithMetaMask as test} from '../../../../testWithMetaMask';
 
 // // Test is adding a DAO member by wrapping tokens
