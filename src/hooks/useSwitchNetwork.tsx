@@ -54,8 +54,10 @@ export const useSwitchNetwork = () => {
     // This is more of a workaround to match chains and unblock existing flows
     // Ex. Aragon DAO connecting to an Aragon DAO, the connecting DAO is on the wrong chain (default chainId of WAGMI config -- was Base)
     if (connectorName === 'WalletConnect') {
-      if (connectors[0]?.switchChain) {
-        connectors[0]?.switchChain({
+      const wcConnector = connectors.find(c => c.name === 'WalletConnect');
+
+      if (wcConnector?.switchChain) {
+        wcConnector.switchChain({
           chainId: CHAIN_METADATA[network as SupportedNetworks]?.id,
         });
       }

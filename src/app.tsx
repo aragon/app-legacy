@@ -38,13 +38,19 @@ import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
 import {ActionsProvider} from './context/actions';
+import {useConnectors} from 'wagmi';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
   const {methods, status, network, address, provider} = useWallet();
+  const connectors = useConnectors();
 
+  console.log(connectors);
+  const wcConnector = connectors.filter(c => c.name === 'WalletConnect');
+
+  console.log('wcConnector', wcConnector);
   useMonitoring();
 
   // Initialize feature flags using the initial URL
