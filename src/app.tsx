@@ -43,9 +43,7 @@ export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
-  const {methods, status, network, address, provider, chainId} = useWallet();
-
-  console.log('network', network, chainId);
+  const {methods, status, network, address, provider} = useWallet();
 
   useMonitoring();
 
