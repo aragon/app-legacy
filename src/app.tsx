@@ -38,28 +38,14 @@ import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
 import {ActionsProvider} from './context/actions';
-import {useConnectors} from 'wagmi';
-import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
-  const {methods, status, network, address, provider, connectorName} =
-    useWallet();
-  const connectors = useConnectors();
+  const {methods, status, network, address, provider, chainId} = useWallet();
 
-  // TODO explore more sturdy ways to handle this in the actual payload and/or a UI flow for network "switching"
-  // Update incoming dAppConnect-as-wallet's current chain to the chainId of the app's current req'd network
-  // All chains when connecting to the app are pre approved by WalletConnect on connection
-  // This is more of a workaround to match chains and unblock existing flows
-  // Ex. Aragon DAO connecting to an Aragon DAO, the connecting DAO is on the wrong chain (default chainId of WAGMI config -- was Base)
-  useEffect(() => {
-    if (connectorName === 'WalletConnect' && connectors[0]?.switchChain)
-      connectors[0]?.switchChain({
-        chainId: CHAIN_METADATA[network as SupportedNetworks]?.id,
-      });
-  }, [connectors, network, connectorName]);
+  console.log('network', network, chainId);
 
   useMonitoring();
 

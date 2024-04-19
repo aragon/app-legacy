@@ -86,7 +86,8 @@ export const NetworkErrorMenu = () => {
             </Trans>
           </WarningDescription>
         </WarningContainer>
-        {connectorName === 'MetaMask' && (
+        {(connectorName === 'MetaMask' ||
+          connectorName === 'WalletConnect') && (
           <Button onClick={handleSwitchNetwork} size="lg" variant="primary">
             {t('alert.wrongNetwork.buttonLabel', {
               network: CHAIN_METADATA[network].name,

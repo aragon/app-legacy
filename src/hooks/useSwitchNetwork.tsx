@@ -1,6 +1,8 @@
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {toHex} from 'utils/library';
+import {useWallet} from 'hooks/useWallet';
+import {useConnectors} from 'wagmi';
 
 type ErrorType = {
   code: number;
@@ -8,6 +10,8 @@ type ErrorType = {
 
 export const useSwitchNetwork = () => {
   const {network} = useNetwork();
+  const {connectorName} = useWallet();
+  const connectors = useConnectors();
 
   const switchWalletNetwork = async () => {
     // Check if MetaMask is installed
@@ -43,6 +47,18 @@ export const useSwitchNetwork = () => {
       alert(
         'MetaMask is not installed. Please consider installing it: https://metamask.io/download.html'
       );
+    }
+    // TODO explore more sturdy ways to handle this in the actual payload and/or a UI flow for network "switching"
+    // Update incoming dAppConnect-as-wallet's current chain to the chainId of the app's current req'd network
+    // All chains when connecting to the app are pre approved by WalletConnect on connection
+    // This is more of a workaround to match chains and unblock existing flows
+    // Ex. Aragon DAO connecting to an Aragon DAO, the connecting DAO is on the wrong chain (default chainId of WAGMI config -- was Base)
+    if (connectorName === 'WalletConnect') {
+      if (connectors[0]?.switchChain) {
+        connectors[0]?.switchChain({
+          chainId: CHAIN_METADATA[network as SupportedNetworks]?.id,
+        });
+      }
     }
   };
 
