@@ -7,7 +7,7 @@ test('Publish signaling Proposal', async ({
   extensionId,
   metamask,
 }) => {
-  await page.goto('http://localhost:5173/');
+  await page.goto(`${LOCALHOST_URL}/`);
   await page.getByRole('button', {name: 'Accept all'}).click();
   await page.getByRole('button', {name: 'Connect wallet'}).click();
   await page.getByRole('button', {name: 'MetaMask MetaMask'}).nth(0).click();
