@@ -1,3 +1,4 @@
+import {LOCALHOST_URL} from '../../../../basic.setup';
 import {testWithMetaMask as test} from '../../../../testWithMetaMask';
 
 // Test is publishing, approving, and executing a withdrawal of DAO funds
@@ -8,7 +9,7 @@ test('Withdraw DAO funds proposal', async ({
   metamask,
 }) => {
   await page.goto(
-    'http://localhost:5173/#/daos/sepolia/0x39d7821be4fe0d861f3d2c5aedbe9ca1ddfd2ba1/dashboard'
+    `${LOCALHOST_URL}/#/daos/sepolia/0x39d7821be4fe0d861f3d2c5aedbe9ca1ddfd2ba1/dashboard`
   );
   await page.getByRole('button', {name: 'Accept all'}).click();
   await page.getByRole('button', {name: 'Connect wallet'}).click();
