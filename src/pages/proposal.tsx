@@ -92,7 +92,7 @@ import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
-import {VoteOrApprovalDialog} from 'containers/VoteOrApprovalDialog/voteOrApprovalDialog';
+import {VoteOrApprovalDialog} from 'containers/voteOrApprovalDialog/voteOrApprovalDialog';
 import {ExecuteProposalDialog} from 'containers/executeProposalDialog';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
