@@ -58,8 +58,6 @@ import {
   GaslessVotingClient,
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
-import {constants} from 'ethers';
-import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
   decodeApplyUpdateAction,
@@ -198,24 +196,6 @@ export const Proposal: React.FC = () => {
     pluginType,
     proposal?.status as string,
     isGaslessProposal(proposal) ? proposal.vochainProposalId : undefined
-  );
-
-  const shouldFetchPastVotingPower =
-    address != null &&
-    daoToken != null &&
-    proposal != null &&
-    proposal.status === ProposalStatus.ACTIVE;
-
-  const {data: pastVotingPower = constants.Zero} = usePastVotingPower(
-    {
-      address: address as string,
-      tokenAddress: daoToken?.address as string,
-      blockNumber: proposal?.creationBlockNumber as number,
-      network,
-    },
-    {
-      enabled: shouldFetchPastVotingPower,
-    }
   );
 
   const {hasAlreadyVote: gaslessAlreadyVote} = useGaslessHasAlreadyVote({
@@ -872,11 +852,9 @@ export const Proposal: React.FC = () => {
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         tryExecution={tryExecution}
-        pluginType={pluginType}
         vote={vote}
-        votingPower={pastVotingPower}
         replacingVote={!!(voted || voteOrApprovalSubmitted)}
-        voteTokenAddress={(proposal as TokenVotingProposal).token?.address}
+        proposal={proposal}
         setVoteOrApprovalSubmitted={setVoteOrApprovalSubmitted}
       />
       <ExecuteProposalDialog

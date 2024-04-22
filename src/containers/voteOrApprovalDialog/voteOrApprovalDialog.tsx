@@ -7,23 +7,26 @@ import {IBuildVoteOrApprovalTransactionParams} from 'services/transactions/trans
 import {useSendVoteOrApprovalTransaction} from './hooks';
 import {useTranslation} from 'react-i18next';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
-import {VoteValues} from '@aragon/sdk-client';
-import {BigNumber} from 'ethers';
+import {
+  MultisigProposal,
+  TokenVotingProposal,
+  VoteValues,
+} from '@aragon/sdk-client';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 /**
  * Represents the props for the VoteOrApprovalDialog component.
  */
 export interface IVoteOrApprovalDialogProps extends ModalProps {
-  pluginType: PluginTypes;
   tryExecution: boolean;
   vote?: VoteValues;
-  votingPower?: BigNumber;
   replacingVote?: boolean;
-  voteTokenAddress?: string;
   setVoteOrApprovalSubmitted: (value: boolean) => void;
+  proposal: MultisigProposal | TokenVotingProposal | GaslessVotingProposal;
 }
 
-const VoteOrApprovalProcess = 'VOTE_OR_APPROVAL';
+const voteOrApprovalProcess = 'VOTE_OR_APPROVAL';
 
 export const VoteOrApprovalDialog: React.FC<
   IVoteOrApprovalDialogProps
@@ -31,22 +34,21 @@ export const VoteOrApprovalDialog: React.FC<
   const {
     isOpen,
     onClose,
-    pluginType,
     tryExecution,
     replacingVote,
     vote,
-    votingPower,
+    proposal,
     setVoteOrApprovalSubmitted,
     ...otherProps
   } = props;
 
-  const DialogTexts =
-    pluginType === 'multisig.plugin.dao.eth' ? 'approval' : 'vote';
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
   const {t} = useTranslation();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
-  const VoteOrApprovalParams = voteOrApprovalUtils.buildVoteOrApprovalParams(
+  const voteOrApprovalParams = voteOrApprovalUtils.buildVoteOrApprovalParams(
     pluginType,
     tryExecution,
     vote
@@ -54,36 +56,38 @@ export const VoteOrApprovalDialog: React.FC<
 
   const {data: transaction} = useVoteOrApprovalTransaction(
     {
-      ...VoteOrApprovalParams,
+      ...voteOrApprovalParams,
       pluginClient,
     } as IBuildVoteOrApprovalTransactionParams,
-    {enabled: VoteOrApprovalParams != null && pluginClient != null}
+    {enabled: voteOrApprovalParams != null && pluginClient != null}
   );
 
   const sendTransactionResults = useSendVoteOrApprovalTransaction({
-    process: VoteOrApprovalProcess,
-    pluginType,
+    process: voteOrApprovalProcess,
     transaction,
-    votingPower,
     replacingVote,
     vote,
+    proposal,
     setVoteOrApprovalSubmitted,
   });
 
+  const handleSuccessClick = () => onClose?.();
+
+  const dialogType =
+    pluginType === 'multisig.plugin.dao.eth' ? 'approval' : 'vote';
+
   return (
     <TransactionDialog
-      title={t(`voteOrApprovalDialog.title.${DialogTexts}`)}
+      title={t(`voteOrApprovalDialog.title.${dialogType}`)}
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
       displayTransactionStatus={transaction != null}
       sendTransactionLabel={t(
-        `voteOrApprovalDialog.button.${DialogTexts}.approve`
+        `voteOrApprovalDialog.button.${dialogType}.approve`
       )}
       successButton={{
-        label: t(`voteOrApprovalDialog.button.${DialogTexts}.success`),
-        onClick: () => {
-          onClose?.();
-        },
+        label: t(`voteOrApprovalDialog.button.${dialogType}.success`),
+        onClick: handleSuccessClick,
       }}
       onClose={onClose}
       {...otherProps}

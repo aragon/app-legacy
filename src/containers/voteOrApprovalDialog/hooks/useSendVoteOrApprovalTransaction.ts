@@ -1,25 +1,27 @@
 import {useSendTransaction} from 'hooks/useSendTransaction';
 import {ITransaction} from 'services/transactions/domain/transaction';
-
-import {ProposalId} from 'utils/types';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {voteStorage} from 'utils/localStorage';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useParams} from 'react-router-dom';
-import {BigNumber} from 'ethers';
-import {VoteValues} from '@aragon/sdk-client';
+import {constants} from 'ethers';
+import {
+  MultisigProposal,
+  TokenVotingProposal,
+  VoteValues,
+} from '@aragon/sdk-client';
 import {useQueryClient} from '@tanstack/react-query';
 import {
   AragonSdkQueryItem,
   aragonSdkQueryKeys,
 } from 'services/aragon-sdk/query-keys';
-
-export type ApproveMultisigProposalParams = {
-  proposalId: string;
-  tryExecution: boolean;
-};
+import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {ProposalStatus} from '@aragon/sdk-client-common';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useDaoToken} from 'hooks/useDaoToken';
 
 export interface IUseSendVoteOrApprovalTransaction {
   /**
@@ -31,15 +33,20 @@ export interface IUseSendVoteOrApprovalTransaction {
    */
   transaction?: ITransaction;
   /**
-   * The type of plugin installed.
+   * Proposal to vote for.
    */
-  pluginType?: PluginTypes;
+  proposal: MultisigProposal | TokenVotingProposal | GaslessVotingProposal;
   /**
-   * VoteParams
+   * Defines if the vote should be replaced.
    */
-  votingPower?: BigNumber;
   replacingVote?: boolean;
+  /**
+   * Vote to be sent.
+   */
   vote?: VoteValues;
+  /**
+   * Callback called on vote/approve submitted.
+   */
   setVoteOrApprovalSubmitted: (value: boolean) => void;
 }
 
@@ -49,18 +56,39 @@ export const useSendVoteOrApprovalTransaction = (
   const {
     process,
     transaction,
-    pluginType,
-    votingPower,
     replacingVote,
     vote,
+    proposal,
     setVoteOrApprovalSubmitted,
   } = params;
   const {network} = useNetwork();
   const {address} = useWallet();
   const queryClient = useQueryClient();
 
-  const {id: urlId} = useParams();
-  const proposalId = new ProposalId(urlId!).export();
+  const {id: proposalId = ''} = useParams();
+
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const {data: daoToken} = useDaoToken(pluginAddress);
+
+  const shouldFetchPastVotingPower =
+    address != null &&
+    daoToken != null &&
+    proposal != null &&
+    proposal.status === ProposalStatus.ACTIVE;
+
+  const {data: votingPower = constants.Zero} = usePastVotingPower(
+    {
+      address: address as string,
+      tokenAddress: daoToken?.address as string,
+      blockNumber: proposal?.creationBlockNumber as number,
+      network,
+    },
+    {
+      enabled: shouldFetchPastVotingPower,
+    }
+  );
 
   const handleVoteOrApprovalSuccess = () => {
     setVoteOrApprovalSubmitted(true);

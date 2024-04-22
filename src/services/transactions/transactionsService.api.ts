@@ -1,17 +1,7 @@
-import {
-  Client,
-  MultisigClient,
-  TokenVotingClient,
-  VoteValues,
-} from '@aragon/sdk-client';
+import {Client, VoteValues} from '@aragon/sdk-client';
 import {DaoAction, PluginInstallItem} from '@aragon/sdk-client-common';
-import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 import {TokenCensus} from '@vocdoni/sdk';
-
-export type PluginClient =
-  | TokenVotingClient
-  | MultisigClient
-  | GaslessVotingClient;
+import {PluginClient} from 'hooks/usePluginClient';
 
 export interface IBuildCreateDaoTransactionParams {
   client: Client;
