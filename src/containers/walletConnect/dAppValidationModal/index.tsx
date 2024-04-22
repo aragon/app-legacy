@@ -1,7 +1,7 @@
 import {AlertInline, Button, IconType} from '@aragon/ods';
 import {WalletInputLegacy} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Controller,
   useFormContext,
@@ -46,6 +46,7 @@ const DAppValidationModal: React.FC<Props> = props => {
   const {control} = useFormContext();
   const {errors} = useFormState({control});
   const [uri] = useWatch({name: [WC_URI_INPUT_NAME], control});
+  const latestKnownSession = useRef<SessionTypes.Struct | null>(null);
 
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
@@ -80,6 +81,16 @@ const DAppValidationModal: React.FC<Props> = props => {
     [sessions, sessionTopic]
   );
 
+  // latestKnownSession is a ref to store the most recent valid session object.
+  // It allows for tracking session state changes outside of the component lifecycle,
+  // avoiding re-renders and managing race conditions when `sessions` update asynchronously.
+  // Awaits `Adding actions` view correctly, while also resetting the flow if the session is terminated prematurely
+  useEffect(() => {
+    if (currentSession) {
+      latestKnownSession.current = currentSession; // Update ref to the latest known session
+    }
+  }, [currentSession]);
+
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
@@ -103,6 +114,7 @@ const DAppValidationModal: React.FC<Props> = props => {
   const resetConnectionState = useCallback(() => {
     setConnectionStatus(ConnectionState.WAITING);
     setSessionTopic(undefined);
+    latestKnownSession.current = null;
   }, []);
 
   const handleBackClick = useCallback(() => {
@@ -133,15 +145,14 @@ const DAppValidationModal: React.FC<Props> = props => {
 
   // Reset the connection state if the session has been terminated on the dApp before `Adding actions` view is closed
   useEffect(() => {
-    const isSuccess = connectionStatus === ConnectionState.SUCCESS;
-
     if (
-      !sessions.includes(currentSession as SessionTypes.Struct) &&
-      isSuccess
+      connectionStatus === ConnectionState.SUCCESS &&
+      latestKnownSession.current &&
+      !sessions.includes(latestKnownSession.current)
     ) {
       resetConnectionState();
     }
-  }, [connectionStatus, currentSession, sessions, resetConnectionState]);
+  }, [connectionStatus, sessions, resetConnectionState]);
 
   const disableCta = uri == null || Boolean(errors[WC_URI_INPUT_NAME]);
 
