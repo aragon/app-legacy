@@ -58,7 +58,7 @@ import {
   GaslessVotingClient,
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
-import {BigNumber, constants} from 'ethers';
+import {constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
@@ -139,8 +139,6 @@ export const Proposal: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [tryExecution, setTryExecution] = useState(false);
   const [vote, setVote] = useState<VoteValues>();
-  const [votingPower, setVotingPower] = useState<BigNumber>(BigNumber.from(0));
-  const [replacingVote, setReplacingVote] = useState(false);
   const [voteOrApprovalSubmitted, setVoteOrApprovalSubmitted] = useState(false);
 
   const {
@@ -755,12 +753,6 @@ export const Proposal: React.FC = () => {
     executableWithNextApproval,
     onVoteSubmitClicked: vote => {
       setVote(vote);
-      setVotingPower(pastVotingPower);
-      if (isGaslessProposal(proposal)) {
-        setVote(vote);
-      } else {
-        setReplacingVote(!!(voted || voteOrApprovalSubmitted));
-      }
       setIsDialogOpen(true);
     },
   };
@@ -882,8 +874,8 @@ export const Proposal: React.FC = () => {
         tryExecution={tryExecution}
         pluginType={pluginType}
         vote={vote}
-        votingPower={votingPower}
-        replacingVote={replacingVote}
+        votingPower={pastVotingPower}
+        replacingVote={!!(voted || voteOrApprovalSubmitted)}
         voteTokenAddress={(proposal as TokenVotingProposal).token?.address}
         setVoteOrApprovalSubmitted={setVoteOrApprovalSubmitted}
       />

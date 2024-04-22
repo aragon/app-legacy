@@ -114,8 +114,12 @@ export const useSendVoteOrApprovalTransaction = (
       pluginType,
     });
 
-    queryClient.invalidateQueries(allProposalsQuery);
-    queryClient.invalidateQueries(currentProposal);
+    queryClient.invalidateQueries({
+      queryKey: allProposalsQuery,
+    });
+    queryClient.invalidateQueries({
+      queryKey: currentProposal,
+    });
   };
 
   const sendTransactionResults = useSendTransaction({
