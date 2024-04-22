@@ -79,8 +79,6 @@ export const VoteOrApprovalDialog: React.FC<
   const dialogContext =
     dialogType === 'approval' && tryExecution ? 'execute' : undefined;
 
-  console.log({dialogContext});
-
   return (
     <TransactionDialog
       title={t(`voteOrApprovalDialog.title.${dialogType}`, {
