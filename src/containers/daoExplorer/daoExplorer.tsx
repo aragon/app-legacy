@@ -62,15 +62,7 @@ export const DaoExplorer = () => {
         pluginNames: filters.pluginNames,
       }),
       ...(filters.networks?.length !== 0 && {
-        networks: filters.networks?.map(network => {
-          // TODO: Remove this Goerli based network conditions
-          if (network === 'arbitrum-goerli') {
-            return 'arbitrumGoerli';
-          } else if (network === 'base-goerli') {
-            return 'baseGoerli';
-          }
-          return network;
-        }),
+        networks: filters.networks,
       }),
       ...(filters.quickFilter === 'memberOf' && address
         ? {memberAddress: address}
@@ -101,7 +93,8 @@ export const DaoExplorer = () => {
     () =>
       followedDaosResult.data?.pages
         .flatMap(page => page.data)
-        .map(followedDaoToDao),
+        .map(followedDaoToDao)
+        .filter(dao => dao.network),
     [followedDaosResult]
   );
 

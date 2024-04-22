@@ -4,13 +4,15 @@ import {
   TokenVotingClient,
   VoteValues,
 } from '@aragon/sdk-client';
-import {PluginInstallItem} from '@aragon/sdk-client-common';
+import {DaoAction, PluginInstallItem} from '@aragon/sdk-client-common';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
+import {TokenCensus} from '@vocdoni/sdk';
 
 export type PluginClient =
   | TokenVotingClient
   | MultisigClient
   | GaslessVotingClient;
+
 export interface IBuildCreateDaoTransactionParams {
   client: Client;
   metadataUri: string;
@@ -25,4 +27,45 @@ export interface IBuildVoteOrApprovalTransactionParams {
   vote: VoteValues;
   proposalId: string;
   tryExecution?: boolean;
+}
+export interface IBuildExecuteMultisigProposalTransactionParams {
+  client: Client;
+  proposalId: string;
+}
+
+export interface IBuildExecuteTokenVotingProposalTransactionParams {
+  client: Client;
+  proposalId: string;
+}
+
+export interface IBuildCreateMultisigProposalTransactionParams {
+  client: Client;
+  actions?: DaoAction[];
+  startDate?: Date;
+  endDate?: Date;
+  approve?: boolean;
+  tryExecution?: boolean;
+  metadataUri: string;
+  pluginAddress: string;
+}
+
+export interface IBuildCreateTokenVotingProposalTransactionParams {
+  client: Client;
+  actions?: DaoAction[];
+  startDate?: Date;
+  endDate?: Date;
+  executeOnPass?: boolean;
+  creatorVote?: VoteValues;
+  metadataUri: string;
+  pluginAddress: string;
+}
+
+export interface IBuildCreateGaslessProposalTransactionParams {
+  client: Client;
+  actions?: DaoAction[];
+  startDate?: Date;
+  endDate?: Date;
+  pluginAddress: string;
+  tokenCensus: TokenCensus;
+  electionId: string;
 }

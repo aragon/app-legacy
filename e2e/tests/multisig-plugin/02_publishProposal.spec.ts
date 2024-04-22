@@ -1,4 +1,5 @@
-import {testWithMetaMask as test} from '../testWithMetaMask';
+import {LOCALHOST_URL} from '../../basic.setup';
+import {testWithMetaMask as test} from '../../testWithMetaMask';
 
 // Test is publishing a signaling Proposal and voting on it
 test('Publish signaling Proposal', async ({
@@ -7,7 +8,7 @@ test('Publish signaling Proposal', async ({
   extensionId,
   metamask,
 }) => {
-  await page.goto('http://localhost:5173/');
+  await page.goto(`${LOCALHOST_URL}/`);
   await page.getByRole('button', {name: 'Accept all'}).click();
   await page.getByRole('button', {name: 'Connect wallet'}).click();
   await page.getByRole('button', {name: 'MetaMask MetaMask'}).nth(0).click();
@@ -19,7 +20,9 @@ test('Publish signaling Proposal', async ({
     .getByRole('link', {name: 'MD Multisig DAO DAO generated'})
     .first()
     .click();
-  await page.getByRole('button', {name: 'New proposal'}).click();
+  await page
+    .getByRole('button', {name: /New proposal|Create proposal/})
+    .click();
   await page.getByRole('button', {name: 'Switch to Ethereum Sepolia'}).click();
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);
@@ -42,5 +45,6 @@ test('Publish signaling Proposal', async ({
   await page.getByRole('button', {name: 'Open your proposal'}).click();
   await page.getByRole('button', {name: 'Approve'}).click();
   await page.getByRole('button', {name: 'Approve'}).click();
+  await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Continue to proposal'}).click();
 });

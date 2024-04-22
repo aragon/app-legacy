@@ -14,16 +14,18 @@ export type StepperLabels<TStepKey extends string> = Record<
 export const StepperModalProgress = <TStepKey extends string>({
   steps,
   labels,
+  className,
 }: {
   steps: StepsMap<TStepKey>;
   labels: StepperLabels<TStepKey>;
+  className?: string;
 }) => {
   if (!steps) {
     return null;
   }
 
   return (
-    <StepList>
+    <StepList className={className}>
       {Object.entries(steps).map(([id, step], i) => {
         return (
           <StepLine

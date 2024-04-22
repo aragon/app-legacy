@@ -5,6 +5,8 @@ import {
 } from '@synthetixio/synpress';
 import 'dotenv/config';
 
+export const LOCALHOST_URL = 'http://localhost:5173/';
+
 const SEED_PHRASE = process.env.METAMASK_SEED_PHRASE!;
 const PASSWORD = process.env.METAMASK_PASSWORD!;
 

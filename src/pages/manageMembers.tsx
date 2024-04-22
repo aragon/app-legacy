@@ -24,7 +24,6 @@ import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
 import {ActionsProvider} from 'context/actions';
-import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
@@ -41,10 +40,15 @@ import {
   ActionUpdateMultisigPluginSettings,
   ManageMembersFormData,
 } from 'utils/types';
+import {useWallet} from 'hooks/useWallet';
+import {CreateProposalDialog} from 'containers/createProposalDialog';
 
 export const ManageMembers: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {isConnected, isOnWrongNetwork} = useWallet();
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // dao data
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
@@ -85,7 +89,17 @@ export const ManageMembers: React.FC = () => {
     name: ['actions'],
   });
 
-  const [showTxModal, setShowTxModal] = useState(false);
+  const handlePublishProposalClick = () => {
+    if (isConnected) {
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        setIsDialogOpen(true);
+      }
+    } else {
+      open('wallet');
+    }
+  };
 
   const handleGoToSetupVoting = useCallback(
     (next: () => void) => {
@@ -120,76 +134,75 @@ export const ManageMembers: React.FC = () => {
   return (
     <FormProvider {...formMethods}>
       <ActionsProvider daoId={daoDetails.address}>
-        <CreateProposalProvider
-          showTxModal={showTxModal}
-          setShowTxModal={setShowTxModal}
+        <FullScreenStepper
+          wizardProcessName={t('newProposal.title')}
+          navLabel={t('labels.manageMember')}
+          processType="ProposalCreation"
+          returnPath={generatePath(Community, {
+            network,
+            dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+          })}
         >
-          <FullScreenStepper
-            wizardProcessName={t('newProposal.title')}
-            navLabel={t('labels.manageMember')}
-            processType="ProposalCreation"
-            returnPath={generatePath(Community, {
-              network,
-              dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
-            })}
+          <Step
+            wizardTitle={t('newProposal.manageWallets.title')}
+            wizardDescription={t('newProposal.manageWallets.description')}
+            isNextButtonDisabled={
+              !actionsAreValid(
+                errors,
+                formActions,
+                multisigVotingSettings.minApprovals
+              )
+            }
+            onNextButtonClicked={handleGoToSetupVoting}
+            onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
           >
-            <Step
-              wizardTitle={t('newProposal.manageWallets.title')}
-              wizardDescription={t('newProposal.manageWallets.description')}
-              isNextButtonDisabled={
-                !actionsAreValid(
-                  errors,
-                  formActions,
-                  multisigVotingSettings.minApprovals
-                )
-              }
-              onNextButtonClicked={handleGoToSetupVoting}
-              onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
-            >
-              <>
-                <AddAddresses
-                  actionIndex={0}
-                  useCustomHeader
-                  currentDaoMembers={daoMembers.members}
-                />
-                <RemoveAddresses
-                  actionIndex={1}
-                  useCustomHeader
-                  currentDaoMembers={daoMembers.members}
-                />
-                <UpdateMinimumApproval
-                  actionIndex={2}
-                  useCustomHeader
-                  currentDaoMembers={daoMembers.members}
-                  currentMinimumApproval={multisigVotingSettings.minApprovals}
-                />
-              </>
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.setupVoting.title')}
-              wizardDescription={t('newWithdraw.setupVoting.description')}
-              isNextButtonDisabled={!setupVotingIsValid(errors)}
-            >
-              <SetupVotingForm pluginSettings={multisigVotingSettings} />
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.defineProposal.heading')}
-              wizardDescription={t('newWithdraw.defineProposal.description')}
-              isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
-            >
-              <DefineProposal />
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.reviewProposal.heading')}
-              wizardDescription={t('newWithdraw.reviewProposal.description')}
-              nextButtonLabel={t('labels.submitProposal')}
-              onNextButtonClicked={() => setShowTxModal(true)}
-              fullWidth
-            >
-              <ReviewProposal defineProposalStepNumber={3} />
-            </Step>
-          </FullScreenStepper>
-        </CreateProposalProvider>
+            <>
+              <AddAddresses
+                actionIndex={0}
+                useCustomHeader
+                currentDaoMembers={daoMembers.members}
+              />
+              <RemoveAddresses
+                actionIndex={1}
+                useCustomHeader
+                currentDaoMembers={daoMembers.members}
+              />
+              <UpdateMinimumApproval
+                actionIndex={2}
+                useCustomHeader
+                currentDaoMembers={daoMembers.members}
+                currentMinimumApproval={multisigVotingSettings.minApprovals}
+              />
+            </>
+          </Step>
+          <Step
+            wizardTitle={t('newWithdraw.setupVoting.title')}
+            wizardDescription={t('newWithdraw.setupVoting.description')}
+            isNextButtonDisabled={!setupVotingIsValid(errors)}
+          >
+            <SetupVotingForm pluginSettings={multisigVotingSettings} />
+          </Step>
+          <Step
+            wizardTitle={t('newWithdraw.defineProposal.heading')}
+            wizardDescription={t('newWithdraw.defineProposal.description')}
+            isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
+          >
+            <DefineProposal />
+          </Step>
+          <Step
+            wizardTitle={t('newWithdraw.reviewProposal.heading')}
+            wizardDescription={t('newWithdraw.reviewProposal.description')}
+            nextButtonLabel={t('labels.submitProposal')}
+            onNextButtonClicked={handlePublishProposalClick}
+            fullWidth
+          >
+            <ReviewProposal defineProposalStepNumber={3} />
+            <CreateProposalDialog
+              isOpen={isDialogOpen}
+              onClose={() => setIsDialogOpen(false)}
+            />
+          </Step>
+        </FullScreenStepper>
       </ActionsProvider>
     </FormProvider>
   );

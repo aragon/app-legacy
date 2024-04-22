@@ -137,14 +137,8 @@ export const useDaoMembers = (
   const countOnly = opts?.countOnly || false;
   const enabled = opts?.enabled || true;
 
-  // TODO: Remove this Goerli based network conditions
   const covalentSupportedNetwork = !(
-    network === 'goerli' ||
-    network === 'mumbai' ||
-    network === 'arbitrum' ||
-    network === 'arbitrum-goerli' ||
-    network === 'base' ||
-    network === 'base-goerli'
+    network === 'arbitrum' || network === 'base'
   );
 
   const useGraphql =
