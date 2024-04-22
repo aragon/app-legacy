@@ -41,7 +41,7 @@ export const VoteOrApprovalDialog: React.FC<
   } = props;
 
   const DialogTexts =
-    pluginType === 'multisig.plugin.dao.eth' ? 'vote' : 'approve';
+    pluginType === 'multisig.plugin.dao.eth' ? 'approval' : 'vote';
 
   const {t} = useTranslation();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
@@ -72,13 +72,15 @@ export const VoteOrApprovalDialog: React.FC<
 
   return (
     <TransactionDialog
-      title={t(`voteOrApprovalDialog.${DialogTexts}.title`)}
+      title={t(`voteOrApprovalDialog.title.${DialogTexts}`)}
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
       displayTransactionStatus={transaction != null}
-      sendTransactionLabel={`button.${DialogTexts}.approve`}
+      sendTransactionLabel={t(
+        `voteOrApprovalDialog.button.${DialogTexts}.approve`
+      )}
       successButton={{
-        label: `button.${DialogTexts}.success`,
+        label: t(`voteOrApprovalDialog.button.${DialogTexts}.success`),
         onClick: () => {
           onClose?.();
         },
