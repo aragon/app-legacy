@@ -53,7 +53,7 @@ const SelectdAppModal: React.FC<Props> = props => {
           <div className="flex flex-col gap-y-2">
             {sessions.map(session => (
               <ListItemAction
-                key={session.peer.metadata.name}
+                key={session.topic}
                 title={session.peer.metadata.name}
                 iconLeft={parseWCIconUrl(
                   session.peer.metadata.url,

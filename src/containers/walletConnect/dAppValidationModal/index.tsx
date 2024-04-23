@@ -41,12 +41,12 @@ const DAppValidationModal: React.FC<Props> = props => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionState>(
     ConnectionState.WAITING
   );
-
   const {wcConnect, validateURI, sessions} = useWalletConnectContext();
 
   const {control} = useFormContext();
   const {errors} = useFormState({control});
   const [uri] = useWatch({name: [WC_URI_INPUT_NAME], control});
+  const [didConnect, setDidConnect] = useState(false);
 
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
@@ -76,9 +76,15 @@ const DAppValidationModal: React.FC<Props> = props => {
     return t('labels.paste');
   }, [connectionStatus, t, uri]);
 
-  const currentSession = sessions.find(
-    ({pairingTopic}) => pairingTopic === sessionTopic
+  const currentSession = useMemo(
+    () => sessions.find(({pairingTopic}) => pairingTopic === sessionTopic),
+    [sessions, sessionTopic]
   );
+
+  // Helps await `Adding actions` view correctly, while also resetting the flow if the session is terminated prematurely
+  useEffect(() => {
+    setDidConnect(currentSession != null);
+  }, [currentSession]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -131,14 +137,22 @@ const DAppValidationModal: React.FC<Props> = props => {
     }
   }, [uri, wcConnect]);
 
-  // Reset the connection state if the session has been terminated on the dApp
+  // Reset the connection state if the session has been terminated on the dApp before `Adding actions` view is closed
   useEffect(() => {
-    const isSuccess = connectionStatus === ConnectionState.SUCCESS;
-
-    if (isSuccess && currentSession == null) {
+    if (
+      connectionStatus === ConnectionState.SUCCESS &&
+      didConnect === true &&
+      !sessions.includes(currentSession as SessionTypes.Struct)
+    ) {
       resetConnectionState();
     }
-  }, [connectionStatus, currentSession, resetConnectionState]);
+  }, [
+    connectionStatus,
+    sessions,
+    resetConnectionState,
+    didConnect,
+    currentSession,
+  ]);
 
   const disableCta = uri == null || Boolean(errors[WC_URI_INPUT_NAME]);
 
