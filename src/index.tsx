@@ -32,7 +32,7 @@ import {App} from './app';
 import {aragonGateway} from 'utils/aragonGateway';
 import {HttpTransport} from 'viem';
 
-const chains = [base, mainnet, polygon, arbitrum, sepolia] as [
+const chains = [mainnet, polygon, base, arbitrum, sepolia] as [
   Chain,
   ...Chain[],
 ];

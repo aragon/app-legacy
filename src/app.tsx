@@ -44,6 +44,7 @@ export const App: React.FC = () => {
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
   const {methods, status, network, address, provider} = useWallet();
+
   useMonitoring();
 
   // Initialize feature flags using the initial URL

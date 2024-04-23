@@ -9,11 +9,11 @@ import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
-import {useSwitchNetwork} from 'hooks/useSwitchNetwork';
 import {useWallet} from 'hooks/useWallet';
 import WalletIcon from 'assets/images/wallet.svg';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {handleClipboardActions, shortenAddress} from 'utils/library';
+import {useSwitchChain} from 'wagmi';
 
 interface INetworkErrorMenuState {
   onClose?: () => void;
@@ -26,8 +26,9 @@ export const NetworkErrorMenu = () => {
   const {onClose, onSuccess} = modalState ?? {};
 
   const {network} = useNetwork();
-  const {switchWalletNetwork} = useSwitchNetwork();
-  const {address, ensName, ensAvatarUrl, connectorName} = useWallet();
+  const {switchChain} = useSwitchChain();
+  const {address, ensName, ensAvatarUrl} = useWallet();
+
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -38,7 +39,8 @@ export const NetworkErrorMenu = () => {
   };
 
   const handleSwitchNetwork = () => {
-    switchWalletNetwork();
+    const currentChain = CHAIN_METADATA[network as SupportedNetworks]?.id;
+    switchChain({chainId: currentChain});
     close();
     onSuccess?.();
   };
@@ -86,13 +88,11 @@ export const NetworkErrorMenu = () => {
             </Trans>
           </WarningDescription>
         </WarningContainer>
-        {connectorName === 'MetaMask' && (
-          <Button onClick={handleSwitchNetwork} size="lg" variant="primary">
-            {t('alert.wrongNetwork.buttonLabel', {
-              network: CHAIN_METADATA[network].name,
-            })}
-          </Button>
-        )}
+        <Button onClick={handleSwitchNetwork} size="lg" variant="primary">
+          {t('alert.wrongNetwork.buttonLabel', {
+            network: CHAIN_METADATA[network].name,
+          })}
+        </Button>
       </ModalBody>
     </ModalBottomSheetSwitcher>
   );
