@@ -83,9 +83,7 @@ const DAppValidationModal: React.FC<Props> = props => {
 
   // Helps await `Adding actions` view correctly, while also resetting the flow if the session is terminated prematurely
   useEffect(() => {
-    if (currentSession != null) {
-      setDidConnect(true); // Update ref to the latest known session
-    }
+    setDidConnect(currentSession != null);
   }, [currentSession]);
 
   /*************************************************
@@ -111,7 +109,6 @@ const DAppValidationModal: React.FC<Props> = props => {
   const resetConnectionState = useCallback(() => {
     setConnectionStatus(ConnectionState.WAITING);
     setSessionTopic(undefined);
-    setDidConnect(false);
   }, []);
 
   const handleBackClick = useCallback(() => {
