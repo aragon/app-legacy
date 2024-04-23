@@ -46,7 +46,7 @@ const DAppValidationModal: React.FC<Props> = props => {
   const {control} = useFormContext();
   const {errors} = useFormState({control});
   const [uri] = useWatch({name: [WC_URI_INPUT_NAME], control});
-  const latestKnownSession = useRef<SessionTypes.Struct | null>(null);
+  const [didConnect, setDidConnect] = useState(false);
 
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
@@ -81,13 +81,10 @@ const DAppValidationModal: React.FC<Props> = props => {
     [sessions, sessionTopic]
   );
 
-  // latestKnownSession is a ref to store the most recent valid session object.
-  // It allows for tracking session state changes outside of the component lifecycle,
-  // avoiding re-renders and managing race conditions when `sessions` update asynchronously.
-  // Awaits `Adding actions` view correctly, while also resetting the flow if the session is terminated prematurely
+  // Helps await `Adding actions` view correctly, while also resetting the flow if the session is terminated prematurely
   useEffect(() => {
-    if (currentSession) {
-      latestKnownSession.current = currentSession; // Update ref to the latest known session
+    if (currentSession != null) {
+      setDidConnect(true); // Update ref to the latest known session
     }
   }, [currentSession]);
 
@@ -114,7 +111,7 @@ const DAppValidationModal: React.FC<Props> = props => {
   const resetConnectionState = useCallback(() => {
     setConnectionStatus(ConnectionState.WAITING);
     setSessionTopic(undefined);
-    latestKnownSession.current = null;
+    setDidConnect(false);
   }, []);
 
   const handleBackClick = useCallback(() => {
@@ -147,12 +144,18 @@ const DAppValidationModal: React.FC<Props> = props => {
   useEffect(() => {
     if (
       connectionStatus === ConnectionState.SUCCESS &&
-      latestKnownSession.current &&
-      !sessions.includes(latestKnownSession.current)
+      didConnect === true &&
+      !sessions.includes(currentSession as SessionTypes.Struct)
     ) {
       resetConnectionState();
     }
-  }, [connectionStatus, sessions, resetConnectionState]);
+  }, [
+    connectionStatus,
+    sessions,
+    resetConnectionState,
+    didConnect,
+    currentSession,
+  ]);
 
   const disableCta = uri == null || Boolean(errors[WC_URI_INPUT_NAME]);
 
