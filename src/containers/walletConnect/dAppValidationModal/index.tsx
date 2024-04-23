@@ -1,7 +1,7 @@
 import {AlertInline, Button, IconType} from '@aragon/ods';
 import {WalletInputLegacy} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
   useFormContext,
