@@ -81,12 +81,7 @@ const ProposalStepper: React.FC = () => {
    *************************************************/
   useEffect(() => {
     const validateActions = async () => {
-      const isValid = await actionsAreValid(
-        formActions,
-        actions,
-        errors,
-        network
-      );
+      const isValid = await actionsAreValid(formActions, actions, errors);
       setAreActionsValid(isValid);
     };
 
