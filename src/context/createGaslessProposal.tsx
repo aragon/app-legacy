@@ -199,6 +199,8 @@ const useCreateGaslessProposal = (daoTokenAddress: string | undefined) => {
       const censusToken = await getCensus3Token();
 
       // Create the vocdoni census
+      census3.queueWait.retryTime = 5000;
+      census3.queueWait.attempts = 100;
       const census3census: Census3Census = await census3.createCensus(
         censusToken.defaultStrategy
       );

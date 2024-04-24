@@ -7,6 +7,7 @@ import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
 import {VocdoniEnv} from './useVocdoniSdk';
+import {CENSUS3_URL} from './useCensus3';
 
 export const GaslessPluginName =
   'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth';
@@ -82,7 +83,8 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
           setPluginClient(
             new GaslessVotingClient(
               new GaslessVotingContext(context),
-              VocdoniEnv
+              VocdoniEnv,
+              CENSUS3_URL
             )
           );
           break;
