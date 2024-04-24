@@ -3,13 +3,24 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 
 import {SupportedVotingSettings} from 'utils/types';
 import {IFetchVotingSettingsParams} from '../aragon-sdk-service.api';
-import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
+import {
+  PluginClient,
+  isGaslessVotingClient,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
+import request, {gql} from 'graphql-request';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PermissionIds} from '@aragon/sdk-client';
+import {SUBGRAPH_API_URL, SupportedNetworks} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 async function fetchVotingSettingsAsync(
   {pluginAddress, blockNumber}: IFetchVotingSettingsParams,
-  client: PluginClient | undefined
+  client: PluginClient | undefined,
+  daoAddress: string | undefined,
+  network: SupportedNetworks
 ): Promise<SupportedVotingSettings | null> {
   if (!pluginAddress)
     return Promise.reject(
@@ -26,8 +37,55 @@ async function fetchVotingSettingsAsync(
     blockNumber
   );
 
+  if (
+    data &&
+    isGaslessVotingSettings(data) &&
+    data.daoTokenAddress &&
+    isGaslessVotingClient(client) &&
+    daoAddress &&
+    SUBGRAPH_API_URL[network]
+  ) {
+    const subgraphUrl = SUBGRAPH_API_URL[network];
+    const mintable = await fetchisMintable(
+      daoAddress,
+      PermissionIds.MINT_PERMISSION_ID,
+      subgraphUrl!
+    );
+    data.hasGovernanceEnabled = data.hasGovernanceEnabled && mintable;
+  }
   return data;
 }
+
+const hasPermissionQuery = gql`
+  query HasPermission($where: Permission_filter!) {
+    permissions(where: $where) {
+      id
+    }
+  }
+`;
+
+const fetchisMintable = async (
+  daoAddress: string,
+  permissionId: string,
+  subgraphUrl: string
+): Promise<boolean> => {
+  const params = {
+    where: {
+      dao: daoAddress.toLowerCase(),
+      permissionId,
+    },
+  };
+
+  const {permissions: data} = await request(
+    subgraphUrl,
+    hasPermissionQuery,
+    params
+  );
+  if (data.error || data == null || data.length === 0) {
+    return false;
+  }
+  return true;
+};
 
 /**
  * Type guard to determine if the settings are of type VotingSettings.
@@ -73,7 +131,9 @@ export function useVotingSettings(
     'queryKey'
   > = {}
 ) {
+  const {data: daoDetails} = useDaoDetailsQuery();
   const client = usePluginClient(params.pluginType);
+  const {network} = useNetwork();
 
   if (!client || !params.pluginAddress) {
     options.enabled = false;
@@ -81,7 +141,8 @@ export function useVotingSettings(
 
   return useQuery({
     queryKey: aragonSdkQueryKeys.votingSettings(params),
-    queryFn: () => fetchVotingSettingsAsync(params, client),
+    queryFn: () =>
+      fetchVotingSettingsAsync(params, client, daoDetails?.address, network),
     ...options,
   });
 }
