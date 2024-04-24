@@ -154,6 +154,7 @@ const InputForm: React.FC<InputFormProps> = ({
     sccActions,
     selectedAction.name,
     selectedAction.notice,
+    selectedSC.actions,
     selectedSC.address,
     selectedSC.name,
     setValue,

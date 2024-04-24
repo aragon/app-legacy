@@ -265,24 +265,27 @@ export async function validateSCCAction(SCCAction: ActionSCC) {
   // looping through selectedAction.inputs instead of the actionInputs
   // will allow us to ignore the payable input so that encoding using
   // the ABI does not complain
-  const functionParams = SCCAction.inputs
-    ?.filter(input => input.name !== getDefaultPayableAmountInputName(i18n.t))
-    .map(input => {
-      const param = input.value;
 
-      if (typeof param === 'string' && param.indexOf('[') === 0) {
-        return JSON.parse(param);
-      }
-      return param;
-    });
+  if (SCCAction?.actions) {
+    const functionParams = SCCAction.inputs
+      ?.filter(input => input.name !== getDefaultPayableAmountInputName(i18n.t))
+      .map(input => {
+        const param = input.value;
 
-  const iface = new ethers.utils.Interface(SCCAction.actions);
+        if (typeof param === 'string' && param.indexOf('[') === 0) {
+          return JSON.parse(param);
+        }
+        return param;
+      });
 
-  try {
-    iface.encodeFunctionData(SCCAction.functionName, functionParams);
-    return true;
-  } catch (e) {
-    return false;
+    const iface = new ethers.utils.Interface(SCCAction.actions);
+
+    try {
+      iface.encodeFunctionData(SCCAction.functionName, functionParams);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   return false;

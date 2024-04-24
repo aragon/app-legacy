@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {AlertInline, Dropdown} from '@aragon/ods';
 
@@ -26,11 +26,9 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   const {network} = useNetwork();
   const [isValid, setIsValid] = useState(true);
 
-  console.log('ciewvew', actionData);
-
   useEffect(() => {
     const validateAction = async () => {
-      const isValid = await validateSCCAction(actionData, network);
+      const isValid = await validateSCCAction(actionData);
       setIsValid(isValid);
     };
     validateAction();
