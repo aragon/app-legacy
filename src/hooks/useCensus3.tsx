@@ -11,7 +11,9 @@ import {useParams} from 'react-router-dom';
 import {useProposal} from '../services/aragon-sdk/queries/use-proposal';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
-const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
+export const CENSUS3_URL =
+  import.meta.env.VITE_VOCDONI_CENSUS3_URL ??
+  'https://census3-stg.vocdoni.net/api';
 
 interface IUseCensus3CreateToken {
   chainId: number;
