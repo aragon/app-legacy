@@ -65,7 +65,9 @@ class CreateDaoUtils {
   ): DaoMetadata => ({
     name: values.daoName,
     description: values.daoSummary,
-    links: values.links.filter(({name, url}) => name != null && url != null),
+    links: values.links.filter(
+      ({name, url}) => name != null && name !== '' && url != null && url !== ''
+    ),
     avatar: `ipfs://${logoCid}`,
   });
 
