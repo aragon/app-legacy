@@ -28,10 +28,9 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
 
   useEffect(() => {
     const validateAction = async () => {
-      const isValid = await validateSCCAction(actionData, network);
+      const isValid = await validateSCCAction(actionData);
       setIsValid(isValid);
     };
-
     validateAction();
   }, [actionData, network]);
 

@@ -7,7 +7,7 @@ import {TFunction} from 'i18next';
 import {TokenVotingClient} from '@aragon/sdk-client';
 
 import {i18n} from '../../i18n.config';
-import {ALPHA_NUMERIC_PATTERN, SupportedNetworks} from './constants';
+import {ALPHA_NUMERIC_PATTERN} from './constants';
 import {
   Web3Address,
   getDefaultPayableAmountInputName,
@@ -24,7 +24,6 @@ import {
   ActionWithdraw,
   Nullable,
 } from './types';
-import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {ensRegistryABI} from 'abis/ensRegistryABI';
 
 export type TokenType =
@@ -198,8 +197,7 @@ export const alphaNumericValidator = (
 export async function actionsAreValid(
   formActions: Nullable<Action[]>,
   contextActions: ActionItem[],
-  errors: FieldErrors,
-  network: SupportedNetworks
+  errors: FieldErrors
 ) {
   // proposals can go through without any actions
   if (contextActions?.length === 0) return true;
@@ -245,7 +243,7 @@ export async function actionsAreValid(
         );
       case 'external_contract_action': {
         const SCCAction = formActions?.[index] as ActionSCC;
-        const result = await validateSCCAction(SCCAction, network);
+        const result = await validateSCCAction(SCCAction);
         return result;
       }
       default:
@@ -263,22 +261,13 @@ export async function actionsAreValid(
   return isValid;
 }
 
-export async function validateSCCAction(
-  SCCAction: ActionSCC,
-  network: SupportedNetworks
-) {
-  const etherscanData = await getEtherscanVerifiedContract(
-    SCCAction.contractAddress,
-    network
-  );
+export async function validateSCCAction(SCCAction: ActionSCC) {
+  // looping through selectedAction.inputs instead of the actionInputs
+  // will allow us to ignore the payable input so that encoding using
+  // The ABI is coming from the selected action distinguishing between
+  // proxy or implementation ABI
 
-  if (
-    etherscanData.status === '1' &&
-    etherscanData.result[0].ABI !== 'Contract source code not verified'
-  ) {
-    // looping through selectedAction.inputs instead of the actionInputs
-    // will allow us to ignore the payable input so that encoding using
-    // the ABI does not complain
+  if (SCCAction?.actions) {
     const functionParams = SCCAction.inputs
       ?.filter(input => input.name !== getDefaultPayableAmountInputName(i18n.t))
       .map(input => {
@@ -290,7 +279,7 @@ export async function validateSCCAction(
         return param;
       });
 
-    const iface = new ethers.utils.Interface(etherscanData.result[0].ABI);
+    const iface = new ethers.utils.Interface(SCCAction.actions);
 
     try {
       iface.encodeFunctionData(SCCAction.functionName, functionParams);
@@ -299,6 +288,7 @@ export async function validateSCCAction(
       return false;
     }
   }
+
   return false;
 }
 

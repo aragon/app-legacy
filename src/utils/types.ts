@@ -390,6 +390,7 @@ export type ActionSCC = {
   functionName: string;
   inputs?: Array<ExternalActionInput>;
   value?: string;
+  actions?: Array<SmartContractAction>;
 };
 
 // Alias

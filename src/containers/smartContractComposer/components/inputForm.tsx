@@ -97,6 +97,7 @@ const InputForm: React.FC<InputFormProps> = ({
     setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
     setValue(`actions.${actionIndex}.functionName`, selectedAction.name);
     setValue(`actions.${actionIndex}.notice`, selectedAction.notice);
+    setValue(`actions.${actionIndex}.actions`, selectedSC.actions);
 
     // loop through all the inputs so we pick up the payable one as well
     // and keep it on the form
@@ -153,6 +154,7 @@ const InputForm: React.FC<InputFormProps> = ({
     sccActions,
     selectedAction.name,
     selectedAction.notice,
+    selectedSC.actions,
     selectedSC.address,
     selectedSC.name,
     setValue,
