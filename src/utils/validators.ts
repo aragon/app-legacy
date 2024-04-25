@@ -264,7 +264,8 @@ export async function actionsAreValid(
 export async function validateSCCAction(SCCAction: ActionSCC) {
   // looping through selectedAction.inputs instead of the actionInputs
   // will allow us to ignore the payable input so that encoding using
-  // the ABI does not complain
+  // The ABI is coming from the selected action distinguishing between
+  // proxy or implementation ABI
 
   if (SCCAction?.actions) {
     const functionParams = SCCAction.inputs
