@@ -99,9 +99,15 @@ export const CreateProposalDialog: React.FC<
     logContext: {stack: [createGaslessProposalProcess], data: formValues},
   });
 
+  const processedTransaction = isGaslessProposal
+    ? createGaslessTransactionResult.transaction
+    : transaction;
+
   const sendTransactionResults = useSendCreateProposalTransaction({
-    process: createProposalProcess,
-    transaction: transaction ?? createGaslessTransactionResult.transaction,
+    process: isGaslessProposal
+      ? createGaslessProposalProcess
+      : createProposalProcess,
+    transaction: processedTransaction,
     votingSettings,
   });
 
@@ -131,7 +137,7 @@ export const CreateProposalDialog: React.FC<
       title={t('createProposalDialog.title')}
       isOpen={isOpen}
       sendTransactionResult={sendTransactionResults}
-      displayTransactionStatus={transaction != null}
+      displayTransactionStatus={processedTransaction != null}
       onlyTransactionStatus={!isGaslessProposal}
       sendTransactionLabel={t('createProposalDialog.button.approve')}
       successButton={{
@@ -152,6 +158,7 @@ export const CreateProposalDialog: React.FC<
         <CreateProposalDialogGaslessSteps
           process={createProposalProcess}
           createTransactionResult={createGaslessTransactionResult}
+          sendTransactionResults={sendTransactionResults}
         />
       )}
     </TransactionDialog>

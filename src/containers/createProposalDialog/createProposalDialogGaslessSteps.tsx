@@ -6,6 +6,7 @@ import {TFunction} from 'i18next';
 import {useTranslation} from 'react-i18next';
 import {Button} from '@aragon/ods';
 import {UseMutationResult} from '@tanstack/react-query';
+import {IUseSendTransactionResult} from 'hooks/useSendTransaction';
 
 export interface ICreateProposalDialogGaslessStepsProps {
   /**
@@ -16,6 +17,10 @@ export interface ICreateProposalDialogGaslessStepsProps {
    * Displays the custom step button as loading when set to true.
    */
   createTransactionResult: IUseCreateVocdoniProposalTransationResult;
+  /**
+   * Result of the sendTransaction hook
+   */
+  sendTransactionResults: IUseSendTransactionResult;
 }
 
 export enum GaslessProposalStepId {
@@ -48,14 +53,13 @@ const queryStatusToStepStatus: Record<UseMutationResult['status'], StepStatus> =
   };
 
 const hookResultsToSteps = (
-  result: IUseCreateVocdoniProposalTransationResult
+  result: IUseCreateVocdoniProposalTransationResult,
+  sendTxResult: IUseSendTransactionResult
 ): StepsMap<GaslessProposalStepId> => {
-  const {
-    createAccountStatus,
-    createElectionStatus,
-    transaction,
-    isCreateTransactionLoading,
-  } = result;
+  const {createAccountStatus, createElectionStatus} = result;
+
+  const {isSuccess, isSendTransactionLoading, isWaitTransactionLoading} =
+    sendTxResult;
 
   return {
     REGISTER_VOCDONI_ACCOUNT: {
@@ -65,11 +69,12 @@ const hookResultsToSteps = (
       status: queryStatusToStepStatus[createElectionStatus],
     },
     CREATE_ONCHAIN_PROPOSAL: {
-      status: isCreateTransactionLoading
-        ? StepStatus.LOADING
-        : transaction != null
-        ? StepStatus.SUCCESS
-        : StepStatus.WAITING,
+      status:
+        isSendTransactionLoading || isWaitTransactionLoading
+          ? StepStatus.LOADING
+          : isSuccess
+          ? StepStatus.SUCCESS
+          : StepStatus.WAITING,
     },
   };
 };
@@ -77,13 +82,16 @@ const hookResultsToSteps = (
 export const CreateProposalDialogGaslessSteps: React.FC<
   ICreateProposalDialogGaslessStepsProps
 > = props => {
-  const {createTransactionResult} = props;
+  const {createTransactionResult, sendTransactionResults} = props;
   const {createAccountStatus, createElectionStatus, retry} =
     createTransactionResult;
 
   const {t} = useTranslation();
 
-  const steps = hookResultsToSteps(createTransactionResult);
+  const steps = hookResultsToSteps(
+    createTransactionResult,
+    sendTransactionResults
+  );
   const stepLabels = getStepLabels(t);
 
   const isError =
