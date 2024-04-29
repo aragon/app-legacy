@@ -15,6 +15,7 @@ import type {
   IFetchVotingSettingsParams,
   IFetchCreatorProposalsParams,
   IFetchTokenAllowanceParams,
+  IFetchIsmintableParams,
 } from './aragon-sdk-service.api';
 import {SupportedNetworks} from 'utils/constants';
 
@@ -31,6 +32,7 @@ export enum AragonSdkQueryItem {
   PROTOCOL_VERSION = 'PROTOCOL_VERSION',
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
+  IS_MINTABLE = 'IS_MINTABLE',
   GET_MEMBER = 'GET_MEMBER',
   GET_CREATOR_PROPOSALS = 'GET_CREATOR_PROPOSALS',
   RELEASE_NOTES = 'RELEASE_NOTES',
@@ -91,6 +93,10 @@ export const aragonSdkQueryKeys = {
   ],
   votingSettings: (params: IFetchVotingSettingsParams): QueryKey => [
     AragonSdkQueryItem.VOTING_SETTINGS,
+    params,
+  ],
+  isMintable: (params: IFetchIsmintableParams): QueryKey => [
+    AragonSdkQueryItem.IS_MINTABLE,
     params,
   ],
   getMember: (
