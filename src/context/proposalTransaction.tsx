@@ -46,8 +46,15 @@ type ProposalTransactionContextType = {
   handleExecutionMultisigApprove: (
     params: ApproveMultisigProposalParams
   ) => void;
+  handleGaslessVoting: (params: SubmitVoteParams) => void;
   isLoading: boolean;
   voteOrApprovalSubmitted: boolean;
+};
+
+type SubmitVoteParams = {
+  vote: VoteValues;
+  voteTokenAddress?: string;
+  replacement?: boolean;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -74,7 +81,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // state values
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showGaslessModal, setShowGaslessModal] = useState(false);
-  const [voteTokenAddress] = useState<string>();
+  const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
   const [showCommitteeApprovalModal, setShowCommitteeApprovalModal] =
     useState(false);
 
@@ -121,6 +128,15 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       setVoteOrApprovalProcessState(TransactionState.WAITING);
     },
     []
+  );
+
+  const handleGaslessVoting = useCallback(
+    (params: SubmitVoteParams) => {
+      setVoteParams({proposalId, vote: params.vote});
+      setVoteTokenAddress(params.voteTokenAddress);
+      setShowGaslessModal(true);
+    },
+    [proposalId]
   );
 
   /*************************************************
@@ -244,6 +260,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const value = useMemo(
     () => ({
       handleExecutionMultisigApprove,
+      handleGaslessVoting,
       isLoading,
       voteOrApprovalSubmitted,
       executionTxHash,
@@ -252,6 +269,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }),
     [
       handleExecutionMultisigApprove,
+      handleGaslessVoting,
       isLoading,
       voteOrApprovalSubmitted,
       executionTxHash,
