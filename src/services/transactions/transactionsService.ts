@@ -16,6 +16,7 @@ import {
   IBuildCreateMultisigProposalTransactionParams,
   IBuildCreateTokenVotingProposalTransactionParams,
   IBuildVoteOrApprovalTransactionParams,
+  IBuildExecuteGaslessProposalTransactionParams,
 } from './transactionsService.api';
 import {ITransaction} from './domain/transaction';
 import {decodeProposalId, hexToBytes} from '@aragon/sdk-client-common';
@@ -120,6 +121,24 @@ class TransactionsService {
     const multisigContract = Multisig__factory.connect(pluginAddress, signer);
 
     const transaction = await multisigContract.populateTransaction.execute(id);
+
+    return transaction as ITransaction;
+  };
+
+  buildExecuteGaslessProposalTransaction = async (
+    params: IBuildExecuteGaslessProposalTransactionParams
+  ): Promise<ITransaction> => {
+    const {proposalId, client} = params;
+
+    const signer = client.web3.getConnectedSigner();
+    const {pluginAddress, id} = decodeProposalId(proposalId);
+    const gaslessContract = VocdoniVoting__factory.connect(
+      pluginAddress,
+      signer
+    );
+
+    const transaction =
+      await gaslessContract.populateTransaction.executeProposal(id);
 
     return transaction as ITransaction;
   };

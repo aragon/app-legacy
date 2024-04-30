@@ -18,12 +18,18 @@ export interface IBuildVoteOrApprovalTransactionParams {
   proposalId: string;
   tryExecution?: boolean;
 }
+
 export interface IBuildExecuteMultisigProposalTransactionParams {
   client: Client;
   proposalId: string;
 }
 
 export interface IBuildExecuteTokenVotingProposalTransactionParams {
+  client: Client;
+  proposalId: string;
+}
+
+export interface IBuildExecuteGaslessProposalTransactionParams {
   client: Client;
   proposalId: string;
 }

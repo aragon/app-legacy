@@ -1,8 +1,9 @@
 import {Client} from '@aragon/sdk-client';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import {useParams} from 'react-router-dom';
+import {useCreateExecuteGaslessProposalTransaction} from 'services/transactions/queries/useCreateExecuteGaslessProposalTransaction';
 import {useCreateExecuteMultisigProposalTransaction} from 'services/transactions/queries/useCreateExecuteMultisigProposalTransaction';
 import {useCreateExecuteTokenVotingProposalTransaction} from 'services/transactions/queries/useCreateExecuteTokenVotingProposalTransaction';
 
@@ -50,8 +51,23 @@ export const useCreateExecuteTransactionProposal = (
     }
   );
 
+  const {data: gaslessTransaction, isLoading: isGaslessTransactionLoading} =
+    useCreateExecuteGaslessProposalTransaction(
+      {
+        client: client as Client,
+        proposalId: proposalId as string,
+      },
+      {
+        enabled: enableHook && pluginType === GaslessPluginName,
+      }
+    );
+
   return {
-    transaction: multisigTransaction ?? tokenVotingTransaction,
-    isLoading: isMultisigTransactionLoading || isTokenVotingTransactionLoading,
+    transaction:
+      multisigTransaction ?? tokenVotingTransaction ?? gaslessTransaction,
+    isLoading:
+      isMultisigTransactionLoading ||
+      isTokenVotingTransactionLoading ||
+      isGaslessTransactionLoading,
   };
 };

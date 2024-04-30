@@ -8,6 +8,7 @@ import type {
   IBuildCreateGaslessProposalTransactionParams,
   IBuildCreateMultisigProposalTransactionParams,
   IBuildCreateTokenVotingProposalTransactionParams,
+  IBuildExecuteGaslessProposalTransactionParams,
 } from './transactionsService.api';
 
 export enum TransactionsQueryItem {
@@ -15,6 +16,7 @@ export enum TransactionsQueryItem {
   VOTE_OR_APPROVAL = 'VOTE_OR_APPROVAL',
   CREATE_EXECUTE_MULTISIG_PROPOSAL = 'CREATE_EXECUTE_MULTISIG_PROPOSAL',
   CREATE_EXECUTE_TOKEN_VOTING_PROPOSAL = 'CREATE_EXECUTE_TOKEN_VOTING_PROPOSAL',
+  CREATE_EXECUTE_GASLESS_PROPOSAL = 'CREATE_EXECUTE_GASLESS_PROPOSAL',
   CREATE_MULTISIG_PROPOSAL = 'CREATE_MULTISIG_PROPOSAL',
   CREATE_TOKEN_VOTING_PROPOSAL = 'CREATE_TOKEN_VOTING_PROPOSAL',
   CREATE_GASLESS_PROPOSAL = 'CREATE_GASLESS_PROPOSAL',
@@ -39,6 +41,12 @@ export const transactionsQueryKeys = {
     params: IBuildExecuteTokenVotingProposalTransactionParams
   ): QueryKey => [
     TransactionsQueryItem.CREATE_EXECUTE_TOKEN_VOTING_PROPOSAL,
+    params,
+  ],
+  createExecuteGaslessProposal: (
+    params: IBuildExecuteGaslessProposalTransactionParams
+  ): QueryKey => [
+    TransactionsQueryItem.CREATE_EXECUTE_GASLESS_PROPOSAL,
     params,
   ],
   createMultisigProposal: (
