@@ -57,6 +57,8 @@ export async function createVocdoniElection(
   const censusToken = await getCensus3Token(params);
 
   // Create the vocdoni census
+  census3.queueWait.retryTime = 5000;
+  census3.queueWait.attempts = 100;
   const census3census = await census3.createCensus(censusToken.defaultStrategy);
 
   const tokenCensus = new TokenCensus(

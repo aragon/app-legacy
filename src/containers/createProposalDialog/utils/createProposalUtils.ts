@@ -1,4 +1,5 @@
 import {MajorityVotingSettings} from '@aragon/sdk-client';
+import {VocdoniVoting__factory} from '@vocdoni/gasless-voting-ethers';
 import {id} from '@ethersproject/hash';
 import {
   DaoAction,
@@ -22,7 +23,7 @@ import {
   SupportedVotingSettings,
 } from 'utils/types';
 import {TransactionReceipt} from 'viem';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 
 export interface IBuildCreateProposalParamsParams {
   values: CreateProposalFormData;
@@ -60,10 +61,13 @@ class CreateProposalUtils {
   ) => {
     const tokenVotingContractInterface = TokenVoting__factory.createInterface();
     const multisigContractInterface = Multisig__factory.createInterface();
+    const vocdoniContractInterface = VocdoniVoting__factory.createInterface();
 
     const contractInterface =
       pluginType === 'multisig.plugin.dao.eth'
         ? multisigContractInterface
+        : pluginType === GaslessPluginName
+        ? vocdoniContractInterface
         : tokenVotingContractInterface;
 
     const log = receipt?.logs?.find(

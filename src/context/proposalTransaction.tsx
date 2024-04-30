@@ -40,14 +40,22 @@ import {ProposalId} from 'utils/types';
 import GaslessVotingModal from '../containers/transactionModals/gaslessVotingModal';
 import {GaslessVoteOrApprovalVote} from '../services/aragon-sdk/selectors';
 import {useNetwork} from './network';
+import {ApproveTallyStep} from '@vocdoni/gasless-voting';
 
 type ProposalTransactionContextType = {
   /** handles voting on proposal */
   handleExecutionMultisigApprove: (
     params: ApproveMultisigProposalParams
   ) => void;
+  handleGaslessVoting: (params: SubmitVoteParams) => void;
   isLoading: boolean;
   voteOrApprovalSubmitted: boolean;
+};
+
+type SubmitVoteParams = {
+  vote: VoteValues;
+  voteTokenAddress?: string;
+  replacement?: boolean;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -74,7 +82,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // state values
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showGaslessModal, setShowGaslessModal] = useState(false);
-  const [voteTokenAddress] = useState<string>();
+  const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
   const [showCommitteeApprovalModal, setShowCommitteeApprovalModal] =
     useState(false);
 
@@ -121,6 +129,15 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       setVoteOrApprovalProcessState(TransactionState.WAITING);
     },
     []
+  );
+
+  const handleGaslessVoting = useCallback(
+    (params: SubmitVoteParams) => {
+      setVoteParams({proposalId, vote: params.vote});
+      setVoteTokenAddress(params.voteTokenAddress);
+      setShowGaslessModal(true);
+    },
+    [proposalId]
   );
 
   /*************************************************
@@ -240,10 +257,66 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   /*************************************************
    *              Submit Transactions              *
    *************************************************/
+  const handleVoteOrApprovalTx = () => {
+    // tx already successful close modal
+    if (voteOrApprovalProcessState === TransactionState.SUCCESS) {
+      handleCloseVoteModal();
+      return;
+    }
+
+    if (
+      (voteParams == null && approvalParams == null) ||
+      voteOrApprovalProcessState === TransactionState.LOADING
+    ) {
+      console.log('Transaction is running');
+      return;
+    }
+
+    setVoteOrApprovalProcessState(TransactionState.LOADING);
+    handleExecutionMultisigApproval(approvalParams!);
+  };
+
+  const handleExecutionMultisigApproval = useCallback(
+    async (params: ApproveMultisigProposalParams) => {
+      if (!isGaslessVotingPluginClient) return;
+
+      const approveSteps = await pluginClient?.methods.approve(
+        params.proposalId,
+        params.tryExecution
+      );
+
+      if (!approveSteps) {
+        throw new Error('Approval function is not initialized correctly');
+      }
+
+      setVoteOrApprovalSubmitted(false);
+
+      try {
+        for await (const step of approveSteps) {
+          switch (step.key) {
+            case ApproveTallyStep.EXECUTING:
+              break;
+            case ApproveTallyStep.DONE:
+              onGaslessVoteOrApprovalSubmitted(params.proposalId);
+              break;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        setVoteOrApprovalProcessState(TransactionState.ERROR);
+      }
+    },
+    [
+      isGaslessVotingPluginClient,
+      onGaslessVoteOrApprovalSubmitted,
+      pluginClient?.methods,
+    ]
+  );
 
   const value = useMemo(
     () => ({
       handleExecutionMultisigApprove,
+      handleGaslessVoting,
       isLoading,
       voteOrApprovalSubmitted,
       executionTxHash,
@@ -252,6 +325,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }),
     [
       handleExecutionMultisigApprove,
+      handleGaslessVoting,
       isLoading,
       voteOrApprovalSubmitted,
       executionTxHash,
@@ -305,7 +379,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         state={state}
         isOpen={isOpen}
         onClose={handleCloseVoteModal}
-        callback={() => null}
+        callback={handleVoteOrApprovalTx}
         closeOnDrag={voteOrApprovalProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}

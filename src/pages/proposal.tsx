@@ -92,6 +92,7 @@ import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 import {VoteOrApprovalDialog} from 'containers/voteOrApprovalDialog/voteOrApprovalDialog';
 import {ExecuteProposalDialog} from 'containers/executeProposalDialog';
+import {useProposalTransactionContext} from 'context/proposalTransaction';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -160,6 +161,8 @@ export const Proposal: React.FC = () => {
           : false,
     }
   );
+
+  const {handleGaslessVoting} = useProposalTransactionContext();
 
   const {data: votingSettings} = useVotingSettings(
     {
@@ -649,6 +652,18 @@ export const Proposal: React.FC = () => {
     }
   };
 
+  const handleSubmitVote = (vote: VoteValues) => {
+    if (isGaslessProposal(proposal)) {
+      handleGaslessVoting({
+        vote,
+        voteTokenAddress: proposal.token?.address,
+      });
+    } else {
+      setVote(vote);
+      setIsDialogOpen(true);
+    }
+  };
+
   const displayAlertMessage =
     isMultisigPlugin && // is multisig plugin
     proposal?.status === 'Active' && // active proposal
@@ -731,10 +746,7 @@ export const Proposal: React.FC = () => {
     votingInProcess,
     voted: voted,
     executableWithNextApproval,
-    onVoteSubmitClicked: vote => {
-      setVote(vote);
-      setIsDialogOpen(true);
-    },
+    onVoteSubmitClicked: handleSubmitVote,
   };
 
   return (

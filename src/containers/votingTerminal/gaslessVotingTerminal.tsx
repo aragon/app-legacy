@@ -198,7 +198,9 @@ export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
     isApprovalPeriod && // active proposal
     address && // logged in
     !isOnWrongNetwork && // on proper network
-    !canApprove; // cannot approve
+    !canApprove && // cannot approve
+    !isUserApproved && // user has not approved
+    !isProposalApproved; // proposal has not been approved
 
   const alertMessage = displayAlertMessage
     ? t('votingTerminal.status.ineligibleWhitelist')

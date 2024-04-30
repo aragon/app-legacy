@@ -8,7 +8,7 @@ import {StrategyHolders} from '@vocdoni/sdk';
 
 export const useCensus3Members = (
   {tokenId, page}: ICensus3VotingPowerProps,
-  options?: Omit<UseQueryOptions<StrategyHolders>, 'queryKey'>
+  options?: Omit<UseQueryOptions<StrategyHolders | null>, 'queryKey'>
 ) => {
   const hookEnabled = options?.enabled ?? false;
   const enableCensus3Token = hookEnabled && !!tokenId;
@@ -28,15 +28,21 @@ export const useCensus3Members = (
   }
 
   const getHolders = useCallback(async () => {
-    return await census3.getStrategyHolders(strategyId!, {
-      pageSize: page || -1,
-    });
+    return census3
+      .getStrategyHolders(strategyId!, {
+        pageSize: page || -1,
+      })
+      .then(holders => holders)
+      .catch(error => {
+        console.debug(error);
+        return null;
+      });
   }, [census3, page, strategyId]);
 
   return useQuery({
     queryKey: Census3QueryKeys.holdersList(strategyId ?? 0, page ?? 0),
-    queryFn: getHolders,
-    enabled: hookEnabled && !!strategyId,
+    queryFn: () => getHolders(),
+    enabled: hookEnabled && !!strategyId && strategyId > 0,
     ...options,
   });
 };

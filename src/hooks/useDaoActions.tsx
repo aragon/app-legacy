@@ -12,6 +12,7 @@ import {
   isGaslessVotingSettings,
   useVotingSettings,
 } from '../services/aragon-sdk/queries/use-voting-settings';
+import {useGaslessGovernanceEnabled} from './useGaslessGovernanceEnabled';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {
@@ -26,6 +27,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
     pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
     pluginType: daoDetails?.plugins[0].id as PluginTypes,
   });
+  const {isGovernanceEnabled} = useGaslessGovernanceEnabled();
 
   const isLoading = daoDetailsLoading || settingsLoading;
 
@@ -49,7 +51,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
     }
     if (isLoading) return;
     if (votingSettings && isGaslessVotingSettings(votingSettings)) {
-      setShowMintOption(votingSettings.hasGovernanceEnabled!);
+      setShowMintOption(isGovernanceEnabled);
       return;
     }
     void fetch();
@@ -58,6 +60,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
     daoDetails,
     daoDetails?.address,
     daoToken?.address,
+    isGovernanceEnabled,
     isLoading,
     provider,
     showMintOption,

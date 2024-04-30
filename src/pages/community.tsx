@@ -167,6 +167,15 @@ export const Community: React.FC = () => {
     ? t('labels.activeMembers', {count: totalMemberCount})
     : `${totalMemberCount} ${t('labels.members')}`;
 
+  // Await to load daoToken address to prevent null see all holders button
+  const seeAllHoldersBtn = daoToken?.address
+    ? {
+        label: t('labels.seeAllHolders'),
+        iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
+        onClick: handleSecondaryButtonClick,
+      }
+    : undefined;
+
   return (
     <PageWrapper
       title={pageTitle}
@@ -181,11 +190,7 @@ export const Community: React.FC = () => {
         : !isGovernanceEnabled
         ? {
             description: t('explore.explorer.tokenBased'),
-            secondaryBtnProps: {
-              label: t('labels.seeAllHolders'),
-              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-              onClick: handleSecondaryButtonClick,
-            },
+            secondaryBtnProps: seeAllHoldersBtn,
           }
         : isDAOTokenWrapped
         ? {
@@ -199,11 +204,7 @@ export const Community: React.FC = () => {
               label: t('community.ctaMain.wrappedLabel'),
               onClick: handlePrimaryClick,
             },
-            tertiaryBtnProps: {
-              label: t('labels.seeAllHolders'),
-              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-              onClick: handleSecondaryButtonClick,
-            },
+            tertiaryBtnProps: seeAllHoldersBtn,
           }
         : isTokenMintable
         ? {
@@ -218,11 +219,7 @@ export const Community: React.FC = () => {
               iconLeft: <Icon icon={IconType.PLUS} />,
               onClick: handleSecondaryButtonClick,
             },
-            tertiaryBtnProps: {
-              label: t('labels.seeAllHolders'),
-              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-              onClick: navigateToTokenHoldersChart,
-            },
+            tertiaryBtnProps: seeAllHoldersBtn,
           }
         : {
             description: t('explore.explorer.tokenBased'),
@@ -231,11 +228,7 @@ export const Community: React.FC = () => {
               iconLeft: <Icon icon={IconType.APP_PROPOSALS} />,
               onClick: () => open('delegateVoting'),
             },
-            secondaryBtnProps: {
-              label: t('labels.seeAllHolders'),
-              iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-              onClick: handleSecondaryButtonClick,
-            },
+            secondaryBtnProps: seeAllHoldersBtn,
           })}
     >
       <BodyContainer>

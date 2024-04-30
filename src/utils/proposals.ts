@@ -514,7 +514,7 @@ export function getLiveProposalTerminalProps(
     // voters
     voters =
       proposal.voters?.map(voter => {
-        return {wallet: voter, src: voter, option: 'none'} as VoterType;
+        return {wallet: voter, src: voter} as VoterType;
       }) ?? [];
 
     // results

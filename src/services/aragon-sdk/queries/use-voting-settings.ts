@@ -25,7 +25,6 @@ async function fetchVotingSettingsAsync(
     pluginAddress,
     blockNumber
   );
-
   return data;
 }
 
