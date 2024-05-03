@@ -660,15 +660,14 @@ export function getLiveProposalTerminalProps(
       ])
     );
 
-    // loop through approvals and update vote option to approved;
-    let approvalAddress;
+    // loop through approvals list and update members vote choice to approved;
+    let matchingMemberApproval;
     proposal.approvals.forEach(address => {
-      approvalAddress = stripPlgnAdrFromProposalId(address).toLowerCase();
+      matchingMemberApproval = address.toLowerCase();
 
-      // considering only members can approve, no need to check if Map has the key
-      mappedMembers.set(approvalAddress, {
-        wallet: approvalAddress,
-        src: approvalAddress,
+      mappedMembers.set(matchingMemberApproval, {
+        wallet: matchingMemberApproval,
+        src: matchingMemberApproval,
         option: 'approved',
       });
     });
