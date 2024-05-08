@@ -8,7 +8,7 @@ export type InputImageSingleProps = {
   /**
    * onChange Event will fires after uploading a valid image
    */
-  onChange: (file: File | null) => void;
+  onChange: (file: File | undefined) => void;
   /**
    * All error messages will pass as onError function inputs
    */
@@ -126,7 +126,7 @@ export const InputImageSingle: React.FC<InputImageSingleProps> = ({
         variant="tertiary"
         onClick={() => {
           setPreview('');
-          onChange(null);
+          onChange(undefined);
         }}
       />
     </ImageContainer>
