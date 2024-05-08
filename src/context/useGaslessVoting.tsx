@@ -24,6 +24,7 @@ import {
 import {useWallet} from '../hooks/useWallet';
 import {isGaslessProposal} from '../utils/proposals';
 import {DetailedProposal} from '../utils/types';
+import {useTranslation} from 'react-i18next';
 
 export enum GaslessVotingStepId {
   CREATE_VOTE_ID = 'CREATE_VOTE_ID',
@@ -33,6 +34,7 @@ export enum GaslessVotingStepId {
 export type GaslessVotingSteps = StepsMap<GaslessVotingStepId>;
 
 const useGaslessVoting = () => {
+  const {t} = useTranslation();
   const {client: vocdoniClient} = useVocdoniClient();
   const {data: daoDetails} = useDaoDetailsQuery();
 
@@ -82,11 +84,22 @@ const useGaslessVoting = () => {
       } catch (e) {
         if (e instanceof ErrElectionFinished) {
           throw new Error('The election has finished');
+        } else if (
+          e instanceof Object &&
+          'message' in e &&
+          typeof e.message === 'string' &&
+          e.message.includes('User rejected the request.')
+        ) {
+          steps.PUBLISH_VOTE.status = StepStatus.ERROR;
+          steps.PUBLISH_VOTE.errorMessage = t(
+            'transactionDialog.error.rejected'
+          );
+          throw new Error(t('transactionDialog.error.rejected'));
         }
         throw e;
       }
     },
-    [vocdoniClient]
+    [steps.PUBLISH_VOTE, t, vocdoniClient]
   );
 
   const vote = useCallback(
