@@ -1,3 +1,4 @@
+import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {IPinDataProps} from './ipfsService.api';
 
 class IpfsService {
@@ -8,8 +9,13 @@ class IpfsService {
   ) {}
 
   getData = async (cid: string) => {
-    const response = await fetch(`${this.gateway}/${cid}`);
-    return await response.text();
+    const resolvedCid = /^ipfs/.test(cid) ? resolveIpfsCid(cid) : cid;
+
+    const response = await fetch(`${this.gateway}/${resolvedCid}`, {
+      method: 'GET',
+    });
+
+    return await response.json();
   };
 
   pinData = async (data: IPinDataProps) => {

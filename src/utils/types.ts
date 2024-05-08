@@ -697,3 +697,29 @@ export type SubgraphMembers = SubgraphTokenVotingMember & {
   };
   network?: string;
 };
+
+export type SubgraphPluginListItem = {
+  appliedPreparation: {
+    pluginAddress: string;
+  } | null;
+  appliedPluginRepo: {
+    subdomain: string;
+  } | null;
+  appliedVersion: {
+    build: number;
+    release: {
+      release: number;
+    };
+  } | null;
+};
+
+type SubgraphDaoBase = {
+  id: string;
+  subdomain: string;
+  metadata: string;
+  plugins: SubgraphPluginListItem[];
+};
+
+export type SubgraphDao = SubgraphDaoBase & {
+  createdAt: string;
+};
