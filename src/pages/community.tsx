@@ -77,6 +77,10 @@ export const Community: React.FC = () => {
 
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
+  const vocdoniBased =
+    (daoDetails?.plugins[0].id as PluginTypes) ===
+    'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth';
+
   const enableSearchSort = totalMemberCount <= 1000;
   const enableDelegation =
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
@@ -295,7 +299,11 @@ export const Community: React.FC = () => {
                         : t('labels.nResults', {count: filteredMemberCount})}
                     </ResultsCountLabel>
                   )}
-                  <MembersList token={daoToken} members={pagedMembers} />
+                  <MembersList
+                    token={daoToken}
+                    members={pagedMembers}
+                    vocdoni={vocdoniBased}
+                  />
                 </>
               )}
             </>
@@ -330,5 +338,5 @@ const ResultsCountLabel = styled.p.attrs({
 })``;
 
 const PaginationWrapper = styled.div.attrs({
-  className: 'flex mt-16',
+  className: 'flex mt-16 w-full justify-center',
 })``;
