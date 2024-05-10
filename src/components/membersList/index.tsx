@@ -17,12 +17,14 @@ import {useGaslessGovernanceEnabled} from '../../hooks/useGaslessGovernanceEnabl
 type MembersListProps = {
   members: DaoMember[];
   token?: Erc20TokenDetails;
+  vocdoni?: boolean;
   isCompactMode?: boolean;
 };
 
 export const MembersList: React.FC<MembersListProps> = ({
   token,
   members,
+  vocdoni,
   isCompactMode,
 }) => {
   const [totalSupply, setTotalSupply] = useState<number>(0);
@@ -105,6 +107,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                 </TableCellHead>
               )}
               <TableCellHead />
+              {vocdoni && <TableCellHead />}
             </tr>
           </thead>
         )}
@@ -120,6 +123,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                 tokenSupply={totalSupply}
                 isTokenDaoMember={true}
                 isCompactMode={isCompactMode}
+                isVocdoni={vocdoni}
                 {...getMemberId(member)}
               />
             ) : (
@@ -137,5 +141,5 @@ export const MembersList: React.FC<MembersListProps> = ({
 };
 
 const TableCellHead = styled.td.attrs({
-  className: 'text-left px-6 py-4',
+  className: 'text-left  px-6 py-4',
 })``;
