@@ -143,6 +143,7 @@ async function getProposal(
 
   if (isTokenVotingClient(client)) {
     const {tokenVotingProposal} = await request<{
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tokenVotingProposal: any;
     }>(SUBGRAPH_API_URL[network]!, QueryTokenVotingProposal, {
       proposalId: extendedProposalId,
@@ -157,6 +158,7 @@ async function getProposal(
     console.log('tokenVotingProposalView', tokenVotingProposal);
   } else if (isMultisigClient(client)) {
     const {multisigProposal} = await request<{
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       multisigProposal: any;
     }>(SUBGRAPH_API_URL[network]!, QueryMultisigProposal, {
       proposalId: extendedProposalId,
