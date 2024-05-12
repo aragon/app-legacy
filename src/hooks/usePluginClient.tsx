@@ -69,17 +69,21 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
   useEffect(() => {
     if (!client || !context) return;
 
+    console.log('testtest23', new MultisigClient(context), pluginType);
+
     if (!pluginType) {
       setPluginClient(undefined);
     } else {
       switch (pluginType as PluginTypes) {
-        case 'multisig.plugin.dao.eth':
+        case 'multisig.plugin.dao.eth': {
           setPluginClient(new MultisigClient(context));
           break;
-        case 'token-voting.plugin.dao.eth':
+        }
+        case 'token-voting.plugin.dao.eth': {
           setPluginClient(new TokenVotingClient(context));
           break;
-        case GaslessPluginName:
+        }
+        case GaslessPluginName: {
           setPluginClient(
             new GaslessVotingClient(
               new GaslessVotingContext(context),
@@ -88,6 +92,7 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
             )
           );
           break;
+        }
         default:
           throw new Error('The requested plugin type is invalid');
       }

@@ -365,7 +365,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   const {transfers, totalAssetValue, isTokensLoading} = useDaoVault();
 
-  const {data, isLoading} = useProposals({
+  const {data} = useProposals({
     daoAddressOrEns,
     pluginType,
     pluginAddress,

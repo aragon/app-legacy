@@ -40,6 +40,9 @@ async function fetchProposals(
   client: PluginClient | undefined
 ): Promise<FetchProposalsResponseTypes> {
   invariant(!!client, 'fetchProposalsAsync: client is not defined');
+
+  console.log('');
+
   const data = await client.methods.getProposals(params);
   return data;
 }
@@ -53,6 +56,7 @@ export const useProposals = (
 ) => {
   const params = {...DEFAULT_PARAMS, ...userParams};
   const client = usePluginClient(params.pluginType);
+
   const queryClient = useQueryClient();
 
   const {network} = useNetwork();
