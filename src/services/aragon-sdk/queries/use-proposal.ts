@@ -3,6 +3,7 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import request, {gql} from 'graphql-request';
 
+import {getExtendedProposalId} from '@aragon/sdk-client-common';
 import {useNetwork} from 'context/network';
 import {
   PluginClient,
@@ -10,6 +11,7 @@ import {
   isTokenVotingClient,
   usePluginClient,
 } from 'hooks/usePluginClient';
+import {ipfsService} from 'services/ipfs/ipfsService';
 import {
   CHAIN_METADATA,
   SUBGRAPH_API_URL,
@@ -24,11 +26,6 @@ import {
   toTokenVotingProposal,
   transformProposal,
 } from '../selectors';
-import {
-  UNSUPPORTED_PROPOSAL_METADATA_LINK,
-  getExtendedProposalId,
-} from '@aragon/sdk-client-common';
-// import {ipfsService} from 'services/ipfs/ipfsService';
 
 export const QueryMultisigProposal = gql`
   query MultisigProposal($proposalId: ID!) {
@@ -133,12 +130,13 @@ export const QueryTokenVotingProposal = gql`
 
 async function getProposal(
   client: PluginClient,
-  propoosalId: string,
+  proposalId: string,
   network: SupportedNetworks
 ): Promise<
   MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
 > {
-  const extendedProposalId = getExtendedProposalId(propoosalId);
+  const extendedProposalId = getExtendedProposalId(proposalId);
+
   let subgraphProposal;
 
   if (isTokenVotingClient(client)) {
@@ -149,13 +147,8 @@ async function getProposal(
       proposalId: extendedProposalId,
     });
 
-    subgraphProposal = tokenVotingProposal;
-
-    subgraphProposal = toTokenVotingProposal(
-      tokenVotingProposal,
-      UNSUPPORTED_PROPOSAL_METADATA_LINK
-    );
-    console.log('tokenVotingProposalView', tokenVotingProposal);
+    const metadata = await ipfsService.getData(tokenVotingProposal.metadata);
+    subgraphProposal = toTokenVotingProposal(tokenVotingProposal, metadata);
   } else if (isMultisigClient(client)) {
     const {multisigProposal} = await request<{
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -164,10 +157,8 @@ async function getProposal(
       proposalId: extendedProposalId,
     });
 
-    subgraphProposal = toMultisigProposal(
-      multisigProposal,
-      UNSUPPORTED_PROPOSAL_METADATA_LINK
-    );
+    const metadata = await ipfsService.getData(multisigProposal.metadata);
+    subgraphProposal = toMultisigProposal(multisigProposal, metadata);
   }
 
   return subgraphProposal as TokenVotingProposal | MultisigProposal;

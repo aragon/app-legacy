@@ -9,7 +9,7 @@ class IpfsService {
   ) {}
 
   getData = async (cid: string) => {
-    const resolvedCid = /^ipfs/.test(cid) ? resolveIpfsCid(cid) : cid;
+    const resolvedCid = cid.startsWith('ipfs') ? resolveIpfsCid(cid) : cid;
 
     const response = await fetch(`${this.gateway}/${resolvedCid}`, {
       method: 'GET',
