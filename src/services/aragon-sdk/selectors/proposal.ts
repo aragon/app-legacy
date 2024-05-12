@@ -1,12 +1,34 @@
 import {
+  Erc20TokenDetails,
+  Erc20WrapperTokenDetails,
+  Erc721TokenDetails,
   MultisigProposal,
   MultisigProposalListItem,
+  SubgraphAction,
+  SubgraphVoteValuesMap,
   TokenVotingProposal,
   TokenVotingProposalListItem,
   TokenVotingProposalVote,
   VoteValues,
 } from '@aragon/sdk-client';
-import {ensure0x, ProposalStatus} from '@aragon/sdk-client-common';
+import {
+  DaoAction,
+  decodeRatio,
+  ensure0x,
+  getCompactProposalId,
+  hexToBytes,
+  ProposalMetadata,
+  ProposalStatus,
+  TokenType,
+} from '@aragon/sdk-client-common';
+import {
+  SubgraphErc20Token,
+  SubgraphErc20WrapperToken,
+  SubgraphErc721Token,
+  SubgraphTokenVotingProposal,
+  SubgraphTokenVotingProposalListItem,
+  SubgraphTokenVotingVoterListItem,
+} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
 import {InfiniteData} from '@tanstack/react-query';
 import {
   GaslessVotingProposal,
@@ -22,6 +44,11 @@ import {
   isTokenBasedProposal,
   recalculateProposalStatus,
 } from 'utils/proposals';
+import {
+  SubgraphContractType,
+  SubgraphMultisigProposal,
+  SubgraphMultisigProposalListItem,
+} from 'utils/types';
 
 /**
  * Transforms proposals within an `InfiniteData` structure.
@@ -334,4 +361,252 @@ function syncGaslessVotesOrApproves(
     approvers: [...approversCache, ...serverApprovals],
     gaslessVoters: [...gaslessVotersCache, ...mappedVoters],
   };
+}
+
+export function computeMultisigProposalStatus(
+  proposal: SubgraphMultisigProposal | SubgraphMultisigProposalListItem
+): ProposalStatus {
+  const now = new Date();
+  const startDate = new Date(parseInt(proposal.startDate) * 1000);
+  const endDate = new Date(parseInt(proposal.endDate) * 1000);
+  // The proposal is executed so the status becomes EXECUTED
+  // independently of the other conditions
+  if (proposal.executed) {
+    return ProposalStatus.EXECUTED;
+  }
+  // The proposal is not executed and the start date is in the future
+  // so the status becomes PENDING
+  if (startDate >= now) {
+    return ProposalStatus.PENDING;
+  }
+  // The proposal is not executed and the start date is in the past
+  // So we must check if the proposal reached the approval threshold
+  // If it reached the approval threshold and it's a signaling proposal
+  // the status becomes SUCCEEDED
+  // If it reached the approval threshold and it's not a signaling proposal
+  // the status becomes SUCCEEDED if if it hasn't reached the end date
+  if (proposal.approvalReached) {
+    if (proposal.isSignaling) {
+      return ProposalStatus.SUCCEEDED;
+    }
+    if (now <= endDate) {
+      return ProposalStatus.SUCCEEDED;
+    }
+  }
+  // The proposal is not executed and the start date is in the past
+  // and the approval threshold is not reached
+  // If the end date is in the future this means that you can still vote
+  // so the status becomes ACTIVE
+  if (now <= endDate) {
+    return ProposalStatus.ACTIVE;
+  }
+  // If none of the other conditions are met the status becomes DEFEATED
+  return ProposalStatus.DEFEATED;
+}
+
+export function computeTokenVotingProposalStatus(
+  proposal: SubgraphTokenVotingProposal | SubgraphTokenVotingProposalListItem
+): ProposalStatus {
+  const now = new Date();
+  const startDate = new Date(parseInt(proposal.startDate) * 1000);
+  const endDate = new Date(parseInt(proposal.endDate) * 1000);
+  // The proposal is executed so the status becomes EXECUTED
+  // independently of the other conditions
+  if (proposal.executed) {
+    return ProposalStatus.EXECUTED;
+  }
+  // The proposal is not executed and the start date is in the future
+  // so the status becomes PENDING
+  if (startDate >= now) {
+    return ProposalStatus.PENDING;
+  }
+  // The proposal is not executed and the start date is in the past.
+  // Accordingly, we check if the proposal reached enough approval
+  // (i.e., that the supportThreshold and minParticipation criteria are both met).
+  // If approvalReached is true and the vote has ended (end date is in the past), it has succeeded.
+  // This applies to normal mode and vote replacement mode.
+  if (proposal.approvalReached && endDate <= now) {
+    return ProposalStatus.SUCCEEDED;
+  }
+  // In early exeuction mode, we calculate if subsequent voting can change the result of the vote.
+  // If not, the proposal is early executable and is therefore succeeded as well.
+  if (proposal.earlyExecutable) {
+    return ProposalStatus.SUCCEEDED;
+  }
+  // The proposal is not executed and the start date is in the past
+  // and the approval threshold is not reached
+  // If the end date is in the future this means that you can still vote
+  // so the status becomes ACTIVE
+  if (now < endDate) {
+    return ProposalStatus.ACTIVE;
+  }
+  // If none of the other conditions are met the status becomes DEFEATED
+  return ProposalStatus.DEFEATED;
+}
+
+export function toMultisigProposal(
+  proposal: SubgraphMultisigProposal,
+  metadata: ProposalMetadata
+): MultisigProposal {
+  const creationDate = new Date(parseInt(proposal.createdAt) * 1000);
+  const startDate = new Date(parseInt(proposal.startDate) * 1000);
+  const endDate = new Date(parseInt(proposal.endDate) * 1000);
+  const executionDate = proposal.executionDate
+    ? new Date(parseInt(proposal.executionDate) * 1000)
+    : null;
+  return {
+    id: getCompactProposalId(proposal.id),
+    dao: {
+      address: proposal.dao.id,
+      name: proposal.dao.subdomain,
+    },
+    creatorAddress: proposal.creator,
+    metadata: {
+      title: metadata.title,
+      summary: metadata.summary,
+      description: metadata.description,
+      resources: metadata.resources,
+      media: metadata.media,
+    },
+    settings: {
+      onlyListed: proposal.plugin.onlyListed,
+      minApprovals: proposal.minApprovals,
+    },
+    creationBlockNumber: parseInt(proposal.creationBlockNumber) || 0,
+    creationDate,
+    startDate,
+    endDate,
+    executionDate,
+    executionBlockNumber: parseInt(proposal.executionBlockNumber) || null,
+    executionTxHash: proposal.executionTxHash || null,
+    actions: proposal.actions.map((action: SubgraphAction): DaoAction => {
+      return {
+        data: hexToBytes(action.data),
+        to: action.to,
+        value: BigInt(action.value),
+      };
+    }),
+    status: computeMultisigProposalStatus(proposal),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    approvals: proposal.approvers.map((approver: any) =>
+      approver.id.slice(0, 42)
+    ),
+  };
+}
+
+export function toTokenVotingProposal(
+  proposal: SubgraphTokenVotingProposal,
+  metadata: ProposalMetadata
+): TokenVotingProposal {
+  const startDate = new Date(parseInt(proposal.startDate) * 1000);
+  const endDate = new Date(parseInt(proposal.endDate) * 1000);
+  const creationDate = new Date(parseInt(proposal.createdAt) * 1000);
+  const executionDate = proposal.executionDate
+    ? new Date(parseInt(proposal.executionDate) * 1000)
+    : null;
+  let usedVotingWeight: bigint = BigInt(0);
+  for (const voter of proposal.voters) {
+    usedVotingWeight += BigInt(voter.votingPower);
+  }
+  const token = parseToken(proposal.plugin.token);
+  return {
+    id: getCompactProposalId(proposal.id),
+    dao: {
+      address: proposal.dao.id,
+      name: proposal.dao.subdomain,
+    },
+    creatorAddress: proposal.creator,
+    metadata: {
+      title: metadata.title,
+      summary: metadata.summary,
+      description: metadata.description,
+      resources: metadata.resources,
+      media: metadata.media,
+    },
+    startDate,
+    endDate,
+    creationDate,
+    creationBlockNumber: parseInt(proposal.creationBlockNumber),
+    executionDate,
+    executionBlockNumber: parseInt(proposal.executionBlockNumber) || null,
+    executionTxHash: proposal.executionTxHash || null,
+    actions: proposal.actions.map((action: SubgraphAction): DaoAction => {
+      return {
+        data: hexToBytes(action.data),
+        to: action.to,
+        value: BigInt(action.value),
+      };
+    }),
+    status: computeTokenVotingProposalStatus(proposal),
+    result: {
+      yes: proposal.yes ? BigInt(proposal.yes) : BigInt(0),
+      no: proposal.no ? BigInt(proposal.no) : BigInt(0),
+      abstain: proposal.abstain ? BigInt(proposal.abstain) : BigInt(0),
+    },
+    settings: {
+      supportThreshold: decodeRatio(BigInt(proposal.supportThreshold), 6),
+      duration: parseInt(proposal.endDate) - parseInt(proposal.startDate),
+      minParticipation: decodeRatio(
+        (BigInt(proposal.minVotingPower) * BigInt(1000000)) /
+          BigInt(proposal.totalVotingPower),
+        6
+      ),
+    },
+    token,
+    usedVotingWeight,
+    totalVotingWeight: BigInt(proposal.totalVotingPower),
+    votes: proposal.voters.map((voter: SubgraphTokenVotingVoterListItem) => {
+      return {
+        voteReplaced: voter.voteReplaced,
+        address: voter.voter.address,
+        vote: SubgraphVoteValuesMap.get(voter.voteOption) as VoteValues,
+        weight: BigInt(voter.votingPower),
+      };
+    }),
+  };
+}
+
+export function parseToken(
+  subgraphToken:
+    | SubgraphErc20Token
+    | SubgraphErc721Token
+    | SubgraphErc20WrapperToken
+): Erc20TokenDetails | Erc721TokenDetails | null {
+  let token:
+    | Erc721TokenDetails
+    | Erc20TokenDetails
+    | Erc20WrapperTokenDetails
+    | null = null;
+  if (subgraphToken.__typename === SubgraphContractType.ERC20) {
+    token = {
+      address: subgraphToken.id,
+      symbol: subgraphToken.symbol,
+      name: subgraphToken.name,
+      decimals: subgraphToken.decimals,
+      type: TokenType.ERC20,
+    };
+  } else if (subgraphToken.__typename === SubgraphContractType.ERC721) {
+    token = {
+      address: subgraphToken.id,
+      symbol: subgraphToken.symbol,
+      name: subgraphToken.name,
+      type: TokenType.ERC721,
+    };
+  } else if (subgraphToken.__typename === SubgraphContractType.ERC20_WRAPPER) {
+    token = {
+      address: subgraphToken.id,
+      symbol: subgraphToken.symbol,
+      name: subgraphToken.name,
+      decimals: subgraphToken.decimals,
+      type: TokenType.ERC20,
+      underlyingToken: {
+        address: subgraphToken.underlyingToken.id,
+        symbol: subgraphToken.underlyingToken.symbol,
+        name: subgraphToken.underlyingToken.name,
+        decimals: subgraphToken.underlyingToken.decimals,
+        type: TokenType.ERC20,
+      },
+    };
+  }
+  return token;
 }

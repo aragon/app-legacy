@@ -1,11 +1,7 @@
-import {Client} from '@aragon/sdk-client';
+export type IPinDataProps = string | ArrayBuffer | Blob;
 
-export interface IAddDataProps {
-  client: Client;
-  data: string | ArrayBuffer | Blob;
-}
-
-export interface IPinDataProps {
-  client: Client;
-  cid: string;
+export interface IPinDataResult {
+  IpfsHash: string;
+  PinSize: number;
+  Timestamp: string;
 }

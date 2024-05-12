@@ -761,11 +761,7 @@ export async function resolveDaoAvatarIpfsCid(
     } else if (/^ipfs/.test(avatar) && client) {
       try {
         const cid = resolveIpfsCid(avatar);
-        const ipfsClient = client.ipfs.getClient();
-        const imageBytes = await ipfsClient.cat(cid); // Uint8Array
-        const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
-
-        return URL.createObjectURL(imageBlob);
+        return `${import.meta.env.VITE_PINATA_GATEWAY}/${cid}`;
       } catch (err) {
         console.warn('Error resolving DAO avatar IPFS Cid', err);
       }

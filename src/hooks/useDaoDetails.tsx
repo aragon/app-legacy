@@ -1,4 +1,9 @@
-import {Client, DaoDetails} from '@aragon/sdk-client';
+import {
+  Client,
+  DaoDetails,
+  DaoMetadata,
+  InstalledPluginListItem,
+} from '@aragon/sdk-client';
 import {JsonRpcProvider} from '@ethersproject/providers';
 import {useQuery} from '@tanstack/react-query';
 import {isAddress} from 'ethers/lib/utils';
@@ -7,11 +12,74 @@ import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {CHAIN_METADATA} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  SUBGRAPH_API_URL,
+  SupportedNetworks,
+} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
+import request, {gql} from 'graphql-request';
+import {SubgraphDao, SubgraphPluginListItem} from 'utils/types';
+import {ipfsService} from 'services/ipfs/ipfsService';
+
+export const QueryDao = gql`
+  query Dao($address: ID!) {
+    dao(id: $address) {
+      id
+      subdomain
+      metadata
+      createdAt
+      plugins {
+        appliedPreparation {
+          pluginAddress
+        }
+        appliedPluginRepo {
+          subdomain
+        }
+        appliedVersion {
+          build
+          release {
+            release
+          }
+        }
+      }
+    }
+  }
+`;
+
+function toDaoDetails(dao: SubgraphDao, metadata: DaoMetadata): DaoDetails {
+  return {
+    address: dao.id,
+    ensDomain: dao.subdomain + '.dao.eth',
+    metadata: {
+      name: metadata?.name,
+      description: metadata?.description,
+      avatar: metadata?.avatar || undefined,
+      links: metadata?.links,
+    },
+    creationDate: new Date(parseInt(dao.createdAt) * 1000),
+    // filter out plugins that are not applied
+    plugins: dao.plugins
+      .filter(
+        plugin =>
+          plugin.appliedPreparation &&
+          plugin.appliedVersion &&
+          plugin.appliedPluginRepo
+      )
+      .map(
+        (plugin: SubgraphPluginListItem): InstalledPluginListItem => ({
+          // we checked with the filter above that these are not null
+          id: `${plugin.appliedPluginRepo!.subdomain}.plugin.dao.eth`,
+          release: plugin.appliedVersion!.release.release,
+          build: plugin.appliedVersion!.build,
+          instanceAddress: plugin.appliedPreparation!.pluginAddress,
+        })
+      ),
+  };
+}
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -25,6 +93,7 @@ async function fetchDaoDetails(
   daoAddressOrEns: string | undefined,
   provider: JsonRpcProvider,
   isL2NetworkEns: boolean,
+  network: SupportedNetworks,
   redirectDaoToAddress: (address: string | null) => void
 ): Promise<DaoDetails | null> {
   if (!daoAddressOrEns)
@@ -32,14 +101,30 @@ async function fetchDaoDetails(
 
   if (!client) return Promise.reject(new Error('client must be defined'));
 
+  const address = await provider.resolveName(daoAddressOrEns as string);
+
   // if network is l2 and has ens name, resolve to address
   if (isL2NetworkEns) {
-    const address = await provider.resolveName(daoAddressOrEns as string);
     redirectDaoToAddress(address);
   }
 
   // Note: SDK doesn't support ens names in L2 chains so we need to resolve the address first
-  const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
+  // const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
+
+  const {dao} = await request<{dao: SubgraphDao}>(
+    SUBGRAPH_API_URL[network]!,
+    QueryDao,
+    {
+      address: address?.toLowerCase() ?? daoAddressOrEns?.toLowerCase(),
+    }
+  );
+
+  let metadata = await ipfsService.getData(dao.metadata);
+
+  if (typeof metadata === 'string') metadata = JSON.parse(metadata);
+
+  const daoDetails = toDaoDetails(dao, metadata);
+
   const avatar = daoDetails?.metadata.avatar;
   if (avatar)
     if (typeof avatar !== 'string') {
@@ -47,11 +132,10 @@ async function fetchDaoDetails(
     } else if (/^ipfs/.test(avatar) && client) {
       try {
         const cid = resolveIpfsCid(avatar);
-        const ipfsClient = client.ipfs.getClient();
-        const imageBytes = await ipfsClient.cat(cid); // Uint8Array
-        const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
 
-        daoDetails.metadata.avatar = URL.createObjectURL(imageBlob);
+        daoDetails.metadata.avatar = `${
+          import.meta.env.VITE_PINATA_GATEWAY
+        }/${cid}`;
       } catch (err) {
         console.warn('Error resolving DAO avatar IPFS Cid', err);
       }
@@ -132,9 +216,17 @@ export const useDaoQuery = (
       daoAddressOrEns,
       provider,
       isL2NetworkEns,
+      network,
       redirectDaoToAddress
     );
-  }, [client, daoAddressOrEns, isL2NetworkEns, provider, redirectDaoToAddress]);
+  }, [
+    client,
+    daoAddressOrEns,
+    isL2NetworkEns,
+    network,
+    provider,
+    redirectDaoToAddress,
+  ]);
 
   return useQuery<DaoDetails | null>({
     queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
