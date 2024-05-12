@@ -39,6 +39,7 @@ jobs:
         run: yarn install --pure-lockfile
       - name: Test
         run: yarn test
+      
       - name: Build
         run: yarn build --mode ${{ needs.set-environment.outputs.environment }}
         env:
@@ -54,6 +55,11 @@ jobs:
           VITE_GATEWAY_RPC_API_KEY: ${{secrets.VITE_GATEWAY_RPC_API_KEY}}
           VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
           VITE_SENTRY_DNS: ${{secrets.VITE_SENTRY_DNS}}
+          VITE_PINATA_CID_VERSION: ${{vars.VITE_PINATA_CID_VERSION}}
+          VITE_PINATA_GATEWAY: ${{vars.VITE_PINATA_GATEWAY}}
+          VITE_PINATA_JWT_API_KEY: ${{secrets.VITE_PINATA_JWT_API_KEY}}
+          
+          
 
       - name: Sentry sourcemap
         env:
