@@ -68,7 +68,7 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
     ];
 
     const contextParams: ContextParams = {
-      daoFactoryAddress:
+      DAOFactory:
         LIVE_CONTRACTS[SupportedVersion.LATEST][translatedNetwork]
           .daoFactoryAddress,
       network: translatedNetwork,

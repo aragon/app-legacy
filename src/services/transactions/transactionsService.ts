@@ -5,6 +5,7 @@ import {
   TokenVoting__factory,
   Multisig__factory,
 } from '@aragon/osx-ethers';
+import {ContractNames} from '@aragon/osx-commons-configs';
 import {VocdoniVoting__factory} from '@vocdoni/gasless-voting-ethers';
 import {toUtf8Bytes} from 'ethers/lib/utils';
 import {zeroAddress} from 'viem';
@@ -36,12 +37,9 @@ class TransactionsService {
     } = params;
 
     const signer = client.web3.getConnectedSigner();
-    const daoFactoryAddress = client.web3.getAddress('daoFactoryAddress');
+    const DaoFactory = client.web3.getAddress(ContractNames.DAO_FACTORY);
 
-    const daoFactoryInstance = DAOFactory__factory.connect(
-      daoFactoryAddress,
-      signer
-    );
+    const daoFactoryInstance = DAOFactory__factory.connect(DaoFactory, signer);
 
     const pluginInstallationData: DAOFactory.PluginSettingsStruct[] = [];
 

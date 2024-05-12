@@ -314,6 +314,7 @@ export const Dashboard: React.FC = () => {
                   avatar: liveDao?.metadata?.avatar,
                   description: liveDao.metadata.description,
                 },
+                metadataHash: liveDao?.metadataHash,
               });
             }}
             links={links}
@@ -377,7 +378,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
 
-  if (isTokensLoading || isLoading) {
+  if (isTokensLoading) {
     return <Loading />;
   }
 

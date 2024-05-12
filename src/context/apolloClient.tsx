@@ -31,6 +31,7 @@ const selectedDaoVar = makeVar<NavigationDao>({
     name: '',
     avatar: '',
   },
+  metadataHash: '',
   chain: 11155111,
   plugins: [],
 });
@@ -40,6 +41,7 @@ const selectedDaoVar = makeVar<NavigationDao>({
  *************************************************/
 export type PendingDao = CreateDaoParams & {
   metadata: DaoMetadata;
+  metadataHash: string;
   creationDate: Date;
 };
 

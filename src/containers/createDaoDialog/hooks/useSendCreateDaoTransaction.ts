@@ -71,6 +71,7 @@ export const useSendCreateDaoTransaction = (
         ...createDaoParams!,
         metadata,
         creationDate: new Date(),
+        metadataHash: '',
       },
     });
 
@@ -93,6 +94,7 @@ export const useSendCreateDaoTransaction = (
           avatar: metadata.avatar,
           description: metadata.description,
         },
+        metadataHash: '',
       },
     });
 

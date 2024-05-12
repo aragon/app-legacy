@@ -63,6 +63,7 @@ export const useAddPendingDaoMutation = () => {
         address: variables.daoAddress,
         ensDomain: variables.daoDetails.ensSubdomain,
         metadata: variables.daoDetails.metadata,
+        metadataHash: variables.daoDetails.metadataHash,
         plugins: [],
         creationDate: variables.daoDetails.creationDate,
       } as DaoDetails;

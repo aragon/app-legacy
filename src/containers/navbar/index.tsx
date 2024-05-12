@@ -51,6 +51,7 @@ const Navbar: React.FC = () => {
           name: daoDetails.metadata.name,
           avatar: daoDetails?.metadata?.avatar,
         },
+        metadataHash: daoDetails.metadataHash,
         chain: CHAIN_METADATA[network].id,
         plugins: daoDetails.plugins,
       });

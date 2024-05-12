@@ -60,6 +60,7 @@ function toDaoDetails(dao: SubgraphDao, metadata: DaoMetadata): DaoDetails {
       avatar: metadata?.avatar || undefined,
       links: metadata?.links,
     },
+    metadataHash: dao.metadata,
     creationDate: new Date(parseInt(dao.createdAt) * 1000),
     // filter out plugins that are not applied
     plugins: dao.plugins

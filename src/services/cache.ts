@@ -180,6 +180,7 @@ export async function getPendingDaoFromCache(
     address: daoAddressOrEns,
     ensDomain: foundDao.ensSubdomain ?? '',
     metadata: foundDao.metadata,
+    metadataHash: foundDao.metadataHash,
     plugins: [],
     creationDate: foundDao.creationDate,
   };
