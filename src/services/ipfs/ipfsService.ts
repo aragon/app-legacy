@@ -15,7 +15,9 @@ class IpfsService {
       method: 'GET',
     });
 
-    return await response.json();
+    const data = await response.json();
+
+    return typeof data === 'string' ? JSON.parse(data) : data;
   };
 
   pinData = async (data: IPinDataProps) => {

@@ -119,9 +119,7 @@ async function fetchDaoDetails(
     }
   );
 
-  let metadata = await ipfsService.getData(dao.metadata);
-
-  if (typeof metadata === 'string') metadata = JSON.parse(metadata);
+  const metadata = await ipfsService.getData(dao.metadata);
 
   const daoDetails = toDaoDetails(dao, metadata);
 
