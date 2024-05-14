@@ -202,7 +202,7 @@ async function getProposalsList(
       sortBy,
     });
 
-    Promise.all(
+    return await Promise.all(
       tokenVotingProposals.map(
         async (
           proposal: SubgraphTokenVotingProposalListItem
