@@ -3,7 +3,12 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import request, {gql} from 'graphql-request';
 
-import {getExtendedProposalId} from '@aragon/sdk-client-common';
+import {
+  InvalidCidError,
+  UNAVAILABLE_PROPOSAL_METADATA,
+  UNSUPPORTED_PROPOSAL_METADATA_LINK,
+  getExtendedProposalId,
+} from '@aragon/sdk-client-common';
 import {useNetwork} from 'context/network';
 import {
   PluginClient,
@@ -147,6 +152,22 @@ async function getProposal(
       proposalId: extendedProposalId,
     });
 
+    try {
+      const metadata = await ipfsService.getData(tokenVotingProposal.metadata);
+      subgraphProposal = toTokenVotingProposal(tokenVotingProposal, metadata);
+    } catch (err) {
+      if (err instanceof InvalidCidError) {
+        return toTokenVotingProposal(
+          tokenVotingProposal,
+          UNSUPPORTED_PROPOSAL_METADATA_LINK
+        );
+      }
+      return toTokenVotingProposal(
+        tokenVotingProposal,
+        UNAVAILABLE_PROPOSAL_METADATA
+      );
+    }
+
     const metadata = await ipfsService.getData(tokenVotingProposal.metadata);
     subgraphProposal = toTokenVotingProposal(tokenVotingProposal, metadata);
   } else if (isMultisigClient(client)) {
@@ -157,8 +178,21 @@ async function getProposal(
       proposalId: extendedProposalId,
     });
 
-    const metadata = await ipfsService.getData(multisigProposal.metadata);
-    subgraphProposal = toMultisigProposal(multisigProposal, metadata);
+    try {
+      const metadata = await ipfsService.getData(multisigProposal.metadata);
+      subgraphProposal = toMultisigProposal(multisigProposal, metadata);
+    } catch (err) {
+      if (err instanceof InvalidCidError) {
+        return toMultisigProposal(
+          multisigProposal,
+          UNSUPPORTED_PROPOSAL_METADATA_LINK
+        );
+      }
+      return toMultisigProposal(
+        multisigProposal,
+        UNAVAILABLE_PROPOSAL_METADATA
+      );
+    }
   }
 
   return subgraphProposal as TokenVotingProposal | MultisigProposal;
