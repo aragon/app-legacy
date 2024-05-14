@@ -34,11 +34,7 @@ import {invariant} from 'utils/invariant';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
-import {
-  toMultisigProposalListItem,
-  toTokenVotingProposalListItem,
-  transformInfiniteProposals,
-} from '../selectors';
+import {transformInfiniteProposals} from '../selectors';
 import {GaslessVotingProposalListItem} from '@vocdoni/gasless-voting';
 import request, {gql} from 'graphql-request';
 import {SubgraphMultisigProposalListItem} from 'utils/types';
@@ -47,6 +43,10 @@ import {SubgraphTokenVotingProposalListItem} from '@aragon/sdk-client/dist/token
 import {isEnsDomain} from '@aragon/ods-old';
 import {useProviders} from 'context/providers';
 import {providers} from 'ethers';
+import {
+  toMultisigProposalListItem,
+  toTokenVotingProposalListItem,
+} from '../selectors/proposals';
 
 export const PROPOSALS_PER_PAGE = 6;
 
