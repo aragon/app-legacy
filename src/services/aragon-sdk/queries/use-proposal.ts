@@ -1,7 +1,7 @@
 import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import request, {gql} from 'graphql-request';
+import request from 'graphql-request';
 
 import {
   InvalidCidError,
@@ -31,107 +31,10 @@ import {
   toTokenVotingProposal,
   transformProposal,
 } from '../selectors';
-
-export const QueryMultisigProposal = gql`
-  query MultisigProposal($proposalId: ID!) {
-    multisigProposal(id: $proposalId) {
-      id
-      dao {
-        id
-        subdomain
-      }
-      creator
-      metadata
-      createdAt
-      startDate
-      endDate
-      actions {
-        to
-        value
-        data
-      }
-      executionDate
-      executionBlockNumber
-      creationBlockNumber
-      plugin {
-        onlyListed
-      }
-      minApprovals
-      executionTxHash
-      executed
-      approvalReached
-      isSignaling
-      approvers(first: 1000) {
-        id
-      }
-    }
-  }
-`;
-
-export const QueryTokenVotingProposal = gql`
-  query TokenVotingProposal($proposalId: ID!) {
-    tokenVotingProposal(id: $proposalId) {
-      id
-      dao {
-        id
-        subdomain
-      }
-      creator
-      metadata
-      createdAt
-      creationBlockNumber
-      executionDate
-      executionBlockNumber
-      actions {
-        to
-        value
-        data
-      }
-      yes
-      no
-      abstain
-      votingMode
-      supportThreshold
-      startDate
-      endDate
-      executed
-      earlyExecutable
-      approvalReached
-      isSignaling
-      executionTxHash
-      voters(first: 1000) {
-        voter {
-          address
-        }
-        voteReplaced
-        voteOption
-        votingPower
-      }
-      plugin {
-        token {
-          id
-          name
-          symbol
-          __typename
-          ... on ERC20Contract {
-            decimals
-          }
-          ... on ERC20WrapperContract {
-            decimals
-            underlyingToken {
-              id
-              name
-              symbol
-              decimals
-            }
-          }
-        }
-      }
-      totalVotingPower
-      minVotingPower
-    }
-  }
-`;
+import {
+  QueryTokenVotingProposal,
+  QueryMultisigProposal,
+} from '../Queryhelpers/proposal';
 
 async function getProposal(
   client: PluginClient,

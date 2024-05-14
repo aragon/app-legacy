@@ -36,7 +36,7 @@ import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {transformInfiniteProposals} from '../selectors';
 import {GaslessVotingProposalListItem} from '@vocdoni/gasless-voting';
-import request, {gql} from 'graphql-request';
+import request from 'graphql-request';
 import {SubgraphMultisigProposalListItem} from 'utils/types';
 import {ipfsService} from 'services/ipfs/ipfsService';
 import {SubgraphTokenVotingProposalListItem} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
@@ -47,6 +47,10 @@ import {
   toMultisigProposalListItem,
   toTokenVotingProposalListItem,
 } from '../selectors/proposals';
+import {
+  QueryMultisigProposals,
+  QueryTokenVotingProposals,
+} from '../Queryhelpers/proposals';
 
 export const PROPOSALS_PER_PAGE = 6;
 
@@ -61,125 +65,6 @@ const DEFAULT_PARAMS = {
   sortBy: ProposalSortBy.CREATED_AT,
   direction: SortDirection.DESC,
 };
-
-export const QueryTokenVotingProposals = gql`
-  query TokenVotingProposals(
-    $where: TokenVotingProposal_filter!
-    $limit: Int!
-    $skip: Int!
-    $direction: OrderDirection!
-    $sortBy: TokenVotingProposal_orderBy!
-  ) {
-    tokenVotingProposals(
-      where: $where
-      first: $limit
-      skip: $skip
-      orderDirection: $direction
-      orderBy: $sortBy
-    ) {
-      id
-      dao {
-        id
-        subdomain
-      }
-      creator
-      metadata
-      yes
-      no
-      abstain
-      startDate
-      endDate
-      executed
-      earlyExecutable
-      approvalReached
-      isSignaling
-      votingMode
-      supportThreshold
-      minVotingPower
-      totalVotingPower
-      actions {
-        to
-        value
-        data
-      }
-      voters {
-        voter {
-          address
-        }
-        voteReplaced
-        voteOption
-        votingPower
-      }
-      plugin {
-        token {
-          id
-          name
-          symbol
-          __typename
-          ... on ERC20Contract {
-            decimals
-          }
-          ... on ERC20WrapperContract {
-            decimals
-            underlyingToken {
-              id
-              name
-              symbol
-              decimals
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-export const QueryMultisigProposals = gql`
-  query MultisigProposals(
-    $where: MultisigProposal_filter!
-    $limit: Int!
-    $skip: Int!
-    $direction: OrderDirection!
-    $sortBy: MultisigProposal_orderBy!
-  ) {
-    multisigProposals(
-      where: $where
-      first: $limit
-      skip: $skip
-      orderDirection: $direction
-      orderBy: $sortBy
-    ) {
-      id
-      dao {
-        id
-        subdomain
-      }
-      creator
-      metadata
-      executed
-      approvalReached
-      isSignaling
-      approvals
-      startDate
-      endDate
-      executionDate
-      executionBlockNumber
-      creationBlockNumber
-      approvers {
-        id
-      }
-      actions {
-        to
-        value
-        data
-      }
-      minApprovals
-      plugin {
-        onlyListed
-      }
-    }
-  }
-`;
 
 async function getProposalsList(
   client: PluginClient,

@@ -1,9 +1,4 @@
-import {
-  Client,
-  DaoDetails,
-  DaoMetadata,
-  InstalledPluginListItem,
-} from '@aragon/sdk-client';
+import {Client, DaoDetails} from '@aragon/sdk-client';
 import {JsonRpcProvider} from '@ethersproject/providers';
 import {useQuery} from '@tanstack/react-query';
 import {isAddress} from 'ethers/lib/utils';
@@ -21,66 +16,11 @@ import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
-import request, {gql} from 'graphql-request';
-import {SubgraphDao, SubgraphPluginListItem} from 'utils/types';
+import request from 'graphql-request';
+import {SubgraphDao} from 'utils/types';
 import {ipfsService} from 'services/ipfs/ipfsService';
 import {isEnsDomain} from '@aragon/ods-old';
-
-export const QueryDao = gql`
-  query Dao($address: ID!) {
-    dao(id: $address) {
-      id
-      subdomain
-      metadata
-      createdAt
-      plugins {
-        appliedPreparation {
-          pluginAddress
-        }
-        appliedPluginRepo {
-          subdomain
-        }
-        appliedVersion {
-          build
-          release {
-            release
-          }
-        }
-      }
-    }
-  }
-`;
-
-function toDaoDetails(dao: SubgraphDao, metadata: DaoMetadata): DaoDetails {
-  return {
-    address: dao.id,
-    ensDomain: dao.subdomain + '.dao.eth',
-    metadata: {
-      name: metadata?.name,
-      description: metadata?.description,
-      avatar: metadata?.avatar || undefined,
-      links: metadata?.links,
-    },
-    creationDate: new Date(parseInt(dao.createdAt) * 1000),
-    // filter out plugins that are not applied
-    plugins: dao.plugins
-      .filter(
-        plugin =>
-          plugin.appliedPreparation &&
-          plugin.appliedVersion &&
-          plugin.appliedPluginRepo
-      )
-      .map(
-        (plugin: SubgraphPluginListItem): InstalledPluginListItem => ({
-          // we checked with the filter above that these are not null
-          id: `${plugin.appliedPluginRepo!.subdomain}.plugin.dao.eth`,
-          release: plugin.appliedVersion!.release.release,
-          build: plugin.appliedVersion!.build,
-          instanceAddress: plugin.appliedPreparation!.pluginAddress,
-        })
-      ),
-  };
-}
+import {QueryDao, toDaoDetails} from 'services/aragon-sdk/Queryhelpers/dao';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
