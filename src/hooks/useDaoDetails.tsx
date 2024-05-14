@@ -1,4 +1,4 @@
-import {Client, DaoDetails} from '@aragon/sdk-client';
+import {Client, DaoDetails, InstalledPluginListItem} from '@aragon/sdk-client';
 import {JsonRpcProvider} from '@ethersproject/providers';
 import {useQuery} from '@tanstack/react-query';
 import {isAddress} from 'ethers/lib/utils';
@@ -6,6 +6,7 @@ import {useCallback, useEffect, useMemo} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
+import {QueryDao, toDaoDetails} from 'services/aragon-sdk/queryHelpers/dao';
 import {useProviders} from 'context/providers';
 import {
   CHAIN_METADATA,
@@ -20,7 +21,6 @@ import request from 'graphql-request';
 import {SubgraphDao} from 'utils/types';
 import {ipfsService} from 'services/ipfs/ipfsService';
 import {isEnsDomain} from '@aragon/ods-old';
-import {QueryDao, toDaoDetails} from 'services/aragon-sdk/dao';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -80,7 +80,7 @@ async function fetchDaoDetails(
       daoDetails.metadata.avatar = avatar;
     }
 
-  daoDetails?.plugins.sort(a => {
+  daoDetails?.plugins.sort((a: InstalledPluginListItem) => {
     if (
       a.id === 'token-voting.plugin.dao.eth' ||
       a.id === 'multisig.plugin.dao.eth'
