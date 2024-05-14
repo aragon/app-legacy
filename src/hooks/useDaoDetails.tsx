@@ -20,7 +20,7 @@ import request from 'graphql-request';
 import {SubgraphDao} from 'utils/types';
 import {ipfsService} from 'services/ipfs/ipfsService';
 import {isEnsDomain} from '@aragon/ods-old';
-import {QueryDao, toDaoDetails} from 'services/aragon-sdk/Queryhelpers/dao';
+import {QueryDao, toDaoDetails} from 'services/aragon-sdk/queryhelpers/dao';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.

@@ -50,7 +50,7 @@ import {
 import {
   QueryMultisigProposals,
   QueryTokenVotingProposals,
-} from '../Queryhelpers/proposals';
+} from '../queryhelpers/proposals';
 
 export const PROPOSALS_PER_PAGE = 6;
 
