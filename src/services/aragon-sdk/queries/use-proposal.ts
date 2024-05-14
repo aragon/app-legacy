@@ -34,7 +34,7 @@ import {
 import {
   QueryTokenVotingProposal,
   QueryMultisigProposal,
-} from '../queryhelpers/proposal';
+} from '../queryHelpers/proposal';
 
 async function getProposal(
   client: PluginClient,
