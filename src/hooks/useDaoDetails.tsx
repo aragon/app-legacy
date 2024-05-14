@@ -24,6 +24,7 @@ import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import request, {gql} from 'graphql-request';
 import {SubgraphDao, SubgraphPluginListItem} from 'utils/types';
 import {ipfsService} from 'services/ipfs/ipfsService';
+import {isEnsDomain} from '@aragon/ods-old';
 
 export const QueryDao = gql`
   query Dao($address: ID!) {
@@ -101,7 +102,9 @@ async function fetchDaoDetails(
 
   if (!client) return Promise.reject(new Error('client must be defined'));
 
-  const address = await provider.resolveName(daoAddressOrEns as string);
+  const address = isEnsDomain(daoAddressOrEns)
+    ? await provider.resolveName(daoAddressOrEns as string)
+    : daoAddressOrEns;
 
   // if network is l2 and has ens name, resolve to address
   if (isL2NetworkEns) {
