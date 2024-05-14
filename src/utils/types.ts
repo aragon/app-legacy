@@ -730,8 +730,6 @@ export type SubgraphMultisigProposalBase = SubgraphProposalBase & {
   minApprovals: number;
   approvalReached: boolean;
   approvers: {id: string}[];
-  // TODO change on subgraph fix
-  // approvers: SubgraphMultisigApproversListItem[];
 };
 
 export type SubgraphMultisigProposalListItem = SubgraphMultisigProposalBase;

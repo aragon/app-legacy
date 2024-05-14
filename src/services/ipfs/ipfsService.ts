@@ -1,5 +1,6 @@
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {IPinDataProps} from './ipfsService.api';
+import {pinataAPI} from 'utils/constants';
 
 class IpfsService {
   constructor(
@@ -23,7 +24,7 @@ class IpfsService {
   pinData = async (data: IPinDataProps) => {
     const processedData = await this.processData(data);
 
-    const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+    const res = await fetch(pinataAPI, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + this.apiKey,

@@ -17,6 +17,8 @@ export const AppMetadata = {
 export const FEEDBACK_FORM =
   'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
 
+export const pinataAPI = 'https://api.pinata.cloud/pinning/pinJSONToIPFS';
+
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   arbitrum:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-arbitrum/version/v1.4.0/api',

@@ -108,9 +108,6 @@ async function fetchDaoDetails(
     redirectDaoToAddress(address);
   }
 
-  // Note: SDK doesn't support ens names in L2 chains so we need to resolve the address first
-  // const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
-
   const {dao} = await request<{dao: SubgraphDao}>(
     SUBGRAPH_API_URL[network]!,
     QueryDao,
@@ -120,7 +117,6 @@ async function fetchDaoDetails(
   );
 
   const metadata = await ipfsService.getData(dao.metadata);
-
   const daoDetails = toDaoDetails(dao, metadata);
 
   const avatar = daoDetails?.metadata.avatar;
