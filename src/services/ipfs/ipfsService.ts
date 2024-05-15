@@ -1,6 +1,6 @@
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {IPinDataProps} from './ipfsService.api';
-import {pinataAPI} from 'utils/constants';
+import {pinataJSONAPI, pinataFileAPI} from 'utils/constants';
 
 class IpfsService {
   constructor(
@@ -22,40 +22,59 @@ class IpfsService {
   };
 
   pinData = async (data: IPinDataProps) => {
-    const processedData = await this.processData(data);
+    const {processedData, type} = await this.processData(data);
+    let res;
 
-    const res = await fetch(pinataAPI, {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + this.apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        pinataOptions: {
-          cidVersion: this.CIDVersion,
+    if (type === 'file') {
+      res = await fetch(pinataFileAPI, {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + this.apiKey,
         },
-        pinataContent: processedData,
-      }),
-    });
+        body: processedData,
+      });
+    } else {
+      res = await fetch(pinataJSONAPI, {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + this.apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pinataOptions: {
+            cidVersion: this.CIDVersion,
+          },
+          pinataContent: processedData,
+        }),
+      });
+    }
 
     return res.json();
   };
 
   private processData = async (
     data: IPinDataProps
-  ): Promise<string | Uint8Array> => {
-    let processedData: string | Uint8Array;
+  ): Promise<{
+    processedData: string | Uint8Array | FormData;
+    type: 'file' | 'json';
+  }> => {
+    let processedData: string | Uint8Array | FormData;
+    let type: 'file' | 'json';
 
     if (data instanceof Blob) {
-      const dataBuffer = await data.arrayBuffer();
-      processedData = new Uint8Array(dataBuffer);
+      const formData = new FormData();
+      formData.append('file', data);
+      processedData = formData;
+      type = 'file';
     } else if (typeof data !== 'string') {
       processedData = new Uint8Array(data);
+      type = 'json';
     } else {
       processedData = data;
+      type = 'json';
     }
 
-    return processedData;
+    return {processedData, type};
   };
 }
 
