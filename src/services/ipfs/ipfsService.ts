@@ -1,6 +1,6 @@
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {IPinDataProps} from './ipfsService.api';
-import {pinataJSONAPI, pinataFileAPI} from 'utils/constants';
+import {pinataJSONAPI, pinataFileAPI, DataType} from 'utils/constants';
 
 class IpfsService {
   constructor(
@@ -25,7 +25,7 @@ class IpfsService {
     const {processedData, type} = await this.processData(data);
     let res;
 
-    if (type === 'file') {
+    if (type === DataType.File) {
       res = await fetch(pinataFileAPI, {
         method: 'POST',
         headers: {
@@ -56,22 +56,22 @@ class IpfsService {
     data: IPinDataProps
   ): Promise<{
     processedData: string | Uint8Array | FormData;
-    type: 'file' | 'json';
+    type: DataType;
   }> => {
     let processedData: string | Uint8Array | FormData;
-    let type: 'file' | 'json';
+    let type: DataType;
 
     if (data instanceof Blob) {
       const formData = new FormData();
-      formData.append('file', data);
+      formData.append(DataType.File, data);
       processedData = formData;
-      type = 'file';
+      type = DataType.File;
     } else if (typeof data !== 'string') {
       processedData = new Uint8Array(data);
-      type = 'json';
+      type = DataType.JSON;
     } else {
       processedData = data;
-      type = 'json';
+      type = DataType.JSON;
     }
 
     return {processedData, type};
