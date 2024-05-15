@@ -1,5 +1,6 @@
 import {
   Client,
+  DaoMetadata,
   DaoUpdateDecodedParams,
   Erc20TokenDetails,
   MintTokenParams,
@@ -10,6 +11,7 @@ import {
   VotingMode,
   WithdrawParams,
 } from '@aragon/sdk-client';
+import {DAO__factory} from '@aragon/osx-ethers';
 import {
   DaoAction,
   DecodedApplyUpdateParams,
@@ -17,6 +19,7 @@ import {
   SupportedNetwork as SdkSupportedNetworks,
   SupportedNetworksArray,
   SupportedVersion,
+  Uint8ArraySchema,
   bytesToHex,
   resolveIpfsCid,
 } from '@aragon/sdk-client-common';
@@ -28,6 +31,7 @@ import {
   formatUnits as ethersFormatUnits,
   hexlify,
   isAddress,
+  toUtf8String,
 } from 'ethers/lib/utils';
 import {TFunction} from 'i18next';
 import {
@@ -73,6 +77,7 @@ import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
 import {daoABI} from 'abis/daoABI';
 import {SupportedChainID} from './constants/chains';
+import {ipfsService} from 'services/ipfs/ipfsService';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -395,6 +400,24 @@ export function decodeGaslessSettingsToAction(
   };
 }
 
+export async function updateDaoMetadataAction(
+  data: Uint8Array
+): Promise<DaoMetadata | undefined> {
+  await Uint8ArraySchema.strict().validate(data);
+  const daoInterface = DAO__factory.createInterface();
+  const hexBytes = bytesToHex(data);
+  const expectedFunction = daoInterface.getFunction('setMetadata');
+  const result = daoInterface.decodeFunctionData(expectedFunction, hexBytes);
+  const metadataUri = toUtf8String(result[0]);
+
+  try {
+    const metadata = await ipfsService.getData(metadataUri);
+    return metadata;
+  } catch (e) {
+    console.error('Failed to fetch metadata action', e);
+  }
+}
+
 /**
  * Decode update DAO metadata settings action
  * @param data Uint8Array action data
@@ -411,11 +434,11 @@ export async function decodeMetadataToAction(
   }
 
   try {
-    const decodedMetadata = await client.decoding.updateDaoMetadataAction(data);
+    const decodedMetadata = await updateDaoMetadataAction(data);
 
     return {
       name: 'modify_metadata',
-      inputs: decodedMetadata,
+      inputs: decodedMetadata as DaoMetadata,
     };
   } catch (error) {
     console.error('Error decoding update dao metadata action', error);
