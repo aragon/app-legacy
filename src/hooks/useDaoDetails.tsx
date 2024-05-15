@@ -21,6 +21,7 @@ import request from 'graphql-request';
 import {SubgraphDao} from 'utils/types';
 import {ipfsService} from 'services/ipfs/ipfsService';
 import {isEnsDomain} from '@aragon/ods-old';
+import {EMPTY_DAO_METADATA_LINK} from 'utils/contract';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -46,6 +47,8 @@ async function fetchDaoDetails(
     ? await provider.resolveName(daoAddressOrEns as string)
     : daoAddressOrEns;
 
+  let daoDetails;
+
   // if network is l2 and has ens name, resolve to address
   if (isL2NetworkEns) {
     redirectDaoToAddress(address);
@@ -59,8 +62,12 @@ async function fetchDaoDetails(
     }
   );
 
-  const metadata = await ipfsService.getData(dao.metadata);
-  const daoDetails = toDaoDetails(dao, metadata);
+  try {
+    const metadata = await ipfsService.getData(dao.metadata);
+    daoDetails = toDaoDetails(dao, metadata);
+  } catch (err) {
+    daoDetails = toDaoDetails(dao, EMPTY_DAO_METADATA_LINK);
+  }
 
   const avatar = daoDetails?.metadata.avatar;
   if (avatar)
