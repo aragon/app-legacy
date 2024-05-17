@@ -4,7 +4,7 @@ import {shortenAddress, AvatarDao} from '@aragon/ods-old';
 import {Icon, IconType} from '@aragon/ods';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {useClient} from 'hooks/useClient';
-import {Client, DaoListItem} from '@aragon/sdk-client';
+import {DaoListItem} from '@aragon/sdk-client';
 import {toDisplayEns} from 'utils/library';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {DaoMember} from 'utils/paths';
@@ -12,6 +12,7 @@ import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 import {useQueryClient} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from 'services/aragon-sdk/query-keys';
 import {SupportedNetworks} from 'utils/constants';
+import {ipfsService} from 'services/ipfs/ipfsService';
 /**
  * Type declarations for `ActionItemAddressProps`.
  */
@@ -68,8 +69,8 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
       if (!metadata || !client) return null;
 
       const cid = resolveIpfsCid(metadata);
-      const ipfsClientString = await (client as Client)?.ipfs.fetchString(cid);
-      const ipfsClient = JSON.parse(ipfsClientString);
+      const ipfsClientString = await ipfsService.getData(cid);
+      const ipfsClient = ipfsClientString;
 
       setMetadataObject(ipfsClient);
     }
@@ -120,3 +121,4 @@ const Address = styled.span.attrs({
 // const Activity = styled.div.attrs({
 //   className: 'ft-text-sm text-neutral-500 mt-2' as string,
 // })``;
+g
