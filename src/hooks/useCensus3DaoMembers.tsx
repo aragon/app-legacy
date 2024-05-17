@@ -39,7 +39,7 @@ export const useCensus3DaoMembers = ({
 
   // If is not a wrapped token and not on a proposal context we can still get the token holders amount
   const enableCensus3Token = enable && !!daoToken?.address && !proposalId;
-  const {data: census3Token} = useCensus3Token(
+  const {data: census3Token, isLoading: isLoadingToken} = useCensus3Token(
     {tokenAddress: daoToken?.address ?? ''},
     {
       enabled: enableCensus3Token,
@@ -148,7 +148,8 @@ export const useCensus3DaoMembers = ({
   const isLoading =
     (isCensusIdLoading && !!proposalId) ||
     (votingPowerIsLoading && enableVotingPoweredMembersQueries) ||
-    (census3MembersIsLoading && enableGetMembers);
+    (census3MembersIsLoading && enableGetMembers) ||
+    (isLoadingToken && enableCensus3Token);
   const isError =
     isCensusIdError || votingPowerIsError || census3MembersIsError;
 
