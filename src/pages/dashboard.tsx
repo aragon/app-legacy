@@ -23,7 +23,7 @@ import {
   useRemoveFollowedDaoMutation,
 } from 'hooks/useFollowedDaos';
 import {usePendingDao, useRemovePendingDaoMutation} from 'hooks/usePendingDao';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaslessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -31,6 +31,8 @@ import {formatDate} from 'utils/date';
 import {toDisplayEns} from 'utils/library';
 import {Dashboard as DashboardPath, NotFound} from 'utils/paths';
 import {Container} from './governance';
+import {useCensus3Token} from '../services/vocdoni-census3/queries/use-census3-token';
+import {useDaoToken} from '../hooks/useDaoToken';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -94,6 +96,26 @@ export const Dashboard: React.FC = () => {
     isFetched: pendingDaoFetched,
   } = usePendingDao(urlAddressOrEns);
 
+  // Pending census for gasless plugins
+  const {data: daoTokenData} = useDaoToken(
+    liveDao?.plugins?.[0]?.instanceAddress || ''
+  );
+  const isGasless =
+    (liveDao?.plugins[0].id as PluginTypes) === GaslessPluginName;
+  const enableCensus3Token =
+    daoTokenData && !!daoTokenData?.address && isGasless;
+
+  const {data: census3Token} = useCensus3Token(
+    {tokenAddress: daoTokenData?.address ?? ''},
+    {
+      enabled: enableCensus3Token,
+      refetchInterval: query =>
+        query.state.data?.status.synced ? false : 5000,
+    }
+  );
+
+  const isPendingDao = pendingDao || !(census3Token?.status.synced ?? false);
+
   const isLoading = liveDaoLoading || pendingDaoLoading || followedDaosLoading;
 
   const removePendingDaoMutation = useRemovePendingDaoMutation(() => {
@@ -132,22 +154,30 @@ export const Dashboard: React.FC = () => {
    *************************************************/
   useEffect(() => {
     // poll for the newly created DAO while waiting to be indexed
-    if (pendingDao && isSuccess && !liveDao) {
+    if (isPendingDao && isSuccess && !liveDao) {
       setPollInterval(1000);
     }
-  }, [isSuccess, liveDao, pendingDao]);
+  }, [isSuccess, liveDao, isPendingDao]);
 
   useEffect(() => {
     if (
-      pendingDao &&
+      isPendingDao &&
       liveDao &&
-      daoCreationState === DaoCreationState.ASSEMBLING_DAO
+      daoCreationState === DaoCreationState.ASSEMBLING_DAO &&
+      isGasless &&
+      census3Token?.status.synced
     ) {
       setPollInterval(0);
       setDaoCreationState(DaoCreationState.DAO_READY);
       setTimeout(() => setDaoCreationState(DaoCreationState.OPEN_DAO), 2000);
     }
-  }, [liveDao, daoCreationState, pendingDao]);
+  }, [
+    liveDao,
+    daoCreationState,
+    isPendingDao,
+    isGasless,
+    census3Token?.status.synced,
+  ]);
 
   useEffect(() => {
     if (
@@ -237,7 +267,7 @@ export const Dashboard: React.FC = () => {
     return <Loading />;
   }
 
-  if (pendingDao) {
+  if (isPendingDao) {
     const buttonLabel = {
       [DaoCreationState.ASSEMBLING_DAO]: t('dashboard.emptyState.buildingDAO'),
       [DaoCreationState.DAO_READY]: t('dashboard.emptyState.daoReady'),
