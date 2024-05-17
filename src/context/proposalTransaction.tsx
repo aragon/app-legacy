@@ -239,7 +239,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         gaslessOnVoteCallback();
       }
     },
-    [address, fetchVotingPower, network, pluginType, voteTokenAddress]
+    [
+      address,
+      fetchVotingPower,
+      gaslessOnVoteCallback,
+      network,
+      pluginType,
+      voteTokenAddress,
+    ]
   );
 
   // handles closing vote/approval modal
