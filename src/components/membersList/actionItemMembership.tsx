@@ -121,4 +121,3 @@ const Address = styled.span.attrs({
 // const Activity = styled.div.attrs({
 //   className: 'ft-text-sm text-neutral-500 mt-2' as string,
 // })``;
-g
