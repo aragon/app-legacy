@@ -657,6 +657,10 @@ export const Proposal: React.FC = () => {
       handleGaslessVoting({
         vote,
         voteTokenAddress: proposal.token?.address,
+        // Set CB to hide voting options once voted
+        onVoteCb: () => {
+          setVoteOrApprovalSubmitted(true);
+        },
       });
     } else {
       setVote(vote);
