@@ -17,14 +17,12 @@ import {useGaslessGovernanceEnabled} from '../../hooks/useGaslessGovernanceEnabl
 type MembersListProps = {
   members: DaoMember[];
   token?: Erc20TokenDetails;
-  vocdoni?: boolean;
   isCompactMode?: boolean;
 };
 
 export const MembersList: React.FC<MembersListProps> = ({
   token,
   members,
-  vocdoni,
   isCompactMode,
 }) => {
   const [totalSupply, setTotalSupply] = useState<number>(0);
@@ -101,13 +99,12 @@ export const MembersList: React.FC<MembersListProps> = ({
                   {t('community.listHeader.votingPower')}
                 </TableCellHead>
               )}
-              {showDelegationHeaders && isGovernanceEnabled && (
-                <TableCellHead>
-                  {t('community.listHeader.delegations')}
-                </TableCellHead>
-              )}
+              <TableCellHead>
+                {showDelegationHeaders && isGovernanceEnabled && (
+                  <>{t('community.listHeader.delegations')}</>
+                )}
+              </TableCellHead>
               <TableCellHead />
-              {vocdoni && <TableCellHead />}
             </tr>
           </thead>
         )}
@@ -123,7 +120,6 @@ export const MembersList: React.FC<MembersListProps> = ({
                 tokenSupply={totalSupply}
                 isTokenDaoMember={true}
                 isCompactMode={isCompactMode}
-                isVocdoni={vocdoni}
                 {...getMemberId(member)}
               />
             ) : (

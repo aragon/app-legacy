@@ -53,6 +53,8 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   const walletBased = pluginType === 'multisig.plugin.dao.eth';
 
+  console.log('pluginType', pluginType);
+
   const headerButtonHandler = () => {
     walletBased
       ? navigate(
@@ -79,7 +81,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
         <div className="w-1/3">
           <ListItemHeader
             icon={IconType.APP_MEMBERS}
-            value={`${totalMemberCount} ${t('labels.members')}`}
+            value={`${totalMemberCount > 0 ? totalMemberCount : ''} ${t(
+              'labels.members'
+            )}`}
             label={
               walletBased
                 ? t('explore.explorer.walletBased')
@@ -121,7 +125,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
     <VerticalContainer>
       <ListItemHeader
         icon={IconType.APP_MEMBERS}
-        value={`${totalMemberCount} ${t('labels.members')}`}
+        value={`${totalMemberCount > 0 ? totalMemberCount : ''} ${t(
+          'labels.members'
+        )}`}
         label={
           walletBased
             ? t('explore.explorer.walletBased')

@@ -76,8 +76,6 @@ export const Community: React.FC = () => {
   );
 
   const walletBased = pluginType === 'multisig.plugin.dao.eth';
-  const vocdoniBased =
-    pluginType === 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth';
 
   const enableSearchSort = totalMemberCount > 0 && totalMemberCount <= 1000;
   const enableDelegation =
@@ -165,11 +163,9 @@ export const Community: React.FC = () => {
     );
   }
 
-  const pageTitle = !isGovernanceEnabled
-    ? t('labels.activeMembers', {
-        count: totalMemberCount > 0 ? totalMemberCount : Number(''),
-      })
-    : `${totalMemberCount > 0 ? totalMemberCount : ''} ${t('labels.members')}`;
+  const pageTitle = `${totalMemberCount > 0 ? totalMemberCount : ''} ${t(
+    'labels.members'
+  )}`;
 
   // Await to load daoToken address to prevent null see all holders button
   const seeAllHoldersBtn = daoToken?.address
@@ -280,7 +276,7 @@ export const Community: React.FC = () => {
           </div>
 
           {/* Members List */}
-          {membersLoading && !vocdoniBased ? (
+          {membersLoading ? (
             <Loading />
           ) : (
             <>
@@ -299,11 +295,7 @@ export const Community: React.FC = () => {
                         : t('labels.nResults', {count: filteredMemberCount})}
                     </ResultsCountLabel>
                   )}
-                  <MembersList
-                    token={daoToken}
-                    members={pagedMembers}
-                    vocdoni={vocdoniBased}
-                  />
+                  <MembersList token={daoToken} members={pagedMembers} />
                 </>
               )}
             </>
