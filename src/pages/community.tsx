@@ -276,7 +276,7 @@ export const Community: React.FC = () => {
           </div>
 
           {/* Members List */}
-          {membersLoading ? (
+          {membersLoading && !vocdoniBased ? (
             <Loading />
           ) : (
             <>
@@ -295,7 +295,11 @@ export const Community: React.FC = () => {
                         : t('labels.nResults', {count: filteredMemberCount})}
                     </ResultsCountLabel>
                   )}
-                  <MembersList token={daoToken} members={pagedMembers} />
+                  <MembersList
+                    token={daoToken}
+                    members={pagedMembers}
+                    vocdoni={vocdoniBased}
+                  />
                 </>
               )}
             </>

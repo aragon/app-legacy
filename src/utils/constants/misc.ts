@@ -34,6 +34,11 @@ export type NavLinkData = {
   icon: IconType;
 };
 
+export const enum DataType {
+  File = 'file',
+  JSON = 'json',
+}
+
 export const NAV_LINKS_DATA: NavLinkData[] = [
   {
     label: i18n.t('navLinks.dashboard'),

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useScreen, shortenAddress, Avatar} from '@aragon/ods-old';
-import {Button, IconType, Tag} from '@aragon/ods';
+import {Button, IconType, Spinner, Tag} from '@aragon/ods';
 import {DaoMember} from 'utils/paths';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {useNetwork} from 'context/network';
@@ -56,6 +56,7 @@ export type ActionItemAddressProps = {
 export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const {
     isCompactMode,
+    isVocdoni,
     addressOrEns,
     avatar,
     delegations,
@@ -123,11 +124,27 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
       {!useCompactMode && votingPower != null && tokenSymbol && (
         <TableCell className="text-neutral-600">
-          <MemberVotingPower
-            votingPower={votingPower}
-            tokenSupply={tokenSupply}
-            tokenSymbol={tokenSymbol}
-          />
+          {isVocdoni ? (
+            // For vocdoni organizations, show the spinner only when votingPower is not positive as the call is async
+            votingPower > 0 ? (
+              <MemberVotingPower
+                votingPower={votingPower}
+                tokenSupply={tokenSupply}
+                tokenSymbol={tokenSymbol}
+              />
+            ) : (
+              <Spinner size="sm" className="pl-4" />
+            )
+          ) : (
+            // For non-vocdoni organizations, show the voting power directly if it's available
+            votingPower > 0 && (
+              <MemberVotingPower
+                votingPower={votingPower}
+                tokenSupply={tokenSupply}
+                tokenSymbol={tokenSymbol}
+              />
+            )
+          )}
         </TableCell>
       )}
 

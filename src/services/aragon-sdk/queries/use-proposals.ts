@@ -3,7 +3,13 @@ import {
   ProposalSortBy,
   TokenVotingProposalListItem,
 } from '@aragon/sdk-client';
-import {SortDirection} from '@aragon/sdk-client-common';
+import {
+  EMPTY_PROPOSAL_METADATA_LINK,
+  InvalidCidError,
+  SortDirection,
+  UNAVAILABLE_PROPOSAL_METADATA,
+  UNSUPPORTED_PROPOSAL_METADATA_LINK,
+} from '@aragon/sdk-client-common';
 import {
   InfiniteData,
   UseInfiniteQueryOptions,
@@ -12,14 +18,39 @@ import {
 } from '@tanstack/react-query';
 
 import {useNetwork} from 'context/network';
-import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
-import {CHAIN_METADATA, SupportedChainID} from 'utils/constants';
+import {
+  PluginClient,
+  isMultisigClient,
+  isTokenVotingClient,
+  usePluginClient,
+} from 'hooks/usePluginClient';
+import {
+  CHAIN_METADATA,
+  SUBGRAPH_API_URL,
+  SupportedChainID,
+  SupportedNetworks,
+} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {transformInfiniteProposals} from '../selectors';
 import {GaslessVotingProposalListItem} from '@vocdoni/gasless-voting';
+import request from 'graphql-request';
+import {SubgraphMultisigProposalListItem} from 'utils/types';
+import {ipfsService} from 'services/ipfs/ipfsService';
+import {SubgraphTokenVotingProposalListItem} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
+import {isEnsDomain} from '@aragon/ods-old';
+import {useProviders} from 'context/providers';
+import {providers} from 'ethers';
+import {
+  toMultisigProposalListItem,
+  toTokenVotingProposalListItem,
+} from '../selectors/proposals';
+import {
+  QueryMultisigProposals,
+  QueryTokenVotingProposals,
+} from '../queryHelpers/proposals';
 
 export const PROPOSALS_PER_PAGE = 6;
 
@@ -35,13 +66,125 @@ const DEFAULT_PARAMS = {
   direction: SortDirection.DESC,
 };
 
-async function fetchProposals(
+async function getProposalsList(
+  client: PluginClient,
   params: IFetchProposalsParams,
-  client: PluginClient | undefined
+  network: SupportedNetworks
+) {
+  const {daoAddressOrEns, limit, skip, direction, sortBy} = params;
+
+  if (isTokenVotingClient(client)) {
+    const {tokenVotingProposals} = await request<{
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      tokenVotingProposals: any;
+    }>(SUBGRAPH_API_URL[network]!, QueryTokenVotingProposals, {
+      where: {
+        dao: daoAddressOrEns,
+      },
+      limit,
+      skip,
+      direction,
+      sortBy,
+    });
+
+    return await Promise.all(
+      tokenVotingProposals.map(
+        async (
+          proposal: SubgraphTokenVotingProposalListItem
+        ): Promise<TokenVotingProposalListItem> => {
+          // format in the metadata field
+          if (!proposal.metadata) {
+            return toTokenVotingProposalListItem(
+              proposal,
+              EMPTY_PROPOSAL_METADATA_LINK
+            );
+          }
+          try {
+            const metadata = await ipfsService.getData(proposal.metadata);
+            return toTokenVotingProposalListItem(proposal, metadata);
+          } catch (err) {
+            if (err instanceof InvalidCidError) {
+              return toTokenVotingProposalListItem(
+                proposal,
+                UNSUPPORTED_PROPOSAL_METADATA_LINK
+              );
+            }
+            return toTokenVotingProposalListItem(
+              proposal,
+              UNAVAILABLE_PROPOSAL_METADATA
+            );
+          }
+        }
+      )
+    );
+  } else if (isMultisigClient(client)) {
+    const {multisigProposals} = await request<{
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      multisigProposals: any;
+    }>(SUBGRAPH_API_URL[network]!, QueryMultisigProposals, {
+      where: {
+        dao: daoAddressOrEns,
+      },
+      limit,
+      skip,
+      direction,
+      sortBy,
+    });
+
+    return await Promise.all(
+      multisigProposals.map(
+        async (
+          proposal: SubgraphMultisigProposalListItem
+        ): Promise<MultisigProposalListItem> => {
+          if (!proposal.metadata) {
+            return toMultisigProposalListItem(
+              proposal,
+              EMPTY_PROPOSAL_METADATA_LINK
+            );
+          }
+          // format in the metadata field
+          try {
+            const metadata = await ipfsService.getData(proposal.metadata);
+            return toMultisigProposalListItem(proposal, metadata);
+          } catch (err) {
+            if (err instanceof InvalidCidError) {
+              return toMultisigProposalListItem(
+                proposal,
+                UNSUPPORTED_PROPOSAL_METADATA_LINK
+              );
+            }
+            return toMultisigProposalListItem(
+              proposal,
+              UNAVAILABLE_PROPOSAL_METADATA
+            );
+          }
+        }
+      )
+    );
+  }
+}
+
+async function fetchProposals(
+  client: PluginClient | undefined,
+  params: IFetchProposalsParams,
+  network: SupportedNetworks,
+  provider: providers.Provider
 ): Promise<FetchProposalsResponseTypes> {
   invariant(!!client, 'fetchProposalsAsync: client is not defined');
-  const data = await client.methods.getProposals(params);
-  return data;
+
+  // eslint-disable-next-line prefer-const
+  let {daoAddressOrEns, ...restParams} = params;
+
+  daoAddressOrEns = isEnsDomain(params?.daoAddressOrEns || '')
+    ? ((await provider.resolveName(params.daoAddressOrEns as string)) as string)
+    : params.daoAddressOrEns;
+
+  const data = await getProposalsList(
+    client,
+    {daoAddressOrEns: daoAddressOrEns?.toLowerCase(), ...restParams},
+    network
+  );
+  return data as FetchProposalsResponseTypes;
 }
 
 export const useProposals = (
@@ -54,6 +197,7 @@ export const useProposals = (
   const params = {...DEFAULT_PARAMS, ...userParams};
   const client = usePluginClient(params.pluginType);
   const queryClient = useQueryClient();
+  const {api: provider} = useProviders();
 
   const {network} = useNetwork();
   const chainId = CHAIN_METADATA[network].id;
@@ -87,7 +231,12 @@ export const useProposals = (
         : params.skip;
 
       // fetch proposals from subgraph
-      const serverProposals = await fetchProposals({...params, skip}, client);
+      const serverProposals = await fetchProposals(
+        client,
+        {...params, skip},
+        network,
+        provider
+      );
       const serverProposalIds = new Set(serverProposals.map(p => p.id));
 
       // fetch from local storage

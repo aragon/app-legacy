@@ -5,6 +5,7 @@ import {
   MultisigProposal,
   MultisigProposalListItem,
   MultisigVotingSettings,
+  SubgraphProposalBase,
   TokenVotingProposal,
   TokenVotingProposalListItem,
   VoteValues,
@@ -697,3 +698,61 @@ export type SubgraphMembers = SubgraphTokenVotingMember & {
   };
   network?: string;
 };
+
+export type SubgraphPluginListItem = {
+  appliedPreparation: {
+    pluginAddress: string;
+  } | null;
+  appliedPluginRepo: {
+    subdomain: string;
+  } | null;
+  appliedVersion: {
+    build: number;
+    release: {
+      release: number;
+    };
+  } | null;
+};
+
+type SubgraphDaoBase = {
+  id: string;
+  subdomain: string;
+  metadata: string;
+  plugins: SubgraphPluginListItem[];
+};
+
+export type SubgraphDao = SubgraphDaoBase & {
+  createdAt: string;
+};
+
+export type SubgraphMultisigProposalBase = SubgraphProposalBase & {
+  plugin: SubgraphMultisigVotingSettings;
+  minApprovals: number;
+  approvalReached: boolean;
+  approvers: {id: string}[];
+};
+
+export type SubgraphMultisigProposalListItem = SubgraphMultisigProposalBase;
+
+export type SubgraphMultisigProposal = SubgraphMultisigProposalBase & {
+  createdAt: string;
+  executionTxHash: string;
+  executionDate: string;
+  executionBlockNumber: string;
+  creationBlockNumber: string;
+};
+
+export type SubgraphMultisigApproversListItem = {
+  approver: {id: string};
+};
+
+export type SubgraphMultisigVotingSettings = {
+  minApprovals: number;
+  onlyListed: boolean;
+};
+
+export enum SubgraphContractType {
+  ERC20 = 'ERC20Contract',
+  ERC20_WRAPPER = 'ERC20WrapperContract',
+  ERC721 = 'ERC721Contract',
+}
