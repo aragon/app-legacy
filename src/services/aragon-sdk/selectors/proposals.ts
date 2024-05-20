@@ -40,7 +40,7 @@ export function toMultisigProposalListItem(
       title: metadata.title,
       summary: metadata.summary,
     },
-    approvals: proposal.approvers.map(approver => approver.id.slice(0, 42)),
+    approvals: proposal.approvals.map(approval => approval.id.slice(0, 42)),
     actions: proposal.actions.map((action: SubgraphAction): DaoAction => {
       return {
         data: hexToBytes(action.data),

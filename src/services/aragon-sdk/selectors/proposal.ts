@@ -488,7 +488,7 @@ export function toMultisigProposal(
     }),
     status: computeMultisigProposalStatus(proposal),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    approvals: proposal.approvers.map((approver: any) =>
+    approvals: proposal.approvals.map((approver: any) =>
       approver.id.slice(0, 42)
     ),
   };
