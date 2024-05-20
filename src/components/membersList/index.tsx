@@ -24,7 +24,6 @@ type MembersListProps = {
 export const MembersList: React.FC<MembersListProps> = ({
   token,
   members,
-  vocdoni,
   isCompactMode,
 }) => {
   const [totalSupply, setTotalSupply] = useState<number>(0);
@@ -107,7 +106,6 @@ export const MembersList: React.FC<MembersListProps> = ({
                 )}
               </TableCellHead>
               <TableCellHead />
-              {vocdoni && <TableCellHead />}
             </tr>
           </thead>
         )}
@@ -123,7 +121,6 @@ export const MembersList: React.FC<MembersListProps> = ({
                 tokenSupply={totalSupply}
                 isTokenDaoMember={true}
                 isCompactMode={isCompactMode}
-                isVocdoni={vocdoni}
                 {...getMemberId(member)}
               />
             ) : (
