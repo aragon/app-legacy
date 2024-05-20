@@ -105,6 +105,9 @@ export const QueryMultisigProposals = gql`
       creationBlockNumber
       approvals {
         id
+        approver {
+          address
+        }
       }
       actions {
         to
