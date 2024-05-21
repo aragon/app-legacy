@@ -79,6 +79,7 @@ import {
   SupportedVersions,
   getLatestNetworkDeployment,
   getNetworkDeployments,
+  getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
@@ -846,9 +847,10 @@ export function sleepFor(time = 600) {
  * @returns translated equivalent app supported network
  */
 export const translateToAppNetwork = (
-  sdkNetwork: SdkContext['network']
+  ethersNetwork: SdkContext['network']
 ): SupportedNetworks => {
-  switch (sdkNetwork.name as SdkSupportedNetworks) {
+  const sdkNetwork = getNetworkNameByAlias(ethersNetwork.name);
+  switch (sdkNetwork as SdkSupportedNetworks) {
     case SdkSupportedNetworks.ARBITRUM:
       return 'arbitrum';
     case SdkSupportedNetworks.BASE:
