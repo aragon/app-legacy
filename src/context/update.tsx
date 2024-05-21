@@ -7,13 +7,8 @@ import {
   TokenVotingClient,
   TokenVotingPluginPrepareUpdateParams,
 } from '@aragon/sdk-client';
-import {
-  ApplyUpdateParams,
-  VersionTag,
-} from '@aragon/sdk-client-common';
-import {
-  SupportedVersions,
-} from '@aragon/osx-commons-configs';
+import {ApplyUpdateParams, VersionTag} from '@aragon/sdk-client-common';
+import {SupportedVersions} from '@aragon/osx-commons-configs';
 import React, {
   createContext,
   ReactElement,

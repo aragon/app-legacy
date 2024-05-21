@@ -80,7 +80,6 @@ import {
   getLatestNetworkDeployment,
   getNetworkDeployments,
 } from '@aragon/osx-commons-configs';
-import {th} from 'date-fns/locale';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {

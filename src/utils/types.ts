@@ -729,7 +729,7 @@ export type SubgraphMultisigProposalBase = SubgraphProposalBase & {
   plugin: SubgraphMultisigVotingSettings;
   minApprovals: number;
   approvalReached: boolean;
-  approvals: {id: string, approver: { address: string} }[];
+  approvals: {id: string; approver: {address: string}}[];
 };
 
 export type SubgraphMultisigProposalListItem = SubgraphMultisigProposalBase;

@@ -4,7 +4,6 @@ import {Link} from '@aragon/ods-old';
 import {IconType} from '@aragon/ods';
 import {
   SupportedNetworks,
-  getNetworkDeploymentForVersion,
   SupportedVersions,
   getNetworkDeployments,
 } from '@aragon/osx-commons-configs';
