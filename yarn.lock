@@ -132,10 +132,10 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client-common@^1.15.1", "@aragon/sdk-client-common@^1.15.2":
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.15.2.tgz#8843cef55fcdb7af31cd5ac80fc25a8659941136"
-  integrity sha512-uQuWLRVvwi8/2P7TkcETrlUuNE6+GATHxl3khXeJpCnuCzOV5Yxydh/Q783/9C0NnnZkdvHw52iqJ7RWkTXjsg==
+"@aragon/sdk-client-common@^1.15.3":
+  version "1.15.3"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.15.3.tgz#039efbdb41fead05f34f999086ec198d1201a1c2"
+  integrity sha512-quZiR9UEYE5atEcFPyohkpU9RvAtal9gqitEv+15IFxf8bkQyH/g/tG7icFseYcCZkHAgzBnjgk/PNfqr4attw==
   dependencies:
     "@aragon/osx-commons-configs" "^0.4.0"
     "@aragon/osx-ethers" "^1.3.1"
@@ -171,14 +171,14 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client@^1.23.4":
-  version "1.23.4"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.23.4.tgz#8b13214471629189c1864c7c8fb68213dd9fe291"
-  integrity sha512-KP7tRJ5dPvCqctg8qUlq0Q+XUIDqb20K+F5rRsDCJX+fdc/dyFLpqDYQczYqh61X61xgBEK9KfqR2beES47CXg==
+"@aragon/sdk-client@^1.23.5":
+  version "1.23.5"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.23.5.tgz#84cc4047e4fad766a175002befced605bd8e6b16"
+  integrity sha512-EcQv10RkASZQPLyDOLGRY1ZnVRVWV1cKpNjJWEbOkwCicihH5JuPp8XFPfRp5794yEpkCAxfq1SFl9NYyS1qeA==
   dependencies:
     "@aragon/osx-commons-configs" "^0.4.0"
     "@aragon/osx-ethers" "1.3.0"
-    "@aragon/sdk-client-common" "^1.15.2"
+    "@aragon/sdk-client-common" "^1.15.3"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
