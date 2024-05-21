@@ -50,10 +50,14 @@ export function useIsMintable(
   params: IFetchIsmintableParams,
   options: Omit<UseQueryOptions<Boolean | null>, 'queryKey'> = {}
 ) {
-  const client = usePluginClient(GaslessPluginName);
+  const client = usePluginClient(params.pluginType);
   const {network} = useNetwork();
 
-  if (!client || !params.daoAddress) {
+  if (
+    !client ||
+    !params.daoAddress ||
+    params.pluginType !== GaslessPluginName
+  ) {
     options.enabled = false;
   }
 

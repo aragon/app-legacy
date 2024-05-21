@@ -37,6 +37,7 @@ export interface IFetchVotingSettingsParams {
 
 export interface IFetchIsmintableParams {
   daoAddress: string;
+  pluginType?: PluginTypes;
 }
 
 export interface IFetchProposalsParams extends ProposalQueryParams {

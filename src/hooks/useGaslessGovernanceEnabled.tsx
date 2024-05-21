@@ -16,6 +16,7 @@ export const useGaslessGovernanceEnabled = () => {
   });
 
   const {data: isMintable} = useIsMintable({
+    pluginType,
     daoAddress: daoDetails?.address || '',
   });
 
