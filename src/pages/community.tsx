@@ -75,9 +75,11 @@ export const Community: React.FC = () => {
     subpageStart + MEMBERS_PER_PAGE
   );
 
-  const walletBased =
-    (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
-  const enableSearchSort = totalMemberCount <= 1000;
+  const walletBased = pluginType === 'multisig.plugin.dao.eth';
+  const vocdoniBased =
+    pluginType === 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth';
+
+  const enableSearchSort = totalMemberCount > 0 && totalMemberCount <= 1000;
   const enableDelegation =
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
@@ -127,7 +129,7 @@ export const Community: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (detailsAreLoading || membersLoading) return <Loading />;
+  if (detailsAreLoading && members.length > 0) return <Loading />;
 
   if (!totalMemberCount && isDAOTokenWrapped) {
     return (
@@ -164,8 +166,10 @@ export const Community: React.FC = () => {
   }
 
   const pageTitle = !isGovernanceEnabled
-    ? t('labels.activeMembers', {count: totalMemberCount})
-    : `${totalMemberCount} ${t('labels.members')}`;
+    ? t('labels.activeMembers', {
+        count: totalMemberCount > 0 ? totalMemberCount : Number(''),
+      })
+    : `${totalMemberCount > 0 ? totalMemberCount : ''} ${t('labels.members')}`;
 
   // Await to load daoToken address to prevent null see all holders button
   const seeAllHoldersBtn = daoToken?.address
@@ -276,7 +280,7 @@ export const Community: React.FC = () => {
           </div>
 
           {/* Members List */}
-          {membersLoading ? (
+          {membersLoading && !vocdoniBased ? (
             <Loading />
           ) : (
             <>
@@ -295,7 +299,11 @@ export const Community: React.FC = () => {
                         : t('labels.nResults', {count: filteredMemberCount})}
                     </ResultsCountLabel>
                   )}
-                  <MembersList token={daoToken} members={pagedMembers} />
+                  <MembersList
+                    token={daoToken}
+                    members={pagedMembers}
+                    vocdoni={vocdoniBased}
+                  />
                 </>
               )}
             </>
@@ -330,5 +338,5 @@ const ResultsCountLabel = styled.p.attrs({
 })``;
 
 const PaginationWrapper = styled.div.attrs({
-  className: 'flex mt-16',
+  className: 'flex mt-16 w-full justify-center',
 })``;

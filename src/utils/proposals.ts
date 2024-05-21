@@ -51,7 +51,6 @@ import {
   decodeOSUpdateActions,
   decodeUpgradeToAndCallAction,
   formatUnits,
-  readFile,
   translateToNetworkishName,
 } from './library';
 import {abbreviateTokenAmount} from './tokens';
@@ -72,6 +71,7 @@ import {ethers} from 'ethers';
 import {SupportedNetworks} from './constants';
 import {FieldValues, UseFormGetValues} from 'react-hook-form';
 import {isGaslessActionChangingSettings} from './committeeVoting';
+import {ipfsService} from 'services/ipfs/ipfsService';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -1196,13 +1196,10 @@ export async function getDecodedUpdateActions(
  * @param avatar
  * @param client
  */
-export const pinAvatar = async (avatar: Blob, client: Client) => {
+export const pinAvatar = async (avatar: Blob) => {
   try {
-    const daoLogoBuffer = await readFile(avatar);
-
-    const logoCID = await client.ipfs.add(new Uint8Array(daoLogoBuffer));
-    await client.ipfs.pin(logoCID);
-    return `ipfs://${logoCID}`;
+    const data = await ipfsService.pinData(avatar);
+    return `ipfs://${data.IpfsHash}`;
   } catch (e) {
     return undefined;
   }
@@ -1230,14 +1227,18 @@ export const getModifyMetadataAction = async (
     typeof preparedAction.inputs.avatar !== 'string'
   ) {
     preparedAction.inputs.avatar = await pinAvatar(
-      preparedAction.inputs.avatar as unknown as Blob,
-      client
+      preparedAction.inputs.avatar as unknown as Blob
     );
   }
   try {
-    const ipfsUri = await client.methods.pinMetadata(preparedAction.inputs);
+    const data = await ipfsService.pinData(
+      JSON.stringify(preparedAction.inputs)
+    );
 
-    return client.encoding.updateDaoMetadataAction(daoAddress, ipfsUri);
+    return client.encoding.updateDaoMetadataAction(
+      daoAddress,
+      `ipfs://${data.IpfsHash}`
+    );
   } catch (error) {
     throw Error('Could not pin metadata on IPFS');
   }

@@ -2,11 +2,18 @@
 
 import {AugmentedEtherscanContractResponse} from 'containers/smartContractComposer/components/contractAddressValidation';
 import {SmartContractAction} from './types';
+import {DaoMetadata} from '@aragon/sdk-client';
 
 export const actionsFilter = (search: string) => (a: SmartContractAction) =>
   a.type === 'function' &&
   (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable') &&
   a.name.toLowerCase().includes(search.toLowerCase());
+
+export const EMPTY_DAO_METADATA_LINK: DaoMetadata = {
+  name: '(the DAO has no metadata)',
+  description: '(the DAO did not define any content)',
+  links: [],
+};
 
 export interface NatspecDetails {
   keyword: string;

@@ -68,7 +68,7 @@ class CreateDaoUtils {
     links: values.links.filter(
       ({name, url}) => name != null && name !== '' && url != null && url !== ''
     ),
-    avatar: `ipfs://${logoCid}`,
+    avatar: logoCid ? `ipfs://${logoCid}` : undefined,
   });
 
   buildCreateDaoParams = (

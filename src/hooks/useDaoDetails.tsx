@@ -1,4 +1,4 @@
-import {Client, DaoDetails} from '@aragon/sdk-client';
+import {Client, DaoDetails, InstalledPluginListItem} from '@aragon/sdk-client';
 import {JsonRpcProvider} from '@ethersproject/providers';
 import {useQuery} from '@tanstack/react-query';
 import {isAddress} from 'ethers/lib/utils';
@@ -6,12 +6,22 @@ import {useCallback, useEffect, useMemo} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
+import {QueryDao, toDaoDetails} from 'services/aragon-sdk/queryHelpers/dao';
 import {useProviders} from 'context/providers';
-import {CHAIN_METADATA} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  SUBGRAPH_API_URL,
+  SupportedNetworks,
+} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
+import request from 'graphql-request';
+import {SubgraphDao} from 'utils/types';
+import {ipfsService} from 'services/ipfs/ipfsService';
+import {isEnsDomain} from '@aragon/ods-old';
+import {EMPTY_DAO_METADATA_LINK} from 'utils/contract';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -25,6 +35,7 @@ async function fetchDaoDetails(
   daoAddressOrEns: string | undefined,
   provider: JsonRpcProvider,
   isL2NetworkEns: boolean,
+  network: SupportedNetworks,
   redirectDaoToAddress: (address: string | null) => void
 ): Promise<DaoDetails | null> {
   if (!daoAddressOrEns)
@@ -32,14 +43,32 @@ async function fetchDaoDetails(
 
   if (!client) return Promise.reject(new Error('client must be defined'));
 
+  const address = isEnsDomain(daoAddressOrEns)
+    ? await provider.resolveName(daoAddressOrEns as string)
+    : daoAddressOrEns;
+
+  let daoDetails;
+
   // if network is l2 and has ens name, resolve to address
   if (isL2NetworkEns) {
-    const address = await provider.resolveName(daoAddressOrEns as string);
     redirectDaoToAddress(address);
   }
 
-  // Note: SDK doesn't support ens names in L2 chains so we need to resolve the address first
-  const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
+  const {dao} = await request<{dao: SubgraphDao}>(
+    SUBGRAPH_API_URL[network]!,
+    QueryDao,
+    {
+      address: address?.toLowerCase() ?? daoAddressOrEns?.toLowerCase(),
+    }
+  );
+
+  try {
+    const metadata = await ipfsService.getData(dao.metadata);
+    daoDetails = toDaoDetails(dao, metadata);
+  } catch (err) {
+    daoDetails = toDaoDetails(dao, EMPTY_DAO_METADATA_LINK);
+  }
+
   const avatar = daoDetails?.metadata.avatar;
   if (avatar)
     if (typeof avatar !== 'string') {
@@ -47,11 +76,10 @@ async function fetchDaoDetails(
     } else if (/^ipfs/.test(avatar) && client) {
       try {
         const cid = resolveIpfsCid(avatar);
-        const ipfsClient = client.ipfs.getClient();
-        const imageBytes = await ipfsClient.cat(cid); // Uint8Array
-        const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
 
-        daoDetails.metadata.avatar = URL.createObjectURL(imageBlob);
+        daoDetails.metadata.avatar = `${
+          import.meta.env.VITE_PINATA_GATEWAY
+        }/${cid}`;
       } catch (err) {
         console.warn('Error resolving DAO avatar IPFS Cid', err);
       }
@@ -59,7 +87,7 @@ async function fetchDaoDetails(
       daoDetails.metadata.avatar = avatar;
     }
 
-  daoDetails?.plugins.sort(a => {
+  daoDetails?.plugins.sort((a: InstalledPluginListItem) => {
     if (
       a.id === 'token-voting.plugin.dao.eth' ||
       a.id === 'multisig.plugin.dao.eth'
@@ -132,9 +160,17 @@ export const useDaoQuery = (
       daoAddressOrEns,
       provider,
       isL2NetworkEns,
+      network,
       redirectDaoToAddress
     );
-  }, [client, daoAddressOrEns, isL2NetworkEns, provider, redirectDaoToAddress]);
+  }, [
+    client,
+    daoAddressOrEns,
+    isL2NetworkEns,
+    network,
+    provider,
+    redirectDaoToAddress,
+  ]);
 
   return useQuery<DaoDetails | null>({
     queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
