@@ -17,6 +17,7 @@ import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useProviders} from 'context/providers';
+import {formatUnits} from 'ethers/lib/utils';
 import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
@@ -132,10 +133,12 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
         voters.map(async voter => {
           const wallet = await Web3Address.create(
             provider,
-            voter.wallet.toLowerCase().split('_')[1]
+            isMultisigProposal
+              ? voter.wallet
+              : voter.wallet.toLowerCase().split('_')[1]
           );
 
-          // commenting out for now to just use tokenAmount fallback
+          // commenting out for now to just use token
           // let balance;
 
           // if (daoToken?.address && wallet.address) {
@@ -155,6 +158,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           };
         })
       );
+      console.log('response', response);
       setDisplayedVoters(response);
     }
 
@@ -178,6 +182,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       : displayedVoters.filter(voter =>
           voter.wallet.includes(query.toLowerCase())
         );
+    console.log('filteredVoters', query);
   }, [displayedVoters, query]);
 
   const minimumReached = useMemo(() => {
