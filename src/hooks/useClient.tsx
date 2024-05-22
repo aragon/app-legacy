@@ -1,9 +1,8 @@
 import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import {
-  LIVE_CONTRACTS,
-  SupportedVersion,
-  SupportedNetworksArray,
-} from '@aragon/sdk-client-common';
+  getLatestNetworkDeployment,
+  SupportedNetworks as SdkSupportedNetworks,
+} from '@aragon/osx-commons-configs';
 
 import {useNetwork} from 'context/network';
 import React, {
@@ -55,7 +54,7 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
     // when network not supported by the SDK, don't set network
     if (
       translatedNetwork === 'unsupported' ||
-      !SupportedNetworksArray.includes(translatedNetwork)
+      !Object.values(SdkSupportedNetworks).includes(translatedNetwork)
     ) {
       return;
     }
@@ -66,11 +65,11 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
         headers: {'X-API-KEY': import.meta.env.VITE_GATEWAY_IPFS_API_KEY},
       },
     ];
+    const daoFactoryAddress =
+      getLatestNetworkDeployment(translatedNetwork)?.DAOFactory.address ?? '';
 
     const contextParams: ContextParams = {
-      daoFactoryAddress:
-        LIVE_CONTRACTS[SupportedVersion.LATEST][translatedNetwork]
-          .daoFactoryAddress,
+      DAOFactory: daoFactoryAddress,
       network: translatedNetwork,
       signer: signer ?? undefined,
       web3Providers: aragonGateway.buildRpcUrl(network)!,

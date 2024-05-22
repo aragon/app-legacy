@@ -132,7 +132,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     id: 137,
     name: i18n.t('explore.modal.filterDAOs.label.polygon'),
     domain: 'L2 Blockchain',
-    logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
+    logo: 'https://assets.coingecko.com/coins/images/4713/large/polygon.png',
     explorer: 'https://polygonscan.com/',
     explorerName: 'Polygonscan',
     isTestnet: false,
