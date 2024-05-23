@@ -51,6 +51,7 @@ export const MembersList: React.FC<MembersListProps> = ({
           provider,
           CHAIN_METADATA[network].nativeCurrency
         );
+        console.log('supply', supply);
         setTotalSupply(Number(formatUnits(supply, decimals)));
       }
     }
@@ -105,7 +106,8 @@ export const MembersList: React.FC<MembersListProps> = ({
                   <>{t('community.listHeader.delegations')}</>
                 )}
               </TableCellHead>
-              <TableCellHead />
+              {showDelegationHeaders && <TableCellHead />}
+              {!isTokenBasedDao && <TableCellHead />}
             </tr>
           </thead>
         )}

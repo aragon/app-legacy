@@ -12,8 +12,14 @@ export const MemberVotingPower: React.FC<MemberVotingPowerProps> = props => {
 
   const supplyPercentage =
     tokenSupply && votingPower != null
-      ? ((votingPower / tokenSupply) * 100).toFixed(2)
+      ? (votingPower / tokenSupply) * 100
       : undefined;
+
+  let supplyPercentageString: string | undefined = undefined;
+  if (supplyPercentage !== undefined) {
+    supplyPercentageString =
+      supplyPercentage < 0.01 ? '< 0.01' : supplyPercentage.toFixed(2);
+  }
 
   const parsedVotingPower = abbreviateTokenAmount(
     votingPower?.toString() ?? '0'
@@ -29,7 +35,9 @@ export const MemberVotingPower: React.FC<MemberVotingPowerProps> = props => {
         <span>{parsedVotingPower}</span>
         <span>{tokenSymbol}</span>
       </div>
-      <span className="ft-text-xs">({supplyPercentage}%)</span>
+      {supplyPercentageString !== undefined && (
+        <span className="ft-text-xs">({supplyPercentageString}%)</span>
+      )}
     </div>
   );
 };
