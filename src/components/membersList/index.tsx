@@ -51,7 +51,7 @@ export const MembersList: React.FC<MembersListProps> = ({
           provider,
           CHAIN_METADATA[network].nativeCurrency
         );
-        console.log('supply', supply);
+
         setTotalSupply(Number(formatUnits(supply, decimals)));
       }
     }
