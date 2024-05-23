@@ -106,8 +106,12 @@ export const MembersList: React.FC<MembersListProps> = ({
                   <>{t('community.listHeader.delegations')}</>
                 )}
               </TableCellHead>
-              {showDelegationHeaders && <TableCellHead />}
-              {!isTokenBasedDao && <TableCellHead />}
+              <TableCellHead />
+              {/* {!showDelegationHeaders && (
+                <>
+                  <TableCellHead /> <TableCellHead />
+                </>
+              )} */}
             </tr>
           </thead>
         )}

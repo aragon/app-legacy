@@ -128,11 +128,11 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         </TableCell>
       )}
 
-      {!useCompactMode && delegations != null && enableDelegation && (
-        <TableCell className="text-neutral-600 ft-text-sm">
+      <TableCell className="text-neutral-600 ft-text-sm">
+        {!useCompactMode && delegations != null && enableDelegation && (
           <span>{delegations > 0 ? delegations : ''}</span>
-        </TableCell>
-      )}
+        )}
+      </TableCell>
 
       <TableCell className="flex justify-end gap-x-3">
         {!useCompactMode && (
