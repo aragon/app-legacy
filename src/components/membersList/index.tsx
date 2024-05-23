@@ -107,11 +107,6 @@ export const MembersList: React.FC<MembersListProps> = ({
                 )}
               </TableCellHead>
               <TableCellHead />
-              {/* {!showDelegationHeaders && (
-                <>
-                  <TableCellHead /> <TableCellHead />
-                </>
-              )} */}
             </tr>
           </thead>
         )}
