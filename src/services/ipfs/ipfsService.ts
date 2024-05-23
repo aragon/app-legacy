@@ -66,11 +66,11 @@ class IpfsService {
       formData.append(DataType.File, data);
       processedData = formData;
       type = DataType.File;
-    } else if (typeof data !== 'string') {
-      processedData = new Uint8Array(data);
+    } else if (typeof data === 'string') {
+      processedData = JSON.parse(data);
       type = DataType.JSON;
     } else {
-      processedData = data;
+      processedData = new Uint8Array(data);
       type = DataType.JSON;
     }
 

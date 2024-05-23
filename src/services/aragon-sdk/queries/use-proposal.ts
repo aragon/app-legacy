@@ -36,7 +36,7 @@ import {
   QueryMultisigProposal,
 } from '../queryHelpers/proposal';
 
-async function getProposal(
+export async function getProposal(
   client: PluginClient,
   proposalId: string,
   network: SupportedNetworks

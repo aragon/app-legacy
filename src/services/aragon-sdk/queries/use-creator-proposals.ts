@@ -19,6 +19,9 @@ import {
   GaslessVotingClient,
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
+import {SupportedNetworks} from 'utils/constants';
+
+import {getProposal} from 'services/aragon-sdk/queries/use-proposal';
 
 type Proposal = MultisigProposal | TokenVotingProposal | GaslessVotingProposal;
 
@@ -60,7 +63,8 @@ export const multisigProposalsQuery = gql`
 
 const fetchCreatorGaslessProposals = async (
   {pluginAddress, address, blockNumber}: IFetchCreatorProposalsParams,
-  client?: PluginClient
+  client?: PluginClient,
+  network?: SupportedNetworks
 ): Promise<Proposal[]> => {
   invariant(client != null, 'fetchCreatorProposals: client is not defined');
 
@@ -74,8 +78,8 @@ const fetchCreatorGaslessProposals = async (
     ProposalSortBy.CREATED_AT
   );
 
-  const proposalQueriesPromises = resultProposalsIds.map(
-    (id: string) => client?.methods.getProposal(id)
+  const proposalQueriesPromises = resultProposalsIds.map((id: string) =>
+    getProposal(client, id, network as SupportedNetworks)
   );
 
   const resultsProposals = await Promise.all(proposalQueriesPromises);
@@ -90,7 +94,8 @@ const fetchCreatorProposals = async (
     pluginType,
     blockNumber,
   }: IFetchCreatorProposalsParams,
-  client?: PluginClient
+  client?: PluginClient,
+  network?: SupportedNetworks
 ): Promise<Proposal[]> => {
   invariant(client != null, 'fetchCreatorProposals: client is not defined');
 
@@ -124,8 +129,8 @@ const fetchCreatorProposals = async (
       ? response.multisigProposals
       : response.tokenVotingProposals) || [];
 
-  const proposalQueriesPromises = resultProposalsIds.map(
-    item => client?.methods.getProposal(item.id)
+  const proposalQueriesPromises = resultProposalsIds.map(item =>
+    getProposal(client, item.id, network as SupportedNetworks)
   );
 
   const resultsProposals = await Promise.all(proposalQueriesPromises);
@@ -151,8 +156,8 @@ export const useCreatorProposals = (
     queryKey: aragonSdkQueryKeys.getCreatorProposals(baseParams, params),
     queryFn: () =>
       params.pluginType === GaslessPluginName
-        ? fetchCreatorGaslessProposals(params, client)
-        : fetchCreatorProposals(params, client),
+        ? fetchCreatorGaslessProposals(params, client, network)
+        : fetchCreatorProposals(params, client, network),
     ...options,
   });
 };

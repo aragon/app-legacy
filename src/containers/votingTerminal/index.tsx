@@ -17,7 +17,6 @@ import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useProviders} from 'context/providers';
-import {formatUnits} from 'ethers/lib/utils';
 import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
@@ -131,21 +130,27 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     async function fetchEns() {
       const response = await Promise.all(
         voters.map(async voter => {
-          const wallet = await Web3Address.create(provider, voter.wallet);
-          let balance;
-          if (daoToken?.address && wallet.address) {
-            balance = await fetchPastVotingPower({
-              tokenAddress: daoToken.address as string,
-              address: wallet.address as string,
-              blockNumber: blockNumber as number,
-              network,
-            });
-          }
+          const wallet = await Web3Address.create(
+            provider,
+            isMultisigProposal
+              ? voter.wallet
+              : voter.wallet.toLowerCase().split('_')[1]
+          );
+
+          // commenting out for now to just use token
+          // let balance;
+
+          // if (daoToken?.address && wallet.address) {
+          //   balance = await fetchPastVotingPower({
+          //     tokenAddress: daoToken.address as string,
+          //     address: voter.wallet.toLowerCase().split('_')[1],
+          //     blockNumber: blockNumber as number,
+          //     network,
+          //   });
+          // }
           return {
             ...voter,
-            tokenAmount: balance
-              ? formatUnits(balance, daoToken?.decimals)
-              : voter.tokenAmount,
+            tokenAmount: voter.tokenAmount,
             tokenSymbol: daoToken?.symbol,
             wallet: (wallet.ensName ?? wallet.address) as string,
             src: (wallet.avatar || wallet.address) as string,
@@ -164,6 +169,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     daoToken?.decimals,
     daoToken?.symbol,
     fetchPastVotingPower,
+    isMultisigProposal,
     network,
     provider,
     voters,

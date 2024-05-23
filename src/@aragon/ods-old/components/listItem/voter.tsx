@@ -59,7 +59,7 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
             {walletTag && <Tag {...walletTag} className="mx-2" />}
           </p>
           <p className="flex font-semibold text-neutral-600 ft-text-sm">
-            {tokenInfo?.amount} {tokenInfo?.symbol}
+            {tokenInfo?.amount}
           </p>
         </LeftContent>
       </LeftSection>
