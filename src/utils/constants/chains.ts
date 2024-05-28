@@ -24,7 +24,7 @@ export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'polygon',
   'sepolia',
   // 'zksync',
-  'zksync-sepolia',
+  'zksyncSepolia',
 ];
 
 export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
@@ -36,7 +36,7 @@ const SUPPORTED_NETWORKS = [
   'polygon',
   'sepolia',
   // 'zksync',
-  'zksync-sepolia',
+  'zksyncSepolia',
 ] as const;
 
 export type SupportedNetworks =
@@ -257,7 +257,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
   //   },
   //   supportsEns: false,
   // },
-  'zksync-sepolia': {
+  zksyncSepolia: {
     id: 300,
     name: i18n.t('explore.modal.filterDAOs.label.zksyncSepolia'),
     domain: 'L2 Blockchain',
@@ -267,7 +267,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     // mainnet: 'zksync',
     explorerName: 'ZkSync Sepolia Explorer',
     publicRpc: 'https://endpoints.omniatech.io/v1/zksync-era/sepolia/public',
-    gatewayNetwork: 'ethereum/zksyncSepolia',
+    gatewayNetwork: 'zksync/sepolia',
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',

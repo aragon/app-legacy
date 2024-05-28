@@ -33,7 +33,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/v1.4.2/api',
   sepolia:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-sepolia/version/v1.4.2/api',
-  'zksync-sepolia':
+  zksyncSepolia:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-zksync-era-sepolia/version/1.4.2/api',
   unsupported: undefined,
 };

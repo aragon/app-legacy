@@ -110,8 +110,8 @@ const networks: SelectableNetworks = {
     security: ['ethereum', 'base', 'arbitrum', 'polygon'],
   },
   test: {
-    cost: ['zksync-sepolia', 'sepolia'],
-    popularity: ['zksync-sepolia', 'sepolia'],
-    security: ['zksync-sepolia', 'sepolia'],
+    cost: ['zksyncSepolia', 'sepolia'],
+    popularity: ['zksyncSepolia', 'sepolia'],
+    security: ['zksyncSepolia', 'sepolia'],
   },
 };
