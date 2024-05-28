@@ -861,6 +861,8 @@ export const translateToAppNetwork = (
       return 'polygon';
     case SdkSupportedNetworks.SEPOLIA:
       return 'sepolia';
+    case SdkSupportedNetworks.ZKSYNC_SEPOLIA:
+      return 'zksync-sepolia';
     default:
       return 'unsupported';
   }
@@ -897,6 +899,8 @@ export function translateToNetworkishName(
       return SdkSupportedNetworks.POLYGON;
     case 'sepolia':
       return SdkSupportedNetworks.SEPOLIA;
+    case 'zksync-sepolia':
+      return SdkSupportedNetworks.ZKSYNC_SEPOLIA;
   }
 
   return 'unsupported';
