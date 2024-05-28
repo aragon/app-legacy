@@ -258,7 +258,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
   //   supportsEns: false,
   // },
   'zksync-sepolia': {
-    id: 324,
+    id: 300,
     name: i18n.t('explore.modal.filterDAOs.label.zksyncSepolia'),
     domain: 'L2 Blockchain',
     logo: 'https://assets.coingecko.com/asset_platforms/images/121/large/zksync.jpeg',
