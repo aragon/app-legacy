@@ -11,6 +11,8 @@ import {
   decodeRatio,
   getCompactProposalId,
   hexToBytes,
+  ProposalStatus,
+  InvalidProposalStatusError,
 } from '@aragon/sdk-client-common';
 import {SubgraphMultisigProposalListItem} from 'utils/types';
 import {
@@ -111,4 +113,35 @@ export function toTokenVotingProposalListItem(
       };
     }),
   };
+}
+
+export function computeTokenVotingProposalStatusFilter(status: ProposalStatus) {
+  let where = {};
+  const now = Math.round(new Date().getTime() / 1000).toString();
+  switch (status) {
+    case ProposalStatus.PENDING:
+      where = {startDate_gte: now};
+      break;
+    case ProposalStatus.ACTIVE:
+      where = {startDate_lt: now, endDate_gte: now, executed: false};
+      break;
+    case ProposalStatus.EXECUTED:
+      where = {executed: true};
+      break;
+    case ProposalStatus.SUCCEEDED:
+      where = {
+        or: [{approvalReached: true, endDate_lt: now}, {earlyExecutable: true}],
+      };
+      break;
+    case ProposalStatus.DEFEATED:
+      where = {
+        potentiallyExecutable: false,
+        endDate_lt: now,
+        executed: false,
+      };
+      break;
+    default:
+      throw new InvalidProposalStatusError();
+  }
+  return where;
 }

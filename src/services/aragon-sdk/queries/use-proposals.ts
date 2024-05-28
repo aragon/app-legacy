@@ -46,6 +46,7 @@ import {providers} from 'ethers';
 import {
   toMultisigProposalListItem,
   toTokenVotingProposalListItem,
+  computeTokenVotingProposalStatusFilter,
 } from '../selectors/proposals';
 import {
   QueryMultisigProposals,
@@ -71,7 +72,11 @@ async function getProposalsList(
   params: IFetchProposalsParams,
   network: SupportedNetworks
 ) {
-  const {daoAddressOrEns, limit, skip, direction, sortBy} = params;
+  const {daoAddressOrEns, limit, skip, direction, sortBy, status} = params;
+
+  const statusFilter = status
+    ? computeTokenVotingProposalStatusFilter(status)
+    : {};
 
   if (isTokenVotingClient(client)) {
     const {tokenVotingProposals} = await request<{
@@ -80,6 +85,7 @@ async function getProposalsList(
     }>(SUBGRAPH_API_URL[network]!, QueryTokenVotingProposals, {
       where: {
         dao: daoAddressOrEns,
+        ...statusFilter,
       },
       limit,
       skip,

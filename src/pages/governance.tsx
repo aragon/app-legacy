@@ -46,15 +46,6 @@ export const Governance: React.FC = () => {
     status: filter !== 'All' ? filter : undefined,
   });
 
-  const filteredProposals = () => {
-    if (filter === 'All') {
-      return data?.pages.flat() ?? [];
-    }
-    return (data?.pages.flat() ?? []).filter(
-      proposal => proposal.status === filter
-    );
-  };
-
   const noProposals =
     isFetched && data?.pages[0].length === 0 && filter === 'All';
 
@@ -171,7 +162,7 @@ export const Governance: React.FC = () => {
             toDisplayEns(daoDetails?.ensDomain) ||
             (daoDetails?.address as string)
           }
-          proposals={filteredProposals()}
+          proposals={data?.pages.flat() ?? []}
           pluginAddress={pluginAddress as string}
           pluginType={pluginType as PluginTypes}
           isLoading={proposalsLoading}
