@@ -3,7 +3,7 @@
 import {i18n} from '../../../i18n.config';
 
 export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 8453, 80001, 84531, 42161, 421613, 11155111,
+  1, 5, 137, 300, 324, 8453, 80001, 84531, 42161, 421613, 11155111,
 ] as const;
 
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
@@ -23,6 +23,8 @@ export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'base',
   'polygon',
   'sepolia',
+  // 'zksync',
+  'zksync-sepolia',
 ];
 
 export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
@@ -33,6 +35,8 @@ const SUPPORTED_NETWORKS = [
   'ethereum',
   'polygon',
   'sepolia',
+  // 'zksync',
+  'zksync-sepolia',
 ] as const;
 
 export type SupportedNetworks =
@@ -226,6 +230,53 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'eth-sepolia',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
+    supportsEns: false,
+  },
+  // zksync: {
+  //   id: 324,
+  //   name: i18n.t('explore.modal.filterDAOs.label.zksync'),
+  //   domain: 'L2 Blockchain',
+  //   logo: 'https://assets.coingecko.com/asset_platforms/images/121/large/zksync.jpeg',
+  //   explorer: 'https://explorer.zksync.io/',
+  //   isTestnet: false,
+  //   explorerName: 'ZkSync Explorer',
+  //   publicRpc: 'https://zksync.meowrpc.com',
+  //   gatewayNetwork: 'ethereum/zksync',
+  //   nativeCurrency: {
+  //     name: 'Ether',
+  //     symbol: 'ETH',
+  //     decimals: 18,
+  //   },
+  //   etherscanApi: 'https://block-explorer-api.mainnet.zksync.io/api',
+  //   etherscanApiKey: '',
+  //   covalent: {
+  //     networkId: 'zksync-mainnet',
+  //     nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+  //   },
+  //   supportsEns: false,
+  // },
+  'zksync-sepolia': {
+    id: 324,
+    name: i18n.t('explore.modal.filterDAOs.label.zksyncSepolia'),
+    domain: 'L2 Blockchain',
+    logo: 'https://assets.coingecko.com/asset_platforms/images/121/large/zksync.jpeg',
+    explorer: 'https://sepolia.explorer.zksync.io/',
+    isTestnet: true,
+    // mainnet: 'zksync',
+    explorerName: 'ZkSync Sepolia Explorer',
+    publicRpc: 'https://endpoints.omniatech.io/v1/zksync-era/sepolia/public',
+    gatewayNetwork: 'ethereum/zksyncSepolia',
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    etherscanApi: 'https://block-explorer-api.sepolia.zksync.dev/api',
+    etherscanApiKey: '',
+    covalent: {
+      networkId: 'zksync-sepolia-testnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
     supportsEns: false,
