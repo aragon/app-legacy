@@ -275,7 +275,6 @@ export async function getTokenInfo(
     };
   }
   const contract = new ethers.Contract(address, erc20TokenABI, provider);
-
   try {
     const values = await queryClient.fetchQuery({
       queryKey: ['getTokenInfo', address],

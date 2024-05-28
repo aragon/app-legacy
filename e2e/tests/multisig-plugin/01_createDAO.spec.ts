@@ -44,7 +44,7 @@ test('Create Multisig DAO', async ({context, page, extensionId, metamask}) => {
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);
   await page.getByRole('button', {name: 'Deploy your DAO'}).click();
-  await page.getByRole('button', {name: 'Approve transaction'}).click();
+  await page.getByRole('button', {name: 'Deploy DAO now'}).click();
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Launch DAO Dashboard'}).click();
   await page.getByRole('button', {name: 'Open your DAO'}).click();

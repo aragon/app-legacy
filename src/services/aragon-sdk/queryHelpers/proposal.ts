@@ -29,11 +29,8 @@ export const QueryMultisigProposal = gql`
       executed
       approvalReached
       isSignaling
-      approvals(first: 1000) {
+      approvers(first: 1000) {
         id
-        approver {
-          address
-        }
       }
     }
   }

@@ -9,7 +9,7 @@ test('Withdraw DAO funds proposal', async ({
   metamask,
 }) => {
   await page.goto(
-    `${LOCALHOST_URL}/#/daos/sepolia/0x39d7821be4fe0d861f3d2c5aedbe9ca1ddfd2ba1/dashboard`
+    `${LOCALHOST_URL}/#/daos/sepolia/0xd5a6cde69cedac1963fa78b5bf9be1a4e0bcfb34/dashboard`
   );
   await page.getByRole('button', {name: 'Accept all'}).click();
   await page.getByRole('button', {name: 'Connect wallet'}).click();
@@ -44,7 +44,7 @@ test('Withdraw DAO funds proposal', async ({
     .fill('Withdraw funds');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Publish proposal'}).click();
-  await page.getByRole('button', {name: 'Create proposal now'}).click();
+  await page.getByRole('button', {name: 'Create proposal'}).click();
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Open your proposal'}).click();
   await page.getByRole('button', {name: 'Vote now'}).click();
@@ -52,9 +52,9 @@ test('Withdraw DAO funds proposal', async ({
   await page.getByRole('button', {name: 'Submit your vote'}).click();
   await page.getByRole('button', {name: 'Vote now'}).click();
   await metamask.confirmTransaction();
-  await page.getByRole('button', {name: 'Open your proposal'}).click();
+  await page.getByRole('button', {name: 'Continue to proposal'}).click();
   await page.getByRole('button', {name: 'Execute now'}).click();
   await page.getByRole('button', {name: 'Execute now'}).click();
   await metamask.confirmTransaction();
-  await page.getByRole('button', {name: 'Open your proposal'}).click();
+  await page.getByRole('button', {name: 'Continue to proposal'}).click();
 });

@@ -7,8 +7,11 @@ import {
   TokenVotingClient,
   TokenVotingPluginPrepareUpdateParams,
 } from '@aragon/sdk-client';
-import {ApplyUpdateParams, VersionTag} from '@aragon/sdk-client-common';
-import {SupportedVersions} from '@aragon/osx-commons-configs';
+import {
+  ApplyUpdateParams,
+  SupportedVersion,
+  VersionTag,
+} from '@aragon/sdk-client-common';
 import React, {
   createContext,
   ReactElement,
@@ -170,18 +173,18 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     if (versions) {
       const OSXVersions = new Map();
 
-      Object.keys(SupportedVersions).forEach(key => {
+      Object.keys(SupportedVersion).forEach(key => {
         if (
           compareVersions(
-            SupportedVersions[key as keyof typeof SupportedVersions],
+            SupportedVersion[key as keyof typeof SupportedVersion],
             versions.join('.')
           ) === 1
         ) {
           OSXVersions.set(
-            SupportedVersions[key as keyof typeof SupportedVersions],
+            SupportedVersion[key as keyof typeof SupportedVersion],
             {
-              version: SupportedVersions[
-                key as keyof typeof SupportedVersions
+              version: SupportedVersion[
+                key as keyof typeof SupportedVersion
               ] as string,
               ...(key === 'LATEST' && {isLatest: true}),
             } as OSX
@@ -189,8 +192,8 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
 
           if (key === 'LATEST') {
             setValue('osSelectedVersion', {
-              version: SupportedVersions[
-                key as keyof typeof SupportedVersions
+              version: SupportedVersion[
+                key as keyof typeof SupportedVersion
               ] as string,
             });
           }

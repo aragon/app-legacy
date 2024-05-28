@@ -20,12 +20,13 @@ import {
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
 import {
-  SupportedVersions,
-  getNetworkDeployments,
-  SupportedNetworks as SdkSupportedNetworks,
-} from '@aragon/osx-commons-configs';
+  LIVE_CONTRACTS,
+  ProposalMetadata,
+  ProposalStatus,
+  SupportedNetworksArray,
+  SupportedVersion,
+} from '@aragon/sdk-client-common';
 import {
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
@@ -1054,7 +1055,7 @@ export function recalculateProposalStatus<
  */
 export async function encodeOsUpdateAction(
   currentVersion: [number, number, number] | undefined,
-  selectedVersion: SupportedVersions,
+  selectedVersion: SupportedVersion,
   network: SupportedNetworks | undefined,
   daoAddress: string | undefined,
   client: Client | undefined
@@ -1062,18 +1063,16 @@ export async function encodeOsUpdateAction(
   const translatedNetwork = translateToNetworkishName(network ?? 'unsupported');
   if (
     translatedNetwork !== 'unsupported' &&
-    Object.values(SdkSupportedNetworks).includes(translatedNetwork) &&
+    SupportedNetworksArray.includes(translatedNetwork) &&
     currentVersion &&
     daoAddress &&
     client
   ) {
     try {
-      const daoFactoryAddress =
-        getNetworkDeployments(translatedNetwork)[selectedVersion]?.DAOFactory
-          .address;
       const encodedAction = await client.encoding.daoUpdateAction(daoAddress, {
         previousVersion: currentVersion,
-        daoFactoryAddress,
+        daoFactoryAddress:
+          LIVE_CONTRACTS[selectedVersion][translatedNetwork].daoFactoryAddress,
       });
       return encodedAction;
     } catch (error) {

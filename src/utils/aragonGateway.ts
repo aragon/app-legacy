@@ -1,3 +1,8 @@
+import {
+  LIVE_CONTRACTS,
+  SupportedVersion,
+  SupportedNetwork as SdkSupportedNetworks,
+} from '@aragon/sdk-client-common';
 import {JsonRpcProvider, Networkish} from '@ethersproject/providers';
 import {
   CHAIN_METADATA,
@@ -6,10 +11,6 @@ import {
   getSupportedNetworkByChainId,
 } from './constants';
 import {translateToNetworkishName} from './library';
-import {
-  SupportedNetworks as SdkSupportedNetworks,
-  getLatestNetworkDeployment,
-} from '@aragon/osx-commons-configs';
 
 class AragonGateway {
   private rpcVersion = '1.0';
@@ -37,10 +38,11 @@ class AragonGateway {
 
     if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
       options.ensAddress =
-        getLatestNetworkDeployment(sdkNetwork)?.ENSRegistry?.address;
+        LIVE_CONTRACTS[SupportedVersion.LATEST][sdkNetwork]?.ensRegistryAddress;
     }
 
     const rpcUrl = this.buildRpcUrl(network)!;
+
     return new JsonRpcProvider(rpcUrl, options);
   };
 
@@ -56,6 +58,7 @@ class AragonGateway {
     const {gatewayNetwork} = CHAIN_METADATA[network];
     const gatewayKey = import.meta.env.VITE_GATEWAY_RPC_API_KEY;
     const rpcUrl = `${this.baseUrl}/v${this.rpcVersion}/rpc/${gatewayNetwork}/${gatewayKey}`;
+
     return rpcUrl;
   };
 

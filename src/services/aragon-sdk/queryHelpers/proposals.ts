@@ -97,17 +97,14 @@ export const QueryMultisigProposals = gql`
       executed
       approvalReached
       isSignaling
-      approvalCount
+      approvals
       startDate
       endDate
       executionDate
       executionBlockNumber
       creationBlockNumber
-      approvals {
+      approvers {
         id
-        approver {
-          address
-        }
       }
       actions {
         to

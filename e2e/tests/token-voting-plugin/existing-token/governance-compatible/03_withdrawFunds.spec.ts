@@ -44,7 +44,7 @@ test('Withdraw DAO funds proposal', async ({
     .fill('Withdraw funds');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.getByRole('button', {name: 'Publish proposal'}).click();
-  await page.getByRole('button', {name: 'Create proposal now'}).click();
+  await page.getByRole('button', {name: 'Create proposal'}).click();
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Open your proposal'}).click();
   await page.getByRole('button', {name: 'Vote now'}).click();
@@ -52,9 +52,9 @@ test('Withdraw DAO funds proposal', async ({
   await page.getByRole('button', {name: 'Submit your vote'}).click();
   await page.getByRole('button', {name: 'Vote now'}).click();
   await metamask.confirmTransaction();
-  await page.getByRole('button', {name: 'Open your proposal'}).click();
+  await page.getByRole('button', {name: 'Continue to proposal'}).click();
   await page.getByRole('button', {name: 'Execute now'}).click();
   await page.getByRole('button', {name: 'Execute now'}).click();
   await metamask.confirmTransaction();
-  await page.getByRole('button', {name: 'Open your proposal'}).click();
+  await page.getByRole('button', {name: 'Continue to proposal'}).click();
 });

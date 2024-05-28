@@ -31,7 +31,7 @@ test('Create Token Based DAO (governance incompatible token)', async ({
   await page.getByPlaceholder('0x…').click();
   await page
     .getByPlaceholder('0x…')
-    .fill('0xea3eed8616877F5d3c4aEbf5A799F2e8D6DE9A5E');
+    .fill('0x1241d91544454f69d92a6753F58701E7B30f5F24');
   await page.getByRole('button', {name: 'Next'}).click();
   await page
     .locator('div')
@@ -39,7 +39,7 @@ test('Create Token Based DAO (governance incompatible token)', async ({
     .getByTestId('number-input')
     .click();
   await page.getByPlaceholder('≥').press('ArrowRight');
-  await page.getByPlaceholder('≥').fill('0.001');
+  await page.getByPlaceholder('≥').fill('5');
   await page.getByRole('button', {name: 'Next'}).click();
   await page.locator('.sc-FjLsS > .w-4').first().click();
   await page
@@ -62,7 +62,7 @@ test('Create Token Based DAO (governance incompatible token)', async ({
   await metamask.approveSwitchNetwork();
   await page.waitForTimeout(1000);
   await page.getByRole('button', {name: 'Deploy your DAO'}).click();
-  await page.getByRole('button', {name: 'Approve transaction'}).click();
+  await page.getByRole('button', {name: 'Deploy DAO now'}).click();
   await metamask.confirmTransaction();
   await page.getByRole('button', {name: 'Launch DAO Dashboard'}).click();
   await page.getByRole('button', {name: 'Open your DAO'}).click();
@@ -72,7 +72,7 @@ test('Create Token Based DAO (governance incompatible token)', async ({
     .click();
   await page.getByRole('button', {name: 'Join the DAO'}).click();
   await page.getByPlaceholder('0').click();
-  await page.getByPlaceholder('0').fill('0.001');
+  await page.getByPlaceholder('0').fill('10');
   await page.getByRole('button', {name: 'Approve tokens'}).click();
   await page.waitForTimeout(5000);
   await metamask.approveTokenPermission();

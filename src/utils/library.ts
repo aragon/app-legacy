@@ -15,6 +15,10 @@ import {DAO__factory} from '@aragon/osx-ethers';
 import {
   DaoAction,
   DecodedApplyUpdateParams,
+  LIVE_CONTRACTS,
+  SupportedNetwork as SdkSupportedNetworks,
+  SupportedNetworksArray,
+  SupportedVersion,
   Uint8ArraySchema,
   bytesToHex,
   resolveIpfsCid,
@@ -74,13 +78,6 @@ import {getTokenInfo} from './tokens';
 import {daoABI} from 'abis/daoABI';
 import {SupportedChainID} from './constants/chains';
 import {ipfsService} from 'services/ipfs/ipfsService';
-import {
-  SupportedNetworks as SdkSupportedNetworks,
-  SupportedVersions,
-  getLatestNetworkDeployment,
-  getNetworkDeployments,
-  getNetworkNameByAlias,
-} from '@aragon/osx-commons-configs';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -571,8 +568,8 @@ export async function decodeOSUpdateActions(
   const translatedNetwork = translateToNetworkishName(network ?? 'unsupported');
 
   if (translatedNetwork !== 'unsupported') {
-    const daoFactoryAddress =
-      getLatestNetworkDeployment(translatedNetwork)?.DAOFactory.address ?? '';
+    const {daoFactoryAddress} =
+      LIVE_CONTRACTS[SupportedVersion.LATEST][translatedNetwork];
 
     let daoImplementationAddress: string | undefined;
 
@@ -847,10 +844,9 @@ export function sleepFor(time = 600) {
  * @returns translated equivalent app supported network
  */
 export const translateToAppNetwork = (
-  ethersNetwork: SdkContext['network']
+  sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
-  const sdkNetwork = getNetworkNameByAlias(ethersNetwork.name);
-  switch (sdkNetwork as SdkSupportedNetworks) {
+  switch (sdkNetwork.name as SdkSupportedNetworks) {
     case SdkSupportedNetworks.ARBITRUM:
       return 'arbitrum';
     case SdkSupportedNetworks.BASE:
@@ -884,7 +880,7 @@ export function translateToNetworkishName(
     case 'arbitrum':
       return SdkSupportedNetworks.ARBITRUM;
     case 'arbitrum-goerli':
-      throw new Error('Arbitrum Goerli is not supported by the SDK');
+      return SdkSupportedNetworks.ARBITRUM_GOERLI;
     case 'base':
       return SdkSupportedNetworks.BASE;
     case 'base-goerli':
@@ -1309,16 +1305,16 @@ export function getPluginRepoAddress(
   protocolVersion: [number, number, number]
 ) {
   const translatedNetwork = translateToNetworkishName(network);
-  const version = `v${protocolVersion.join('.')}` as SupportedVersions;
   if (
     translatedNetwork !== 'unsupported' &&
-    Object.values(SdkSupportedNetworks).includes(translatedNetwork) &&
-    Object.values(SupportedVersions).includes(version)
+    SupportedNetworksArray.includes(translatedNetwork)
   ) {
     return pluginType === 'multisig.plugin.dao.eth'
-      ? getNetworkDeployments(translatedNetwork)[version]?.MultisigRepoProxy
-          .address
-      : getNetworkDeployments(translatedNetwork)[version]?.TokenVotingRepoProxy
-          .address;
+      ? LIVE_CONTRACTS[protocolVersion?.join('.') as SupportedVersion]?.[
+          translatedNetwork
+        ].multisigRepoAddress
+      : LIVE_CONTRACTS[protocolVersion?.join('.') as SupportedVersion]?.[
+          translatedNetwork
+        ].tokenVotingRepoAddress;
   }
 }

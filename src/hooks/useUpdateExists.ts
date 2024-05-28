@@ -1,4 +1,4 @@
-import {SupportedVersions} from '@aragon/osx-commons-configs';
+import {SupportedVersion} from '@aragon/sdk-client-common';
 
 import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
@@ -17,7 +17,7 @@ export const useUpdateExists = (): boolean => {
   const {data: installedProtocol} = useProtocolVersion(daoAddress);
 
   // check whether protocol update exists
-  const latestProtocolVersion = SupportedVersions.V1_3_0 as string;
+  const latestProtocolVersion = SupportedVersion.LATEST as string;
   const installedProtocolVersion = installedProtocol?.join('.');
 
   const protocolUpdateExists = !!(

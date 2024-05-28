@@ -3,10 +3,10 @@ import {useTranslation} from 'react-i18next';
 import {Link} from '@aragon/ods-old';
 import {IconType} from '@aragon/ods';
 import {
-  SupportedNetworks,
-  SupportedVersions,
-  getNetworkDeployments,
-} from '@aragon/osx-commons-configs';
+  LIVE_CONTRACTS,
+  SupportedNetworksArray,
+  SupportedVersion,
+} from '@aragon/sdk-client-common';
 
 import {useNetwork} from 'context/network';
 import {AppVersion, CHAIN_METADATA} from 'utils/constants';
@@ -35,15 +35,14 @@ export const VersionInfoCard: React.FC<{
 
   let OSxAddress = '';
   const translatedNetwork = translateToNetworkishName(network);
-  const currentVersion = `v${versions?.join('.')}` as SupportedVersions;
   if (
     translatedNetwork !== 'unsupported' &&
-    Object.values(SupportedNetworks).includes(translatedNetwork) &&
-    Object.values(SupportedVersions).includes(currentVersion)
+    SupportedNetworksArray.includes(translatedNetwork)
   ) {
     OSxAddress =
-      getNetworkDeployments(translatedNetwork)[currentVersion]?.DAOFactory
-        .address ?? '';
+      LIVE_CONTRACTS[versions?.join('.') as SupportedVersion]?.[
+        translatedNetwork
+      ]?.daoFactoryAddress;
   }
 
   let pluginName = '';
