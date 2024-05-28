@@ -138,7 +138,9 @@ export const useDaoMembers = (
   const enabled = opts?.enabled || true;
 
   const covalentSupportedNetwork = !(
-    network === 'arbitrum' || network === 'base'
+    network === 'arbitrum' ||
+    network === 'base' ||
+    network === 'zksync-sepolia'
   );
 
   const useGraphql =
