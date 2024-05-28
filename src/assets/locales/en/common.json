@@ -1067,7 +1067,9 @@
           "member": "Wallet-based",
           "governanceType": "Governance type",
           "arbitrum": "Arbitrum",
-          "ethereumSepolia": "Ethereum Sepolia"
+          "ethereumSepolia": "Ethereum Sepolia",
+          "zksync": "ZkSync Era",
+          "zksyncSepolia": "ZkSync Sepolia"
         },
         "ctaLabel": {
           "see0": "See 0 DAOs",
