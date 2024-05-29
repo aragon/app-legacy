@@ -86,6 +86,13 @@
   dependencies:
     tslib "^2.6.2"
 
+"@aragon/osx-commons-configs@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-commons-configs/-/osx-commons-configs-0.4.0.tgz#5b6ae025de1ccf7f9a135bfbcb0aa822c774acf9"
+  integrity sha512-/2wIQCbv/spMRdOjRXK0RrXG1TK5aMcbD73RvMgMwQwSrKcA1dCntUuSxmTm2W8eEtOzs8E1VPjqZk0cXL4SSQ==
+  dependencies:
+    tslib "^2.6.2"
+
 "@aragon/osx-ethers-v1.0.0@npm:@aragon/osx-ethers@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.2.1.tgz#a442048137153ed5a3ca4eff3f3927b45a5134b5"
@@ -125,13 +132,53 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client@1.22.1", "@aragon/sdk-client@^1.22.1":
+"@aragon/sdk-client-common@^1.15.3":
+  version "1.15.3"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.15.3.tgz#039efbdb41fead05f34f999086ec198d1201a1c2"
+  integrity sha512-quZiR9UEYE5atEcFPyohkpU9RvAtal9gqitEv+15IFxf8bkQyH/g/tG7icFseYcCZkHAgzBnjgk/PNfqr4attw==
+  dependencies:
+    "@aragon/osx-commons-configs" "^0.4.0"
+    "@aragon/osx-ethers" "^1.3.1"
+    "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
+    "@aragon/sdk-ipfs" "^1.1.0"
+    "@ethersproject/abstract-signer" "^5.5.0"
+    "@ethersproject/bignumber" "^5.6.0"
+    "@ethersproject/constants" "^5.6.0"
+    "@ethersproject/contracts" "^5.5.0"
+    "@ethersproject/providers" "^5.5.0"
+    "@ethersproject/wallet" "^5.6.0"
+    graphql "^16.5.0"
+    graphql-request "^4.3.0"
+    yup "^1.2.0"
+
+"@aragon/sdk-client@1.22.1":
   version "1.22.1"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.22.1.tgz#229f5e2f97982fc54c36afd6a8655c2fbfa8a88a"
   integrity sha512-AaL+z40RDCwToVYH54xj333KuR674eO0JZ9fCgDCru9rii3mX/Y/tmsa4aFz4/Hu3LA5PVFS5vnXbi3fp0P2Ug==
   dependencies:
     "@aragon/osx-ethers" "1.3.0"
     "@aragon/sdk-client-common" "^1.14.1"
+    "@aragon/sdk-ipfs" "^1.1.0"
+    "@ethersproject/abstract-signer" "^5.5.0"
+    "@ethersproject/bignumber" "^5.6.0"
+    "@ethersproject/constants" "^5.6.0"
+    "@ethersproject/contracts" "^5.5.0"
+    "@ethersproject/providers" "^5.5.0"
+    "@ethersproject/wallet" "^5.6.0"
+    "@openzeppelin/contracts" "^4.8.1"
+    "@openzeppelin/contracts-upgradeable" "^4.8.1"
+    graphql "^16.5.0"
+    graphql-request "^4.3.0"
+    yup "^1.2.0"
+
+"@aragon/sdk-client@^1.23.5":
+  version "1.23.5"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.23.5.tgz#84cc4047e4fad766a175002befced605bd8e6b16"
+  integrity sha512-EcQv10RkASZQPLyDOLGRY1ZnVRVWV1cKpNjJWEbOkwCicihH5JuPp8XFPfRp5794yEpkCAxfq1SFl9NYyS1qeA==
+  dependencies:
+    "@aragon/osx-commons-configs" "^0.4.0"
+    "@aragon/osx-ethers" "1.3.0"
+    "@aragon/sdk-client-common" "^1.15.3"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -10864,16 +10911,7 @@ string-length@^4.0.1:
     char-regex "^1.0.2"
     strip-ansi "^6.0.0"
 
-"string-width-cjs@npm:string-width@^4.2.0":
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
-  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^6.0.1"
-
-string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -10944,14 +10982,7 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
-  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
-  dependencies:
-    ansi-regex "^5.0.1"
-
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -11863,7 +11894,7 @@ which@^2.0.1, which@^2.0.2:
   dependencies:
     isexe "^2.0.0"
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
@@ -11876,15 +11907,6 @@ wrap-ansi@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-6.2.0.tgz#e9393ba07102e6c91a3b221478f0257cd2856e53"
   integrity sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==
-  dependencies:
-    ansi-styles "^4.0.0"
-    string-width "^4.1.0"
-    strip-ansi "^6.0.0"
-
-wrap-ansi@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
-  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
   dependencies:
     ansi-styles "^4.0.0"
     string-width "^4.1.0"
