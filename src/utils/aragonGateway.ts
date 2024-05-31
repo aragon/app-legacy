@@ -14,7 +14,7 @@ import {
 class AragonGateway {
   private rpcVersion = '1.0';
   private ipfsVersion = '1.0';
-  private baseUrl = import.meta.env.VITE_GATEWAY_URL;
+  private baseUrl = import.meta.env.VITE_GATEWAY_URL as string;
 
   getRpcProvider = (
     chainIdOrNetwork: number | SupportedNetworks
@@ -55,7 +55,12 @@ class AragonGateway {
 
     const {gatewayNetwork} = CHAIN_METADATA[network];
     const gatewayKey = import.meta.env.VITE_GATEWAY_RPC_API_KEY;
-    const rpcUrl = `${this.baseUrl}/v${this.rpcVersion}/rpc/${gatewayNetwork}/${gatewayKey}`;
+    const baseUrl =
+      network === 'zksyncSepolia'
+        ? this.baseUrl.replace('app', 'alchemy')
+        : this.baseUrl;
+
+    const rpcUrl = `${baseUrl}/v${this.rpcVersion}/rpc/${gatewayNetwork}/${gatewayKey}`;
     return rpcUrl;
   };
 
