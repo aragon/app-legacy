@@ -21,7 +21,7 @@ import {
 import {ITransaction} from './domain/transaction';
 import {decodeProposalId, hexToBytes} from '@aragon/sdk-client-common';
 import {isMultisigClient, isTokenVotingClient} from 'hooks/usePluginClient';
-import {ContractNames} from '@aragon/osx-commons-configs';
+import {FrameworkContractsNames} from '@aragon/osx-commons-configs';
 
 class TransactionsService {
   buildCreateDaoTransaction = async (
@@ -37,7 +37,9 @@ class TransactionsService {
     } = params;
 
     const signer = client.web3.getConnectedSigner();
-    const daoFactoryAddress = client.web3.getAddress(ContractNames.DAO_FACTORY);
+    const daoFactoryAddress = client.web3.getAddress(
+      FrameworkContractsNames.DAO_FACTORY
+    );
 
     const daoFactoryInstance = DAOFactory__factory.connect(
       daoFactoryAddress,

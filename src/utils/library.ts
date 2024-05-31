@@ -1317,8 +1317,8 @@ export function getPluginRepoAddress(
   ) {
     return pluginType === 'multisig.plugin.dao.eth'
       ? getNetworkDeployments(translatedNetwork)[version]?.MultisigRepoProxy
-          .address
+          ?.address
       : getNetworkDeployments(translatedNetwork)[version]?.TokenVotingRepoProxy
-          .address;
+          ?.address;
   }
 }
