@@ -54,7 +54,11 @@ class AragonGateway {
     }
 
     const {gatewayNetwork} = CHAIN_METADATA[network];
-    const gatewayKey = import.meta.env.VITE_GATEWAY_RPC_API_KEY;
+    const gatewayKey =
+      network === 'zksyncSepolia'
+        ? import.meta.env.VITE_GATEWAY_RPC_API_KEY_ALCHEMY
+        : import.meta.env.VITE_GATEWAY_RPC_API_KEY;
+
     const baseUrl =
       network === 'zksyncSepolia'
         ? this.baseUrl.replace('app', 'alchemy')
