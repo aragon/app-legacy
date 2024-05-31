@@ -103,10 +103,10 @@ export const Community: React.FC = () => {
     );
   };
 
-  const handleSecondaryButtonClick = () => {
+  const navigateToMintTokens = () => {
     if (isTokenMintable) {
       navigate('mint-tokens');
-    } else navigateToTokenHoldersChart();
+    }
   };
 
   const handlePrimaryClick = () => {
@@ -172,7 +172,7 @@ export const Community: React.FC = () => {
     ? {
         label: t('labels.seeAllHolders'),
         iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-        onClick: handleSecondaryButtonClick,
+        onClick: navigateToTokenHoldersChart,
       }
     : undefined;
 
@@ -217,7 +217,7 @@ export const Community: React.FC = () => {
             secondaryBtnProps: {
               label: t('labels.mintTokens'),
               iconLeft: <Icon icon={IconType.PLUS} />,
-              onClick: handleSecondaryButtonClick,
+              onClick: navigateToMintTokens,
             },
             tertiaryBtnProps: seeAllHoldersBtn,
           }

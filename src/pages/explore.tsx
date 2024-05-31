@@ -1,7 +1,3 @@
-import {
-  SupportedNetworksArray,
-  SupportedNetwork,
-} from '@aragon/sdk-client-common';
 import React, {useEffect} from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
@@ -12,6 +8,7 @@ import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
 import {useNetwork} from 'context/network';
 import {translateToNetworkishName} from 'utils/library';
+import {SupportedNetworks} from '@aragon/osx-commons-configs';
 
 export const Explore: React.FC = () => {
   const {network, setNetwork} = useNetwork();
@@ -20,10 +17,10 @@ export const Explore: React.FC = () => {
     //FIXME: temporarily when network not supported by the SDK, default to ethereum
     const translatedNetwork = translateToNetworkishName(
       network
-    ) as SupportedNetwork;
+    ) as SupportedNetworks;
 
     // when network not supported by the SDK, don't set network
-    if (!SupportedNetworksArray.includes(translatedNetwork)) {
+    if (!Object.values(SupportedNetworks).includes(translatedNetwork)) {
       console.warn('Unsupported network, defaulting to ethereum');
       setNetwork('ethereum');
     }

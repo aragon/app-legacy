@@ -28,6 +28,7 @@ export const useCensus3Members = (
   }
 
   const getHolders = useCallback(async () => {
+    if (!strategyId) return null;
     return census3
       .getStrategyHolders(strategyId!, {
         pageSize: page || -1,

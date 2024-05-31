@@ -56,6 +56,7 @@ type SubmitVoteParams = {
   vote: VoteValues;
   voteTokenAddress?: string;
   replacement?: boolean;
+  onVoteCb?: () => void;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -82,6 +83,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // state values
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showGaslessModal, setShowGaslessModal] = useState(false);
+  const [gaslessOnVoteCallback, setGaslessOnVoteCallback] =
+    useState<() => void>();
   const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
   const [showCommitteeApprovalModal, setShowCommitteeApprovalModal] =
     useState(false);
@@ -135,6 +138,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     (params: SubmitVoteParams) => {
       setVoteParams({proposalId, vote: params.vote});
       setVoteTokenAddress(params.voteTokenAddress);
+      setGaslessOnVoteCallback(params.onVoteCb);
       setShowGaslessModal(true);
     },
     [proposalId]
@@ -231,8 +235,18 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           voteToPersist
         );
       }
+      if (gaslessOnVoteCallback) {
+        gaslessOnVoteCallback();
+      }
     },
-    [address, fetchVotingPower, network, pluginType, voteTokenAddress]
+    [
+      address,
+      fetchVotingPower,
+      gaslessOnVoteCallback,
+      network,
+      pluginType,
+      voteTokenAddress,
+    ]
   );
 
   // handles closing vote/approval modal

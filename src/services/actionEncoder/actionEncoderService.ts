@@ -1,11 +1,4 @@
-import {
-  DaoAction,
-  LIVE_CONTRACTS,
-  SupportedNetworksArray,
-  SupportedVersion,
-  TokenType,
-  hexToBytes,
-} from '@aragon/sdk-client-common';
+import {DaoAction, TokenType, hexToBytes} from '@aragon/sdk-client-common';
 import {IEncodeActionParams} from './actionEncoderService.api';
 import {ethers} from 'ethers';
 import {isNativeToken} from 'utils/tokens';
@@ -30,6 +23,11 @@ import {
   isGaslessVotingSettings,
   isMultisigVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
+import {
+  SupportedNetworks,
+  getNetworkDeployments,
+  SupportedVersions,
+} from '@aragon/osx-commons-configs';
 
 class ActionEncoderService {
   encodeActions = async (
@@ -206,18 +204,19 @@ class ActionEncoderService {
         case 'os_update': {
           if (
             translatedNetwork !== 'unsupported' &&
-            SupportedNetworksArray.includes(translatedNetwork) &&
+            Object.values(SupportedNetworks).includes(translatedNetwork) &&
             daoAddress &&
             versions
           ) {
+            const daoFactoryAddress =
+              getNetworkDeployments(translatedNetwork)[
+                action.inputs.version as SupportedVersions
+              ]?.DAOFactory.address;
             actionPromises.push(
               Promise.resolve(
                 client.encoding.daoUpdateAction(daoAddress, {
                   previousVersion: versions as [number, number, number],
-                  daoFactoryAddress:
-                    LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
-                      translatedNetwork
-                    ].daoFactoryAddress,
+                  daoFactoryAddress,
                 })
               )
             );

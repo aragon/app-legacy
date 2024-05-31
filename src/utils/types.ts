@@ -11,11 +11,7 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {
-  ApplyUpdateParams,
-  SupportedVersion,
-  VersionTag,
-} from '@aragon/sdk-client-common';
+import {ApplyUpdateParams, VersionTag} from '@aragon/sdk-client-common';
 import {
   CreateGasslessProposalParams,
   GaslessPluginVotingSettings,
@@ -31,6 +27,7 @@ import {Web3Address} from './library';
 import {TokenType} from './validators';
 import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
 import {ITagProps} from '@aragon/ods';
+import {SupportedVersions} from '@aragon/osx-commons-configs';
 
 /*************************************************
  *                 DAO Creation types            *
@@ -350,7 +347,7 @@ export type ActionMintToken = {
 export type ActionOSUpdate = {
   name: 'os_update';
   inputs: {
-    version: SupportedVersion;
+    version: SupportedVersions;
   };
 };
 
@@ -729,7 +726,7 @@ export type SubgraphMultisigProposalBase = SubgraphProposalBase & {
   plugin: SubgraphMultisigVotingSettings;
   minApprovals: number;
   approvalReached: boolean;
-  approvers: {id: string}[];
+  approvals: {id: string; approver: {address: string}}[];
 };
 
 export type SubgraphMultisigProposalListItem = SubgraphMultisigProposalBase;
