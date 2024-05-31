@@ -117,6 +117,9 @@ export const Dashboard: React.FC = () => {
     }
   );
 
+  const isPendingDao =
+    pendingDao || (isGasless && !(census3Token?.status.synced ?? false));
+
   const isLoading = liveDaoLoading || pendingDaoLoading || followedDaosLoading;
 
   const removePendingDaoMutation = useRemovePendingDaoMutation(() => {
@@ -155,22 +158,29 @@ export const Dashboard: React.FC = () => {
    *************************************************/
   useEffect(() => {
     // poll for the newly created DAO while waiting to be indexed
-    if (pendingDao && isSuccess && !liveDao) {
+    if (isPendingDao && isSuccess && !liveDao) {
       setPollInterval(1000);
     }
-  }, [isSuccess, liveDao, pendingDao]);
+  }, [isSuccess, liveDao, isPendingDao]);
 
   useEffect(() => {
     if (
-      pendingDao &&
+      isPendingDao &&
       liveDao &&
-      daoCreationState === DaoCreationState.ASSEMBLING_DAO
+      daoCreationState === DaoCreationState.ASSEMBLING_DAO &&
+      (!isGasless || census3Token?.status.synced === true)
     ) {
       setPollInterval(0);
       setDaoCreationState(DaoCreationState.DAO_READY);
       setTimeout(() => setDaoCreationState(DaoCreationState.OPEN_DAO), 2000);
     }
-  }, [liveDao, daoCreationState, pendingDao]);
+  }, [
+    liveDao,
+    daoCreationState,
+    isPendingDao,
+    isGasless,
+    census3Token?.status.synced,
+  ]);
 
   useEffect(() => {
     if (
@@ -260,7 +270,7 @@ export const Dashboard: React.FC = () => {
     return <Loading />;
   }
 
-  if (pendingDao) {
+  if (isPendingDao) {
     const buttonLabel = {
       [DaoCreationState.ASSEMBLING_DAO]: t('dashboard.emptyState.buildingDAO'),
       [DaoCreationState.DAO_READY]: t('dashboard.emptyState.daoReady'),
