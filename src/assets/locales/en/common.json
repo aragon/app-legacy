@@ -1068,8 +1068,8 @@
           "governanceType": "Governance type",
           "arbitrum": "Arbitrum",
           "ethereumSepolia": "Ethereum Sepolia",
-          "zksync": "ZkSync Era",
-          "zksyncSepolia": "ZkSync Sepolia"
+          "zksync": "zkSync Era",
+          "zksyncSepolia": "zkSync Sepolia"
         },
         "ctaLabel": {
           "see0": "See 0 DAOs",
