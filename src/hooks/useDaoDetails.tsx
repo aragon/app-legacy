@@ -185,7 +185,7 @@ export const useDaoQuery = (
         : {refetchOnWindowFocus: false}),
     },
     refetchInterval,
-    select: addAvatarToDao(),
+    select: processDaoResponse(network),
   });
 };
 
@@ -239,19 +239,22 @@ export const useDaoDetailsQuery = () => {
   return apiResponse;
 };
 
-/**
- * Adds avatar to DAO
- * @param dao DAO details
- * @returns DAO details object augmented with a resolved IPFS avatar
- */
-const addAvatarToDao = () => (dao: DaoDetails | null) => {
-  if (!dao) return null;
+const processDaoResponse =
+  (network: SupportedNetworks) => (dao: DaoDetails | null) => {
+    if (!dao) {
+      return null;
+    }
 
-  return {
-    ...dao,
-    metadata: {
-      ...dao?.metadata,
-      avatar: dao?.metadata.avatar,
-    },
+    const processedEns = !CHAIN_METADATA[network].supportsEns
+      ? ''
+      : dao.ensDomain;
+
+    return {
+      ...dao,
+      ensDomain: processedEns,
+      metadata: {
+        ...dao?.metadata,
+        avatar: dao?.metadata.avatar,
+      },
+    };
   };
-};

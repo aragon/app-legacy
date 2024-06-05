@@ -8,7 +8,7 @@
   "license": "GPL-3.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --host --force",
     "dev:watch": "cross-env WATCH=true vite --host",
     "build": "cross-env NODE_ENV=production vite build",
     "build:analyze": "cross-env ANALYZE=true vite build",

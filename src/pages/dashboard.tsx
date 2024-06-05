@@ -87,10 +87,7 @@ export const Dashboard: React.FC = () => {
     isSuccess,
     isFetched: liveDaoFetched,
   } = useDaoQuery(urlAddressOrEns, pollInterval);
-  const liveAddressOrEns =
-    network !== 'sepolia'
-      ? toDisplayEns(liveDao?.ensDomain) || liveDao?.address
-      : liveDao?.address;
+  const liveAddressOrEns = toDisplayEns(liveDao?.ensDomain) || liveDao?.address;
 
   // pending DAO
   const {
