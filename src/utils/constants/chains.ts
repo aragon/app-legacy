@@ -261,11 +261,11 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     id: 300,
     name: i18n.t('explore.modal.filterDAOs.label.zksyncSepolia'),
     domain: 'L2 Blockchain',
-    logo: 'https://assets.coingecko.com/asset_platforms/images/121/large/zksync.jpeg',
+    logo: 'https://static.debank.com/image/chain/logo_url/era/2cfcd0c8436b05d811b03935f6c1d7da.png',
     explorer: 'https://sepolia.explorer.zksync.io/',
     isTestnet: true,
     mainnet: 'ethereum', // temporary price lookup while zksyncSepolia native token is not supported with default values by API services
-    explorerName: 'ZkSync Sepolia Explorer',
+    explorerName: 'zkSync Sepolia Explorer',
     publicRpc: 'https://endpoints.omniatech.io/v1/zksync-era/sepolia/public',
     gatewayNetwork: 'zksync/sepolia',
     nativeCurrency: {
