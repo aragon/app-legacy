@@ -128,7 +128,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           icon={IconType.COPY}
           iconPosition="right"
         >
-          {shortenDaoUrl(daoUrl)}
+          {shortenAddress(daoEnsName)}
         </Dropdown.Item>
       );
     }
