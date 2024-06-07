@@ -45,6 +45,8 @@ type DescriptionProps = {
   fullDescription?: boolean;
 };
 
+const noCapChains = ['zkSync Era', 'zkSync Sepolia'];
+
 export const HeaderDao: React.FC<HeaderDaoProps> = ({
   daoName,
   daoAddress,
@@ -128,7 +130,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           icon={IconType.COPY}
           iconPosition="right"
         >
-          {shortenDaoUrl(daoUrl)}
+          {shortenAddress(daoEnsName)}
         </Dropdown.Item>
       );
     }
@@ -195,7 +197,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
               icon={IconType.BLOCKCHAIN_BLOCK}
               className="text-primary-400"
             />
-            <DetailsText className="capitalize">{daoChain}</DetailsText>
+             <DetailsText className={noCapChains.includes(daoChain) ? '' : 'capitalize'}>{daoChain}</DetailsText>
           </NetworkDetails>
           <NetworkDetails>
             <Icon icon={IconType.APP_MEMBERS} className="text-primary-400" />
