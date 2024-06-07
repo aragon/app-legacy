@@ -195,7 +195,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
               icon={IconType.BLOCKCHAIN_BLOCK}
               className="text-primary-400"
             />
-            <DetailsText className="capitalize">{daoChain}</DetailsText>
+            <DetailsText>{daoChain}</DetailsText>
           </NetworkDetails>
           <NetworkDetails>
             <Icon icon={IconType.APP_MEMBERS} className="text-primary-400" />
