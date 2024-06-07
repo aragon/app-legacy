@@ -107,7 +107,9 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
         onClick={() => onCopy?.(daoAddress)}
         icon={IconType.COPY}
         iconPosition="right"
-      ></Dropdown.Item>,
+      >
+        {shortenAddress(daoAddress)}
+      </Dropdown.Item>,
       <Dropdown.Item
         key={3}
         onClick={() => onCopy?.(`https://${daoUrl}`)}
@@ -126,7 +128,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           icon={IconType.COPY}
           iconPosition="right"
         >
-          {shortenAddress(daoEnsName)}
+          {shortenDaoUrl(daoUrl)}
         </Dropdown.Item>
       );
     }
