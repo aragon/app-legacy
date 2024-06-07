@@ -111,7 +111,7 @@ const networks: SelectableNetworks = {
   },
   test: {
     cost: ['zksyncSepolia', 'sepolia'],
-    popularity: ['zksyncSepolia', 'sepolia'],
-    security: ['zksyncSepolia', 'sepolia'],
+    popularity: ['sepolia', 'zksyncSepolia'],
+    security: ['sepolia', 'zksyncSepolia'],
   },
 };
