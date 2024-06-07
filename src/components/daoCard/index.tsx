@@ -112,7 +112,7 @@ const DaoMetadataWrapper = styled.div.attrs({
   className: 'flex flex-row space-x-6',
 })``;
 const IconLabel = styled.p.attrs({
-  className: 'text-neutral-600 ft-text-sm capitalize',
+  className: 'text-neutral-600 ft-text-sm',
 })``;
 const IconWrapper = styled.div.attrs({
   className: 'flex flex-row space-x-2',
