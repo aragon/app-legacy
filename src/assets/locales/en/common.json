@@ -819,7 +819,7 @@
       "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
       "shortTitle": "Select governance settings",
       "wrappedReferenceTitle": "Reference values",
-      "wrappedReferenceDesc": "The amount of {{gTokenSymbol}} that must vote to meet minimum participation depends on the amount of {{tokenSymbol}} that is wrapped. The values on this screen with an asterisk are for reference only. You can evaluate different scenarios by adjusting the following value. Learn more about {{link}}.",
+      "wrappedReferenceDesc": "The amount of {{gTokenSymbol}} that must vote to meet minimum participation depends on the amount of {{tokenSymbol}} that is wrapped. The values on this screen with an asterisk are for reference only. You can evaluate different scenarios by adjusting the following value. Learn more about it {{link}}.",
       "wrappedReferenceAlertInfo": "These values are for reference only and do not affect your \"governance settings\"!",
       "wrappedReferenceLabel": "Amount of wrapped {{tokenSymbol}}",
       "wrappedReferenceSupply": "Total supply {{tokenSymbol}}",
