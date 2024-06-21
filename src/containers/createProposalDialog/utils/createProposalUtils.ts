@@ -49,9 +49,7 @@ class CreateProposalUtils {
     title: values.proposalTitle,
     summary: values.proposalSummary,
     description: values.proposal,
-    resources: values.links.filter(
-      ({name, url}) => url != null && name != null
-    ),
+    resources: values.links.filter(({name, url}) => name && url),
   });
 
   getProposalIdFromReceipt = (
