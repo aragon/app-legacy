@@ -8,7 +8,7 @@ export const AppVersion =
 export const AppMetadata = {
   name: 'Aragon DAO',
   description: 'Aragon DAO',
-  url: 'https://aragon.org',
+  url: 'https://app.aragon.org/',
   icons: [
     'https://assets.website-files.com/5e997428d0f2eb13a90aec8c/635283b535e03c60d5aafe64_logo_aragon_isotype.png',
   ],
