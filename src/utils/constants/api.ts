@@ -27,7 +27,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   base: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseMainnet/version/1.4.2/api',
 
   ethereum:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mainnet/version/1.4.2/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mainnet/version/1.4.3/api',
 
   polygon:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/1.4.2/api',
