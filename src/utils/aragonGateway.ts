@@ -21,8 +21,6 @@ class AragonGateway {
   ): JsonRpcProvider => {
     let network = this.parseNetwork(chainIdOrNetwork);
 
-    console.log('chainIdOrNetwork', chainIdOrNetwork);
-
     // Default provider to ethereum for unsupported networks
     if (network == null || network === 'unsupported') {
       network = 'ethereum';
@@ -41,8 +39,6 @@ class AragonGateway {
       options.ensAddress =
         getLatestNetworkDeployment(sdkNetwork)?.ENSRegistry?.address;
     }
-
-    console.log('viewview', options);
 
     const rpcUrl = this.buildRpcUrl(network)!;
     return new JsonRpcProvider(rpcUrl, options);
