@@ -19,6 +19,7 @@ import {
   polygon,
   sepolia,
   zkSyncSepoliaTestnet,
+  zkSync,
 } from 'wagmi/chains';
 import {AlertProvider} from 'context/alert';
 import {GlobalModalsProvider} from 'context/globalModals';
@@ -47,6 +48,7 @@ const chains = [
   arbitrum,
   sepolia,
   zkSyncSepoliaTestnet,
+  zkSync,
 ] as [Chain, ...Chain[]];
 
 const transports = chains.reduce(

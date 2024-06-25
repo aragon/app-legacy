@@ -23,7 +23,7 @@ export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'base',
   'polygon',
   'sepolia',
-  // 'zksync',
+  'zksync',
   'zksyncSepolia',
 ];
 
@@ -35,7 +35,7 @@ const SUPPORTED_NETWORKS = [
   'ethereum',
   'polygon',
   'sepolia',
-  // 'zksync',
+  'zksync',
   'zksyncSepolia',
 ] as const;
 
@@ -234,29 +234,29 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     supportsEns: false,
   },
-  // zksync: {
-  //   id: 324,
-  //   name: i18n.t('explore.modal.filterDAOs.label.zksync'),
-  //   domain: 'L2 Blockchain',
-  //   logo: 'https://static.debank.com/image/chain/logo_url/era/2cfcd0c8436b05d811b03935f6c1d7da.png',
-  //   explorer: 'https://explorer.zksync.io/',
-  //   isTestnet: false,
-  //   explorerName: 'zkSync Explorer',
-  //   publicRpc: 'https://zksync.meowrpc.com',
-  //   gatewayNetwork: 'ethereum/zksync',
-  //   nativeCurrency: {
-  //     name: 'Ether',
-  //     symbol: 'ETH',
-  //     decimals: 18,
-  //   },
-  //   etherscanApi: 'https://block-explorer-api.mainnet.zksync.io/api',
-  //   etherscanApiKey: '',
-  //   covalent: {
-  //     networkId: 'zksync-mainnet',
-  //     nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-  //   },
-  //   supportsEns: false,
-  // },
+  zksync: {
+    id: 324,
+    name: i18n.t('explore.modal.filterDAOs.label.zksync'),
+    domain: 'L2 Blockchain',
+    logo: 'https://static.debank.com/image/chain/logo_url/era/2cfcd0c8436b05d811b03935f6c1d7da.png',
+    explorer: 'https://explorer.zksync.io/',
+    isTestnet: false,
+    explorerName: 'zkSync Explorer',
+    publicRpc: 'https://zksync.meowrpc.com',
+    gatewayNetwork: 'zksync',
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    etherscanApi: 'https://block-explorer-api.mainnet.zksync.io/api',
+    etherscanApiKey: '',
+    covalent: {
+      networkId: 'zksync-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
+    supportsEns: false,
+  },
   zksyncSepolia: {
     id: 300,
     name: i18n.t('explore.modal.filterDAOs.label.zksyncSepolia'),

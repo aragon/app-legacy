@@ -21,6 +21,8 @@ class AragonGateway {
   ): JsonRpcProvider => {
     let network = this.parseNetwork(chainIdOrNetwork);
 
+    console.log('chainIdOrNetwork', chainIdOrNetwork);
+
     // Default provider to ethereum for unsupported networks
     if (network == null || network === 'unsupported') {
       network = 'ethereum';
@@ -40,6 +42,8 @@ class AragonGateway {
         getLatestNetworkDeployment(sdkNetwork)?.ENSRegistry?.address;
     }
 
+    console.log('viewview', options);
+
     const rpcUrl = this.buildRpcUrl(network)!;
     return new JsonRpcProvider(rpcUrl, options);
   };
@@ -55,12 +59,12 @@ class AragonGateway {
 
     const {gatewayNetwork} = CHAIN_METADATA[network];
     const gatewayKey =
-      network === 'zksyncSepolia'
+      network === 'zksyncSepolia' || network === 'zksync'
         ? import.meta.env.VITE_GATEWAY_RPC_API_KEY_ALCHEMY
         : import.meta.env.VITE_GATEWAY_RPC_API_KEY;
 
     const baseUrl =
-      network === 'zksyncSepolia'
+      network === 'zksyncSepolia' || network === 'zksync'
         ? this.baseUrl.replace('app', 'alchemy')
         : this.baseUrl;
 

@@ -65,7 +65,7 @@ export const useWallet = (): IUseWallet => {
 
   const provider = useMemo(
     () =>
-      ['mumbai', 'polygon'].includes(network)
+      ['mumbai', 'polygon', 'zkSepolia'].includes(network)
         ? aragonGateway.getRpcProvider(network)
         : signer?.provider,
     [network, signer?.provider]

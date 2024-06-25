@@ -22,9 +22,9 @@
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@aragon/ods": "^1.0.20",
-    "@aragon/osx-commons-configs": "^0.5.0",
-    "@aragon/sdk-client": "^1.24.0",
-    "@aragon/sdk-client-common": "^1.16.0",
+    "@aragon/osx-commons-configs": "^0.6.0",
+    "@aragon/sdk-client": "^1.25.0",
+    "@aragon/sdk-client-common": "^1.17.0",
     "@playwright/test": "^1.42.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.4",

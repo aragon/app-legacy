@@ -140,7 +140,8 @@ export const useDaoMembers = (
   const covalentSupportedNetwork = !(
     network === 'arbitrum' ||
     network === 'base' ||
-    network === 'zksyncSepolia'
+    network === 'zksyncSepolia' ||
+    network === 'zksync'
   );
 
   const useGraphql =
