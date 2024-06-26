@@ -207,7 +207,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             {links
               ?.slice(0, DEFAULT_LINKS_SHOWN)
               ?.map(({label, href}, index: number) => (
-                <Link {...{label, href}} external key={index} />
+                <StyledLink {...{label, href}} external key={index} />
               ))}
           </LinksWrapper>
           <ActionContainer>
@@ -299,7 +299,11 @@ const DetailsText = styled.span.attrs({
 })``;
 
 const LinksWrapper = styled.div.attrs({
-  className: 'space-x-6 hidden xl:flex',
+  className: 'space-x-3 ml-3 hidden xl:flex',
+})``;
+
+const StyledLink = styled(Link).attrs({
+  className: 'max-w-xs',
 })``;
 
 const ActionContainer = styled.div.attrs({
