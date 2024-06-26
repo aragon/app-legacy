@@ -243,7 +243,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     isTestnet: false,
     explorerName: 'zkSync Explorer',
     publicRpc: 'https://zksync.meowrpc.com',
-    gatewayNetwork: 'zksync',
+    gatewayNetwork: 'zksync/mainnet',
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
