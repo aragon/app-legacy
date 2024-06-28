@@ -17,9 +17,13 @@ export const useTokenMetadata = (
 ): HookData<TokenWithMetadata[]> => {
   const {network} = useNetwork();
 
+  const addressZero =
+    network === 'zksyncMainnet' || network === 'zksyncSepolia'
+      ? '0x000000000000000000000000000000000000800a'
+      : constants.AddressZero;
+
   const tokenListParams = assets.map(asset => ({
-    address:
-      asset.type !== TokenType.NATIVE ? asset.address : constants.AddressZero,
+    address: asset.type !== TokenType.NATIVE ? asset.address : addressZero,
     network,
     symbol:
       asset.type !== TokenType.NATIVE

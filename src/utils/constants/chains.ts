@@ -253,7 +253,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     etherscanApiKey: '',
     covalent: {
       networkId: 'zksync-mainnet',
-      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee800A',
     },
     supportsEns: false,
   },
