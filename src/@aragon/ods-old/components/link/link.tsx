@@ -49,7 +49,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         {...props}
         data-testid="link"
       >
-        <div className="mr-1 flex items-center gap-x-2">
+        <div className="flex items-center">
           <Label>{label}</Label>
           {iconRight && <Icon icon={iconRight} size="sm" />}
         </div>

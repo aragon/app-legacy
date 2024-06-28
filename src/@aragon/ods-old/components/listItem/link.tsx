@@ -36,11 +36,12 @@ export const ListItemLink: React.FC<ListItemLinkProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'w-full overflow-hidden',
+  className: 'w-1/3 overflow-hidden border-[1px] border-critical-200 ',
 })``;
 
 const Link = styled.a.attrs({
-  className: 'flex items-center min-w-0 text-primary-500' as string,
+  className:
+    'flex items-center min-w-0 text-primary-500 border-[1px] border-critical-200' as string,
 })``;
 
 const Title = styled.p.attrs({

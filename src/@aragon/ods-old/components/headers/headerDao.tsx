@@ -202,45 +202,45 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             <DetailsText>{daoType}</DetailsText>
           </NetworkDetails>
         </NetworkDetailsContainer>
-        <ActionWrapper>
-          <LinksWrapper>
-            {links
-              ?.slice(0, DEFAULT_LINKS_SHOWN)
-              ?.map(({label, href}, index: number) => (
-                <StyledLink {...{label, href}} external key={index} />
-              ))}
-          </LinksWrapper>
-          <ActionContainer>
-            {showDropdown && (
-              <Dropdown.Container
-                align="start"
-                customTrigger={
-                  <Button
-                    iconRight={IconType.CHEVRON_DOWN}
-                    variant="tertiary"
-                    size="lg"
-                  >
-                    All Links
-                  </Button>
-                }
-              >
-                {links?.map(({label, href}, index: number) => (
-                  <div className="mb-3 p-2" key={index}>
-                    <ListItemLink {...{label, href}} external />
-                  </div>
-                ))}
-              </Dropdown.Container>
-            )}
-            <Button
-              onClick={onFollowClick}
-              variant="tertiary"
-              size="lg"
-              iconLeft={following ? IconType.CHECKMARK : undefined}
+
+        <LinksWrapper>
+          {links
+            ?.slice(0, DEFAULT_LINKS_SHOWN)
+            ?.map(({label, href}, index: number) => (
+              <StyledLink {...{label, href}} external key={index} />
+            ))}
+        </LinksWrapper>
+        <ActionContainer>
+          {showDropdown && (
+            <Dropdown.Container
+              align="start"
+              customTrigger={
+                <Button
+                  iconRight={IconType.CHEVRON_DOWN}
+                  variant="tertiary"
+                  size="lg"
+                  className="text-nowrap"
+                >
+                  All Links
+                </Button>
+              }
             >
-              {following ? labels.following : labels.follow}
-            </Button>
-          </ActionContainer>
-        </ActionWrapper>
+              {links?.map(({label, href}, index: number) => (
+                <div className="mb-3 p-2" key={index}>
+                  <ListItemLink {...{label, href}} external />
+                </div>
+              ))}
+            </Dropdown.Container>
+          )}
+          <Button
+            onClick={onFollowClick}
+            variant="tertiary"
+            size="lg"
+            iconLeft={following ? IconType.CHECKMARK : undefined}
+          >
+            {following ? labels.following : labels.follow}
+          </Button>
+        </ActionContainer>
       </DetailsWrapper>
     </Card>
   );
@@ -283,15 +283,15 @@ const Description = styled.p.attrs({
 `;
 
 const DetailsWrapper = styled.div.attrs({
-  className: 'flex items-center justify-between flex-col md:flex-row',
+  className: 'flex items-center justify-between flex gap-x-6',
 })``;
 
 const NetworkDetailsContainer = styled.div.attrs({
-  className: 'flex space-x-6 w-full md:w-auto',
+  className: 'flex space-x-6 w-max-content wrap-none',
 })``;
 
 const NetworkDetails = styled.div.attrs({
-  className: 'flex space-x-2 items-center justify-center',
+  className: 'flex space-x-2 items-center justify-center text-nowrap',
 })``;
 
 const DetailsText = styled.span.attrs({
@@ -299,20 +299,15 @@ const DetailsText = styled.span.attrs({
 })``;
 
 const LinksWrapper = styled.div.attrs({
-  className: 'space-x-3 ml-3 hidden xl:flex',
+  className: 'gap-x-3 hidden xl:grid xl:grid-cols-2 w-full',
 })``;
 
 const StyledLink = styled(Link).attrs({
-  className: 'max-w-xs',
+  className: 'w-full',
 })``;
 
 const ActionContainer = styled.div.attrs({
-  className: 'flex space-x-3 w-full justify-between',
-})``;
-
-const ActionWrapper = styled.div.attrs({
-  className:
-    'flex items-center md:space-x-6 justify-between md:justify-start w-full md:w-max space-y-6 md:space-y-0',
+  className: 'flex space-x-3 w-max-content justify-end',
 })``;
 
 const CredentialsDropdownTrigger = styled(Link).attrs({
