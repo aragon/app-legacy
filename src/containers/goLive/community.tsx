@@ -190,30 +190,33 @@ const Community: React.FC = () => {
                   </Dd>
                 </Dl>
               )}
-              <Dl>
-                <Dt>{t('labels.review.distribution')}</Dt>
-                <Dd>
-                  {isCustomToken ? (
-                    <Link
-                      label={t('createDAO.review.distributionLink', {
-                        count: wallets?.length,
-                      })}
-                      onClick={() => open('addresses')}
-                    />
-                  ) : (
-                    <Link
-                      label={t('labels.review.distributionLinkLabel')}
-                      href={
-                        CHAIN_METADATA[network].explorer +
-                          '/token/tokenholderchart/' +
-                          tokenAddress?.address || tokenAddress
-                      }
-                      iconRight={IconType.LINK_EXTERNAL}
-                      external
-                    />
-                  )}
-                </Dd>
-              </Dl>
+              {(isCustomToken ||
+                (network !== 'zksync' && network !== 'zksyncSepolia')) && (
+                <Dl>
+                  <Dt>{t('labels.review.distribution')}</Dt>
+                  <Dd>
+                    {isCustomToken ? (
+                      <Link
+                        label={t('createDAO.review.distributionLink', {
+                          count: wallets?.length,
+                        })}
+                        onClick={() => open('addresses')}
+                      />
+                    ) : (
+                      <Link
+                        label={t('labels.review.distributionLinkLabel')}
+                        href={
+                          CHAIN_METADATA[network].explorer +
+                            '/token/tokenholderchart/' +
+                            tokenAddress?.address || tokenAddress
+                        }
+                        iconRight={IconType.LINK_EXTERNAL}
+                        external
+                      />
+                    )}
+                  </Dd>
+                </Dl>
+              )}
               <Dl>
                 <Dt>{t('labels.proposalCreation')}</Dt>
                 <Dd>

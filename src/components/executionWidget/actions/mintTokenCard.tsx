@@ -89,6 +89,9 @@ export const MintTokenCard: React.FC<{
     [network]
   );
 
+  const explorerTokenPath =
+    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+
   /*************************************************
    *                     Render                    *
    *************************************************/
@@ -100,7 +103,7 @@ export const MintTokenCard: React.FC<{
       smartContractAddress={daoToken?.address}
       blockExplorerLink={
         daoToken?.address
-          ? `${CHAIN_METADATA[network].explorer}token/${daoToken?.address}`
+          ? `${CHAIN_METADATA[network].explorer}${explorerTokenPath}${daoToken?.address}`
           : undefined
       }
       verified

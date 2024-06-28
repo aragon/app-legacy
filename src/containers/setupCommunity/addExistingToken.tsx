@@ -29,8 +29,9 @@ const AddExistingToken: React.FC = () => {
 
   const provider = aragonGateway.getRpcProvider(blockchain.id);
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
-  const tokenAddressBlockExplorerURL =
-    CHAIN_METADATA[network].explorer + 'token/';
+  const explorerPath =
+    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+  const tokenAddressBlockExplorerURL = `${CHAIN_METADATA[network].explorer}${explorerPath}`;
 
   // get plugin Client
   const pluginClient = usePluginClient('token-voting.plugin.dao.eth');

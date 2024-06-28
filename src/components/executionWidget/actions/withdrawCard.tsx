@@ -44,6 +44,9 @@ export const WithdrawCard: React.FC<{
   const recipient = (action.to.ensName || action.to.address) as string;
   const recipientURL = `${explorerURL}address/${recipient}`;
 
+  const explorerTokenPath =
+    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+
   return (
     <AccordionMethod
       type="execution-widget"
@@ -52,7 +55,7 @@ export const WithdrawCard: React.FC<{
       smartContractAddress={action.tokenAddress}
       blockExplorerLink={
         action.tokenAddress
-          ? `${CHAIN_METADATA[network].explorer}token/${action.tokenAddress}`
+          ? `${CHAIN_METADATA[network].explorer}${explorerTokenPath}${action.tokenAddress}`
           : undefined
       }
       verified
