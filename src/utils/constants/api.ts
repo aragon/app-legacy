@@ -22,7 +22,7 @@ export const pinataFileAPI = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
 
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   arbitrum:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-arbitrum/version/1.4.2/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-arbitrum/version/v1.4.2/api',
 
   base: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseMainnet/version/1.4.2/api',
 
