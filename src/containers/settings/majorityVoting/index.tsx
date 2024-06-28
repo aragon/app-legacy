@@ -93,8 +93,9 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         : t('labels.no'),
   };
 
-  const daoTokenBlockUrl =
-    CHAIN_METADATA[network].explorer + 'token/' + daoToken?.address;
+  const explorerPath =
+    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+  const daoTokenBlockUrl = `${CHAIN_METADATA[network].explorer}${explorerPath}${daoToken?.address}`;
 
   return (
     <>

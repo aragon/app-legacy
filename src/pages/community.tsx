@@ -168,13 +168,14 @@ export const Community: React.FC = () => {
   )}`;
 
   // Await to load daoToken address to prevent null see all holders button
-  const seeAllHoldersBtn = daoToken?.address
-    ? {
-        label: t('labels.seeAllHolders'),
-        iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
-        onClick: navigateToTokenHoldersChart,
-      }
-    : undefined;
+  const seeAllHoldersBtn =
+    daoToken?.address && network !== 'zksync' && network !== 'zksyncSepolia'
+      ? {
+          label: t('labels.seeAllHolders'),
+          iconLeft: <Icon icon={IconType.LINK_EXTERNAL} />,
+          onClick: navigateToTokenHoldersChart,
+        }
+      : undefined;
 
   return (
     <PageWrapper

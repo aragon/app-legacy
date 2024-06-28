@@ -167,12 +167,13 @@ export const MintTokenCard: React.FC<{
               </p>
             </HStack>
           )}
-          {/* TODO add total amount of token holders here. */}
-          <Link
-            label={t('labels.seeAllHolders')}
-            href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${action.summary.daoTokenAddress}`}
-            iconRight={IconType.LINK_EXTERNAL}
-          />
+          {network !== 'zksync' && network !== 'zksyncSepolia' && (
+            <Link
+              label={t('labels.seeAllHolders')}
+              href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${action.summary.daoTokenAddress}`}
+              iconRight={IconType.LINK_EXTERNAL}
+            />
+          )}
         </SummaryContainer>
       </Container>
     </AccordionMethod>
