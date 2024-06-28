@@ -106,7 +106,7 @@ type SelectableNetworks = Record<
 const networks: SelectableNetworks = {
   main: {
     cost: ['polygon', 'base', 'arbitrum', 'ethereum', 'zksyncMainnet'],
-    popularity: ['ethereum', 'arbitrum', 'base', 'zksyncMainnet'],
+    popularity: ['ethereum', 'polygon', 'arbitrum', 'base', 'zksyncMainnet'],
     security: ['ethereum', 'base', 'arbitrum', 'polygon', 'zksyncMainnet'],
   },
   test: {
