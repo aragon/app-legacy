@@ -90,7 +90,9 @@ export const MintTokenCard: React.FC<{
   );
 
   const explorerTokenPath =
-    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+    network === 'zksyncMainnet' || network === 'zksyncSepolia'
+      ? 'address/'
+      : 'token/';
 
   /*************************************************
    *                     Render                    *
@@ -170,7 +172,7 @@ export const MintTokenCard: React.FC<{
               </p>
             </HStack>
           )}
-          {network !== 'zksync' && network !== 'zksyncSepolia' && (
+          {network !== 'zksyncMainnet' && network !== 'zksyncSepolia' && (
             <Link
               label={t('labels.seeAllHolders')}
               href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${action.summary.daoTokenAddress}`}

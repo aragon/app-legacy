@@ -191,7 +191,8 @@ const Community: React.FC = () => {
                 </Dl>
               )}
               {(isCustomToken ||
-                (network !== 'zksync' && network !== 'zksyncSepolia')) && (
+                (network !== 'zksyncMainnet' &&
+                  network !== 'zksyncSepolia')) && (
                 <Dl>
                   <Dt>{t('labels.review.distribution')}</Dt>
                   <Dd>

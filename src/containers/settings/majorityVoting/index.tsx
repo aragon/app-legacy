@@ -94,7 +94,9 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   };
 
   const explorerPath =
-    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+    network === 'zksyncMainnet' || network === 'zksyncSepolia'
+      ? 'address/'
+      : 'token/';
   const daoTokenBlockUrl = `${CHAIN_METADATA[network].explorer}${explorerPath}${daoToken?.address}`;
 
   return (

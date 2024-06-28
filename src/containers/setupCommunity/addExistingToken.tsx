@@ -30,7 +30,9 @@ const AddExistingToken: React.FC = () => {
   const provider = aragonGateway.getRpcProvider(blockchain.id);
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const explorerPath =
-    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+    network === 'zksyncMainnet' || network === 'zksyncSepolia'
+      ? 'address/'
+      : 'token/';
   const tokenAddressBlockExplorerURL = `${CHAIN_METADATA[network].explorer}${explorerPath}`;
 
   // get plugin Client

@@ -141,7 +141,7 @@ export const useDaoMembers = (
     network === 'arbitrum' ||
     network === 'base' ||
     network === 'zksyncSepolia' ||
-    network === 'zksync'
+    network === 'zksyncMainnet'
   );
 
   const useGraphql =

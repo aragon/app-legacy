@@ -864,7 +864,7 @@ export const translateToAppNetwork = (
     case SdkSupportedNetworks.ZKSYNC_SEPOLIA:
       return 'zksyncSepolia';
     case SdkSupportedNetworks.ZKSYNC_MAINNET:
-      return 'zksync';
+      return 'zksyncMainnet';
     default:
       return 'unsupported';
   }
@@ -903,7 +903,7 @@ export function translateToNetworkishName(
       return SdkSupportedNetworks.SEPOLIA;
     case 'zksyncSepolia':
       return SdkSupportedNetworks.ZKSYNC_SEPOLIA;
-    case 'zksync':
+    case 'zksyncMainnet':
       return SdkSupportedNetworks.ZKSYNC_MAINNET;
   }
 

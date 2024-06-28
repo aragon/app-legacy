@@ -45,7 +45,9 @@ export const WithdrawCard: React.FC<{
   const recipientURL = `${explorerURL}address/${recipient}`;
 
   const explorerTokenPath =
-    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+    network === 'zksyncMainnet' || network === 'zksyncSepolia'
+      ? 'address/'
+      : 'token/';
 
   return (
     <AccordionMethod

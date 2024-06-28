@@ -23,7 +23,7 @@ export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'base',
   'polygon',
   'sepolia',
-  'zksync',
+  'zksyncMainnet',
   'zksyncSepolia',
 ];
 
@@ -35,7 +35,7 @@ const SUPPORTED_NETWORKS = [
   'ethereum',
   'polygon',
   'sepolia',
-  'zksync',
+  'zksyncMainnet',
   'zksyncSepolia',
 ] as const;
 
@@ -234,7 +234,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     supportsEns: false,
   },
-  zksync: {
+  zksyncMainnet: {
     id: 324,
     name: i18n.t('explore.modal.filterDAOs.label.zksync'),
     domain: 'L2 Blockchain',
@@ -264,7 +264,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     logo: 'https://static.debank.com/image/chain/logo_url/era/2cfcd0c8436b05d811b03935f6c1d7da.png',
     explorer: 'https://sepolia.explorer.zksync.io/',
     isTestnet: true,
-    mainnet: 'zksync',
+    mainnet: 'zksyncMainnet',
     explorerName: 'zkSync Sepolia Explorer',
     publicRpc: 'https://endpoints.omniatech.io/v1/zksync-era/sepolia/public',
     gatewayNetwork: 'zksync/sepolia',

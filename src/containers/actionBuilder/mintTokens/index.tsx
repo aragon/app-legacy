@@ -89,7 +89,9 @@ const MintTokens: React.FC<MintTokensProps> = ({
   })();
 
   const explorerPath =
-    network === 'zksync' || network === 'zksyncSepolia' ? 'address/' : 'token/';
+    network === 'zksyncMainnet' || network === 'zksyncSepolia'
+      ? 'address/'
+      : 'token/';
 
   return (
     <AccordionMethod
