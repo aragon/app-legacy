@@ -218,7 +218,8 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 <Button
                   iconRight={IconType.CHEVRON_DOWN}
                   variant="tertiary"
-                  size="lg"
+                  size="sm"
+                  responsiveSize={{md: 'md'}}
                   className="text-nowrap"
                 >
                   All Links
@@ -235,7 +236,8 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           <Button
             onClick={onFollowClick}
             variant="tertiary"
-            size="lg"
+            size="sm"
+            responsiveSize={{md: 'md'}}
             iconLeft={following ? IconType.CHECKMARK : undefined}
           >
             {following ? labels.following : labels.follow}
@@ -283,7 +285,8 @@ const Description = styled.p.attrs({
 `;
 
 const DetailsWrapper = styled.div.attrs({
-  className: 'flex items-center justify-between flex gap-x-6',
+  className:
+    'flex sm:items-center justify-start items-start sm:justify-between flex-col gap-y-4 sm:flex-row sm:gap-x-6',
 })``;
 
 const NetworkDetailsContainer = styled.div.attrs({
