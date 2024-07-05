@@ -8,7 +8,7 @@ import {Link} from '../link';
 import {ListItemLink} from '../listItem';
 
 const DEFAULT_LINES_SHOWN = 2;
-const DEFAULT_LINKS_SHOWN = 3;
+const DEFAULT_LINKS_SHOWN = 2;
 const DEFAULT_TRANSLATIONS = {
   follow: 'Follow',
   following: 'Following',
