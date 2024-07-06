@@ -169,30 +169,18 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   useEffect(() => {
     if (versions) {
       const OSXVersions = new Map();
+      const versionKeys = Object.keys(SupportedVersions);
 
-      Object.keys(SupportedVersions).forEach(key => {
-        if (
-          compareVersions(
-            SupportedVersions[key as keyof typeof SupportedVersions],
-            versions.join('.')
-          ) === 1
-        ) {
-          OSXVersions.set(
-            SupportedVersions[key as keyof typeof SupportedVersions],
-            {
-              version: SupportedVersions[
-                key as keyof typeof SupportedVersions
-              ] as string,
-              ...(key === 'LATEST' && {isLatest: true}),
-            } as OSX
-          );
+      versionKeys.forEach((key, index) => {
+        const version =
+          SupportedVersions[key as keyof typeof SupportedVersions];
+        const isLatest = index === versionKeys.length - 1;
 
-          if (key === 'LATEST') {
-            setValue('osSelectedVersion', {
-              version: SupportedVersions[
-                key as keyof typeof SupportedVersions
-              ] as string,
-            });
+        if (compareVersions(version, versions.join('.')) === 1) {
+          OSXVersions.set(version, {version, isLatest});
+
+          if (isLatest) {
+            setValue('osSelectedVersion', {version});
           }
         }
       });
