@@ -81,7 +81,7 @@ const Label = styled.span.attrs({
 })``;
 
 const Description = styled.p.attrs({
-  className: 'ft-text-sm text-neutral-600 truncate',
+  className: 'ft-text-sm text-neutral-600 truncate max-w-md',
 })``;
 
 const variants = {
