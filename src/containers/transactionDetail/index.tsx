@@ -46,17 +46,17 @@ const TransactionDetail: React.FC = () => {
 
   const {data: proposal} = useProposal({
     pluginType: plugins?.[0].id as PluginTypes,
-    id: proposalId?.toString() ?? '',
+    // id: proposalId?.toString() ?? '',
+    id: '0x3e3c5b75ef8c9f3b0e245395a4e64987b92bef81_0xe', //pieter: set id to debug navigating to proposal
   });
 
   const handleNavigateToProposal = useCallback(() => {
-    navigate(
-      generatePath(Proposal, {
-        network,
-        dao: toDisplayEns(ensDomain) ?? daoName,
-        id: proposalId!.toUrlSlug(), // only called for Withdrawals
-      })
-    );
+    const path = generatePath(Proposal, {
+      network,
+      dao: ensDomain || daoDetails?.address,
+      id: proposal?.id,
+    });
+    navigate(path);
     onClose();
   }, [ensDomain, daoName, navigate, network, onClose, proposalId]);
 
