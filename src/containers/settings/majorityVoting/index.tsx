@@ -112,7 +112,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Definition>
             <div className="flex flex-1 flex-wrap items-start justify-between gap-y-2">
               <Link
-                label={`${daoToken.name} ${daoToken.symbol}`}
+                label={`${daoToken.name} (${daoToken.symbol})`}
                 iconRight={IconType.LINK_EXTERNAL}
                 href={daoTokenBlockUrl}
                 description={shortenAddress(daoToken.address)}
