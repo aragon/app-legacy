@@ -71,7 +71,7 @@ export const VersionInfoCard: React.FC<{
       <SettingsCard title={t('setting.versionInfo.title')}>
         <DescriptionPair>
           <Term>{t('setting.versionInfo.labelApp')}</Term>
-          <FlexibleDefinition className="truncate">
+          <FlexibleDefinition className="truncate max-w-60">
             <Link
               label={`Aragon App v${AppVersion}`}
               type="primary"
@@ -82,7 +82,7 @@ export const VersionInfoCard: React.FC<{
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('setting.versionInfo.labelOs')}</Term>
-          <FlexibleDefinition className="truncate">
+          <FlexibleDefinition className="truncate max-w-60">
             <Link
               label={
                 !isLoading ? `Aragon OSx v${versions?.join('.')}` : 'Loading...'
@@ -97,7 +97,7 @@ export const VersionInfoCard: React.FC<{
 
         <DescriptionPair className="border-none">
           <Term>{t('setting.versionInfo.labelGovernance')}</Term>
-          <FlexibleDefinition className="truncate">
+          <FlexibleDefinition className="truncate max-w-60">
             <Link
               label={`${pluginName} v${pluginVersion}`}
               description={shortenAddress(pluginAddress)}
