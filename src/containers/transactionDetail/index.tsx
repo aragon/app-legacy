@@ -23,6 +23,14 @@ import {Proposal} from 'utils/paths';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {Withdraw} from 'utils/types';
 
+// extract the part of proposal id needed for the useproposal hook
+const extractProposalId = (proposalId: string): string => {
+  const parts = proposalId.split('_');
+  const secondPart = parts[1];
+  const truncatedSecondPart = secondPart.replace(/0{62}$/, '');
+  return `${parts[0]}_${truncatedSecondPart}`;
+};
+
 const TransactionDetail: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -36,9 +44,10 @@ const TransactionDetail: React.FC = () => {
 
   const explorerURL = CHAIN_METADATA[network].explorer;
   const transactionUrl = ` ${explorerURL}tx/${transfer.transaction}`;
+
   const proposalId =
     transfer.transferType === TransferTypes.Withdraw
-      ? (transfer as Withdraw).proposalId
+      ? extractProposalId(String((transfer as Withdraw).proposalId))
       : undefined;
 
   const daoExplorerURL = `${explorerURL}address/${address}`;
@@ -46,19 +55,18 @@ const TransactionDetail: React.FC = () => {
 
   const {data: proposal} = useProposal({
     pluginType: plugins?.[0].id as PluginTypes,
-    // id: proposalId?.toString() ?? '',
-    id: '0x3e3c5b75ef8c9f3b0e245395a4e64987b92bef81_0xe', //pieter: set id to debug navigating to proposal
+    id: proposalId?.toString() ?? '',
   });
 
   const handleNavigateToProposal = useCallback(() => {
     const path = generatePath(Proposal, {
       network,
       dao: ensDomain || daoDetails?.address,
-      id: proposal?.id,
+      id: proposalId,
     });
     navigate(path);
     onClose();
-  }, [ensDomain, daoName, navigate, network, onClose, proposalId]);
+  }, [network, ensDomain, daoDetails?.address, proposalId, navigate, onClose]);
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
