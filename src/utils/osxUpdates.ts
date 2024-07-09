@@ -1,5 +1,6 @@
 import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
 import {VersionTag} from '@aragon/sdk-client-common';
+import {normalizeVersion} from './library';
 
 export interface IGetReleaseNotesParams {
   releases?: IReleaseNote[];
@@ -17,7 +18,9 @@ class OsxUpdates {
       ? version.join('.')
       : version;
 
-    return processedVersion ? `Aragon OSx v${processedVersion}` : undefined;
+    return processedVersion
+      ? `Aragon OSx v${normalizeVersion(processedVersion)}`
+      : undefined;
   };
 
   getPluginVersion = (version?: VersionTag): string | undefined => {

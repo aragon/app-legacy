@@ -1286,8 +1286,8 @@ export const walletInWalletList = (
 export function compareVersions(version1: string, version2: string): number {
   if (!version1 || !version2) return 0;
 
-  const v1 = version1.split('.').map(Number);
-  const v2 = version2.split('.').map(Number);
+  const v1 = normalizeVersion(version1).split('.').map(Number);
+  const v2 = normalizeVersion(version2).split('.').map(Number);
 
   for (let i = 0; i < v1.length; i++) {
     if (v1[i] > v2[i]) {
@@ -1298,6 +1298,14 @@ export function compareVersions(version1: string, version2: string): number {
   }
 
   return 0;
+}
+
+export function normalizeVersion(version: string): string {
+  if (version.startsWith('v')) {
+    return version.slice(1);
+  }
+
+  return version;
 }
 
 /**
