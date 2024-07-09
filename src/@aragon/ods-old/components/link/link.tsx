@@ -77,7 +77,7 @@ const StyledLink = styled.a.attrs<StyledLinkProps>(({disabled, type}) => {
 `;
 
 const Label = styled.span.attrs({
-  className: 'ft-text-base font-semibold truncate max-w-xs',
+  className: 'ft-text-base font-semibold truncate',
 })``;
 
 const Description = styled.p.attrs({
