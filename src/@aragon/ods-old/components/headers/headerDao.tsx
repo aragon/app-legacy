@@ -208,10 +208,10 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
               ?.slice(0, DEFAULT_LINKS_SHOWN)
               ?.map(({label, href}, index: number) => (
                 <Link
-                  className="max-w-44"
                   {...{label, href}}
                   external
                   key={index}
+                  className="md:max-w-44"
                 />
               ))}
           </LinksWrapper>
