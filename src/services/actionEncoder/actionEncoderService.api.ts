@@ -5,13 +5,13 @@ import {SupportedNetworks} from 'utils/constants';
 import {Action, SupportedVotingSettings} from 'utils/types';
 
 export interface IEncodeActionParams {
-  client?: Client;
-  pluginClient?: PluginClient;
-  pluginAddress?: string;
+  client: Client;
+  pluginClient: PluginClient;
+  pluginAddress: string;
   actions: Action[];
   t: TFunction;
   network: SupportedNetworks;
-  daoAddress?: string;
+  daoAddress: string;
   versions?: [number, number, number];
   votingSettings?: SupportedVotingSettings | null;
 }

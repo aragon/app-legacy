@@ -1,16 +1,14 @@
-import {UseQueryOptions, useQuery} from '@tanstack/react-query';
-import {actionEncoderQueryKeys} from '../queryKeys';
+import {UseMutationOptions, useMutation} from '@tanstack/react-query';
 import {IEncodeActionParams} from '../actionEncoderService.api';
 import {actionEncoderService} from '../actionEncoderService';
 import {DaoAction} from '@aragon/sdk-client-common';
 
 export const useEncodeActions = (
-  params: IEncodeActionParams,
-  options?: Omit<UseQueryOptions<DaoAction[] | null>, 'queryKey'>
+  options?: UseMutationOptions<DaoAction[], unknown, IEncodeActionParams>
 ) => {
-  return useQuery({
-    queryKey: actionEncoderQueryKeys.encodeActions(params),
-    queryFn: () => actionEncoderService.encodeActions(params),
+  return useMutation({
+    mutationFn: (params: IEncodeActionParams) =>
+      actionEncoderService.encodeActions(params),
     ...options,
   });
 };

@@ -30,9 +30,7 @@ import {
 } from '@aragon/osx-commons-configs';
 
 class ActionEncoderService {
-  encodeActions = async (
-    params: IEncodeActionParams
-  ): Promise<DaoAction[] | null> => {
+  encodeActions = async (params: IEncodeActionParams): Promise<DaoAction[]> => {
     const {
       actions,
       network,
@@ -44,15 +42,6 @@ class ActionEncoderService {
       versions,
       t,
     } = params;
-
-    if (
-      client == null ||
-      pluginClient == null ||
-      pluginAddress == null ||
-      daoAddress == null
-    ) {
-      return null;
-    }
 
     const validActions = getNonEmptyActions(
       actions,

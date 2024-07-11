@@ -1,6 +1,6 @@
 import {ModalProps} from '@aragon/ods-old';
 import {TransactionDialog} from 'containers/transactionDialog';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {CreateProposalDialogSteps} from './createProposalDialogSteps';
 import {useTranslation} from 'react-i18next';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -29,6 +29,7 @@ import {toDisplayEns} from 'utils/library';
 import {CreateProposalDialogGaslessSteps} from './createProposalDialogGaslessSteps';
 import {useCreateVocdoniProposalTransaction} from './hooks/useCreateVocdoniProposalTransaction';
 import {ICreateProposalParams} from './utils/createProposalUtils';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 
 export interface ICreateProposalDialogProps extends ModalProps {}
 
@@ -59,18 +60,11 @@ export const CreateProposalDialog: React.FC<
   const pluginClient = usePluginClient(pluginType);
   const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
 
+  const {data: versions} = useProtocolVersion(daoDetails?.address as string);
+
   const [metadataCid, setMetadataCid] = useState<string>();
 
-  const {data: encodedActions} = useEncodeActions({
-    actions,
-    network,
-    pluginClient,
-    votingSettings,
-    client,
-    pluginAddress,
-    t,
-    daoAddress: daoDetails?.address,
-  });
+  const {data: encodedActions, mutate: encodeActions} = useEncodeActions();
 
   const createProposalParams = createProposalUtils.buildCreateProposalParams({
     values: formValues as CreateProposalFormData,
@@ -131,6 +125,33 @@ export const CreateProposalDialog: React.FC<
     navigate(proposalPath);
     onClose?.();
   };
+
+  useEffect(() => {
+    if (client && pluginClient && pluginAddress && daoDetails) {
+      encodeActions({
+        actions,
+        network,
+        pluginClient,
+        votingSettings,
+        client,
+        pluginAddress,
+        t,
+        daoAddress: daoDetails?.address,
+        versions,
+      });
+    }
+  }, [
+    client,
+    pluginClient,
+    encodeActions,
+    actions,
+    network,
+    votingSettings,
+    pluginAddress,
+    t,
+    daoDetails,
+    versions,
+  ]);
 
   return (
     <TransactionDialog
