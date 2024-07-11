@@ -249,7 +249,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
         <DescriptionPair className="border-none">
           <Term>{t('labels.links')}</Term>
           <Definition>
-            <div className="relative flex xl:max-w-sm flex-col space-y-3">
+            <div className="relative flex flex-col space-y-3 xl:max-w-sm">
               {daoDetails.metadata.links.slice(0, 3).map(({name, url}) => (
                 <Link
                   key={url}
