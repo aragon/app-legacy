@@ -37,7 +37,7 @@ async function fetchPluginVersions(
     'fetchAvailablePlugins: client is not defined'
   );
 
-  const data = await client.methods.getPlugin(pluginRepoAddress);
+  const data = await client.methods.getPlugin(pluginRepoAddress, false);
   return data;
 }
 

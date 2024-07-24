@@ -59,12 +59,6 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
       return;
     }
 
-    const ipfsNodes = [
-      {
-        url: aragonGateway.buildIpfsUrl(network)!,
-        headers: {'X-API-KEY': import.meta.env.VITE_GATEWAY_IPFS_API_KEY},
-      },
-    ];
     const daoFactoryAddress =
       getLatestNetworkDeployment(translatedNetwork)?.DAOFactory.address ?? '';
 
@@ -73,7 +67,7 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
       network: translatedNetwork,
       signer: signer ?? undefined,
       web3Providers: aragonGateway.buildRpcUrl(network)!,
-      ipfsNodes,
+      ipfsNodes: [],
       graphqlNodes: [{url: SUBGRAPH_API_URL[network]!}],
     };
 
