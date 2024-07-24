@@ -68,22 +68,6 @@ class AragonGateway {
     return rpcUrl;
   };
 
-  buildIpfsUrl = (
-    chainIdOrNetwork: number | SupportedNetworks
-  ): string | null => {
-    const network = this.parseNetwork(chainIdOrNetwork);
-
-    if (network == null || network === 'unsupported') {
-      return null;
-    }
-
-    const {isTestnet} = CHAIN_METADATA[network];
-    const ipfsEnv = isTestnet ? 'test' : 'prod';
-    const ipfsUrl = `${this.baseUrl}/v${this.ipfsVersion}/ipfs/${ipfsEnv}/api/v0`;
-
-    return ipfsUrl;
-  };
-
   private parseNetwork = (
     chainIdOrNetwork: number | SupportedNetworks
   ): SupportedNetworks | undefined => {
