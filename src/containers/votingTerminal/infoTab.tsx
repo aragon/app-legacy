@@ -166,7 +166,7 @@ const InfoTab: React.FC<Props> = ({
         </InfoLine>
         <InfoLine className="items-start gap-x-4">
           <p className="ft-text-base">{t('votingTerminal.endDate')}</p>
-          <EndDateWrapper className="w-[213px]">
+          <EndDateWrapper>
             <Strong>{endDate}</Strong>
             {preciseEndDate && (
               <div className="flex justify-end gap-x-2">
