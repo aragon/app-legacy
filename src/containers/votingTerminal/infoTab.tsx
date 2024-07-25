@@ -49,7 +49,6 @@ const InfoTab: React.FC<Props> = ({
   preciseEndDate,
 }) => {
   const {t} = useTranslation();
-  const isMultisigProposal = minApproval != null && minApproval !== 0;
 
   return (
     <>
@@ -168,21 +167,13 @@ const InfoTab: React.FC<Props> = ({
         <InfoLine className="items-start gap-x-4">
           <p className="ft-text-base">{t('votingTerminal.endDate')}</p>
           <EndDateWrapper className="w-[213px]">
-            {isMultisigProposal ? (
-              <p className="text-right font-semibold text-neutral-800 ft-text-base">
-                {t('votingTerminal.multisig.endDescription')}
-              </p>
-            ) : (
-              <>
-                <Strong>{endDate}</Strong>
-                {preciseEndDate && (
-                  <div className="flex justify-end gap-x-2">
-                    <p className="text-right text-neutral-800 ft-text-sm">
-                      {preciseEndDate}
-                    </p>
-                  </div>
-                )}
-              </>
+            <Strong>{endDate}</Strong>
+            {preciseEndDate && (
+              <div className="flex justify-end gap-x-2">
+                <p className="text-right text-neutral-800 ft-text-sm">
+                  {preciseEndDate}
+                </p>
+              </div>
             )}
           </EndDateWrapper>
         </InfoLine>
