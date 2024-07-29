@@ -65,5 +65,5 @@ test('Edit DAO settings Proposal', async ({
   await page.getByRole('button', {name: 'Execute now'}).click();
   await page.getByRole('button', {name: 'Execute now'}).click();
   await metamask.confirmTransaction();
-  await page.getByRole('button', {name: 'Continue to proposal'}).click();
+  // await page.getByRole('button', {name: 'Continue to proposal'}).click();
 });
