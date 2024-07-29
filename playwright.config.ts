@@ -51,24 +51,28 @@ export default defineConfig({
     },
 
     /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+    {
+      name: 'Mobile Chrome',
+      use: {...devices['Pixel 5']},
+      timeout: 120000, // Set a timeout of 120 seconds for each test in this project
+    },
+    {
+      name: 'Mobile Safari',
+      use: {...devices['iPhone 12']},
+      timeout: 120000, // Set a timeout of 120 seconds for each test in this project
+    },
 
     /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    {
+      name: 'Microsoft Edge',
+      use: {...devices['Desktop Edge'], channel: 'msedge'},
+      timeout: 120000, // Set a timeout of 120 seconds for each test in this project
+    },
+    {
+      name: 'Google Chrome',
+      use: {...devices['Desktop Chrome'], channel: 'chrome'},
+      timeout: 120000, // Set a timeout of 120 seconds for each test in this project
+    },
   ],
 
   /* Run your local dev server before starting the tests */
