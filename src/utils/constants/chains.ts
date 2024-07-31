@@ -164,7 +164,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     id: 42161,
     name: i18n.t('explore.modal.filterDAOs.label.arbitrum'),
     domain: 'L2 Blockchain',
-    logo: 'https://bridge.arbitrum.io/logo.png',
+    logo: 'https://docs.arbitrum.io/img/logo.svg',
     explorer: 'https://arbiscan.io/',
     explorerName: 'Arbiscan',
     isTestnet: false,
