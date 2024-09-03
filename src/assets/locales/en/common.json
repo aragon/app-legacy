@@ -1497,7 +1497,7 @@
       "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
     },
     "ctaMain": {
-      "wrappedLabel": "Join the DAO"
+      "wrappedLabel": "Wrap / unwrap tokens"
     },
     "actionItemDropdown": {
       "optionCopyAddress": "Copy address",
