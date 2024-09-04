@@ -58,7 +58,7 @@ const DaoMetadata: React.FC = () => {
             <Dt>{t('labels.summary')}</Dt>
             <Dd>{daoSummary}</Dd>
           </Dl>
-          {links[0].url !== '' && (
+          {links && links.length > 0 && links[0].url && (
             <Dl>
               <Dt>{t('labels.links')}</Dt>
               <Dd>
