@@ -57,10 +57,6 @@ export const CreateDaoDialog: React.FC<ICreateDaoDialogProps> = props => {
     const daoPath = generatePath(Dashboard, daoPathParams);
     navigate(daoPath);
     onClose?.();
-
-    if (network === 'ethereum') {
-      open('poapClaim');
-    }
   };
 
   return (
