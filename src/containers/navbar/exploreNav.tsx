@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import {ButtonWallet, useScreen} from '@aragon/ods-old';
-import {Button} from '@aragon/ods';
+import {Button, Switch} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useWallet} from 'hooks/useWallet';
@@ -10,12 +10,14 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {Container, GridLayout} from 'components/layout';
 import {trackEvent} from '../../services/analytics';
 import {useNavigate} from 'react-router-dom';
-
+import {changeLanguage} from '../../../i18n.config';
 const ExploreNav: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensName, ensAvatarUrl, isConnected, methods} = useWallet();
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
+
+  const [checked, setChecked] = useState(false);
 
   const path = t('logo.linkURL');
   const navigate = useNavigate();
@@ -26,6 +28,11 @@ const ExploreNav: React.FC = () => {
       navigate('/create');
       return;
     }
+  };
+
+  const changeLanguage2 = () => {
+    setChecked(!checked);
+    changeLanguage(!checked ? 'en' : 'zh');
   };
 
   const handleWalletButtonClick = () => {
@@ -79,6 +86,11 @@ const ExploreNav: React.FC = () => {
                     ? ensName || address
                     : t('navButtons.connectWallet')
                 }
+              />
+              <Switch
+                checked={checked}
+                onCheckedChanged={changeLanguage2}
+                label="文/EN"
               />
             </ActionsWrapper>
           </RightContent>
