@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {Breadcrumb, ButtonWallet} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useReactiveVar} from '@apollo/client';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -25,7 +25,8 @@ type DesktopNavProp = {
   processLabel?: string;
   onDaoSelect: () => void;
   onWalletClick: () => void;
-  onFeedbackClick: () => void;
+  // onFeedbackClick: () => void;
+  onCreateDaoClick: () => void;
 };
 
 const DesktopNav: React.FC<DesktopNavProp> = props => {
@@ -120,10 +121,9 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
             className="w-full md:w-max"
             size="lg"
             variant="tertiary"
-            iconRight={IconType.FEEDBACK}
-            onClick={props.onFeedbackClick}
+            onClick={props.onCreateDaoClick}
           >
-            {t('navButtons.giveFeedback')}
+            {t('createDAO.title')}
           </Button>
 
           <ButtonWallet

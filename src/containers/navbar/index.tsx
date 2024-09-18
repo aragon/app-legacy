@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from 'react';
-import {matchRoutes, useLocation} from 'react-router-dom';
+import {matchRoutes, useLocation, useNavigate} from 'react-router-dom';
 
 import {ProcessType} from 'containers/exitProcessMenu';
 import {selectedDaoVar} from 'context/apolloClient';
@@ -26,6 +26,7 @@ import {
 import {i18n} from '../../../i18n.config';
 import DesktopNav from './desktop';
 import MobileNav from './mobile';
+import {useWallet} from '../../hooks/useWallet';
 
 const Navbar: React.FC = () => {
   const {open} = useGlobalModalContext();
@@ -35,7 +36,8 @@ const Navbar: React.FC = () => {
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
   const {data: daoDetails} = useDaoDetailsQuery();
-
+  const navigate = useNavigate();
+  const {isConnected} = useWallet();
   const processInfo = useMemo(() => {
     const matches = matchRoutes(processPaths, pathname);
     if (matches) return getProcessInfo(matches[0].route.path) as ProcessInfo;
@@ -68,8 +70,15 @@ const Navbar: React.FC = () => {
     open('wallet');
   };
 
-  const handleFeedbackButtonClick = () => {
-    window.open(FEEDBACK_FORM, '_blank');
+  // const handleFeedbackButtonClick = () => {
+  //   window.open(FEEDBACK_FORM, '_blank');
+  // };
+  const handleCreateDaoButtonClick = () => {
+    // window.open(FEEDBACK_FORM, '_blank');
+    if (isConnected) {
+      navigate('/create');
+      return;
+    }
   };
 
   if (isDesktop) {
@@ -81,7 +90,8 @@ const Navbar: React.FC = () => {
         processType={processInfo?.processType}
         onDaoSelect={handleOnDaoSelect}
         onWalletClick={handleWalletButtonClick}
-        onFeedbackClick={handleFeedbackButtonClick}
+        onCreateDaoClick={handleCreateDaoButtonClick}
+        // onFeedbackClick={handleFeedbackButtonClick}
       />
     );
   }
@@ -89,7 +99,8 @@ const Navbar: React.FC = () => {
     <MobileNav
       onDaoSelect={handleOnDaoSelect}
       onWalletClick={handleWalletButtonClick}
-      onFeedbackClick={handleFeedbackButtonClick}
+      onCreateDaoClick={handleCreateDaoButtonClick}
+      // onFeedbackClick={handleFeedbackButtonClick}
     />
   );
 };

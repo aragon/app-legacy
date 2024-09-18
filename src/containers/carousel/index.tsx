@@ -21,6 +21,7 @@ const Carousel: React.FC = () => {
   // when the rest of CTAs are enabled
   const handleCTAClick = useCallback(
     (path: string) => {
+      console.log('clicked', path);
       if (path === '/create') {
         trackEvent('landing_createDaoBtn_clicked');
       }

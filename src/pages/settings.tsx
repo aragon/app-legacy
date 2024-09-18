@@ -87,14 +87,14 @@ export const Settings: React.FC = () => {
       </div>
 
       {/* Version Info */}
-      {daoUpdateEnabled && (
-        <VersionInfoCard
-          pluginAddress={daoDetails.plugins[0].instanceAddress}
-          pluginType={daoDetails.plugins[0].id as PluginTypes}
-          pluginVersion={`${daoDetails.plugins[0].release}.${daoDetails.plugins[0].build}`}
-          daoAddress={daoDetails.address}
-        />
-      )}
+      {/*{daoUpdateEnabled && (*/}
+      {/*  <VersionInfoCard*/}
+      {/*    pluginAddress={daoDetails.plugins[0].instanceAddress}*/}
+      {/*    pluginType={daoDetails.plugins[0].id as PluginTypes}*/}
+      {/*    pluginVersion={`${daoDetails.plugins[0].release}.${daoDetails.plugins[0].build}`}*/}
+      {/*    daoAddress={daoDetails.address}*/}
+      {/*  />*/}
+      {/*)}*/}
 
       {/* Edit */}
       <div
@@ -129,6 +129,8 @@ const styles = {
 
 const DEFAULT_LINES_SHOWN = 3;
 const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
+  console.log('daoDetails.metadata=' + daoDetails.metadata);
+  console.log('daoDetails.metadata.links=' + daoDetails.metadata.links);
   const {t} = useTranslation();
   const {network, isL2Network} = useNetwork();
 

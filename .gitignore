@@ -1,39 +1,31 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
-node_modules
+/node_modules
+/.pnp
+.pnp.js
 
 # testing
-coverage
-.cache-synpress
+/coverage
 
 # production
-build
-dist
-*.local
-.cache
+/dist
 
 # misc
-.vscode
-.idea
-.yarn
-.yarnrc.yml
 .DS_Store
-*.pem
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+/.nx
+/.nx/cache
+/.vscode/*
+!/.vscode/extensions.json
+.idea
 
-# debug
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env
-
-# generated
-.bin
-stats.html
-
-# e2e tests
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
+# Optional eslint cache
+.eslintcache

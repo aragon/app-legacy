@@ -14,7 +14,8 @@ import MobileMenu from './mobileMenu';
 type MobileNavProps = {
   onDaoSelect: () => void;
   onWalletClick: () => void;
-  onFeedbackClick: () => void;
+  // onFeedbackClick: () => void;
+  onCreateDaoClick: () => void;
 };
 
 const MobileNav: React.FC<MobileNavProps> = props => {
@@ -69,7 +70,7 @@ const MobileNav: React.FC<MobileNavProps> = props => {
           </FlexOne>
         </Menu>
       </Container>
-      <MobileMenu onFeedbackClick={props.onFeedbackClick} />
+      <MobileMenu onCreateDaoClick={props.onCreateDaoClick} />
     </>
   );
 };

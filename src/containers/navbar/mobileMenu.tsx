@@ -13,7 +13,8 @@ import {usePrivacyContext} from 'context/privacyContext';
 import {toDisplayEns} from 'utils/library';
 
 type MobileNavMenuProps = {
-  onFeedbackClick: () => void;
+  // onFeedbackClick: () => void;
+  onCreateDaoClick: () => void;
 };
 
 const MobileNavMenu = (props: MobileNavMenuProps) => {
@@ -46,10 +47,10 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
             className="w-full"
             size="lg"
             variant="tertiary"
-            iconRight={IconType.FEEDBACK}
-            onClick={props.onFeedbackClick}
+            onClick={props.onCreateDaoClick}
           >
-            {t('navButtons.giveFeedback')}
+            {/*{t('navButtons.giveFeedback')}*/}
+            {t('createDAO.title')}
           </Button>
         </div>
       </div>

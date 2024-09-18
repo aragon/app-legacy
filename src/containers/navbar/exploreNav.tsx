@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import {ButtonWallet, useScreen} from '@aragon/ods-old';
-import {Button, IconType} from '@aragon/ods';
+import {Button} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useWallet} from 'hooks/useWallet';
 import Logo from 'assets/images/logo.svg';
 import {useGlobalModalContext} from 'context/globalModals';
 import {Container, GridLayout} from 'components/layout';
-import {FEEDBACK_FORM} from 'utils/constants';
+import {trackEvent} from '../../services/analytics';
+import {useNavigate} from 'react-router-dom';
 
 const ExploreNav: React.FC = () => {
   const {t} = useTranslation();
@@ -17,9 +18,14 @@ const ExploreNav: React.FC = () => {
   const {isDesktop} = useScreen();
 
   const path = t('logo.linkURL');
-
-  const handleFeedbackButtonClick = () => {
-    window.open(FEEDBACK_FORM, '_blank');
+  const navigate = useNavigate();
+  const createWalletButtonClick = () => {
+    console.log('create wallet button clicked');
+    trackEvent('landing_createDaoBtn_clicked');
+    if (isConnected) {
+      navigate('/create');
+      return;
+    }
   };
 
   const handleWalletButtonClick = () => {
@@ -51,18 +57,18 @@ const ExploreNav: React.FC = () => {
                 <Button
                   size="lg"
                   variant="tertiary"
-                  iconRight={IconType.FEEDBACK}
-                  onClick={handleFeedbackButtonClick}
+                  onClick={createWalletButtonClick}
                 >
-                  {t('navButtons.giveFeedback')}
+                  {t('createDAO.title')}
                 </Button>
               ) : (
                 <Button
                   size="lg"
                   variant="tertiary"
-                  iconLeft={IconType.FEEDBACK}
-                  onClick={handleFeedbackButtonClick}
-                />
+                  onClick={createWalletButtonClick}
+                >
+                  {t('createDAO.title')}
+                </Button>
               )}
               <ButtonWallet
                 src={ensAvatarUrl || address}

@@ -11,8 +11,6 @@ import {
 import {GridLayout} from 'components/layout';
 import ProtectedRoute from 'components/protectedRoute';
 import {Loading} from 'components/temporary/loading';
-import ExploreFooter from 'containers/exploreFooter';
-import Footer from 'containers/footer';
 import Navbar from 'containers/navbar';
 import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
 import ExploreNav from 'containers/navbar/exploreNav';
@@ -187,7 +185,7 @@ const ExploreWrapper: React.FC = () => (
       <ExploreNav />
       <Outlet />
     </div>
-    <ExploreFooter />
+    {/*<ExploreFooter />*/}
   </>
 );
 
@@ -212,7 +210,7 @@ const DaoWrapper: React.FC = () => {
           {isOpen && <TransactionDetail />}
         </GridLayout>
       </div>
-      <Footer />
+      {/*<Footer />*/}
     </GovTokensWrappingProvider>
   );
 };
