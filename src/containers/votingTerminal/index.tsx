@@ -176,12 +176,18 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   ]);
 
   const filteredVoters = useMemo(() => {
+    // Check if it's a multisig proposal
+    const votersToFilter = isMultisigProposal
+      ? displayedVoters.filter(voter => voter.option === 'approved')
+      : displayedVoters;
+
+    // Apply search query filtering (if any)
     return query === ''
-      ? displayedVoters
-      : displayedVoters.filter(voter =>
+      ? votersToFilter
+      : votersToFilter.filter(voter =>
           voter.wallet.includes(query.toLowerCase())
         );
-  }, [displayedVoters, query]);
+  }, [displayedVoters, query, isMultisigProposal]);
 
   const minimumReached = useMemo(() => {
     if (isMultisigProposal) {
