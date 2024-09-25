@@ -8,7 +8,6 @@ import {useProviders} from 'context/providers';
 import {useEffect, useState} from 'react';
 import {featureFlags} from 'utils/featureFlags';
 import {PluginTypes} from './usePluginClient';
-import WalletConnect from '../assets/images/walletConnect.svg';
 import {
   isGaslessVotingSettings,
   useVotingSettings,
@@ -88,7 +87,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       title: t('AddActionModal.connectdAppsTitle'),
       subtitle: t('AddActionModal.connectdAppsSubtitle'),
       isReuseable: true,
-      icon: WalletConnect,
+      wcLogo: true,
       isDisabled:
         featureFlags.getValue('VITE_FEATURE_FLAG_DAO_WALLET_CONNECT') ===
         'false',

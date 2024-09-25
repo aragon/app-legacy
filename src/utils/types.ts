@@ -245,7 +245,7 @@ export type ActionParameter = {
   /**
    * Optional icon to be shown inline with title
    */
-  icon?: string;
+  wcLogo?: boolean;
   /**
    * Whether an action can be used several times in a proposal. Currently
    * actions are either limited to 1 or not limited at all. This might need to
