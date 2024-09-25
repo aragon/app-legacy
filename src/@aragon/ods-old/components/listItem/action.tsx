@@ -25,6 +25,7 @@ export type ListItemActionProps = CustomButtonProps & {
    */
   title: string;
   tag?: ITagProps;
+  icon?: string;
   /**
    * Normal font, small. Optional. Displayed below the title, left aligned
    */
@@ -42,10 +43,12 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
   iconLeft,
   iconRight,
   tag,
+  icon,
   mode = 'default',
   truncateText = false,
   ...props
 }) => {
+  console.log('icon', icon);
   return (
     <Container {...props} mode={mode} data-testid="listItem-action">
       <LeftContent>
@@ -53,7 +56,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
         {/* This could be done with label. However, I can't get the label's text
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-x-1 group text-primary-400 hover:text-critical-500">
             <p
               className={`font-semibold ft-text-base ${
                 truncateText ? 'truncate' : ''
@@ -61,7 +64,9 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
             >
               {title}
             </p>
+
             {tag && <Tag {...tag} />}
+            {icon && <img className="h-5 text-primary-400" src={icon} />}
           </div>
           {subtitle && (
             <p

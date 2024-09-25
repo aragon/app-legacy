@@ -1347,7 +1347,8 @@
       }
     },
     "dappConnect": {
-      "desc": "You can interact with any dApp that supports interacting with DAOs and add actions to your proposal.",
+      "desc1": "Powered by WalletConnect",
+      "desc2": "With dAppConnect, you can add any dApp that supports DAO interactions and compose new actions for your proposal.",
       "validation": {
         "codeInputHelp": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
         "modalTitle": "Connect new dApp",

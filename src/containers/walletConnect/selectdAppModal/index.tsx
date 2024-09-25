@@ -10,6 +10,7 @@ import ModalHeader from 'components/modalHeader';
 import useScreen from 'hooks/useScreen';
 import {parseWCIconUrl} from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
+import WalletConnect from '../../../assets/images/WalletConnectIcon.svg';
 
 type Props = {
   isOpen: boolean;
@@ -45,8 +46,14 @@ const SelectdAppModal: React.FC<Props> = props => {
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
       />
       <Content>
-        <div className="flex flex-col gap-2">
-          <Description>{t('modal.dappConnect.desc')}</Description>
+        <div className="flex flex-col gap-3">
+          <img src={WalletConnect} alt="Wallet Connect" className="h-[50px]" />
+          <Description className="text-center mb-2">
+            {t('modal.dappConnect.desc1')}
+          </Description>
+          <Description className="text-center">
+            {t('modal.dappConnect.desc2')}
+          </Description>
           {sessions.length > 0 && (
             <Label>{t('modal.dappConnect.detaildApp.listTitle')}</Label>
           )}
