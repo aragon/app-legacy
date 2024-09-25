@@ -56,7 +56,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
         {/* This could be done with label. However, I can't get the label's text
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
-          <div className="flex items-center gap-x-1 group text-primary-400 hover:text-critical-500">
+          <div className="group flex items-center gap-x-1 text-primary-400 hover:text-critical-500">
             <p
               className={`font-semibold ft-text-base ${
                 truncateText ? 'truncate' : ''

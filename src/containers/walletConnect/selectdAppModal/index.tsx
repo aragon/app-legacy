@@ -48,7 +48,7 @@ const SelectdAppModal: React.FC<Props> = props => {
       <Content>
         <div className="flex flex-col gap-3">
           <img src={WalletConnect} alt="Wallet Connect" className="h-[50px]" />
-          <Description className="text-center mb-2">
+          <Description className="mb-2 text-center">
             {t('modal.dappConnect.desc1')}
           </Description>
           <Description className="text-center">
