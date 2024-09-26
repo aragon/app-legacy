@@ -46,7 +46,7 @@ const SelectdAppModal: React.FC<Props> = props => {
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
       />
       <Content>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-y-3">
           <img src={WalletConnect} alt="Wallet Connect" className="h-[50px]" />
           <Description className="mb-2 text-center">
             {t('modal.dappConnect.desc1')}

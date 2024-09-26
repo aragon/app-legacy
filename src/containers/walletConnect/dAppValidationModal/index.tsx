@@ -19,6 +19,7 @@ import {TransactionState as ConnectionState} from 'utils/constants/misc';
 import {handleClipboardActions} from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
 import {METADATA_NAME_ERROR} from '../walletConnectProvider/useWalletConnectInterceptor';
+import WalletConnect from '../../../assets/images/WalletConnectIcon.svg';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -175,7 +176,15 @@ const DAppValidationModal: React.FC<Props> = props => {
       />
       <Content>
         <FormGroup>
-          <div className="flex flex-col gap-y-1">
+          <div className="flex flex-col gap-y-3">
+            <img
+              src={WalletConnect}
+              alt="Wallet Connect"
+              className="h-[50px]"
+            />
+            <Description className="text-center">
+              {t('modal.dappConnect.desc1')}
+            </Description>
             <p className="font-semibold text-neutral-800 ft-text-base">
               {t('modal.dappConnect.validation.codeInputLabel')}
             </p>
@@ -273,4 +282,8 @@ const FormGroup = styled.div.attrs({className: 'space-y-3'})``;
 
 const AlertWrapper = styled.div.attrs({
   className: 'mt-3 flex justify-center',
+})``;
+
+const Description = styled.p.attrs({
+  className: 'ft-text-sm text-neutral-600',
 })``;

@@ -24,6 +24,9 @@ export type ListItemActionProps = CustomButtonProps & {
    */
   title: string;
   tag?: ITagProps;
+  /**
+   * WalletConnect logo. Optional. Displayed inline with the title.
+   */
   wcLogo?: boolean;
   /**
    * Normal font, small. Optional. Displayed below the title, left aligned
