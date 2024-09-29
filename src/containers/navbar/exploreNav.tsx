@@ -1,25 +1,25 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {ButtonWallet, useScreen} from '@aragon/ods-old';
-import {Button, Switch} from '@aragon/ods';
+import {Button} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useWallet} from 'hooks/useWallet';
-import Logo from 'assets/images/logo.svg';
+// import Logo from 'assets/images/logo.svg';
 import {useGlobalModalContext} from 'context/globalModals';
 import {Container, GridLayout} from 'components/layout';
 import {trackEvent} from '../../services/analytics';
 import {useNavigate} from 'react-router-dom';
-import {changeLanguage} from '../../../i18n.config';
+// import {changeLanguage} from '../../../i18n.config';
 const ExploreNav: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensName, ensAvatarUrl, isConnected, methods} = useWallet();
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
 
-  const [checked, setChecked] = useState(false);
+  // const [checked, setChecked] = useState(false);
 
-  const path = t('logo.linkURL');
+  // const path = t('logo.linkURL');
   const navigate = useNavigate();
   const createWalletButtonClick = () => {
     console.log('create wallet button clicked');
@@ -30,10 +30,10 @@ const ExploreNav: React.FC = () => {
     }
   };
 
-  const changeLanguage2 = () => {
-    setChecked(!checked);
-    changeLanguage(!checked ? 'en' : 'zh');
-  };
+  // const changeLanguage2 = () => {
+  //   setChecked(!checked);
+  //   changeLanguage(!checked ? 'en' : 'zh');
+  // };
 
   const handleWalletButtonClick = () => {
     if (isConnected) {
@@ -53,10 +53,10 @@ const ExploreNav: React.FC = () => {
       <Menu>
         <GridLayout>
           <LeftContent>
-            <LogoContainer
+            {/* <LogoContainer
               src={Logo}
               onClick={() => window.open(path, '_blank')}
-            />
+            /> */}
           </LeftContent>
           <RightContent>
             <ActionsWrapper>
@@ -87,11 +87,11 @@ const ExploreNav: React.FC = () => {
                     : t('navButtons.connectWallet')
                 }
               />
-              <Switch
+              {/* <Switch
                 checked={checked}
                 onCheckedChanged={changeLanguage2}
                 label="文/EN"
-              />
+              /> */}
             </ActionsWrapper>
           </RightContent>
         </GridLayout>
@@ -110,9 +110,9 @@ const LeftContent = styled.div.attrs({
   className: 'col-span-3 md:col-span-2 flex items-center',
 })``;
 
-const LogoContainer = styled.img.attrs({
-  className: 'h-8 cursor-pointer',
-})``;
+// const LogoContainer = styled.img.attrs({
+//   className: 'h-8 cursor-pointer',
+// })``;
 
 const RightContent = styled.div.attrs({
   className:

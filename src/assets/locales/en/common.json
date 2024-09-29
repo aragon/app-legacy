@@ -15,15 +15,15 @@
     "exploreLinkLabel": "Explore",
     "exploreLinkURL": "/",
     "learnLinkLabel": "Learn",
-    "learnLinkURL": "https://aragon.org/education-portal",
+    "learnLinkURL": "https://cddao.com/education-portal",
     "buildLinkLabel": "Build",
     "buildLinkURL": "https://devs.aragon.org/",
     "helpLinkLabel": "Help",
     "helpLinkURL": "https://discord.gg/AhzsGmh7fK",
     "termsLinkLabel": "Terms of service",
-    "termsLinkURL": "https://aragon.org/terms-and-conditions",
+    "termsLinkURL": "https://cddao.com/terms-and-conditions",
     "privacyLinkLabel": "Privacy",
-    "privacyLinkURL": "https://aragon.org/privacy-policy",
+    "privacyLinkURL": "https://cddao.com/privacy-policy",
     "members": "Members",
     "guide": "Learn more"
   },
@@ -271,7 +271,7 @@
     "emptyState": {
       "title": "Make your first deposit",
       "description": "Every community needs capital to motivate and operate. Get things moving by making your first treasury deposit.",
-      "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
+      "descriptionLinkURL": "https://cddao.com/how-to/manage-a-dao-treasury",
       "buttonLabel": "Deposit funds"
     },
     "modalExport": {
@@ -294,7 +294,7 @@
       "desc": "To add funds to your DAO, make a deposit. Learn more about it {{link}}.",
       "title": "No tokens found",
       "descLinkLabel": "in this guide",
-      "descLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury"
+      "descLinkURL": "https://cddao.com/how-to/manage-a-dao-treasury"
     }
   },
   "governance": {
@@ -305,7 +305,7 @@
     "emptyState": {
       "title": "Create your first proposal",
       "description": "What's the first thing your community needs to decide? Get your community involved in the decision-making process.",
-      "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
+      "descriptionLinkURL": "https://cddao.com/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
     "proposals": {
       "publishedBy": "Published by",
@@ -677,7 +677,7 @@
       "label": "Step 1",
       "title": "Select blockchain",
       "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
-      "descriptionLinkURL": "https://aragon.org/how-to/choose-the-right-blockchain-for-your-dao"
+      "descriptionLinkURL": "https://cddao.com/how-to/choose-the-right-blockchain-for-your-dao"
     },
     "step2": {
       "label": "Step 2",
@@ -687,7 +687,7 @@
       "logoSubtitle": "JPG, PNG or GIF of no more than 3MB. We recommend 1024x1024px.",
       "descriptionSubtitle": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
       "linksSubtitle": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers.",
-      "descriptionLinkURL": "https://aragon.org/how-to/build-a-dao-brand-identity",
+      "descriptionLinkURL": "https://cddao.com/how-to/build-a-dao-brand-identity",
       "ensNameSubtitle": "This will be your DAO’s unique ENS subdomain, created automatically for you. Lowercase letters, numbers, and the dash '-' are all acceptable characters; ideally, the character count should be under 128."
     },
     "step3": {
@@ -720,7 +720,7 @@
         "verificationAlertCriticalTitle": "Not supported token",
         "verificationAlertWarningDescription": "This token must be wrapped by its holders to participate in your DAO's governance.\n\nToken holders can wrap their tokens within the Aragon App at any time to receive equivalent governance tokens (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}). These can then be used to vote on proposals in your DAO. They can unwrap at any time to receive their original tokens.",
         "verificationAlertCriticalDescription": "This token is not supported in the Aragon App. Try a different token or specify that you don't have a governance token yet.",
-        "descriptionLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+        "descriptionLinkURL": "https://cddao.com/how-to/import-existing-tokens",
         "verificationLabelBlockchain": "Blockchain",
         "verificationAlertCriticalBlockchainTitle": "Incorrect blockchain",
         "verificationAlertCriticalBlockchainDescription": "This token is deployed on a different blockchain than the one you chose for your DAO. Use a token deployed on {{blockchainName}}.",
@@ -755,7 +755,7 @@
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
       "createTokenHelptext": "Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, {{link}}",
       "createTokenHelptextLinkLabel": "read this guide",
-      "createTokenHelptextLinkURL": "https://aragon.org/how-to/mint-dao-governance-tokens",
+      "createTokenHelptextLinkURL": "https://cddao.com/how-to/mint-dao-governance-tokens",
       "membership": "Who can participate in governance?",
       "eligibility": {
         "optionTitle": "Who is eligible?",
@@ -777,9 +777,9 @@
         }
       },
       "membershipSubtitle": "You can always start with a multisig and mint tokens later.",
-      "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
+      "descriptionLinkURL": "https://cddao.com/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
-      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
+      "distributeTokensHelpertextLinkURL": "https://cddao.com/how-to/distribute-a-dao-governance-token",
       "blockChainVoting": {
         "label": "On what blockchain will community voting take place?",
         "optionOnchainLabel": "{{blockchainName}}",
@@ -816,7 +816,7 @@
         "1AddressOnly": "The approval threshold can’t be changed because there is only 1 address."
       },
       "descriptionLinkLabel": "this guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
+      "descriptionLinkURL": "https://cddao.com/how-to/governance-ii-setting-dao-governance-thresholds",
       "shortTitle": "Select governance settings",
       "wrappedReferenceTitle": "Reference values",
       "wrappedReferenceDesc": "The amount of {{gTokenSymbol}} that must vote to meet minimum participation depends on the amount of {{tokenSymbol}} that is wrapped. The values on this screen with an asterisk are for reference only. You can evaluate different scenarios by adjusting the following value. Learn more about it {{link}}.",
@@ -828,7 +828,7 @@
       "wrappedReferenceMinParticipation": "Minimum participation",
       "wrappedReferenceMinParticipationDesc": "{{minParticipationValue}} of {{gTokenSymbol}} total supply",
       "wrappedReferenceDescLinkLabel": "in our guide",
-      "wrappedReferenceDescLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+      "wrappedReferenceDescLinkURL": "https://cddao.com/how-to/import-existing-tokens",
       "wrappedReferenceValueLabel": "{{tokenSymbol}}",
       "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
     },
@@ -1036,7 +1036,7 @@
     },
     "learn": {
       "linkLabel": "Learn about DAOs",
-      "linkURL": "https://aragon.org/education-portal"
+      "linkURL": "https://cddao.com/education-portal"
     },
     "toggleFilter": {
       "Favourites": "Following",
@@ -1113,7 +1113,7 @@
     "rejectAllCookies": "Reject all",
     "acceptSelectedCookies": "Accept",
     "content": "We use cookies and similar technologies to improve your experience, enable certain features, and analyze our application usage. You may opt-out of cookies here. Learn more in our {{link}}.",
-    "contentLinkURL": "https://aragon.org/privacy-policy",
+    "contentLinkURL": "https://cddao.com/privacy-policy",
     "contentLinkLabel": "privacy policy"
   },
   "transactionDetail": {
@@ -1190,7 +1190,7 @@
     }
   },
   "logo": {
-    "linkURL": "https://aragon.org/"
+    "linkURL": "https://cddao.com/"
   },
   "modal": {
     "deposit": {
@@ -1301,7 +1301,7 @@
         "title": "You have no voting power",
         "ctaLabel": "Ok, understood",
         "Link": "Learn more",
-        "LinkURL": "https://aragon.org/how-to/delegate-your-voting-power"
+        "LinkURL": "https://cddao.com/how-to/delegate-your-voting-power"
       },
       "CantVote": {
         "title": "You can't vote",
@@ -1375,7 +1375,7 @@
       "headerTitle": "Connect dApp",
       "alertInfo": "Not all dApps support connecting to DAOs.",
       "ctaGuide": "Having issues?",
-      "ctaGuideURL": "https://aragon.org/how-to/dapp-connect"
+      "ctaGuideURL": "https://cddao.com/how-to/dapp-connect"
     }
   },
   "scc": {
@@ -1428,7 +1428,7 @@
       "title": "No smart contract added",
       "description": "Add a smart contract to interact with it.",
       "modalTitle": "Smart contract composer",
-      "learnMore": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao"
+      "learnMore": "https://cddao.com/how-to/interact-with-external-contracts-from-your-dao"
     },
     "abi": {
       "abiInputLabel": "ABI function",
@@ -1449,7 +1449,7 @@
       "contractAmountActions": "{{amount}} actions",
       "ctaLabel": "Connect smart contract",
       "learnLinkLabel": "Learn more",
-      "learnLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao",
+      "learnLinkURL": "https://cddao.com/how-to/interact-with-external-contracts-from-your-dao",
       "proxyContractAddressLabel": "{{contractAddress}} as proxy",
       "noActionsFound": "No write actions found"
     },
@@ -1494,7 +1494,7 @@
       "title": "Become the first member",
       "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance.",
       "ctaLabel": "Join the DAO",
-      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
+      "descLinkURL": "https://cddao.com/how-to/import-existing-tokens"
     },
     "ctaMain": {
       "wrappedLabel": "Wrap / unwrap tokens"
@@ -1535,7 +1535,7 @@
       "desc": "You don’t have the required voting power or wrapped token balance. Creating proposals in {{daoName}} requires at least {{amount}} {{wrappedTokenSymbol}} in either voting power or wrapped token balance. Wrap more {{tokenSymbol}} to be able to participate in governance.",
       "ctaLabel": "Wrap tokens",
       "cancleLabel": "Cancel",
-      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+      "descLinkURL": "https://cddao.com/how-to/import-existing-tokens",
       "header": "Join the DAO"
     }
   },
@@ -1668,7 +1668,7 @@
         "desc": "One or more of our checks found that these actions are not constructed properly, indicating that this update is harmful."
       },
       "descLinkLabel": "read our guide",
-      "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
+      "descLinkURL": "https://cddao.com/how-to/update-your-aragon-dao"
     }
   },
   "setting": {
@@ -1692,7 +1692,7 @@
       "title": "Community voting parameters",
       "desc": "Establish the conditions that determine the passage of a proposal during the community voting phase. How much support does the proposal need? How much of the community needs to participate? How long is the proposal open for voting? Learn more in {{link}}.",
       "descLinkLabel": "this guide",
-      "descLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds"
+      "descLinkURL": "https://cddao.com/how-to/governance-ii-setting-dao-governance-thresholds"
     },
     "executionMultisig": {
       "title": "Define your execution multisig",
@@ -1701,7 +1701,7 @@
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig.",
       "executionTitle": "Execution expiration time",
       "executionDesc": "Execution expiration time is the window available for the execution multisig to enact a passed community-backed proposal before it becomes ineligible for execution.\n",
-      "descLinkURL": "https://aragon.org/how-to/gasless-voting-plugin",
+      "descLinkURL": "https://cddao.com/how-to/gasless-voting-plugin",
       "descLinkLabel": "in our guide"
     }
   },

@@ -15,15 +15,15 @@
     "exploreLinkLabel": "探索",
     "exploreLinkURL": "/",
     "learnLinkLabel": "学习",
-    "learnLinkURL": "https://aragon.org/education-portal",
+    "learnLinkURL": "https://cddao.com/education-portal",
     "buildLinkLabel": "构建",
     "buildLinkURL": "https://devs.aragon.org/",
     "helpLinkLabel": "帮助",
     "helpLinkURL": "https://discord.gg/AhzsGmh7fK",
     "termsLinkLabel": "服务条款",
-    "termsLinkURL": "https://aragon.org/terms-and-conditions",
+    "termsLinkURL": "https://cddao.com/terms-and-conditions",
     "privacyLinkLabel": "隐私",
-    "privacyLinkURL": "https://aragon.org/privacy-policy",
+    "privacyLinkURL": "https://cddao.com/privacy-policy",
     "members": "成员",
     "guide": "了解更多"
   },
@@ -271,7 +271,7 @@
     "emptyState": {
       "title": "进行你的第一笔存款",
       "description": "每个社区都需要资金来激励和运营。通过进行你的第一笔财库存款来开始行动。",
-      "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
+      "descriptionLinkURL": "https://cddao.com/how-to/manage-a-dao-treasury",
       "buttonLabel": "存入资金"
     },
     "modalExport": {
@@ -294,7 +294,7 @@
       "desc": "要向你的DAO添加资金，请进行存款。在{{link}}中了解更多。",
       "title": "未找到代币",
       "descLinkLabel": "本指南",
-      "descLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury"
+      "descLinkURL": "https://cddao.com/how-to/manage-a-dao-treasury"
     }
   },
   "governance": {
@@ -305,7 +305,7 @@
     "emptyState": {
       "title": "创建你的第一个提案",
       "description": "你的社区需要决定的第一件事是什么？让你的社区参与到决策过程中。",
-      "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
+      "descriptionLinkURL": "https://cddao.com/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
     "proposals": {
       "publishedBy": "发布者",
@@ -677,7 +677,7 @@
       "label": "第1步",
       "title": "选择区块链",
       "description": "您选择的链是存储您的代币和资产的地方。如果您已经有代币,请选择铸造该代币的链。这以后无法更改。",
-      "descriptionLinkURL": "https://aragon.org/how-to/choose-the-right-blockchain-for-your-dao"
+      "descriptionLinkURL": "https://cddao.com/how-to/choose-the-right-blockchain-for-your-dao"
     },
     "step2": {
       "label": "第2步",
@@ -687,7 +687,7 @@
       "logoSubtitle": "不超过3MB的JPG、PNG或GIF。我们建议1024x1024像素。",
       "descriptionSubtitle": "用几句话描述您DAO的目的。这会在浏览页面上列出,以便新贡献者可以找到您。",
       "linksSubtitle": "链接到您DAO的网站、社交媒体资料、Discord或其他社区聚集的地方。",
-      "descriptionLinkURL": "https://aragon.org/how-to/build-a-dao-brand-identity",
+      "descriptionLinkURL": "https://cddao.com/how-to/build-a-dao-brand-identity",
       "ensNameSubtitle": "这将是您DAO的唯一ENS子域,自动为您创建。小写字母、数字和破折号'-'都是可接受的字符;理想情况下,字符数应少于128个。"
     },
     "step3": {
@@ -720,7 +720,7 @@
         "verificationAlertCriticalTitle": "不支持的代币",
         "verificationAlertWarningDescription": "该代币的持有人必须包装它才能参与您DAO的治理。\n\n代币持有人可以随时在Aragon App中包装他们的代币以接收等量的治理代币(1 {{tokenSymbol}} = 1 {{gTokenSymbol}})。这些代币可以用于对您DAO的提案进行投票。他们可以随时解包以接收原始代币。",
         "verificationAlertCriticalDescription": "Aragon App不支持此代币。尝试不同的代币或指定您还没有治理代币。",
-        "descriptionLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+        "descriptionLinkURL": "https://cddao.com/how-to/import-existing-tokens",
         "verificationLabelBlockchain": "区块链",
         "verificationAlertCriticalBlockchainTitle": "区块链不正确",
         "verificationAlertCriticalBlockchainDescription": "此代币部署在与您为DAO选择的区块链不同的区块链上。使用部署在{{blockchainName}}上的代币。",
@@ -755,7 +755,7 @@
       "whiteListWalletAlertText": "您连接的钱包已自动添加到列表中。如果您愿意,可以将其移除。",
       "createTokenHelptext": "定义代币详情并将代币分配给核心团队和DAO资金库。有关代币铸造最佳实践的更多信息,{{link}}",
       "createTokenHelptextLinkLabel": "阅读本指南",
-      "createTokenHelptextLinkURL": "https://aragon.org/how-to/mint-dao-governance-tokens",
+      "createTokenHelptextLinkURL": "https://cddao.com/how-to/mint-dao-governance-tokens",
       "membership": "谁可以参与治理?",
       "eligibility": {
         "optionTitle": "谁有资格?",
@@ -777,9 +777,9 @@
         }
       },
       "membershipSubtitle": "您随时可以从多重签名开始,稍后再铸造代币。",
-      "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
+      "descriptionLinkURL": "https://cddao.com/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "阅读我们的指南",
-      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
+      "distributeTokensHelpertextLinkURL": "https://cddao.com/how-to/distribute-a-dao-governance-token",
       "blockChainVoting": {
         "label": "社区投票将在哪个区块链上进行?",
         "optionOnchainLabel": "{{blockchainName}}",
@@ -816,7 +816,7 @@
         "1AddressOnly": "由于只有 1 个地址，批准阈值无法更改。"
       },
       "descriptionLinkLabel": "本指南",
-      "descriptionLinkURL": "https://aragon.org/how - to/governance - ii - setting - dao - governance - thresholds",
+      "descriptionLinkURL": "https://cddao.com/how - to/governance - ii - setting - dao - governance - thresholds",
       "shortTitle": "选择治理设置",
       "wrappedReferenceTitle": "参考值",
       "wrappedReferenceDesc": "为满足最低参与度而必须投票的 {{gTokenSymbol}} 数量取决于已包装的 {{tokenSymbol}} 数量。此屏幕上带星号的值仅供参考。您可以通过调整以下值来评估不同的情况。了解更多信息 {{link}}。",
@@ -828,7 +828,7 @@
       "wrappedReferenceMinParticipation": "最低参与度",
       "wrappedReferenceMinParticipationDesc": "{{gTokenSymbol}} 总供应量的 {{minParticipationValue}}",
       "wrappedReferenceDescLinkLabel": "在我们的指南中",
-      "wrappedReferenceDescLinkURL": "https://aragon.org/how",
+      "wrappedReferenceDescLinkURL": "https://cddao.com/how",
       "wrappedReferenceParticipationValueLabel": "{gTokenSymbol} "
     },
     "review": {
@@ -1009,12 +1009,12 @@
   },
   "explore": {
     "hero": {
-      "title": "探索去中心化自治组织（DAO）世界",
+      "title": "搜索",
       "subtitle1": "在一个地方构建您的去中心化自治组织（DAO）、探索社区并为您的项目寻找灵感。"
     },
     "explorer": {
-      "title": "探索去中心化自治组织（DAO）",
-      "myDaos": "我的去中心化自治组织（DAO）",
+      "title": "搜索DAO",
+      "myDaos": "我的DAO",
       "popular": "热门",
       "newest": "最新",
       "walletBased": "基于钱包",
@@ -1035,11 +1035,11 @@
     },
     "learn": {
       "linkLabel": "了解去中心化自治组织（DAO）",
-      "linkURL": "https://aragon.org/education - portal"
+      "linkURL": "https://www.cddao.com"
     },
     "toggleFilter": {
       "Favourites": "关注",
-      "allDAOs": "所有去中心化自治组织（DAO）",
+      "allDAOs": "全部",
       "member": "成员"
     },
     "inputPlaceholder": {
@@ -1112,7 +1112,7 @@
     "rejectAllCookies": "全部拒绝",
     "acceptSelectedCookies": "接受",
     "content": "我们使用 Cookie 和类似技术来提升您的体验、启用特定功能并分析我们应用程序的使用情况。您可以在此处选择不使用 Cookie。在我们的 {{link}} 中了解更多信息。",
-    "contentLinkURL": "https://aragon.org/privacy - policy",
+    "contentLinkURL": "https://cddao.com/privacy - policy",
     "contentLinkLabel": "隐私政策"
   },
   "transactionDetail": {
@@ -1189,7 +1189,7 @@
     }
   },
   "logo": {
-    "linkURL": "https://aragon.org/"
+    "linkURL": "https://cddao.com/"
   },
   "modal": {
     "deposit": {
@@ -1300,7 +1300,7 @@
         "title": "您没有投票权",
         "ctaLabel": "好的，明白了",
         "Link": "了解更多",
-        "LinkURL": "https://aragon.org/how - to/delegate - your - voting - power"
+        "LinkURL": "https://cddao.com/how - to/delegate - your - voting - power"
       },
       "CantVote": {
         "title": "您不能投票",
@@ -1373,7 +1373,7 @@
         "headerTitle": "Connect dApp",
         "alertInfo": "Not all dApps support connecting to DAOs.",
         "ctaGuide": "Having issues?",
-        "ctaGuideURL": "https://aragon.org/how-to/dapp-connect"
+        "ctaGuideURL": "https://cddao.com/how-to/dapp-connect"
       }
     }
   },
@@ -1427,7 +1427,7 @@
       "title": "未添加智能合约",
       "description": "添加一个智能合约以与其交互。",
       "modalTitle": "智能合约组合器",
-      "learnMore": "https://aragon.org/how - to/interact - with - external - contracts - from - your - dao"
+      "learnMore": "https://cddao.com/how - to/interact - with - external - contracts - from - your - dao"
     },
     "abi": {
       "abiInputLabel": "应用二进制接口（ABI）函数",
@@ -1448,7 +1448,7 @@
       "contractAmountActions": "{{amount}} 个操作",
       "ctaLabel": "连接智能合约",
       "learnLinkLabel": "了解更多",
-      "learnLinkURL": "https://aragon.org/how - to/interact - with - external - contracts - from - your - dao",
+      "learnLinkURL": "https://cddao.com/how - to/interact - with - external - contracts - from - your - dao",
       "proxyContractAddressLabel": "{{contractAddress}} 作为代理",
       "noActionsFound": "未找到可写操作"
     },
@@ -1493,7 +1493,7 @@
       "title": "成为第一个成员",
       "desc": "包装您的 {{tokenSymbol}} 以成为去中心化自治组织（DAO）社区的成员。这将使您能够参与治理。",
       "ctaLabel": "加入去中心化自治组织（DAO）",
-      "descLinkURL": "https://aragon.org/how - to/import - existing - tokens"
+      "descLinkURL": "https://cddao.com/how - to/import - existing - tokens"
     },
     "ctaMain": {
       "wrappedLabel": "包装 / 解包通证"
@@ -1534,7 +1534,7 @@
       "desc": "您没有所需的投票权或包装通证余额。在 {{daoName}} 中创建提案需要在投票权或包装通证余额方面至少有 {{amount}} 个 {{wrappedTokenSymbol}}。包装更多 {{tokenSymbol}} 以能够参与治理。",
       "ctaLabel": "包装通证",
       "cancleLabel": "取消",
-      "descLinkURL": "https://aragon.org/how - to/import - existing - tokens",
+      "descLinkURL": "https://cddao.com/how - to/import - existing - tokens",
       "header": "加入去中心化自治组织（DAO）"
     }
   },
@@ -1667,7 +1667,7 @@
         "desc": "我们的一个或多个检查发现这些操作构建不正确，这表明此更新有害。"
       },
       "descLinkLabel": "阅读我们的指南",
-      "descLinkURL": "https://aragon.org/how - to/update - your - aragon - dao"
+      "descLinkURL": "https://cddao.com/how - to/update - your - aragon - dao"
     }
   },
   "setting": {
@@ -1691,7 +1691,7 @@
       "title": "社区投票参数",
       "desc": "确定在社区投票阶段决定提案通过的条件。提案需要多少支持率？社区中有多少人需要参与？提案开放投票的时长是多久？在 {{link}} 中了解更多信息。",
       "descLinkLabel": "本指南",
-      "descLinkURL": "https://aragon.org/how - to/governance - ii - setting - dao - governance - thresholds"
+      "descLinkURL": "https://cddao.com/how - to/governance - ii - setting - dao - governance - thresholds"
     },
     "executionMultisig": {
       "title": "定义您的执行多重签名",
@@ -1700,7 +1700,7 @@
       "membersDesc": "这些地址构成批准和执行社区通过的提案的管理机构。添加将成为执行多重签名成员的地址。",
       "executionTitle": "执行过期时间",
       "executionDesc": "执行过期时间是执行多重签名在社区支持的提案变得无资格执行之前可用于执行该提案的时间窗口。\n",
-      "descLinkURL": "https://aragon.org/how - to/gasless - voting - plugin",
+      "descLinkURL": "https://cddao.com/how - to/gasless - voting - plugin",
       "descLinkLabel": "在我们的指南中"
     }
   },
