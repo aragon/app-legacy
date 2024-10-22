@@ -246,7 +246,7 @@ const processDaoResponse =
     }
 
     // Set ENS to empty string for DAOs with an ENS on chains that do not support ENS
-    // (e.g. when a DAO is created with an ENS outside of Aragon App)
+    // (e.g. when a DAO is created with an ENS outside of cdDAO App)
     const processedEns = !CHAIN_METADATA[network].supportsEns
       ? ''
       : dao.ensDomain;

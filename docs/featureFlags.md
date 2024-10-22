@@ -1,6 +1,6 @@
 # Feature Flags
 
-Feature flags in the Aragon App allow developers to enable or disable certain features depending on the current environment.
+Feature flags in the cdDAO App allow developers to enable or disable certain features depending on the current environment.
 
 Feature flags are managed through environment variables, which are set in the respective `.env.production`, `.env.development`, and `.env.staging` files. Depending on the environment the user is currently using, the corresponding feature flags for that environment are loaded and used.
 
@@ -27,7 +27,7 @@ In the above example, the `VITE_FEATURE_FLAG_DISCOVER_DAO` feature flag is enabl
 
 ## Overriding Feature Flags
 
-To override a feature flag for the current environment, simply append the key and value of the feature flag to the URL as a query parameter and start using the Aragon App:
+To override a feature flag for the current environment, simply append the key and value of the feature flag to the URL as a query parameter and start using the cdDAO App:
 
 ```
 https://app.aragon.org?VITE_FEATURE_FLAG_DISCOVER_DAO=true

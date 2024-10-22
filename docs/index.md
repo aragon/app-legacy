@@ -1,6 +1,6 @@
-# Aragon App Documentation
+# cdDAO App Documentation
 
-This guide provides information on various topics related to developing with Aragon App.
+This guide provides information on various topics related to developing with cdDAO App.
 
 ## Contents
 
@@ -8,7 +8,7 @@ This guide provides information on various topics related to developing with Ara
   We are using APISIX as API Gateway.
 
 - [Feature Flags](./featureFlags.md)
-  Feature flags in the Aragon App allow developers to enable or disable certain features depending on the environment.
+  Feature flags in the cdDAO App allow developers to enable or disable certain features depending on the environment.
 
 - [Local Development with Linked ODS Library](./linkOdsLibrary.md)
   Discover how to test and develop the Aragon ODS library locally by creating a link to the `@aragon/ods` package.

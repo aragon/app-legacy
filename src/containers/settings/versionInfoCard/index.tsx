@@ -73,7 +73,7 @@ export const VersionInfoCard: React.FC<{
           <Term>{t('setting.versionInfo.labelApp')}</Term>
           <FlexibleDefinition className="truncate xl:max-w-60">
             <Link
-              label={`Aragon App v${AppVersion}`}
+              label={`cdDAO App v${AppVersion}`}
               type="primary"
               iconRight={IconType.LINK_EXTERNAL}
               href={'https://app.aragon.org'}

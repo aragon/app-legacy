@@ -1,7 +1,7 @@
 # Local Development with Linked ODS Library
 
 To facilitate testing and development of the Aragon ODS library locally, you can create a link to the `@aragon/ods`
-package and integrate it into your Aragon App environment. In order to do so, follow the steps below:
+package and integrate it into your cdDAO App environment. In order to do so, follow the steps below:
 
 1.  Navigate to the `@aragon/ods` directory and execute the following commands to create a link to the package and initiate
     continuous building in watch mode:
@@ -22,4 +22,4 @@ package and integrate it into your Aragon App environment. In order to do so, fo
         ```
 
     With this setup, any change made to the `@aragon/ods` library files will trigger an automatic rebuild of the package.
-    Consequently, the Aragon App server will be reloaded, ensuring that the latest changes from the ODS library are integrated.
+    Consequently, the cdDAO App server will be reloaded, ensuring that the latest changes from the ODS library are integrated.

@@ -14,13 +14,13 @@
 
 
 
-# Aragon App
+# cdDAO App
 
-The Aragon App is an easy-to-use platform that empowers users to create and manage their Decentralized Autonomous Organizations (DAOs). The application interacts with the [Aragon OSx](https://github.com/aragon/osx) through the integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the [Aragon ODS](https://github.com/aragon/ods) library.
+The cdDAO App is an easy-to-use platform that empowers users to create and manage their Decentralized Autonomous Organizations (DAOs). The application interacts with the [Aragon OSx](https://github.com/aragon/osx) through the integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the [Aragon ODS](https://github.com/aragon/ods) library.
 
 ## Getting Started
 
-Follow these steps to set up the Aragon App locally:
+Follow these steps to set up the cdDAO App locally:
 
 1. Install the project's dependencies:
 
@@ -34,7 +34,7 @@ yarn install
 yarn dev
 ```
 
-3. Access the Aragon App by opening [http://localhost:3000](http://localhost:3000) in your web browser.
+3. Access the cdDAO App by opening [http://localhost:3000](http://localhost:3000) in your web browser.
 
 Other available commands include:
 
@@ -58,7 +58,7 @@ npm run test
 
 ## Environments
 
-The Aragon App supports various environments, each with its unique URL and deployment trigger. Here are the available environments:
+The cdDAO App supports various environments, each with its unique URL and deployment trigger. Here are the available environments:
 
 | Name           | Url                            | Deployment trigger                                           | Environment file   |
 | -------------- | ------------------------------ | ------------------------------------------------------------ | ------------------ |
@@ -69,13 +69,13 @@ The Aragon App supports various environments, each with its unique URL and deplo
 
 ### Hosting
 
-The CI/CD pipelines for the Aragon App use GitHub Actions, and once completed successfully, the static site generated will be hosted on:
+The CI/CD pipelines for the cdDAO App use GitHub Actions, and once completed successfully, the static site generated will be hosted on:
 
 - [Fleek](https://fleek.co): For staging and production environments.
 
 ## Documentation
 
-The Aragon App is built using the following tools to ensure a seamless user experience:
+The cdDAO App is built using the following tools to ensure a seamless user experience:
 
 - [ReactJS](https://reactjs.org)
 - [Vite](https://vitejs.dev)
@@ -86,7 +86,7 @@ The Aragon App is built using the following tools to ensure a seamless user expe
 - [ESLint](https://eslint.org)
 - [Prettier](https://prettier.io)
 
-For more technical information about the Aragon App, please check the [Aragon App Documentation](./docs/index.md).
+For more technical information about the cdDAO App, please check the [cdDAO App Documentation](./docs/index.md).
 
 ## Contributing
 

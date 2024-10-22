@@ -62,7 +62,7 @@ const Footer: React.FC = () => {
         }`}
       >
         <Icon icon={IconType.INFO} />
-        <span>Aragon App Public Beta</span>
+        <span>cdDAO App Public Beta</span>
       </div>
     </Section>
   );
