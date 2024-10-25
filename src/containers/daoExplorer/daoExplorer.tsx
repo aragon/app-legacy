@@ -40,7 +40,7 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
 
 export const DaoExplorer = () => {
   const {t} = useTranslation();
-  const {isConnected, address} = useWallet();
+  const {isConnected, address, methods} = useWallet();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(false);
@@ -145,6 +145,16 @@ export const DaoExplorer = () => {
 
   const handleClearFilters = () => {
     dispatch({type: FilterActionTypes.RESET, payload: DEFAULT_FILTERS});
+  };
+
+  const handleWalletButtonClick = () => {
+    if (isConnected) {
+      return;
+    }
+
+    methods.selectWallet().catch((err: Error) => {
+      console.error(err);
+    });
   };
 
   /*************************************************
@@ -252,7 +262,11 @@ export const DaoExplorer = () => {
                 )}
               </>
             )}
-            <Button size="md" href="/create">
+            <Button
+              size="md"
+              href="/#/create"
+              onClick={handleWalletButtonClick}
+            >
               {t('cta.create.actionLabel')}
             </Button>
           </ButtonGroupContainer>
