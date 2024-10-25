@@ -3,7 +3,7 @@ import {Spinner, Button, IconType, CardEmptyState, Dropdown} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
-
+import featuredDaosData from 'assets/data/featured.json';
 import {DaoCard} from 'components/daoCard';
 import DaoFilterModal, {DEFAULT_FILTERS} from 'containers/daoFilterModal';
 import {
@@ -13,7 +13,7 @@ import {
 import {NavigationDao} from 'context/apolloClient';
 import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
 import {useWallet} from 'hooks/useWallet';
-import {IDao} from 'services/aragon-backend/domain/dao';
+import {IDao, IFeaturedDao} from 'services/aragon-backend/domain/dao';
 import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
 import {useDaos} from 'services/aragon-backend/queries/use-daos';
 import {getSupportedNetworkByChainId} from 'utils/constants';
@@ -23,6 +23,7 @@ import {
   quickFilters,
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
+import {normalizeFeaturedDao} from 'utils/normalizeFeaturedDao';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   creatorAddress: '' as Address,
@@ -103,6 +104,12 @@ export const DaoExplorer = () => {
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 
+  const featuredDaos: IFeaturedDao[] = featuredDaosData.map(
+    dao => dao as IFeaturedDao
+  );
+
+  const featuredDaoList: IDao[] = featuredDaos.map(normalizeFeaturedDao);
+
   const totalDaos = useFollowList
     ? followedDaosResult.data?.pages[0].total ?? 0
     : newDaosResult.data?.pages[0].total ?? 0;
@@ -145,19 +152,19 @@ export const DaoExplorer = () => {
             value={filters.quickFilter}
             onChange={toggleQuickFilters}
           >
-            {quickFilters.map(f => {
-              return (
-                <Toggle
-                  key={f.value}
-                  label={t(f.label)}
-                  value={f.value}
-                  disabled={
-                    (f.value === 'memberOf' || f.value === 'following') &&
-                    !isConnected
-                  }
-                />
-              );
-            })}
+            {quickFilters
+              .filter(f => {
+                if (
+                  !isConnected &&
+                  (f.value === 'memberOf' || f.value === 'following')
+                ) {
+                  return false;
+                }
+                return true;
+              })
+              .map(f => (
+                <Toggle key={f.value} label={t(f.label)} value={f.value} />
+              ))}
           </ToggleGroup>
           <ButtonGroupContainer>
             <Button
@@ -247,39 +254,54 @@ export const DaoExplorer = () => {
           />
         ) : (
           <CardsWrapper>
-            {filteredDaoList?.map(
-              (dao: IDao, index: React.Key | null | undefined) => (
-                <DaoCard key={index} dao={dao} />
-              )
+            {filters.quickFilter === 'featuredDaos' ? (
+              <>
+                {featuredDaoList.map(
+                  (dao: IDao, index: React.Key | null | undefined) => (
+                    <DaoCard key={index} dao={dao} />
+                  )
+                )}
+              </>
+            ) : (
+              <>
+                {filteredDaoList?.map(
+                  (dao: IDao, index: React.Key | null | undefined) => (
+                    <DaoCard key={index} dao={dao} />
+                  )
+                )}
+                {isLoading && <Spinner size="xl" variant="primary" />}
+              </>
             )}
-            {isLoading && <Spinner size="xl" variant="primary" />}
           </CardsWrapper>
         )}
       </MainContainer>
-      {totalDaos != null && totalDaos > 0 && totalDaosShown > 0 && (
-        <div className="flex items-center lg:gap-x-6">
-          {hasNextPage && (
-            <Button
-              className="self-start"
-              isLoading={isFetchingNextPage}
-              iconRight={
-                !isFetchingNextPage ? IconType.CHEVRON_DOWN : undefined
-              }
-              variant="tertiary"
-              size="md"
-              onClick={() => fetchNextPage()}
-            >
-              {t('explore.explorer.showMore')}
-            </Button>
-          )}
-          <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
-            {t('explore.pagination.label.amountOf DAOs', {
-              amount: totalDaosShown,
-              total: totalDaos,
-            })}
-          </span>
-        </div>
-      )}
+      {totalDaos != null &&
+        totalDaos > 0 &&
+        totalDaosShown > 0 &&
+        filters.quickFilter !== 'featuredDaos' && (
+          <div className="flex items-center lg:gap-x-6">
+            {hasNextPage && (
+              <Button
+                className="self-start"
+                isLoading={isFetchingNextPage}
+                iconRight={
+                  !isFetchingNextPage ? IconType.CHEVRON_DOWN : undefined
+                }
+                variant="tertiary"
+                size="md"
+                onClick={() => fetchNextPage()}
+              >
+                {t('explore.explorer.showMore')}
+              </Button>
+            )}
+            <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
+              {t('explore.pagination.label.amountOf DAOs', {
+                amount: totalDaosShown,
+                total: totalDaos,
+              })}
+            </span>
+          </div>
+        )}
       <DaoFilterModal
         isOpen={showAdvancedFilters}
         filters={filters}

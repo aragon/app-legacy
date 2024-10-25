@@ -1039,7 +1039,8 @@
       "linkURL": "https://aragon.org/education-portal"
     },
     "toggleFilter": {
-      "Favourites": "Following",
+      "favourites": "Following",
+      "featuredDAOs": "Featured",
       "allDAOs": "All DAOs ",
       "member": "Member"
     },

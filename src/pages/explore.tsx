@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
-
 import {GridLayout} from 'components/layout';
 import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';

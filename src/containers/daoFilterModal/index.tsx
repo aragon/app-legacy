@@ -18,7 +18,7 @@ import {
 import {DaoFilterAction, DaoFilterState, FilterActionTypes} from './reducer';
 
 export const DEFAULT_FILTERS: DaoFilterState = {
-  quickFilter: 'allDaos',
+  quickFilter: 'featuredDaos',
   pluginNames: [],
   networks: [],
   order: 'tvl',
