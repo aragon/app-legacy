@@ -79,7 +79,7 @@ export const DaoExplorer = () => {
 
     if (!filters) return '';
 
-    if (filters.quickFilter !== DEFAULT_FILTERS.quickFilter) count++;
+    if (filters.quickFilter !== 'allDaos') count++;
 
     // plugin Name filter
     if (filters.pluginNames?.length !== 0) count++;
@@ -134,7 +134,7 @@ export const DaoExplorer = () => {
 
   const noFeaturedDaosFound =
     isLoadingFeaturedDaos === false &&
-    featuredDaoList != null &&
+    featuredDaoList == null &&
     filters.quickFilter === 'featuredDaos';
 
   const handleClearFilters = () => {
@@ -150,6 +150,8 @@ export const DaoExplorer = () => {
       console.error(err);
     });
   };
+
+  const showSortFilter = filters.quickFilter !== 'featuredDaos' && isConnected;
 
   /*************************************************
    *                    Render                     *
@@ -179,13 +181,12 @@ export const DaoExplorer = () => {
               ))}
           </ToggleGroup>
           <ButtonGroupContainer>
-            {isConnected && (
+            {showSortFilter && (
               <>
                 <Button
                   variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
                   size="md"
                   className="!min-w-fit"
-                  responsiveSize={{lg: 'lg'}}
                   iconLeft={IconType.FILTER}
                   onClick={() => setShowAdvancedFilters(true)}
                 >
@@ -202,7 +203,6 @@ export const DaoExplorer = () => {
                       <Button
                         variant={activeDropdown ? 'secondary' : 'tertiary'}
                         size="md"
-                        responsiveSize={{lg: 'lg'}}
                         iconLeft={IconType.SORT_DESC}
                       />
                     }
