@@ -138,6 +138,11 @@ export const DaoExplorer = () => {
 
   const noDaosFound = isLoading === false && totalDaos === 0;
 
+  const noFeaturedDaosFound =
+    isLoadingFeaturedDaos === false &&
+    !featuredDaos &&
+    filters.quickFilter === 'featuredDaos';
+
   const handleClearFilters = () => {
     dispatch({type: FilterActionTypes.RESET, payload: DEFAULT_FILTERS});
   };
@@ -247,10 +252,12 @@ export const DaoExplorer = () => {
                 )}
               </>
             )}
-            <Button href="/create">{t('cta.create.actionLabel')}</Button>
+            <Button size="md" href="/create">
+              {t('cta.create.actionLabel')}
+            </Button>
           </ButtonGroupContainer>
         </FilterGroupContainer>
-        {noDaosFound ? (
+        {noDaosFound || noFeaturedDaosFound ? (
           <CardEmptyState
             objectIllustration={{object: 'MAGNIFYING_GLASS'}}
             heading={t('explore.emptyStateSearch.title')}
