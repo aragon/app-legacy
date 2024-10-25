@@ -1,17 +1,17 @@
 import {useQuery} from '@tanstack/react-query';
-import {IFeaturedDao} from 'services/aragon-backend/domain/dao';
+import {IDao} from 'services/aragon-backend/domain/dao';
 
 const FEATURED_DAOS_URL =
-  'https://raw.githubusercontent.com/aragon/app/develop/src/assets/data/featured.json';
+  'https://raw.githubusercontent.com/aragon/app/refs/heads/develop/src/assets/data/featured-daos.json';
 
-const fetchFeaturedDaos = async (): Promise<IFeaturedDao[]> => {
+const fetchFeaturedDaos = async (): Promise<IDao[]> => {
   const response = await fetch(FEATURED_DAOS_URL);
 
   if (!response.ok) {
     throw new Error('Failed to fetch featured DAOs');
   }
 
-  const data: IFeaturedDao[] = await response.json();
+  const data: IDao[] = await response.json();
   return data;
 };
 

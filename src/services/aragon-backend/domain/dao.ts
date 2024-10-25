@@ -19,15 +19,4 @@ export interface IDao {
   createdAt: string;
   pluginName: string;
   stats?: IDaoStats;
-  overrideUrl?: string;
-}
-
-export interface IFeaturedDao {
-  overrideUrl: string | undefined;
-  daoName: string;
-  description: string;
-  avatarUrl: string;
-  blockchain: SupportedNetworks;
-  daoAddress: Address;
-  urlOverride?: string;
 }

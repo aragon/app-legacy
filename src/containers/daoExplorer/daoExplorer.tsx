@@ -23,7 +23,6 @@ import {
   quickFilters,
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
-import {normalizeFeaturedDao} from 'utils/normalizeFeaturedDao';
 import {useFeaturedDaos} from 'hooks/useFeaturedDaos';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
@@ -105,13 +104,8 @@ export const DaoExplorer = () => {
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 
-  const {data: featuredDaos, isLoading: isLoadingFeaturedDaos} =
+  const {data: featuredDaoList, isLoading: isLoadingFeaturedDaos} =
     useFeaturedDaos();
-
-  // Normalize the featured DAOs data
-  const featuredDaoList: IDao[] = featuredDaos
-    ? featuredDaos.map(normalizeFeaturedDao)
-    : [];
 
   const totalDaos = useFollowList
     ? followedDaosResult.data?.pages[0].total ?? 0
@@ -140,7 +134,7 @@ export const DaoExplorer = () => {
 
   const noFeaturedDaosFound =
     isLoadingFeaturedDaos === false &&
-    !featuredDaos &&
+    !featuredDaoList &&
     filters.quickFilter === 'featuredDaos';
 
   const handleClearFilters = () => {
@@ -287,7 +281,7 @@ export const DaoExplorer = () => {
           <CardsWrapper>
             {filters.quickFilter === 'featuredDaos' ? (
               <>
-                {featuredDaoList.map(
+                {featuredDaoList?.map(
                   (dao: IDao, index: React.Key | null | undefined) => (
                     <DaoCard key={index} dao={dao} />
                   )

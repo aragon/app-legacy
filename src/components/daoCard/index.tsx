@@ -10,8 +10,12 @@ import {toDisplayEns} from 'utils/library';
 import {Dashboard} from 'utils/paths';
 import {IDao} from 'services/aragon-backend/domain/dao';
 
+interface IDaoWithOverride extends IDao {
+  overrideUrl?: string;
+}
+
 export interface IDaoCardProps {
-  dao: IDao;
+  dao: IDaoWithOverride;
 }
 
 export const DaoCard = (props: IDaoCardProps) => {
