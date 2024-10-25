@@ -3,7 +3,7 @@ import {Spinner, Button, IconType, CardEmptyState, Dropdown} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {Address} from 'viem';
-import featuredDaosData from 'assets/data/featured.json';
+
 import {DaoCard} from 'components/daoCard';
 import DaoFilterModal, {DEFAULT_FILTERS} from 'containers/daoFilterModal';
 import {
@@ -13,7 +13,7 @@ import {
 import {NavigationDao} from 'context/apolloClient';
 import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
 import {useWallet} from 'hooks/useWallet';
-import {IDao, IFeaturedDao} from 'services/aragon-backend/domain/dao';
+import {IDao} from 'services/aragon-backend/domain/dao';
 import {OrderDirection} from 'services/aragon-backend/domain/ordered-request';
 import {useDaos} from 'services/aragon-backend/queries/use-daos';
 import {getSupportedNetworkByChainId} from 'utils/constants';
@@ -24,6 +24,7 @@ import {
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
 import {normalizeFeaturedDao} from 'utils/normalizeFeaturedDao';
+import {useFeaturedDaos} from 'hooks/useFeaturedDaos';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   creatorAddress: '' as Address,
@@ -104,11 +105,13 @@ export const DaoExplorer = () => {
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
 
-  const featuredDaos: IFeaturedDao[] = featuredDaosData.map(
-    dao => dao as IFeaturedDao
-  );
+  const {data: featuredDaos, isLoading: isLoadingFeaturedDaos} =
+    useFeaturedDaos();
 
-  const featuredDaoList: IDao[] = featuredDaos.map(normalizeFeaturedDao);
+  // Normalize the featured DAOs data
+  const featuredDaoList: IDao[] = featuredDaos
+    ? featuredDaos.map(normalizeFeaturedDao)
+    : [];
 
   const totalDaos = useFollowList
     ? followedDaosResult.data?.pages[0].total ?? 0
@@ -260,6 +263,9 @@ export const DaoExplorer = () => {
                   (dao: IDao, index: React.Key | null | undefined) => (
                     <DaoCard key={index} dao={dao} />
                   )
+                )}
+                {isLoadingFeaturedDaos && (
+                  <Spinner size="xl" variant="primary" />
                 )}
               </>
             ) : (
