@@ -56,9 +56,7 @@ export const DaoCard = (props: IDaoCardProps) => {
           <IconLabel>{CHAIN_METADATA[network].name}</IconLabel>
         </IconWrapper>
         {overrideUrl != null && (
-          <IconWrapper>
-            <AvatarIcon variant="primary" icon={IconType.LINK_EXTERNAL} />
-          </IconWrapper>
+          <AvatarIcon variant="primary" icon={IconType.LINK_EXTERNAL} />
         )}
       </DaoMetadataWrapper>
     </Container>

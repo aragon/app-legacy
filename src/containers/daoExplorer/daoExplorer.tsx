@@ -134,7 +134,7 @@ export const DaoExplorer = () => {
 
   const noFeaturedDaosFound =
     isLoadingFeaturedDaos === false &&
-    !featuredDaoList &&
+    featuredDaoList != null &&
     filters.quickFilter === 'featuredDaos';
 
   const handleClearFilters = () => {
