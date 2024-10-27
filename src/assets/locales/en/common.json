@@ -1010,8 +1010,8 @@
   },
   "explore": {
     "hero": {
-      "title": "Explore the DAO World",
-      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project all in one place."
+      "title": "Governed on Aragon",
+      "subtitle1": "Explore the organizations using our modular governance stack to secure their onchain governance."
     },
     "explorer": {
       "title": "Explore DAOs",
@@ -1037,6 +1037,10 @@
     "learn": {
       "linkLabel": "Learn about DAOs",
       "linkURL": "https://aragon.org/education-portal"
+    },
+    "build": {
+      "linkLabel": "Build faster",
+      "linkURL": "https://docs.aragon.org"
     },
     "toggleFilter": {
       "Favourites": "Following",
@@ -1134,13 +1138,13 @@
     },
     "learn": {
       "title": "Learn about DAOs",
-      "description": "Find inspiration and learn about DAOs in our education portal designed for builders at every stage of the journey.",
+      "description": "Explore and learn through our “How-to Guides”, DAO Education, Educational Articles and more!",
       "actionLabel": "Learn about DAOs"
     },
     "build": {
       "title": "Build faster",
-      "description": "Use our governance plugins to build a DAO, dApp, or anything you can imagine on the Aragon OSx protocol.",
-      "actionLabel": "Coming soon"
+      "description": "Build something something on open-source infrastructure with governance plugins.",
+      "actionLabel": "Build custom DAO"
     },
     "404": {
       "titleLine1": "Oh no,",

@@ -56,6 +56,7 @@ export const DaoExplorer = () => {
 
   const newDaosResult = useDaos(
     {
+      take: 12,
       direction: OrderDirection.DESC,
       orderBy: filters.order,
       ...(filters.pluginNames?.length !== 0 && {
@@ -138,7 +139,6 @@ export const DaoExplorer = () => {
   return (
     <Container>
       <MainContainer>
-        <Title>{t('explore.explorer.title')}</Title>
         <FilterGroupContainer>
           <ToggleGroup
             isMultiSelect={false}
@@ -305,12 +305,8 @@ const CardsWrapper = styled.div.attrs({
   className: 'grid grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-6',
 })``;
 
-const Title = styled.p.attrs({
-  className: 'font-semibold ft-text-xl text-neutral-800',
-})``;
-
 const FilterGroupContainer = styled.div.attrs({
-  className: 'flex justify-between space-x-3',
+  className: 'flex justify-between space-x-3 mt-12',
 })``;
 
 const ButtonGroupContainer = styled.div.attrs({
