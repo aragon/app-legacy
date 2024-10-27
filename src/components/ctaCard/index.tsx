@@ -13,6 +13,7 @@ type Props = {
   onClick: (path: string) => void;
   subtitle: string;
   title: string;
+  isPrimary: boolean;
 };
 
 const CTACard: React.FC<Props> = props => {
@@ -27,10 +28,10 @@ const CTACard: React.FC<Props> = props => {
       </Content>
 
       <Button
-        variant={props.actionAvailable ? 'primary' : 'tertiary'}
-        size="lg"
+        variant={props.isPrimary ? 'primary' : 'secondary'}
+        size="md"
         disabled={!props.actionAvailable}
-        onClick={() => props.onClick(props.path)}
+        href={props.path}
         className={`${!isDesktop && 'w-full'}`}
       >
         {props.actionLabel}
@@ -43,11 +44,8 @@ export default CTACard;
 
 const CTACardWrapper = styled.div.attrs({
   className:
-    'flex flex-col xl:items-start items-center p-6 space-y-6 rounded-xl relative xl:m-0 mb-6 mx-2' as string,
-})`
-  background: rgba(255, 255, 255, 0.68);
-  backdrop-filter: blur(50px);
-`;
+    'bg-neutral-0 flex flex-col xl:items-start items-center p-6 space-y-6 rounded-xl relative xl:m-0 mb-6 mx-2 shadow-neutral',
+})``;
 
 const Content = styled.div.attrs({
   className: 'flex xl:items-start items-center flex-col xl:m-0 mb-6',

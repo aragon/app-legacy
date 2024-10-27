@@ -1,6 +1,6 @@
 /* TOP LEVEL PAGES ========================================================== */
 export const Landing = '/';
-export const CreateDAO = '/create';
+export const CreateDAO = '/#/create';
 export const NotFound = '/not-found';
 
 /* DAO-SPECIFIC PAGES ======================================================= */
