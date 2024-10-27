@@ -32,8 +32,7 @@ const Container = styled.div.attrs({
 })``;
 
 const Wrapper = styled.div.attrs({
-  className:
-    'flex justify-center xl:justify-between relative w-full col-start-2 col-end-12',
+  className: 'flex relative w-full col-start-1 xl:col-start-2 col-end-12',
 })``;
 
 const ContentWrapper = styled.div.attrs({
@@ -49,7 +48,7 @@ const Title = styled.h1.attrs({
 
 const Subtitle = styled.h3.attrs({
   className:
-    'text-neutral-0 ft-text-lg font-normal text-center xl:text-left leading-[24px] xl:leading-[30px]',
+    'text-neutral-0 ft-text-lg font-normal leading-[24px] xl:leading-[30px]',
 })``;
 
 const ImageWrapper = styled.div.attrs({
