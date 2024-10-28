@@ -28,7 +28,8 @@ function Hero() {
 // by lowering the content using the padding-top. Same with factor 12 on
 // desktop.
 const Container = styled.div.attrs({
-  className: 'relative bg-primary-400 xl:pt-24 xl:-mt-24 overflow-hidden',
+  className:
+    'relative bg-primary-400 -mt-20 pt-20 xl:pt-24 xl:-mt-24 overflow-hidden',
 })``;
 
 const Wrapper = styled.div.attrs({
@@ -40,10 +41,10 @@ const ContentWrapper = styled.div.attrs({
 })``;
 
 const Title = styled.h1.attrs({
-  className: 'text-neutral-0  ft-text-4xl xl:text-left',
+  className: 'text-neutral-0  ft-text-5xl',
 })`
   font-family: Sora;
-  letter-spacing: -0.03em;
+  letter-spacing: -2.4%;
 `;
 
 const Subtitle = styled.h3.attrs({
