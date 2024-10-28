@@ -6,6 +6,7 @@ import {GridLayout} from 'components/layout';
 
 function Hero() {
   const {t} = useTranslation();
+
   return (
     <Container>
       <StyledImage src={Blueprint} alt="Background Texture" />
@@ -15,18 +16,12 @@ function Hero() {
             <Title>{t('explore.hero.title')}</Title>
             <Subtitle>{t('explore.hero.subtitle1')}</Subtitle>
           </ContentWrapper>
-          <ImageWrapper></ImageWrapper>
         </Wrapper>
       </GridLayout>
     </Container>
   );
 }
 
-// NOTE: "h-[448px] -mt-20 pt-20" is the "simplest" way to achieve a sticky header
-// with a gradient AND a primary 400 background. What it does it is extends the
-// hero by a height of 12, moves it up using the negative margin and compensates
-// by lowering the content using the padding-top. Same with factor 12 on
-// desktop.
 const Container = styled.div.attrs({
   className:
     'relative bg-primary-400 -mt-20 pt-20 xl:pt-24 xl:-mt-24 overflow-hidden',
@@ -50,10 +45,6 @@ const Title = styled.h1.attrs({
 const Subtitle = styled.h3.attrs({
   className:
     'text-neutral-0 ft-text-lg font-normal leading-[24px] xl:leading-[30px]',
-})``;
-
-const ImageWrapper = styled.div.attrs({
-  className: 'h-full',
 })``;
 
 const StyledImage = styled.img.attrs({
