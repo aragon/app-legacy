@@ -79,8 +79,6 @@ export const DaoExplorer = () => {
 
     if (!filters) return '';
 
-    if (filters.quickFilter !== 'allDaos') count++;
-
     // plugin Name filter
     if (filters.pluginNames?.length !== 0) count++;
 
@@ -165,6 +163,7 @@ export const DaoExplorer = () => {
             isMultiSelect={false}
             value={filters.quickFilter}
             onChange={toggleQuickFilters}
+            className="grid w-full grid-cols-2 gap-1 text-center md:flex md:w-fit md:flex-row"
           >
             {quickFilters
               .filter(f => {
@@ -177,16 +176,20 @@ export const DaoExplorer = () => {
                 return true;
               })
               .map(f => (
-                <Toggle key={f.value} label={t(f.label)} value={f.value} />
+                <Toggle
+                  key={f.value}
+                  label={t(f.label)}
+                  value={f.value}
+                  className="flex w-full justify-center md:w-fit"
+                />
               ))}
           </ToggleGroup>
           <ButtonGroupContainer>
             {showSortFilter && (
-              <>
+              <div className="flex gap-x-1">
                 <Button
                   variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
                   size="md"
-                  className="!min-w-fit"
                   iconLeft={IconType.FILTER}
                   onClick={() => setShowAdvancedFilters(true)}
                 >
@@ -254,12 +257,13 @@ export const DaoExplorer = () => {
                     </Dropdown.Item>
                   </Dropdown.Container>
                 )}
-              </>
+              </div>
             )}
             <Button
               size="md"
               href="/#/create"
               onClick={handleWalletButtonClick}
+              className="w-full md:w-fit md:shrink-0"
             >
               {t('cta.create.actionLabel')}
             </Button>
@@ -360,9 +364,11 @@ const Title = styled.p.attrs({
 })``;
 
 const FilterGroupContainer = styled.div.attrs({
-  className: 'flex justify-between space-x-3',
+  className:
+    'flex flex-col gap-y-3 md:flex-row items-center md:justify-between',
 })``;
 
 const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex space-x-3 items-start',
+  className:
+    'flex flex-row-reverse md:flex-row gap-x-3 items-center justify-center md:w-fit w-full md:justify-between',
 })``;
