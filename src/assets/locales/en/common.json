@@ -1132,19 +1132,19 @@
   },
   "cta": {
     "create": {
-      "title": "Create your DAO",
-      "description": "Mint tokens, set governance parameters, and deploy your DAO on-chain in minutes with our no-code setup process.",
+      "title": "Create",
+      "description": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
       "actionLabel": "Create a DAO"
     },
     "learn": {
-      "title": "Learn about DAOs",
-      "description": "Explore and learn through our “How-to Guides”, DAO Education, Educational Articles and more!",
+      "title": "Learn",
+      "description": "Master onchain governance with our Resource Library's case studies, guides, and expert insights into Aragon OSx.",
       "actionLabel": "Learn about DAOs"
     },
     "build": {
-      "title": "Build faster",
-      "description": "Build something something on open-source infrastructure with governance plugins.",
-      "actionLabel": "Build custom DAO"
+      "title": "Build",
+      "description": "Take the DIY approach: build Aragon OSx plugins or your own application using our Governance UI Kit and App Template.",
+      "actionLabel": "Build a custom DAO"
     },
     "404": {
       "titleLine1": "Oh no,",
