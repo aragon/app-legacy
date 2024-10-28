@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
-
 import {GridLayout} from 'components/layout';
 import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
@@ -43,5 +42,5 @@ export const Explore: React.FC = () => {
 
 const ContentWrapper = styled.div.attrs({
   className:
-    'col-span-full xl:col-start-2 xl:col-end-12 space-y-10 xl:space-y-12 mb-20 xl:mb-20',
+    'col-span-full xl:col-start-2 xl:col-end-12 space-y-10 xl:space-y-16 mb-12 xl:mb-20',
 })``;
