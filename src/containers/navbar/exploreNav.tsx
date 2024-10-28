@@ -55,7 +55,7 @@ const ExploreNav: React.FC = () => {
                   iconRight={IconType.FEEDBACK}
                   onClick={handleFeedbackButtonClick}
                 >
-                  {isDesktop && t('navButtons.giveFeedback')}
+                  {t('navButtons.giveFeedback')}
                 </Button>
               ) : (
                 <Button
