@@ -32,6 +32,7 @@ const CTACard: React.FC<Props> = props => {
         size="md"
         disabled={!props.actionAvailable}
         href={props.path}
+        target={props.isPrimary ? '_self' : '_blank'}
         className={`${!isDesktop && 'w-full'}`}
       >
         {props.actionLabel}
