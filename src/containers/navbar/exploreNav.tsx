@@ -49,7 +49,6 @@ const ExploreNav: React.FC = () => {
             <ActionsWrapper>
               {isDesktop ? (
                 <Button
-                  size="lg"
                   variant="tertiary"
                   iconRight={IconType.FEEDBACK}
                   onClick={handleFeedbackButtonClick}
@@ -58,7 +57,6 @@ const ExploreNav: React.FC = () => {
                 </Button>
               ) : (
                 <Button
-                  size="lg"
                   variant="tertiary"
                   iconLeft={IconType.FEEDBACK}
                   onClick={handleFeedbackButtonClick}

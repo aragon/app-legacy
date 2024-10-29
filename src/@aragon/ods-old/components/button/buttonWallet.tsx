@@ -44,7 +44,9 @@ type AvatarProps = Pick<ButtonWalletProps, 'isLoading' | 'isConnected' | 'src'>;
 
 const Avatar: FC<AvatarProps> = ({isConnected, isLoading, src}) => {
   if (!isConnected) {
-    return <Icon icon={IconType.PERSON} />;
+    return (
+      <Icon size="lg" responsiveSize={{md: 'md'}} icon={IconType.PERSON} />
+    );
   }
   if (isLoading) {
     return <Spinner size="small" />;
@@ -59,7 +61,7 @@ const StyledButton = styled.button.attrs<StyledButtonProp>(({isLoading}) => {
     isLoading ? 'text-primary-500' : 'text-neutral-600'
   } flex items-center md:space-x-3 font-semibold p-3 hover:text-neutral-800
     active:text-neutral-800 disabled:text-neutral-300 bg-neutral-0 hover:bg-neutral-100 active:bg-neutral-200
-    disabled:bg-neutral-100 rounded-xl focus-visible:ring focus-visible:ring-primary`;
+    disabled:bg-neutral-100 rounded-xl focus-visible:ring focus-visible:ring-primary size-12 justify-center md:w-fit`;
   return {className};
 })``;
 
