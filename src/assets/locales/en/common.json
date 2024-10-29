@@ -1018,9 +1018,7 @@
       "myDaos": "My DAOs",
       "popular": "Popular",
       "newest": "Newest",
-      "walletBased": "Wallet-based",
-      "showMore": "Show more",
-      "tokenBased": "Token-based"
+      "showMore": "Show more"
     },
     "activeProposals": "Active proposals",
     "showMore": "Show more",
@@ -1043,7 +1041,8 @@
       "linkURL": "https://docs.aragon.org"
     },
     "toggleFilter": {
-      "Favourites": "Following",
+      "favourites": "Following",
+      "featuredDAOs": "Featured",
       "allDAOs": "All DAOs ",
       "member": "Member"
     },

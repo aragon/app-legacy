@@ -23,6 +23,8 @@ import {
   quickFilters,
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
+import {useFeaturedDaos} from 'hooks/useFeaturedDaos';
+import classNames from 'classnames';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   creatorAddress: '' as Address,
@@ -38,7 +40,7 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
 
 export const DaoExplorer = () => {
   const {t} = useTranslation();
-  const {isConnected, address} = useWallet();
+  const {isConnected, address, methods} = useWallet();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(false);
@@ -79,8 +81,6 @@ export const DaoExplorer = () => {
 
     if (!filters) return '';
 
-    if (filters.quickFilter !== DEFAULT_FILTERS.quickFilter) count++;
-
     // plugin Name filter
     if (filters.pluginNames?.length !== 0) count++;
 
@@ -103,6 +103,9 @@ export const DaoExplorer = () => {
 
   const {isLoading, hasNextPage, isFetchingNextPage, fetchNextPage} =
     useFollowList ? followedDaosResult : newDaosResult;
+
+  const {data: featuredDaoList, isLoading: isLoadingFeaturedDaos} =
+    useFeaturedDaos();
 
   const totalDaos = useFollowList
     ? followedDaosResult.data?.pages[0].total ?? 0
@@ -129,9 +132,46 @@ export const DaoExplorer = () => {
 
   const noDaosFound = isLoading === false && totalDaos === 0;
 
+  const noFeaturedDaosFound =
+    isLoadingFeaturedDaos === false &&
+    featuredDaoList == null &&
+    filters.quickFilter === 'featuredDaos';
+
   const handleClearFilters = () => {
     dispatch({type: FilterActionTypes.RESET, payload: DEFAULT_FILTERS});
   };
+
+  const handleWalletButtonClick = () => {
+    if (isConnected) {
+      return;
+    }
+
+    methods.selectWallet().catch((err: Error) => {
+      console.error(err);
+    });
+  };
+
+  const showSortFilter = filters.quickFilter !== 'featuredDaos' && isConnected;
+
+  const filterGroupClassName = classNames('flex justify-between w-full', {
+    'flex flex-col items-center gap-y-3 md:flex-row md:justify-between':
+      isConnected,
+  });
+
+  const toggleGroupClassName = classNames('flex flex-row w-full', {
+    'grid w-full grid-cols-2 gap-1 text-center md:flex md:w-fit md:flex-row':
+      isConnected,
+  });
+
+  const toggleClassName = classNames({
+    'flex w-full justify-center md:w-fit': isConnected,
+  });
+
+  const buttonGroupContainerClassName = classNames('shrink-0', {
+    'flex w-full md:w-fit justify-end': filters.quickFilter === 'featuredDaos',
+    'flex gap-x-3 w-full md:w-fit justify-between':
+      isConnected && filters.quickFilter !== 'featuredDaos',
+  });
 
   /*************************************************
    *                    Render                     *
@@ -139,101 +179,118 @@ export const DaoExplorer = () => {
   return (
     <Container>
       <MainContainer>
-        <FilterGroupContainer>
+        <div className={filterGroupClassName}>
           <ToggleGroup
             isMultiSelect={false}
             value={filters.quickFilter}
             onChange={toggleQuickFilters}
+            className={toggleGroupClassName}
           >
-            {quickFilters.map(f => {
-              return (
+            {quickFilters
+              .filter(f => {
+                if (
+                  !isConnected &&
+                  (f.value === 'memberOf' || f.value === 'following')
+                ) {
+                  return false;
+                }
+                return true;
+              })
+              .map(f => (
                 <Toggle
                   key={f.value}
                   label={t(f.label)}
                   value={f.value}
-                  disabled={
-                    (f.value === 'memberOf' || f.value === 'following') &&
-                    !isConnected
-                  }
+                  className={toggleClassName}
                 />
-              );
-            })}
+              ))}
           </ToggleGroup>
-          <ButtonGroupContainer>
-            <Button
-              variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
-              size="md"
-              className="!min-w-fit"
-              responsiveSize={{lg: 'lg'}}
-              iconLeft={IconType.FILTER}
-              onClick={() => setShowAdvancedFilters(true)}
-            >
-              {filtersCount}
-            </Button>
-            {filters.quickFilter !== 'following' && (
-              <Dropdown.Container
-                align="end"
-                open={activeDropdown}
-                onOpenChange={e => {
-                  setActiveDropdown(e);
-                }}
-                customTrigger={
-                  <Button
-                    variant={activeDropdown ? 'secondary' : 'tertiary'}
-                    size="md"
-                    responsiveSize={{lg: 'lg'}}
-                    iconLeft={IconType.SORT_DESC}
-                  />
-                }
-              >
-                <Dropdown.Item
-                  icon={
-                    filters.order === 'tvl' ? IconType.CHECKMARK : undefined
-                  }
-                  selected={filters.order === 'tvl'}
-                  onClick={() => toggleOrderby('tvl')}
+          <div className={buttonGroupContainerClassName}>
+            {showSortFilter && (
+              <div className="flex gap-x-1">
+                <Button
+                  variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
+                  size="md"
+                  iconLeft={IconType.FILTER}
+                  onClick={() => setShowAdvancedFilters(true)}
                 >
-                  {t('explore.sortBy.largestTreasury')}
-                </Dropdown.Item>
-                <Dropdown.Item
-                  icon={
-                    filters.order === 'proposals'
-                      ? IconType.CHECKMARK
-                      : undefined
-                  }
-                  iconPosition="right"
-                  selected={filters.order === 'proposals'}
-                  onClick={() => toggleOrderby('proposals')}
-                >
-                  {t('explore.sortBy.mostProposals')}
-                </Dropdown.Item>
-                <Dropdown.Item
-                  icon={
-                    filters.order === 'members' ? IconType.CHECKMARK : undefined
-                  }
-                  iconPosition="right"
-                  selected={filters.order === 'members'}
-                  onClick={() => toggleOrderby('members')}
-                >
-                  {t('explore.sortBy.largestCommunity')}
-                </Dropdown.Item>
-                <Dropdown.Item
-                  icon={
-                    filters.order === 'createdAt'
-                      ? IconType.CHECKMARK
-                      : undefined
-                  }
-                  iconPosition="right"
-                  selected={filters.order === 'createdAt'}
-                  onClick={() => toggleOrderby('createdAt')}
-                >
-                  {t('explore.sortBy.recentlyCreated')}
-                </Dropdown.Item>
-              </Dropdown.Container>
+                  {filtersCount}
+                </Button>
+                {filters.quickFilter !== 'following' && (
+                  <Dropdown.Container
+                    align="end"
+                    open={activeDropdown}
+                    onOpenChange={e => {
+                      setActiveDropdown(e);
+                    }}
+                    customTrigger={
+                      <Button
+                        variant={activeDropdown ? 'secondary' : 'tertiary'}
+                        size="md"
+                        iconLeft={IconType.SORT_DESC}
+                      />
+                    }
+                  >
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'tvl' ? IconType.CHECKMARK : undefined
+                      }
+                      selected={filters.order === 'tvl'}
+                      onClick={() => toggleOrderby('tvl')}
+                    >
+                      {t('explore.sortBy.largestTreasury')}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'proposals'
+                          ? IconType.CHECKMARK
+                          : undefined
+                      }
+                      iconPosition="right"
+                      selected={filters.order === 'proposals'}
+                      onClick={() => toggleOrderby('proposals')}
+                    >
+                      {t('explore.sortBy.mostProposals')}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'members'
+                          ? IconType.CHECKMARK
+                          : undefined
+                      }
+                      iconPosition="right"
+                      selected={filters.order === 'members'}
+                      onClick={() => toggleOrderby('members')}
+                    >
+                      {t('explore.sortBy.largestCommunity')}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'createdAt'
+                          ? IconType.CHECKMARK
+                          : undefined
+                      }
+                      iconPosition="right"
+                      selected={filters.order === 'createdAt'}
+                      onClick={() => toggleOrderby('createdAt')}
+                    >
+                      {t('explore.sortBy.recentlyCreated')}
+                    </Dropdown.Item>
+                  </Dropdown.Container>
+                )}
+              </div>
             )}
-          </ButtonGroupContainer>
-        </FilterGroupContainer>
-        {noDaosFound ? (
+            <Button
+              size="md"
+              href="/#/create"
+              onClick={handleWalletButtonClick}
+              className="shrink-0 "
+            >
+              {t('cta.create.actionLabel')}
+            </Button>
+          </div>
+        </div>
+        {noDaosFound || noFeaturedDaosFound ? (
           <CardEmptyState
             objectIllustration={{object: 'MAGNIFYING_GLASS'}}
             heading={t('explore.emptyStateSearch.title')}
@@ -247,39 +304,57 @@ export const DaoExplorer = () => {
           />
         ) : (
           <CardsWrapper>
-            {filteredDaoList?.map(
-              (dao: IDao, index: React.Key | null | undefined) => (
-                <DaoCard key={index} dao={dao} />
-              )
+            {filters.quickFilter === 'featuredDaos' ? (
+              <>
+                {featuredDaoList?.map(
+                  (dao: IDao, index: React.Key | null | undefined) => (
+                    <DaoCard key={index} dao={dao} />
+                  )
+                )}
+                {isLoadingFeaturedDaos && (
+                  <Spinner size="xl" variant="primary" />
+                )}
+              </>
+            ) : (
+              <>
+                {filteredDaoList?.map(
+                  (dao: IDao, index: React.Key | null | undefined) => (
+                    <DaoCard key={index} dao={dao} />
+                  )
+                )}
+                {isLoading && <Spinner size="xl" variant="primary" />}
+              </>
             )}
-            {isLoading && <Spinner size="xl" variant="primary" />}
           </CardsWrapper>
         )}
       </MainContainer>
-      {totalDaos != null && totalDaos > 0 && totalDaosShown > 0 && (
-        <div className="flex items-center lg:gap-x-6">
-          {hasNextPage && (
-            <Button
-              className="self-start"
-              isLoading={isFetchingNextPage}
-              iconRight={
-                !isFetchingNextPage ? IconType.CHEVRON_DOWN : undefined
-              }
-              variant="tertiary"
-              size="md"
-              onClick={() => fetchNextPage()}
-            >
-              {t('explore.explorer.showMore')}
-            </Button>
-          )}
-          <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
-            {t('explore.pagination.label.amountOf DAOs', {
-              amount: totalDaosShown,
-              total: totalDaos,
-            })}
-          </span>
-        </div>
-      )}
+      {totalDaos != null &&
+        totalDaos > 0 &&
+        totalDaosShown > 0 &&
+        filters.quickFilter !== 'featuredDaos' && (
+          <div className="flex items-center lg:gap-x-6">
+            {hasNextPage && (
+              <Button
+                className="self-start"
+                isLoading={isFetchingNextPage}
+                iconRight={
+                  !isFetchingNextPage ? IconType.CHEVRON_DOWN : undefined
+                }
+                variant="tertiary"
+                size="md"
+                onClick={() => fetchNextPage()}
+              >
+                {t('explore.explorer.showMore')}
+              </Button>
+            )}
+            <span className="ml-auto font-semibold text-neutral-800 ft-text-base lg:ml-0">
+              {t('explore.pagination.label.amountOf DAOs', {
+                amount: totalDaosShown,
+                total: totalDaos,
+              })}
+            </span>
+          </div>
+        )}
       <DaoFilterModal
         isOpen={showAdvancedFilters}
         filters={filters}
@@ -303,12 +378,4 @@ const Container = styled.div.attrs({
 
 const CardsWrapper = styled.div.attrs({
   className: 'grid grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-6',
-})``;
-
-const FilterGroupContainer = styled.div.attrs({
-  className: 'flex justify-between space-x-3 mt-12',
-})``;
-
-const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex space-x-3 items-start',
 })``;

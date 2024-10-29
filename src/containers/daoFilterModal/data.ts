@@ -31,7 +31,12 @@ export const governanceFilters: GovernanceFilter[] = [
   },
 ];
 
-export type QuickFilterValue = 'allDaos' | 'memberOf' | 'following';
+export type QuickFilterValue =
+  | 'allDaos'
+  | 'featuredDaos'
+  | 'memberOf'
+  | 'following';
+
 type QuickFilter = {
   label: string;
   value: QuickFilterValue;
@@ -41,10 +46,11 @@ type QuickFilter = {
 export type OrderByValue = 'createdAt' | 'tvl' | 'members' | 'proposals';
 
 export const quickFilters: QuickFilter[] = [
+  {label: 'explore.toggleFilter.featuredDAOs', value: 'featuredDaos'},
   {label: 'explore.toggleFilter.allDAOs', value: 'allDaos'},
   {label: 'explore.toggleFilter.member', value: 'memberOf'},
   {
-    label: 'explore.toggleFilter.Favourites',
+    label: 'explore.toggleFilter.favourites',
     value: 'following',
   },
 ];
