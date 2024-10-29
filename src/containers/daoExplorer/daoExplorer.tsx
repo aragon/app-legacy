@@ -152,6 +152,11 @@ export const DaoExplorer = () => {
 
   const showSortFilter = filters.quickFilter !== 'featuredDaos' && isConnected;
 
+  const filterGroupClassName = classNames('flex justify-between w-full', {
+    'flex flex-col items-center gap-y-3 md:flex-row md:justify-between':
+      isConnected,
+  });
+
   const toggleGroupClassName = classNames('flex flex-row w-full', {
     'grid w-full grid-cols-2 gap-1 text-center md:flex md:w-fit md:flex-row':
       isConnected,
@@ -161,22 +166,11 @@ export const DaoExplorer = () => {
     'flex w-full justify-center md:w-fit': isConnected,
   });
 
-  const filterGroupClassName = classNames('flex justify-between w-full', {
-    'flex flex-col items-center gap-y-3 md:flex-row md:justify-between':
-      isConnected,
+  const buttonGroupContainerClassName = classNames('shrink-0', {
+    'flex w-full md:w-fit justify-end': filters.quickFilter === 'featuredDaos',
+    'flex gap-x-3 w-full md:w-fit justify-between':
+      isConnected && filters.quickFilter !== 'featuredDaos',
   });
-
-  const buttonGroupContainerClassName = classNames(
-    'shrink-0',
-    {
-      'flex w-full md:w-fit justify-end':
-        filters.quickFilter === 'featuredDaos',
-    },
-    {
-      'flex gap-x-3 w-full md:w-fit justify-between':
-        isConnected && filters.quickFilter !== 'featuredDaos',
-    }
-  );
 
   /*************************************************
    *                    Render                     *
