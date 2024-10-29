@@ -49,15 +49,16 @@ const CTACardWrapper = styled.div.attrs({
 })``;
 
 const Content = styled.div.attrs({
-  className: 'flex xl:items-start items-center flex-col xl:m-0 mb-6',
+  className: 'flex xl:items-start items-center flex-col lg:m-0 ',
 })``;
 
 const Title = styled.p.attrs({
-  className: 'ft-text-2xl font-semibold text-neutral-800 xl:mt-4 mt-0',
+  className: 'ft-text-2xl font-semibold text-neutral-800 lg:mt-4 mt-0',
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'text-neutral-600 h-[72px] ft-text-base xl:mt-4 mt-3',
+  className:
+    'text-center lg:text-left text-neutral-600 lg:h-[72px] ft-text-base lg:mt-4 mt-3',
 })``;
 
 const StyledImg = styled.img.attrs({
