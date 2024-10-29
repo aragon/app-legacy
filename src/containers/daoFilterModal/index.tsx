@@ -7,18 +7,13 @@ import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
 import useScreen from 'hooks/useScreen';
-import {useWallet} from 'hooks/useWallet';
+
 import {SupportedNetworks} from 'utils/constants';
-import {
-  QuickFilterValue,
-  governanceFilters,
-  networkFilters,
-  quickFilters,
-} from './data';
+import {governanceFilters, networkFilters} from './data';
 import {DaoFilterAction, DaoFilterState, FilterActionTypes} from './reducer';
 
 export const DEFAULT_FILTERS: DaoFilterState = {
-  quickFilter: 'allDaos',
+  quickFilter: 'featuredDaos',
   pluginNames: [],
   networks: [],
   order: 'tvl',
@@ -82,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
         iconLeft={IconType.CLOSE}
         variant="tertiary"
         size="sm"
-        responsiveSize={{lg: 'lg'}}
+        responsiveSize={{lg: 'md'}}
         onClick={onClose}
       />
     </ModalHeader>
@@ -92,11 +87,10 @@ const Header: React.FC<HeaderProps> = ({onClose}) => {
 type ContentProps = Pick<DaoFilterModalProps, 'filters' | 'onFilterChange'>;
 
 const ModalContent: React.FC<ContentProps> = ({
-  filters: {networks, quickFilter, pluginNames, showTestnets},
+  filters: {networks, pluginNames, showTestnets},
   onFilterChange,
 }) => {
   const {t} = useTranslation();
-  const {isConnected} = useWallet();
 
   const testnetsFilters = networkFilters.flatMap(f =>
     f.testnet ? f.value : []
@@ -109,14 +103,6 @@ const ModalContent: React.FC<ContentProps> = ({
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
-  const toggleQuickFilters = (value?: string | string[]) => {
-    if (value && !Array.isArray(value)) {
-      onFilterChange({
-        type: FilterActionTypes.SET_QUICK_FILTER,
-        payload: value as QuickFilterValue,
-      });
-    }
-  };
 
   const toggleNetworks = (value?: string[]) => {
     onFilterChange({
@@ -152,29 +138,6 @@ const ModalContent: React.FC<ContentProps> = ({
    *************************************************/
   return (
     <Main>
-      {/* Quick Filters */}
-      <FilterSection>
-        <ToggleGroup
-          isMultiSelect={false}
-          value={quickFilter}
-          onChange={toggleQuickFilters}
-        >
-          {quickFilters.map(f => {
-            return (
-              <Toggle
-                key={f.value}
-                label={t(f.label)}
-                value={f.value}
-                disabled={
-                  (f.value === 'memberOf' || f.value === 'following') &&
-                  !isConnected
-                }
-              />
-            );
-          })}
-        </ToggleGroup>
-      </FilterSection>
-
       {/* Blockchain Filters */}
       <FilterSection>
         <TitleWrapper>
