@@ -184,7 +184,7 @@ export const Community: React.FC = () => {
       title={pageTitle}
       {...(walletBased
         ? {
-            description: t('explore.explorer.walletBased'),
+            description: t('governance.type.walletBased'),
             primaryBtnProps: {
               label: t('labels.manageMember'),
               onClick: handlePrimaryClick,
@@ -192,12 +192,12 @@ export const Community: React.FC = () => {
           }
         : !isGovernanceEnabled
         ? {
-            description: t('explore.explorer.tokenBased'),
+            description: t('governance.type.tokenBased'),
             secondaryBtnProps: seeAllHoldersBtn,
           }
         : isDAOTokenWrapped
         ? {
-            description: t('explore.explorer.tokenBased'),
+            description: t('governance.type.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
               iconLeft: <Icon icon={IconType.APP_PROPOSALS} />,
@@ -211,7 +211,7 @@ export const Community: React.FC = () => {
           }
         : isTokenMintable
         ? {
-            description: t('explore.explorer.tokenBased'),
+            description: t('governance.type.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
               iconLeft: <Icon icon={IconType.APP_PROPOSALS} />,
@@ -225,7 +225,7 @@ export const Community: React.FC = () => {
             tertiaryBtnProps: seeAllHoldersBtn,
           }
         : {
-            description: t('explore.explorer.tokenBased'),
+            description: t('governance.type.tokenBased'),
             primaryBtnProps: {
               label: t('governance.actionSecondary'),
               iconLeft: <Icon icon={IconType.APP_PROPOSALS} />,
