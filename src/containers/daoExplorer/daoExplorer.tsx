@@ -168,7 +168,7 @@ export const DaoExplorer = () => {
   });
 
   const buttonGroupContainerClassName = classNames('shrink-0', {
-    'flex w-full md:w-fit justify-end': filters.quickFilter === 'featuredDaos',
+    'flex w-full md:w-fit': filters.quickFilter === 'featuredDaos',
     'flex gap-x-3 w-full md:w-fit justify-between':
       isConnected && filters.quickFilter !== 'featuredDaos',
   });
