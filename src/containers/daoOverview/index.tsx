@@ -2,14 +2,9 @@ import {Breadcrumb} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
 import CardWithImage from 'components/cardWithImage';
 import {useFormStep} from 'components/fullScreenStepper';
-import {
-  ActiveIndicator,
-  Indicator,
-  StyledCarousel,
-} from 'containers/explorerCta';
+import {ActiveIndicator, Indicator, StyledCarousel} from 'containers/carousel';
 import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {i18n} from '../../../i18n.config';
