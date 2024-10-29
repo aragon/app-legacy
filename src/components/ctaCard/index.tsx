@@ -13,6 +13,7 @@ type Props = {
   onClick: (path: string) => void;
   subtitle: string;
   title: string;
+  isPrimary: boolean;
 };
 
 const CTACard: React.FC<Props> = props => {
@@ -27,10 +28,11 @@ const CTACard: React.FC<Props> = props => {
       </Content>
 
       <Button
-        variant={props.actionAvailable ? 'primary' : 'tertiary'}
-        size="lg"
+        variant={props.isPrimary ? 'primary' : 'secondary'}
+        size="md"
         disabled={!props.actionAvailable}
-        onClick={() => props.onClick(props.path)}
+        href={props.path}
+        target={props.isPrimary ? '_self' : '_blank'}
         className={`${!isDesktop && 'w-full'}`}
       >
         {props.actionLabel}
@@ -43,22 +45,20 @@ export default CTACard;
 
 const CTACardWrapper = styled.div.attrs({
   className:
-    'flex flex-col xl:items-start items-center p-6 space-y-6 rounded-xl relative xl:m-0 mb-6 mx-2' as string,
-})`
-  background: rgba(255, 255, 255, 0.68);
-  backdrop-filter: blur(50px);
-`;
+    'bg-neutral-0 flex flex-col xl:items-start items-center p-6 lg:space-y-2 rounded-xl gap-y-6 mb-6 lg:mb-0 shadow-neutral',
+})``;
 
 const Content = styled.div.attrs({
-  className: 'flex xl:items-start items-center flex-col xl:m-0 mb-6',
+  className: 'flex xl:items-start items-center flex-col lg:m-0 ',
 })``;
 
 const Title = styled.p.attrs({
-  className: 'ft-text-2xl font-semibold text-neutral-800 xl:mt-4 mt-0',
+  className: 'ft-text-2xl font-semibold text-neutral-800 lg:mt-4 mt-0',
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'text-neutral-600 h-[72px] ft-text-base xl:mt-4 mt-3',
+  className:
+    'text-center lg:text-left text-neutral-600 lg:h-[72px] ft-text-base lg:mt-4 mt-3',
 })``;
 
 const StyledImg = styled.img.attrs({

@@ -3,7 +3,6 @@ import {Carousel as ReactResponsiveCarousel} from 'react-responsive-carousel';
 import styled from 'styled-components';
 import {useNavigate} from 'react-router-dom';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-
 import CTACard from 'components/ctaCard';
 import {CTACards} from 'components/ctaCard/data';
 import useScreen from 'hooks/useScreen';
