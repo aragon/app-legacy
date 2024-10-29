@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {ButtonWallet, useScreen} from '@aragon/ods-old';
 import {Button, IconType} from '@aragon/ods';
@@ -9,8 +9,10 @@ import Logo from 'assets/images/logo.svg';
 import {useGlobalModalContext} from 'context/globalModals';
 import {Container, GridLayout} from 'components/layout';
 import {FEEDBACK_FORM} from 'utils/constants';
+import classNames from 'classnames';
 
 const ExploreNav: React.FC = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
   const {t} = useTranslation();
   const {address, ensName, ensAvatarUrl, isConnected, methods} = useWallet();
   const {open} = useGlobalModalContext();
@@ -29,15 +31,37 @@ const ExploreNav: React.FC = () => {
     }
 
     methods.selectWallet().catch((err: Error) => {
-      // To be implemented: maybe add an error message when
-      // the error is different from closing the window
       console.error(err);
     });
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const threshold = 250;
+      if (window.scrollY > threshold) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const menuClassNames = classNames('py-4 xl:py-6', {
+    'bg-gradient-to-b from-primary-400 to-transparent': !isScrolled,
+    'bg-primary-400': isScrolled,
+  });
+
   return (
     <Container data-testid="navbar">
-      <Menu>
+      <nav className={menuClassNames}>
         <GridLayout>
           <LeftContent>
             <LogoContainer
@@ -75,16 +99,10 @@ const ExploreNav: React.FC = () => {
             </ActionsWrapper>
           </RightContent>
         </GridLayout>
-      </Menu>
+      </nav>
     </Container>
   );
 };
-
-const Menu = styled.nav.attrs({
-  className: 'py-4 xl:py-6',
-})`
-  background: linear-gradient(180deg, #3164fa 0%, rgba(49, 100, 250, 0) 100%);
-`;
 
 const LeftContent = styled.div.attrs({
   className: 'col-span-3 md:col-span-2 flex items-center',

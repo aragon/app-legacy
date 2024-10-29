@@ -2,7 +2,6 @@ import {Breadcrumb} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
 import CardWithImage from 'components/cardWithImage';
 import {useFormStep} from 'components/fullScreenStepper';
 import {ActiveIndicator, Indicator, StyledCarousel} from 'containers/carousel';

@@ -1,7 +1,6 @@
 import {AvatarDao} from '@aragon/ods-old';
-import {Icon, IconType} from '@aragon/ods';
+import {AvatarIcon, Icon, IconType} from '@aragon/ods';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import useScreen from 'hooks/useScreen';
 import {generatePath, useHref} from 'react-router-dom';
@@ -11,15 +10,18 @@ import {toDisplayEns} from 'utils/library';
 import {Dashboard} from 'utils/paths';
 import {IDao} from 'services/aragon-backend/domain/dao';
 
+interface IDaoWithOverride extends IDao {
+  overrideUrl?: string;
+}
+
 export interface IDaoCardProps {
-  dao: IDao;
+  dao: IDaoWithOverride;
 }
 
 export const DaoCard = (props: IDaoCardProps) => {
   const {dao} = props;
-  const {name, daoAddress, logo, ens, description, network, pluginName} = dao;
+  const {name, daoAddress, logo, ens, description, network, overrideUrl} = dao;
 
-  const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {avatar} = useResolveDaoAvatar(logo);
 
@@ -29,23 +31,18 @@ export const DaoCard = (props: IDaoCardProps) => {
   });
   const daoUrl = useHref(daoPage);
 
-  // TODO: This should be changed for new plugin types
-  const daoType =
-    pluginName === 'token-voting.plugin.dao.eth' ||
-    pluginName === 'token-voting-repo'
-      ? t('explore.explorer.tokenBased')
-      : t('explore.explorer.walletBased');
+  const resolvedDaoUrl = overrideUrl ?? daoUrl;
 
   return (
-    <Container href={daoUrl}>
+    <Container
+      href={resolvedDaoUrl}
+      target={overrideUrl != null ? '_blank' : undefined}
+    >
       <DaoDataWrapper>
         <HeaderContainer>
           <AvatarDao daoName={name} src={logo && avatar} />
           <div className="space-y-0.5 text-left xl:space-y-1">
             <Title>{name}</Title>
-            <p className="font-semibold text-neutral-500 ft-text-sm">
-              {toDisplayEns(ens)}
-            </p>
           </div>
         </HeaderContainer>
         <Description isDesktop={isDesktop}>{description}</Description>
@@ -58,10 +55,9 @@ export const DaoCard = (props: IDaoCardProps) => {
           />
           <IconLabel>{CHAIN_METADATA[network].name}</IconLabel>
         </IconWrapper>
-        <IconWrapper>
-          <Icon icon={IconType.APP_MEMBERS} className="text-neutral-600" />
-          <IconLabel>{daoType}</IconLabel>
-        </IconWrapper>
+        {overrideUrl != null && (
+          <AvatarIcon variant="primary" icon={IconType.LINK_EXTERNAL} />
+        )}
       </DaoMetadataWrapper>
     </Container>
   );
@@ -69,7 +65,7 @@ export const DaoCard = (props: IDaoCardProps) => {
 
 const Container = styled.a.attrs({
   className: `p-4 xl:p-6 w-full flex flex-col space-y-6
-    box-border border border-neutral-0
+    box-border border border-neutral-100
     focus:outline-none focus:ring focus:ring-primary
     hover:border-neutral-100 active:border-200
     bg-neutral-0 rounded-xl cursor-pointer
@@ -109,7 +105,7 @@ const Description = styled.p.attrs({
 `;
 
 const DaoMetadataWrapper = styled.div.attrs({
-  className: 'flex flex-row space-x-6',
+  className: 'flex flex-row justify-between items-center',
 })``;
 const IconLabel = styled.p.attrs({
   className: 'text-neutral-600 ft-text-sm',

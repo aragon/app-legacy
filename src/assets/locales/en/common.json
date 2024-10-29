@@ -32,7 +32,7 @@
     "subtitle": "Go back to explorer page"
   },
   "navButtons": {
-    "connectWallet": "Connect wallet",
+    "connectWallet": "Connect",
     "giveFeedback": "Give feedback"
   },
   "labels": {
@@ -1010,17 +1010,15 @@
   },
   "explore": {
     "hero": {
-      "title": "Explore the DAO World",
-      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project all in one place."
+      "title": "Governed on Aragon",
+      "subtitle1": "Explore the organizations using our modular governance stack to secure their onchain governance."
     },
     "explorer": {
       "title": "Explore DAOs",
       "myDaos": "My DAOs",
       "popular": "Popular",
       "newest": "Newest",
-      "walletBased": "Wallet-based",
-      "showMore": "Show more",
-      "tokenBased": "Token-based"
+      "showMore": "Show more"
     },
     "activeProposals": "Active proposals",
     "showMore": "Show more",
@@ -1038,8 +1036,13 @@
       "linkLabel": "Learn about DAOs",
       "linkURL": "https://aragon.org/education-portal"
     },
+    "build": {
+      "linkLabel": "Build faster",
+      "linkURL": "https://docs.aragon.org"
+    },
     "toggleFilter": {
-      "Favourites": "Following",
+      "favourites": "Following",
+      "featuredDAOs": "Featured",
       "allDAOs": "All DAOs ",
       "member": "Member"
     },
@@ -1128,19 +1131,19 @@
   },
   "cta": {
     "create": {
-      "title": "Create your DAO",
-      "description": "Mint tokens, set governance parameters, and deploy your DAO on-chain in minutes with our no-code setup process.",
+      "title": "Create",
+      "description": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
       "actionLabel": "Create a DAO"
     },
     "learn": {
-      "title": "Learn about DAOs",
-      "description": "Find inspiration and learn about DAOs in our education portal designed for builders at every stage of the journey.",
+      "title": "Learn",
+      "description": "Master onchain governance with our Resource Library's case studies, guides, and expert insights into Aragon OSx.",
       "actionLabel": "Learn about DAOs"
     },
     "build": {
-      "title": "Build faster",
-      "description": "Use our governance plugins to build a DAO, dApp, or anything you can imagine on the Aragon OSx protocol.",
-      "actionLabel": "Coming soon"
+      "title": "Build",
+      "description": "Take the DIY approach: build Aragon OSx plugins or your own application using our Governance UI Kit and App Template.",
+      "actionLabel": "Build a custom DAO"
     },
     "404": {
       "titleLine1": "Oh no,",

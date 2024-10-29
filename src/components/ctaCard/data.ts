@@ -14,6 +14,7 @@ const CTACards = [
     imgSrc: createDaoImg,
     subtitle: i18n.t('cta.create.description'),
     title: i18n.t('cta.create.title'),
+    isPrimary: true,
   },
   {
     actionAvailable: true,
@@ -22,14 +23,16 @@ const CTACards = [
     imgSrc: learnImg,
     subtitle: i18n.t('cta.learn.description'),
     title: i18n.t('cta.learn.title'),
+    isPrimary: false,
   },
   {
-    actionAvailable: false,
+    actionAvailable: true,
     actionLabel: i18n.t('cta.build.actionLabel'),
-    path: '',
+    path: i18n.t('explore.build.linkURL'),
     imgSrc: buildFaster,
     subtitle: i18n.t('cta.build.description'),
     title: i18n.t('cta.build.title'),
+    isPrimary: false,
   },
 ];
 
