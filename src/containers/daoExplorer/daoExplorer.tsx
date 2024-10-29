@@ -263,7 +263,7 @@ export const DaoExplorer = () => {
               size="md"
               href="/#/create"
               onClick={handleWalletButtonClick}
-              className="w-full md:w-fit md:shrink-0"
+              className="shrink-0 "
             >
               {t('cta.create.actionLabel')}
             </Button>
@@ -369,6 +369,5 @@ const FilterGroupContainer = styled.div.attrs({
 })``;
 
 const ButtonGroupContainer = styled.div.attrs({
-  className:
-    'flex flex-row-reverse md:flex-row gap-x-3 items-center justify-center md:w-fit w-full md:justify-between',
+  className: 'flex gap-x-3 w-full md:w-fit justify-between self-end',
 })``;
