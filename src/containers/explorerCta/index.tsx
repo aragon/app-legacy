@@ -1,13 +1,12 @@
 import React, {useMemo, useCallback} from 'react';
 import styled from 'styled-components';
 import {useNavigate} from 'react-router-dom';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import CTACard from 'components/ctaCard';
 import {CTACards} from 'components/ctaCard/data';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 
-const Carousel: React.FC = () => {
+const ExplorerCTA: React.FC = () => {
   const navigate = useNavigate();
   const {methods, isConnected} = useWallet();
 
@@ -62,7 +61,7 @@ const Carousel: React.FC = () => {
 };
 
 const CTAContainer = styled.div.attrs({
-  className: 'relative flex lg:flex-row flex-col space-x-6 max-w-fit',
+  className: 'relative flex lg:flex-row flex-col lg:space-x-6 max-w-fit',
 })``;
 
 export const ActiveIndicator = styled.li.attrs({
@@ -73,4 +72,4 @@ export const Indicator = styled.li.attrs({
   className: 'inline-block bg-neutral-200 h-1.5 w-4 ml-2 rounded-xl',
 })``;
 
-export default Carousel;
+export default ExplorerCTA;

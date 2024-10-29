@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import {GridLayout} from 'components/layout';
-import Carousel from 'containers/carousel';
+import ExplorerCTA from 'containers/explorerCta';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
 import {useNetwork} from 'context/network';
@@ -30,7 +30,7 @@ export const Explore: React.FC = () => {
       <GridLayout>
         <ContentWrapper>
           <DaoExplorer />
-          <Carousel />
+          <ExplorerCTA />
         </ContentWrapper>
       </GridLayout>
     </>

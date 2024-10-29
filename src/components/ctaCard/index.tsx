@@ -45,7 +45,7 @@ export default CTACard;
 
 const CTACardWrapper = styled.div.attrs({
   className:
-    'bg-neutral-0 flex flex-col xl:items-start items-center p-6 space-y-6 rounded-xl relative xl:m-0 mb-6 mx-2 shadow-neutral',
+    'bg-neutral-0 flex flex-col xl:items-start items-center p-6 lg:space-y-2 rounded-xl gap-y-6 mb-6 lg:mb-0 shadow-neutral',
 })``;
 
 const Content = styled.div.attrs({
