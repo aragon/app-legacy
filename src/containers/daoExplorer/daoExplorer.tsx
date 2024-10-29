@@ -24,6 +24,7 @@ import {
 } from '../daoFilterModal/data';
 import {Toggle, ToggleGroup} from '@aragon/ods';
 import {useFeaturedDaos} from 'hooks/useFeaturedDaos';
+import classNames from 'classnames';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   creatorAddress: '' as Address,
@@ -151,6 +152,32 @@ export const DaoExplorer = () => {
 
   const showSortFilter = filters.quickFilter !== 'featuredDaos' && isConnected;
 
+  const toggleGroupClassName = classNames('flex flex-row w-full', {
+    'grid w-full grid-cols-2 gap-1 text-center md:flex md:w-fit md:flex-row':
+      isConnected,
+  });
+
+  const toggleClassName = classNames({
+    'flex w-full justify-center md:w-fit': isConnected,
+  });
+
+  const filterGroupClassName = classNames('flex justify-between w-full', {
+    'flex flex-col items-center gap-y-3 md:flex-row md:justify-between':
+      isConnected,
+  });
+
+  const buttonGroupContainerClassName = classNames(
+    'shrink-0',
+    {
+      'flex w-full md:w-fit justify-end':
+        filters.quickFilter === 'featuredDaos',
+    },
+    {
+      'flex gap-x-3 w-full md:w-fit justify-between':
+        isConnected && filters.quickFilter !== 'featuredDaos',
+    }
+  );
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -158,12 +185,12 @@ export const DaoExplorer = () => {
     <Container>
       <MainContainer>
         <Title>{t('explore.explorer.title')}</Title>
-        <FilterGroupContainer>
+        <div className={filterGroupClassName}>
           <ToggleGroup
             isMultiSelect={false}
             value={filters.quickFilter}
             onChange={toggleQuickFilters}
-            className="grid w-full grid-cols-2 gap-1 text-center md:flex md:w-fit md:flex-row"
+            className={toggleGroupClassName}
           >
             {quickFilters
               .filter(f => {
@@ -180,11 +207,11 @@ export const DaoExplorer = () => {
                   key={f.value}
                   label={t(f.label)}
                   value={f.value}
-                  className="flex w-full justify-center md:w-fit"
+                  className={toggleClassName}
                 />
               ))}
           </ToggleGroup>
-          <ButtonGroupContainer>
+          <div className={buttonGroupContainerClassName}>
             {showSortFilter && (
               <div className="flex gap-x-1">
                 <Button
@@ -267,8 +294,8 @@ export const DaoExplorer = () => {
             >
               {t('cta.create.actionLabel')}
             </Button>
-          </ButtonGroupContainer>
-        </FilterGroupContainer>
+          </div>
+        </div>
         {noDaosFound || noFeaturedDaosFound ? (
           <CardEmptyState
             objectIllustration={{object: 'MAGNIFYING_GLASS'}}
@@ -361,13 +388,4 @@ const CardsWrapper = styled.div.attrs({
 
 const Title = styled.p.attrs({
   className: 'font-semibold ft-text-xl text-neutral-800',
-})``;
-
-const FilterGroupContainer = styled.div.attrs({
-  className:
-    'flex flex-col gap-y-3 md:flex-row items-center md:justify-between',
-})``;
-
-const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex gap-x-3 w-full md:w-fit justify-between self-end',
 })``;
