@@ -53,7 +53,11 @@ export const DaoCard = (props: IDaoCardProps) => {
             icon={IconType.BLOCKCHAIN_BLOCKCHAIN}
             className="text-neutral-600"
           />
-          <IconLabel>{CHAIN_METADATA[network].name}</IconLabel>
+          <IconLabel>
+            {network === ('mode' as unknown)
+              ? 'Mode'
+              : CHAIN_METADATA[network].name}
+          </IconLabel>
         </IconWrapper>
         {overrideUrl != null && (
           <AvatarIcon variant="primary" icon={IconType.LINK_EXTERNAL} />
