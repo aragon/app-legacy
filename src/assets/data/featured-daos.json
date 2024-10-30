@@ -1,7 +1,7 @@
 [
   {
     "name": "Polygon",
-    "description": "The home of community-driven decision-making for the Polygon aggregated blockchain network.",
+    "description": "The Polygon Governance Hub enables community-driven decision-making for the Polygon aggregated blockchain network.",
     "logo": "https://aragon-1.mypinata.cloud/ipfs/QmXj8BtBp5wddCXcDQEAdBgkNtEjEHdHfHGsz4MnUBzxHU",
     "network": "polygon",
     "daoAddress": "0x0000000000000000000000000000000000000000",
@@ -9,7 +9,7 @@
   },
   {
     "name": "Puffer Financial",
-    "description": "Empowers the community to govern the Puffer ecosystem while upholding Ethereum’s core principle of decentralization.",
+    "description": "PufferDAO enables the community and its ecosystem participants to govern the Puffer protocol.",
     "logo": "https://pbs.twimg.com/profile_images/1816010238262444033/ccrQWNFq_400x400.jpg",
     "network": "ethereum",
     "daoAddress": "0x5dea8e499b05de8f86e7521f039770268055b23f",
@@ -17,7 +17,7 @@
   },
   {
     "name": "Mode",
-    "description": "The home for the Mode community to participate in Mode's evolving Governance.",
+    "description": "The Mode Governance Hub enables the community to participate in scaling DeFi to billions of users.",
     "logo": "https://pbs.twimg.com/profile_images/1688569679877390338/IYXD4bdy_400x400.jpg",
     "network": "mode",
     "daoAddress": "0xcf2c9a22b58f125f929cb8e8b29a6d7e2c4287ff",
@@ -25,7 +25,7 @@
   },
   {
     "name": "Aragon X",
-    "description": "Aragon X dogfoods its own tools on its journey to enable everyone to experiment with governance at the speed of software.",
+    "description": "The Aragon X team is dogfooding their latest governance stack - the most modular governance stack on Ethereum."
     "logo": "https://pbs.twimg.com/profile_images/1643537212095733761/zMvurGOa_400x400.jpg",
     "network": "ethereum",
     "daoAddress": "0xdafbd7d63cee88d73a51592b42f27f7fd6ab7722"
@@ -40,7 +40,7 @@
   },
   {
     "name": "Steakhouse Financial",
-    "description": "Steakhouse's Metamorpho vaults utilize Guardian DAOs to provide transparent and trustless community oversight.",
+    "description": "Steakhouse's Metamorpho vaults utilize Aragon Guardian DAOs to provide transparent and trustless community oversight.",
     "logo": "https://pbs.twimg.com/profile_images/1562326980820967424/f07396YH_400x400.jpg",
     "network": "ethereum",
     "daoAddress": "0xaa0500198B4425DfC4E272FbE42C8E64E21fc03d",
