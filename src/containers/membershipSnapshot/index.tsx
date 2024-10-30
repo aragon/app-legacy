@@ -84,8 +84,8 @@ export const MembershipSnapshot: React.FC<Props> = ({
             )}`}
             label={
               walletBased
-                ? t('explore.explorer.walletBased')
-                : t('explore.explorer.tokenBased')
+                ? t('governance.type.walletBased')
+                : t('governance.type.tokenBased')
             }
             buttonText={
               walletBased
@@ -128,8 +128,8 @@ export const MembershipSnapshot: React.FC<Props> = ({
         )}`}
         label={
           walletBased
-            ? t('explore.explorer.walletBased')
-            : t('explore.explorer.tokenBased')
+            ? t('governance.type.walletBased')
+            : t('governance.type.tokenBased')
         }
         buttonText={
           walletBased

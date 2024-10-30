@@ -307,6 +307,10 @@
       "description": "What's the first thing your community needs to decide? Get your community involved in the decision-making process.",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
+    "type": {
+      "tokenBased": "Token-based",
+      "walletBased": "Wallet-based"
+    },
     "proposals": {
       "publishedBy": "Published by",
       "Pending": "Starts in {{timeDiff}}",

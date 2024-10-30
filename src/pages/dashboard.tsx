@@ -304,8 +304,8 @@ export const Dashboard: React.FC = () => {
   if (liveDao && liveAddressOrEns) {
     const daoType =
       (liveDao?.plugins[0]?.id as PluginTypes) === 'multisig.plugin.dao.eth'
-        ? t('explore.explorer.walletBased')
-        : t('explore.explorer.tokenBased');
+        ? t('governance.type.walletBased')
+        : t('governance.type.tokenBased');
 
     const links =
       liveDao.metadata?.links
