@@ -4,12 +4,13 @@ import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 
 import {Container, GridLayout} from 'components/layout';
-import Logo from 'assets/images/logoBlue.svg';
 import Logo404 from 'assets/images/illu-custom.svg';
 import Green from 'assets/images/circleGreenGradient.svg';
 import Purple from 'assets/images/purpleGradient.svg';
 import {Landing} from 'utils/paths';
 import {Button} from '@aragon/ods';
+import {Logotype} from 'components/logos/logotype';
+import {Logo} from 'components/logos/logo';
 
 export const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -20,10 +21,11 @@ export const NotFound: React.FC = () => {
       <Container>
         <Menu>
           <GridLayout>
-            <img
-              className="col-span-2 col-start-2 mx-auto h-8 md:col-start-4 xl:col-start-auto xl:mx-0"
-              src={Logo}
-            />
+            <LeftContent>
+              <LogoContainer href="/">
+                <Logotype />
+              </LogoContainer>
+            </LeftContent>
           </GridLayout>
         </Menu>
       </Container>
@@ -71,6 +73,14 @@ export const NotFound: React.FC = () => {
     </>
   );
 };
+
+const LeftContent = styled.div.attrs({
+  className: 'col-span-2 flex items-center',
+})``;
+
+const LogoContainer = styled.a.attrs({
+  className: 'h-10 text-primary-400',
+})``;
 
 const Menu = styled.nav.attrs({
   className: 'py-4 xl:py-8',
