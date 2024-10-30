@@ -18,7 +18,7 @@
     "name": "Mode",
     "description": "The home for the Mode community to participate in Mode's evolving Governance.",
     "logo": "https://example.com/avatars/nftcollectors.png",
-    "network": "polygon",
+    "network": "mode",
     "daoAddress": "0x7890abcdef1234567890abcdef1234567890abcd",
     "overrideUrl": "https://nftcollectors.io"
   },
