@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-
 import {Container, GridLayout} from 'components/layout';
 import Logo404 from 'assets/images/illu-custom.svg';
 import Green from 'assets/images/circleGreenGradient.svg';
@@ -10,7 +9,6 @@ import Purple from 'assets/images/purpleGradient.svg';
 import {Landing} from 'utils/paths';
 import {Button} from '@aragon/ods';
 import {Logotype} from 'components/logos/logotype';
-import {Logo} from 'components/logos/logo';
 
 export const NotFound: React.FC = () => {
   const navigate = useNavigate();
