@@ -2,47 +2,48 @@
   {
     "name": "Polygon",
     "description": "The home of community-driven decision-making for the Polygon aggregated blockchain network, as well as other network architecture.",
-    "logo": "https://example.com/avatars/cryptopioneers.png",
-    "network": "ethereum",
-    "daoAddress": "0x1234567890abcdef1234567890abcdef12345678",
-    "overrideUrl": "https://cryptopioneers.io/custom-link"
+    "logo": "https://pbs.twimg.com/profile_images/1781425963265327104/TB5fMI9O_400x400.jpg",
+    "network": "polygon",
+    "daoAddress": "0x0000000000000000000000000000000000000000",
+    "overrideUrl": "https://governance.polygon.technology/"
   },
   {
     "name": "Puffer Financial",
     "description": "PufferDAO empowers our community to govern the Puffer ecosystem — including Puffer LRT, UniFi Rollup, and UniFi AVS — while upholding Ethereum’s core principle of decentralization.",
-    "logo": "https://example.com/avatars/defimasters.png",
-    "network": "polygon",
-    "daoAddress": "0xabcdef1234567890abcdef1234567890abcdef12"
+    "logo": "https://pbs.twimg.com/profile_images/1816010238262444033/ccrQWNFq_400x400.jpg",
+    "network": "ethereum",
+    "daoAddress": "0x5dea8e499b05de8f86e7521f039770268055b23f",
+    "overrideUrl": "https://vote.puffer.fi/"
   },
   {
     "name": "Mode",
     "description": "The home for the Mode community to participate in Mode's evolving Governance.",
-    "logo": "https://example.com/avatars/nftcollectors.png",
-    "network": "mode",
-    "daoAddress": "0x7890abcdef1234567890abcdef1234567890abcd",
-    "overrideUrl": "https://nftcollectors.io"
+    "logo": "https://pbs.twimg.com/profile_images/1688569679877390338/IYXD4bdy_400x400.jpg",
+    "network": "ethereum",
+    "daoAddress": "0xcf2c9a22b58f125f929cb8e8b29a6d7e2c4287ff",
+    "overrideUrl": "https://gov.mode.network/"
   },
   {
-    "name": "Aragon X",
+    "name": "Aragon",
     "description": "Aragon X aims to push Aragon's Project mission by allowing everyone to experiment with governance at the speed of software.",
-    "logo": "https://example.com/avatars/greenchain.png",
-    "network": "sepolia",
-    "daoAddress": "0x4567890abcdef1234567890abcdef1234567890ef"
+    "logo": "https://pbs.twimg.com/profile_images/1643537212095733761/zMvurGOa_400x400.jpg",
+    "network": "ethereum",
+    "daoAddress": "0xdafbd7d63cee88d73a51592b42f27f7fd6ab7722"
   },
   {
     "name": "Openmesh",
     "description": "Openmesh's OpenR&D is open-source platform designed to empower decentralized teams to collaborate seamlessly.",
-    "logo": "https://example.com/avatars/metabuilders.png",
-    "network": "arbitrum",
-    "daoAddress": "0xabcdef7890abcdef1234567890abcdef12345678",
-    "overrideUrl": "https://metabuilders.io/projects"
+    "logo": "https://pbs.twimg.com/profile_images/1796530693314424833/PfW0xFlD_400x400.jpg",
+    "network": "polygon",
+    "daoAddress": "0x053a28A9Ffd76253379759df5e5b41466cD13804",
+    "overrideUrl": "https://openrd.openmesh.network/"
   },
   {
     "name": "Steakhouse Financial",
     "description": "Steakhouse Guardian DAOs provide community oversight for Steakhouse's MetaMorpho vaults, ensuring transparent security without trust assumptions.",
-    "logo": "https://example.com/avatars/freakydeakydao.png",
-    "network": "arbitrum",
-    "daoAddress": "0x1234567890abcdef1234567890abcdef12345678",
-    "overrideUrl": "https://freakydeakydao.io"
+    "logo": "https://pbs.twimg.com/profile_images/1562326980820967424/f07396YH_400x400.jpg",
+    "network": "ethereum",
+    "daoAddress": "0xaa0500198B4425DfC4E272FbE42C8E64E21fc03d",
+    "overrideUrl": "https://app.morpho.org/vault?vault=0xBEEF01735c132Ada46AA9aA4c54623cAA92A64CB"
   }
 ]
