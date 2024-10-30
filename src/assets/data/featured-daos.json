@@ -4,7 +4,7 @@
     "description": "The home of community-driven decision-making for the Polygon aggregated blockchain network, as well as other network architecture",
     "logo": "https://pbs.twimg.com/profile_images/1781425963265327104/TB5fMI9O_400x400.jpg",
     "network": "polygon",
-    "daoAddress": "",
+    "daoAddress": "0x0000000000000000000000000000000000000000",
     "overrideUrl": "https://governance.polygon.technology/"
   },
   {
