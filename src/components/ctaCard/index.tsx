@@ -45,11 +45,11 @@ export default CTACard;
 
 const CTACardWrapper = styled.div.attrs({
   className:
-    'bg-neutral-0 flex flex-col xl:items-start items-center p-6 lg:space-y-2 rounded-xl gap-y-6 mb-6 lg:mb-0 shadow-neutral',
+    'bg-neutral-0 flex flex-col lg:items-start items-center p-6 lg:space-y-2 rounded-xl gap-y-6 mb-6 lg:mb-0 shadow-neutral',
 })``;
 
 const Content = styled.div.attrs({
-  className: 'flex xl:items-start items-center flex-col lg:m-0 ',
+  className: 'flex lg:items-start items-center flex-col lg:m-0 ',
 })``;
 
 const Title = styled.p.attrs({

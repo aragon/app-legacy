@@ -154,8 +154,7 @@ export const DaoExplorer = () => {
   const showSortFilter = filters.quickFilter !== 'featuredDaos' && isConnected;
 
   const filterGroupClassName = classNames('flex justify-between w-full', {
-    'flex flex-col items-center gap-y-3 md:flex-row md:justify-between':
-      isConnected,
+    'flex flex-col gap-y-3 md:flex-row md:justify-between': isConnected,
   });
 
   const toggleGroupClassName = classNames('flex flex-row w-full', {
@@ -168,7 +167,7 @@ export const DaoExplorer = () => {
   });
 
   const buttonGroupContainerClassName = classNames('shrink-0', {
-    'flex w-full md:w-fit': filters.quickFilter === 'featuredDaos',
+    'flex md:w-fit': !isConnected && filters.quickFilter === 'featuredDaos',
     'flex gap-x-3 w-full md:w-fit justify-between':
       isConnected && filters.quickFilter !== 'featuredDaos',
   });
@@ -284,7 +283,7 @@ export const DaoExplorer = () => {
               size="md"
               href="/#/create"
               onClick={handleWalletButtonClick}
-              className="shrink-0 "
+              className="w-fit"
             >
               {t('cta.create.actionLabel')}
             </Button>
