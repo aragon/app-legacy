@@ -1,14 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Icon, IconType} from '@aragon/ods';
-
 import {GridLayout} from 'components/layout';
 import {StyledLink} from 'components/styledLink';
 import useScreen from 'hooks/useScreen';
 import Green from 'assets/images/greenGradient.svg';
-import IconLogo from 'assets/images/iconLogo.svg';
 import Purple from 'assets/images/purpleGradient.svg';
 import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
+import {Logotype} from 'components/logos/logotype';
 
 const Footer: React.FC = () => {
   const {isDesktop} = useScreen();
@@ -37,7 +36,7 @@ const Footer: React.FC = () => {
             {isDesktop ? (
               <>
                 <FlexDiv>
-                  <LogoContainer src={IconLogo} />
+                  <Logotype />
                   <StyledNavList>{ExploreNavLinks}</StyledNavList>
                 </FlexDiv>
                 <FlexDiv>
@@ -49,7 +48,9 @@ const Footer: React.FC = () => {
               </>
             ) : (
               <>
-                <LogoContainer src={IconLogo} />
+                <LogoContainer>
+                  <Logotype />
+                </LogoContainer>
                 <StyledNavList>{ExploreNavLinks}</StyledNavList>
                 <StyledNavList>{PrivacyNavLinks}</StyledNavList>
                 <Copyright>
@@ -84,11 +85,7 @@ const ActionContainer = styled.div.attrs({
 })``;
 
 const FlexDiv = styled.div.attrs({
-  className: 'flex space-x-8 items-center',
-})``;
-
-const LogoContainer = styled.img.attrs({
-  className: 'h-10',
+  className: 'flex space-x-8 items-center h-10 text-neutral-0',
 })``;
 
 const StyledNavList = styled.ul.attrs({
@@ -105,6 +102,10 @@ const GradientGreen = styled.img.attrs({
 
 const GradientPurple = styled.img.attrs({
   className: 'xl:h-80 h-60 absolute -right-10 xl:-top-[88px] top-32',
+})``;
+
+const LogoContainer = styled.div.attrs({
+  className: 'h-10 text-neutral-0',
 })``;
 
 export default Footer;

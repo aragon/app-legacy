@@ -2,12 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import {Link} from '@aragon/ods-old';
 import {Icon, IconType} from '@aragon/ods';
-
 import {GridLayout} from 'components/layout';
 import useScreen from 'hooks/useScreen';
-import IconLogoBlue from 'assets/images/iconLogoBlue.svg';
 import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
 import {useWallet} from 'hooks/useWallet';
+import {Logotype} from 'components/logos/logotype';
 
 const Footer: React.FC = () => {
   const {isDesktop} = useScreen();
@@ -33,7 +32,7 @@ const Footer: React.FC = () => {
             {isDesktop ? (
               <>
                 <FlexDiv>
-                  <LogoContainer src={IconLogoBlue} />
+                  <Logotype />
                   <StyledNavList>{ExploreNavLinks}</StyledNavList>
                 </FlexDiv>
                 <FlexDiv>
@@ -45,7 +44,9 @@ const Footer: React.FC = () => {
               </>
             ) : (
               <>
-                <LogoContainer src={IconLogoBlue} />
+                <LogoContainer>
+                  <Logotype />
+                </LogoContainer>
                 <StyledNavList>{ExploreNavLinks}</StyledNavList>
                 <StyledNavList>{PrivacyNavLinks}</StyledNavList>
                 <Copyright>
@@ -84,11 +85,7 @@ const ActionContainer = styled.div.attrs({
 })``;
 
 const FlexDiv = styled.div.attrs({
-  className: 'flex space-x-8 items-center',
-})``;
-
-const LogoContainer = styled.img.attrs({
-  className: 'h-10',
+  className: 'flex space-x-8 items-center h-10 text-primary-400',
 })``;
 
 const StyledNavList = styled.ul.attrs({
@@ -97,6 +94,10 @@ const StyledNavList = styled.ul.attrs({
 
 const Copyright = styled.span.attrs({
   className: 'text-neutral-600 font-normal',
+})``;
+
+const LogoContainer = styled.div.attrs({
+  className: 'h-10 text-primary-400',
 })``;
 
 export default Footer;

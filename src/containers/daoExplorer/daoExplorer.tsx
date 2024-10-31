@@ -371,10 +371,11 @@ export const DaoExplorer = () => {
 const MainContainer = styled.div.attrs({
   className: 'flex flex-col space-y-4 xl:space-y-6',
 })``;
+
 const Container = styled.div.attrs({
   className: 'flex flex-col space-y-3',
 })``;
 
 const CardsWrapper = styled.div.attrs({
-  className: 'grid grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-6',
+  className: 'grid grid-cols-1 gap-3 md:grid-cols-2',
 })``;
