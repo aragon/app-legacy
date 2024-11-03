@@ -3,7 +3,7 @@
     "name": "Polygon",
     "description": "The Polygon Governance Hub enables community-driven decision-making for the Polygon aggregated blockchain network.",
     "logo": "https://aragon-1.mypinata.cloud/ipfs/QmXj8BtBp5wddCXcDQEAdBgkNtEjEHdHfHGsz4MnUBzxHU",
-    "network": "polygon",
+    "network": "ethereum",
     "daoAddress": "0x0000000000000000000000000000000000000000",
     "overrideUrl": "https://governance.polygon.technology/"
   },
@@ -37,7 +37,7 @@
     "logo": "https://pbs.twimg.com/profile_images/1796530693314424833/PfW0xFlD_400x400.jpg",
     "network": "polygon",
     "daoAddress": "0x053a28A9Ffd76253379759df5e5b41466cD13804",
-    "overrideUrl": "https://openrd.openmesh.network/"
+    "overrideUrl": "https://ovc.openmesh.network/plugins/token-voting/"
   },
   {
     "name": "Aragon X",
