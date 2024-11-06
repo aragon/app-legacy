@@ -25,6 +25,7 @@ import {
 import {Toggle, ToggleGroup} from '@aragon/ods';
 import {useFeaturedDaos} from 'hooks/useFeaturedDaos';
 import classNames from 'classnames';
+import {useScreen} from '@aragon/ods-old';
 
 const followedDaoToDao = (dao: NavigationDao): IDao => ({
   creatorAddress: '' as Address,
@@ -41,6 +42,8 @@ const followedDaoToDao = (dao: NavigationDao): IDao => ({
 export const DaoExplorer = () => {
   const {t} = useTranslation();
   const {isConnected, address, methods} = useWallet();
+
+  const {isMobile} = useScreen();
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(false);
@@ -151,7 +154,7 @@ export const DaoExplorer = () => {
     });
   };
 
-  const showSortFilter = filters.quickFilter !== 'featuredDaos' && isConnected;
+  const showSortFilter = filters.quickFilter === 'allDaos';
 
   const filterGroupClassName = classNames('flex justify-between w-full', {
     'flex flex-col gap-y-3 md:flex-row md:justify-between': isConnected,
@@ -166,7 +169,7 @@ export const DaoExplorer = () => {
     'flex w-full justify-center md:w-fit': isConnected,
   });
 
-  const buttonGroupContainerClassName = classNames('shrink-0', {
+  const buttonGroupContainerClassName = classNames('shrink-0 flex gap-x-3', {
     'flex md:w-fit': !isConnected && filters.quickFilter === 'featuredDaos',
     'flex gap-x-3 w-full md:w-fit justify-between':
       isConnected && filters.quickFilter !== 'featuredDaos',
@@ -215,78 +218,86 @@ export const DaoExplorer = () => {
                 >
                   {filtersCount}
                 </Button>
-                {filters.quickFilter !== 'following' && (
-                  <Dropdown.Container
-                    align="end"
-                    open={activeDropdown}
-                    onOpenChange={e => {
-                      setActiveDropdown(e);
-                    }}
-                    customTrigger={
-                      <Button
-                        variant={activeDropdown ? 'secondary' : 'tertiary'}
-                        size="md"
-                        iconLeft={IconType.SORT_DESC}
-                      />
+
+                <Dropdown.Container
+                  align="end"
+                  open={activeDropdown}
+                  onOpenChange={e => {
+                    setActiveDropdown(e);
+                  }}
+                  customTrigger={
+                    <Button
+                      variant={activeDropdown ? 'secondary' : 'tertiary'}
+                      size="md"
+                      iconLeft={IconType.SORT_DESC}
+                    />
+                  }
+                >
+                  <Dropdown.Item
+                    icon={
+                      filters.order === 'tvl' ? IconType.CHECKMARK : undefined
                     }
+                    selected={filters.order === 'tvl'}
+                    onClick={() => toggleOrderby('tvl')}
                   >
-                    <Dropdown.Item
-                      icon={
-                        filters.order === 'tvl' ? IconType.CHECKMARK : undefined
-                      }
-                      selected={filters.order === 'tvl'}
-                      onClick={() => toggleOrderby('tvl')}
-                    >
-                      {t('explore.sortBy.largestTreasury')}
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      icon={
-                        filters.order === 'proposals'
-                          ? IconType.CHECKMARK
-                          : undefined
-                      }
-                      iconPosition="right"
-                      selected={filters.order === 'proposals'}
-                      onClick={() => toggleOrderby('proposals')}
-                    >
-                      {t('explore.sortBy.mostProposals')}
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      icon={
-                        filters.order === 'members'
-                          ? IconType.CHECKMARK
-                          : undefined
-                      }
-                      iconPosition="right"
-                      selected={filters.order === 'members'}
-                      onClick={() => toggleOrderby('members')}
-                    >
-                      {t('explore.sortBy.largestCommunity')}
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      icon={
-                        filters.order === 'createdAt'
-                          ? IconType.CHECKMARK
-                          : undefined
-                      }
-                      iconPosition="right"
-                      selected={filters.order === 'createdAt'}
-                      onClick={() => toggleOrderby('createdAt')}
-                    >
-                      {t('explore.sortBy.recentlyCreated')}
-                    </Dropdown.Item>
-                  </Dropdown.Container>
-                )}
+                    {t('explore.sortBy.largestTreasury')}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
+                      filters.order === 'proposals'
+                        ? IconType.CHECKMARK
+                        : undefined
+                    }
+                    iconPosition="right"
+                    selected={filters.order === 'proposals'}
+                    onClick={() => toggleOrderby('proposals')}
+                  >
+                    {t('explore.sortBy.mostProposals')}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
+                      filters.order === 'members'
+                        ? IconType.CHECKMARK
+                        : undefined
+                    }
+                    iconPosition="right"
+                    selected={filters.order === 'members'}
+                    onClick={() => toggleOrderby('members')}
+                  >
+                    {t('explore.sortBy.largestCommunity')}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
+                      filters.order === 'createdAt'
+                        ? IconType.CHECKMARK
+                        : undefined
+                    }
+                    iconPosition="right"
+                    selected={filters.order === 'createdAt'}
+                    onClick={() => toggleOrderby('createdAt')}
+                  >
+                    {t('explore.sortBy.recentlyCreated')}
+                  </Dropdown.Item>
+                </Dropdown.Container>
               </div>
             )}
-            <Button
-              size="md"
-              href="/#/create"
-              onClick={handleWalletButtonClick}
-              className="w-fit"
-            >
-              {t('cta.create.actionLabel')}
-            </Button>
+            {isMobile && !isConnected && filters.quickFilter === 'allDaos' ? (
+              <Button
+                size="md"
+                href="/#/create"
+                onClick={handleWalletButtonClick}
+                iconLeft={IconType.PLUS}
+              />
+            ) : (
+              <Button
+                size="md"
+                href="/#/create"
+                onClick={handleWalletButtonClick}
+                className="w-fit"
+              >
+                {t('cta.create.actionLabel')}
+              </Button>
+            )}
           </div>
         </div>
         {noDaosFound || noFeaturedDaosFound ? (
