@@ -314,29 +314,26 @@ export const DaoExplorer = () => {
             }}
           />
         ) : (
-          <CardsWrapper>
-            {filters.quickFilter === 'featuredDaos' ? (
-              <>
-                {featuredDaoList?.map(
-                  (dao: IDao, index: React.Key | null | undefined) => (
-                    <DaoCard key={index} dao={dao} />
-                  )
-                )}
-                {isLoadingFeaturedDaos && (
-                  <Spinner size="xl" variant="primary" />
-                )}
-              </>
-            ) : (
-              <>
-                {filteredDaoList?.map(
-                  (dao: IDao, index: React.Key | null | undefined) => (
-                    <DaoCard key={index} dao={dao} />
-                  )
-                )}
-                {isLoading && <Spinner size="xl" variant="primary" />}
-              </>
+          <>
+            {(isLoading || isLoadingFeaturedDaos) && (
+              <div className="flex h-72 w-full items-center justify-center">
+                <Spinner size="xl" variant="primary" />
+              </div>
             )}
-          </CardsWrapper>
+            <CardsWrapper>
+              {filters.quickFilter === 'featuredDaos'
+                ? featuredDaoList?.map(
+                    (dao: IDao, index: React.Key | null | undefined) => (
+                      <DaoCard key={index} dao={dao} />
+                    )
+                  )
+                : filteredDaoList?.map(
+                    (dao: IDao, index: React.Key | null | undefined) => (
+                      <DaoCard key={index} dao={dao} />
+                    )
+                  )}
+            </CardsWrapper>
+          </>
         )}
       </MainContainer>
       {totalDaos != null &&
