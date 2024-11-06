@@ -169,14 +169,11 @@ export const DaoExplorer = () => {
     'flex w-full justify-center md:w-fit': isConnected,
   });
 
-  const buttonGroupContainerClassName = classNames(
-    'shrink-0 flex gap-x-3 justify-end',
-    {
-      'flex md:w-fit': !isConnected && filters.quickFilter === 'featuredDaos',
-      'flex gap-x-3 w-full md:w-fit justify-between':
-        isConnected && filters.quickFilter === 'allDaos',
-    }
-  );
+  const buttonGroupContainerClassName = classNames('flex gap-x-3 justify-end', {
+    'flex md:w-fit': !isConnected && filters.quickFilter === 'featuredDaos',
+    'flex gap-x-3 w-full md:w-fit justify-between':
+      isConnected && filters.quickFilter === 'allDaos',
+  });
 
   /*************************************************
    *                    Render                     *
@@ -218,6 +215,7 @@ export const DaoExplorer = () => {
                   size="md"
                   iconLeft={IconType.FILTER}
                   onClick={() => setShowAdvancedFilters(true)}
+                  className="!min-w-fit"
                 >
                   {filtersCount}
                 </Button>
@@ -296,7 +294,7 @@ export const DaoExplorer = () => {
                 size="md"
                 href="/#/create"
                 onClick={handleWalletButtonClick}
-                className="w-fit"
+                className="shrink-0"
               >
                 {t('cta.create.actionLabel')}
               </Button>
