@@ -315,8 +315,10 @@ export const DaoExplorer = () => {
           />
         ) : (
           <>
-            {(isLoading || isLoadingFeaturedDaos) && (
-              <div className="flex h-72 w-full items-center justify-center">
+            {((filters.quickFilter !== 'featuredDaos' && isLoading) ||
+              (filters.quickFilter === 'featuredDaos' &&
+                isLoadingFeaturedDaos)) && (
+              <div className="flex h-40 w-full grow items-center justify-center md:h-72">
                 <Spinner size="xl" variant="primary" />
               </div>
             )}
