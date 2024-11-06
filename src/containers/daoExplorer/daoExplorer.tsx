@@ -169,11 +169,14 @@ export const DaoExplorer = () => {
     'flex w-full justify-center md:w-fit': isConnected,
   });
 
-  const buttonGroupContainerClassName = classNames('shrink-0 flex gap-x-3', {
-    'flex md:w-fit': !isConnected && filters.quickFilter === 'featuredDaos',
-    'flex gap-x-3 w-full md:w-fit justify-between':
-      isConnected && filters.quickFilter !== 'featuredDaos',
-  });
+  const buttonGroupContainerClassName = classNames(
+    'shrink-0 flex gap-x-3 justify-end',
+    {
+      'flex md:w-fit': !isConnected && filters.quickFilter === 'featuredDaos',
+      'flex gap-x-3 w-full md:w-fit justify-between':
+        isConnected && filters.quickFilter === 'allDaos',
+    }
+  );
 
   /*************************************************
    *                    Render                     *
