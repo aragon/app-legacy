@@ -24,7 +24,7 @@
     "overrideUrl": "https://vote.puffer.fi/"
   },
   {
-    "name": "Curve Financial",
+    "name": "Curve Finance",
     "description": "Curve.fi DAO lets CRV holders lock their tokens to make onchain-enforceable changes to the Curve protocol.",
     "logo": "https://pbs.twimg.com/profile_images/1220560374346461185/W1sQNVWo_400x400.jpg",
     "network": "ethereum",
