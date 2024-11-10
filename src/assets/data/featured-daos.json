@@ -1,4 +1,12 @@
 [
+    {
+    "name": "Lido",
+    "description": "The Lido DAO governs key parameters of Ethereum's largest liquid staking protocol using the voting power of LDO.",
+    "logo": "https://pbs.twimg.com/profile_images/1721880644345622528/G2czctJJ_400x400.jpg",
+    "network": "ethereum",
+    "daoAddress": "0x0000000000000000000000000000000000000000",
+    "overrideUrl": "https://vote.lido.fi/"
+  },
   {
     "name": "Polygon",
     "description": "The Polygon Governance Hub enables community-driven decision-making for the Polygon aggregated blockchain network.",
@@ -14,6 +22,14 @@
     "network": "ethereum",
     "daoAddress": "0x5dea8e499b05de8f86e7521f039770268055b23f",
     "overrideUrl": "https://vote.puffer.fi/"
+  },
+  {
+    "name": "Curve Financial",
+    "description": "Curve.fi DAO lets CRV holders lock their tokens to make onchain-enforceable changes to the Curve protocol.",
+    "logo": "https://pbs.twimg.com/profile_images/1220560374346461185/W1sQNVWo_400x400.jpg",
+    "network": "ethereum",
+    "daoAddress": "0x0000000000000000000000000000000000000000",
+    "overrideUrl": "https://dao.curve.fi/dao"
   },
   {
     "name": "Mode",
