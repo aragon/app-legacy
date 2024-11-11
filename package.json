@@ -40,9 +40,9 @@
     "@vocdoni/gasless-voting": "0.0.1-rc30",
     "@vocdoni/react-providers": "0.3.1",
     "@vocdoni/sdk": "0.8.0",
-    "@walletconnect/core": "^2.8.3",
-    "@walletconnect/utils": "^2.8.3",
-    "@walletconnect/web3wallet": "^1.8.2",
+    "@walletconnect/core": "2.8.3",
+    "@walletconnect/utils": "2.8.3",
+    "@walletconnect/web3wallet": "1.8.2",
     "@web3modal/siwe": "^4.1.5",
     "@web3modal/wagmi": "^4.1.5",
     "big.js": "^6.2.1",
@@ -69,7 +69,7 @@
     "styled-components": "^6.0.8",
     "tiptap-markdown": "^0.8.4",
     "use-react-router-breadcrumbs": "^3.0.1",
-    "viem": "^2.9.9",
+    "viem": "2.10.11",
     "wagmi": "^2.5.18"
   },
   "devDependencies": {
