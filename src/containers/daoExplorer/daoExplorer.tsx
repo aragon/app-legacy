@@ -154,7 +154,10 @@ export const DaoExplorer = () => {
     });
   };
 
-  const showSortFilter = filters.quickFilter === 'allDaos';
+  const showFilter = ['allDaos', 'memberOf', 'following'].includes(
+    filters.quickFilter
+  );
+  const showSort = ['allDaos', 'memberOf'].includes(filters.quickFilter);
 
   const filterGroupClassName = classNames('flex justify-between w-full', {
     'flex flex-col gap-y-3 md:flex-row md:justify-between': isConnected,
@@ -208,7 +211,7 @@ export const DaoExplorer = () => {
               ))}
           </ToggleGroup>
           <div className={buttonGroupContainerClassName}>
-            {showSortFilter && (
+            {showFilter && (
               <div className="flex gap-x-1">
                 <Button
                   variant={filtersCount !== '' ? 'secondary' : 'tertiary'}
@@ -220,66 +223,68 @@ export const DaoExplorer = () => {
                   {filtersCount}
                 </Button>
 
-                <Dropdown.Container
-                  align="end"
-                  open={activeDropdown}
-                  onOpenChange={e => {
-                    setActiveDropdown(e);
-                  }}
-                  customTrigger={
-                    <Button
-                      variant={activeDropdown ? 'secondary' : 'tertiary'}
-                      size="md"
-                      iconLeft={IconType.SORT_DESC}
-                    />
-                  }
-                >
-                  <Dropdown.Item
-                    icon={
-                      filters.order === 'tvl' ? IconType.CHECKMARK : undefined
+                {showSort && (
+                  <Dropdown.Container
+                    align="end"
+                    open={activeDropdown}
+                    onOpenChange={e => {
+                      setActiveDropdown(e);
+                    }}
+                    customTrigger={
+                      <Button
+                        variant={activeDropdown ? 'secondary' : 'tertiary'}
+                        size="md"
+                        iconLeft={IconType.SORT_DESC}
+                      />
                     }
-                    selected={filters.order === 'tvl'}
-                    onClick={() => toggleOrderby('tvl')}
                   >
-                    {t('explore.sortBy.largestTreasury')}
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      filters.order === 'proposals'
-                        ? IconType.CHECKMARK
-                        : undefined
-                    }
-                    iconPosition="right"
-                    selected={filters.order === 'proposals'}
-                    onClick={() => toggleOrderby('proposals')}
-                  >
-                    {t('explore.sortBy.mostProposals')}
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      filters.order === 'members'
-                        ? IconType.CHECKMARK
-                        : undefined
-                    }
-                    iconPosition="right"
-                    selected={filters.order === 'members'}
-                    onClick={() => toggleOrderby('members')}
-                  >
-                    {t('explore.sortBy.largestCommunity')}
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      filters.order === 'createdAt'
-                        ? IconType.CHECKMARK
-                        : undefined
-                    }
-                    iconPosition="right"
-                    selected={filters.order === 'createdAt'}
-                    onClick={() => toggleOrderby('createdAt')}
-                  >
-                    {t('explore.sortBy.recentlyCreated')}
-                  </Dropdown.Item>
-                </Dropdown.Container>
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'tvl' ? IconType.CHECKMARK : undefined
+                      }
+                      selected={filters.order === 'tvl'}
+                      onClick={() => toggleOrderby('tvl')}
+                    >
+                      {t('explore.sortBy.largestTreasury')}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'proposals'
+                          ? IconType.CHECKMARK
+                          : undefined
+                      }
+                      iconPosition="right"
+                      selected={filters.order === 'proposals'}
+                      onClick={() => toggleOrderby('proposals')}
+                    >
+                      {t('explore.sortBy.mostProposals')}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'members'
+                          ? IconType.CHECKMARK
+                          : undefined
+                      }
+                      iconPosition="right"
+                      selected={filters.order === 'members'}
+                      onClick={() => toggleOrderby('members')}
+                    >
+                      {t('explore.sortBy.largestCommunity')}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      icon={
+                        filters.order === 'createdAt'
+                          ? IconType.CHECKMARK
+                          : undefined
+                      }
+                      iconPosition="right"
+                      selected={filters.order === 'createdAt'}
+                      onClick={() => toggleOrderby('createdAt')}
+                    >
+                      {t('explore.sortBy.recentlyCreated')}
+                    </Dropdown.Item>
+                  </Dropdown.Container>
+                )}
               </div>
             )}
             {isMobile && !isConnected && filters.quickFilter === 'allDaos' ? (
