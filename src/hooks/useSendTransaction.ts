@@ -167,15 +167,9 @@ export const useSendTransaction = (
     resetSendTransactionWagmi();
 
     // Set gas to null to skip wagmi gas estimation and allow users to still
-    // send the transaction to their wallet when gas-estimation fails
-    const gas = isEstimateGasError ? null : undefined;
-    sendTransactionWagmi({...transaction, gas});
-  }, [
-    sendTransactionWagmi,
-    resetSendTransactionWagmi,
-    transaction,
-    isEstimateGasError,
-  ]);
+    // send the transaction to their wallet
+    sendTransactionWagmi({...transaction, gas: null});
+  }, [sendTransactionWagmi, resetSendTransactionWagmi, transaction]);
 
   return {
     isEstimateGasError,
