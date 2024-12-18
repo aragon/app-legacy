@@ -16,10 +16,10 @@ jobs:
         if: endsWith(github.ref, '/fleek-fixes')
         id: envdev
         run: echo "environment=staging" >> $GITHUB_OUTPUT
-      - name: Set environment to staging
-        if: endsWith(github.ref, '/develop')
-        id: envdev
-        run: echo "environment=staging" >> $GITHUB_OUTPUT
+      #- name: Set environment to staging
+      #  if: endsWith(github.ref, '/develop')
+      #  id: envdev
+      #  run: echo "environment=staging" >> $GITHUB_OUTPUT
       - name: Set environment to prod
         if: endsWith(github.ref, '/main')
         id: envprod
