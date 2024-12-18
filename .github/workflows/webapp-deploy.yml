@@ -12,14 +12,10 @@ jobs:
     outputs:
       environment: ${{ steps.envdev.outputs.environment }}${{ steps.envprod.outputs.environment }}
     steps:
-      - name: Set environment to TESTING REMOVE THIS
-        if: endsWith(github.ref, '/fleek-fixes')
+      - name: Set environment to staging
+        if: endsWith(github.ref, '/develop')
         id: envdev
         run: echo "environment=staging" >> $GITHUB_OUTPUT
-      #- name: Set environment to staging
-      #  if: endsWith(github.ref, '/develop')
-      #  id: envdev
-      #  run: echo "environment=staging" >> $GITHUB_OUTPUT
       - name: Set environment to prod
         if: endsWith(github.ref, '/main')
         id: envprod
