@@ -1,14 +1,8 @@
 {
-  "site": {
-    "id": "81492921-4a99-4f5d-bd34-aa01ba6a1504",
-    "team": "aragonone-team",
-    "platform": "ipfs",
-    "source": "ipfs",
-    "name": "apparagonorg"
-  },
-  "build": {
-    "baseDir": "",
-    "publicDir": "dist",
-    "rootDir": ""
-  }
+  "sites": [
+    {
+      "slug": "apparagonorg",
+      "distDir": "dist"
+    }
+  ]
 }

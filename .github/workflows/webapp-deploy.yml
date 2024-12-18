@@ -64,15 +64,19 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: yarn sentry:sourcemaps
 
+      - name: Install Fleek CLI
+        run: npm i -g @fleek-platform/cli
       - name: Activate Fleek
         env:
           FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
-        run: mv ./.github/fleek/$FLEEK_FILE.json .fleek.json
-      - name: Deploy through Fleek
+        run: mv ./.github/fleek/$FLEEK_FILE.json fleek.config.json
+      - name: Deploy on Fleek
         id: deploy
-        uses: fleekhq/action-deploy@v1.0.1
-        with:
-          apiKey: ${{ secrets.FLEEK_API_KEY }}
-          workDir: ${{ env.working-directory }}
+        run: fleek sites deploy
+        env:
+          FLEEK_TOKEN: ${{ secrets.FLEEK_TOKEN_2 }}
+          FLEEK_PROJECT_ID: ${{ secrets.FLEEK_PROJECT_ID_2 }}
+          
+
       - name: Get the Fleek output url
         run: echo "The Fleek deploy url is ${{ steps.deploy.outputs.deployUrl }}"
