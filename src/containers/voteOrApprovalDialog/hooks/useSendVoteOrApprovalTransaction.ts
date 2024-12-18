@@ -22,6 +22,7 @@ import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {TransactionReceipt} from 'viem';
 
 export interface IUseSendVoteOrApprovalTransaction {
   /**
@@ -90,17 +91,21 @@ export const useSendVoteOrApprovalTransaction = (
     }
   );
 
-  const handleVoteOrApprovalSuccess = () => {
+  const handleVoteOrApprovalSuccess = (txReceipt: TransactionReceipt) => {
+    // Use address from transaction receipt for caching the vote as user can
+    // switch address after approving the transaction
+    const userAddress = txReceipt.from.toLowerCase();
+
     setVoteOrApprovalSubmitted(true);
 
     switch (pluginType) {
       case 'token-voting.plugin.dao.eth': {
         // cache token-voting vote
-        if (address != null && votingPower && vote) {
+        if (votingPower && vote) {
           // fetch token user balance, ie vote weight
           try {
             const voteToPersist = {
-              address: address.toLowerCase(),
+              address: userAddress,
               vote: vote,
               weight: votingPower.toBigInt(),
               voteReplaced: !!replacingVote,
@@ -119,13 +124,11 @@ export const useSendVoteOrApprovalTransaction = (
         break;
       }
       case 'multisig.plugin.dao.eth': {
-        if (address) {
-          voteStorage.addVote(
-            CHAIN_METADATA[network].id,
-            proposalId,
-            address.toLowerCase()
-          );
-        }
+        voteStorage.addVote(
+          CHAIN_METADATA[network].id,
+          proposalId,
+          userAddress
+        );
         break;
       }
       case 'vocdoni-gasless-voting-poc-vanilla-erc20.plugin.dao.eth': {
