@@ -56,10 +56,10 @@
     "overrideUrl": "https://ovc.openmesh.network/plugins/token-voting/"
   },
   {
-    "name": "Aragon X",
-    "description": "The Aragon X team is dogfooding their latest governance stack - the most modular governance stack on Ethereum.",
-    "logo": "https://pbs.twimg.com/profile_images/1643537212095733761/zMvurGOa_400x400.jpg",
+    "name": "Aragon Foundation",
+    "description": "Onchain asset management to empower developers to build open source technology for onchain governance.",
+    "logo": "https://pbs.twimg.com/profile_images/1851934141782331394/Z0ZqlyIo_400x400.png",
     "network": "ethereum",
-    "daoAddress": "0xdafbd7d63cee88d73a51592b42f27f7fd6ab7722"
+    "daoAddress": "0xb2ecff866c75c640f335afbe5b09d5b03d464362"
   }
 ]
