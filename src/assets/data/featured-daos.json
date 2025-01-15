@@ -16,9 +16,17 @@
     "overrideUrl": "https://governance.polygon.technology/"
   },
   {
+    "name": "Taiko DAO",
+    "description": "Taiko DAO gives token holders and delegates onchain veto rights to secure the Taiko based rollup.",
+    "logo": "https://pbs.twimg.com/profile_images/1823377013186691072/jPGLrNT0_400x400.png",
+    "network": "ethereum",
+    "daoAddress": "0x0000000000000000000000000000000000000000",
+    "overrideUrl": "https://hekla.dao.taiko.xyz/"
+  },
+  {
     "name": "Puffer DAO",
     "description": "Puffer DAO enables the community and its ecosystem participants to govern the Puffer protocol.",
-    "logo": "https://pbs.twimg.com/profile_images/1816010238262444033/ccrQWNFq_400x400.jpg",
+    "logo": "https://pbs.twimg.com/profile_images/1874641749865607169/08edgUL-_400x400.jpg",
     "network": "ethereum",
     "daoAddress": "0x5dea8e499b05de8f86e7521f039770268055b23f",
     "overrideUrl": "https://vote.puffer.fi/"
@@ -46,14 +54,6 @@
     "network": "ethereum",
     "daoAddress": "0xaa0500198B4425DfC4E272FbE42C8E64E21fc03d",
     "overrideUrl": "https://app.morpho.org/vault?vault=0xBEEF01735c132Ada46AA9aA4c54623cAA92A64CB"
-  },
-  {
-    "name": "Openmesh",
-    "description": "Openmesh's OpenR&D is open-source platform designed to empower decentralized teams to collaborate seamlessly.",
-    "logo": "https://pbs.twimg.com/profile_images/1796530693314424833/PfW0xFlD_400x400.jpg",
-    "network": "polygon",
-    "daoAddress": "0x053a28A9Ffd76253379759df5e5b41466cD13804",
-    "overrideUrl": "https://ovc.openmesh.network/plugins/token-voting/"
   },
   {
     "name": "Aragon Foundation",
