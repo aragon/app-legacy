@@ -55,10 +55,6 @@ jobs:
           VITE_PINATA_CID_VERSION: ${{vars.VITE_PINATA_CID_VERSION}}
           VITE_PINATA_GATEWAY: ${{vars.VITE_PINATA_GATEWAY}}
           VITE_PINATA_JWT_API_KEY: ${{secrets.VITE_PINATA_JWT_API_KEY}}
-      - name: Sentry sourcemap
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: yarn sentry:sourcemaps
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
