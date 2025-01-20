@@ -32,7 +32,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   polygon:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/1.4.2/api',
   sepolia:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-sepolia/version/1.4.2/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/dev-sepolia/api',
   zksyncMainnet:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-zksync-era/version/1.4.3/api',
   zksyncSepolia:

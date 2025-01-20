@@ -1,9 +1,9 @@
 import {
   DAOFactory,
   DAOFactory__factory,
-  PluginRepo__factory,
   TokenVoting__factory,
   Multisig__factory,
+  PluginRepo__factory,
 } from '@aragon/osx-ethers';
 import {VocdoniVoting__factory} from '@vocdoni/gasless-voting-ethers';
 import {toUtf8Bytes} from 'ethers/lib/utils';
@@ -21,7 +21,7 @@ import {
 import {ITransaction} from './domain/transaction';
 import {decodeProposalId, hexToBytes} from '@aragon/sdk-client-common';
 import {isMultisigClient, isTokenVotingClient} from 'hooks/usePluginClient';
-import {FrameworkContractsNames} from '@aragon/osx-commons-configs';
+// import {FrameworkContractsNames} from '@aragon/osx-commons-configs';
 
 class TransactionsService {
   buildCreateDaoTransaction = async (
@@ -37,9 +37,9 @@ class TransactionsService {
     } = params;
 
     const signer = client.web3.getConnectedSigner();
-    const daoFactoryAddress = client.web3.getAddress(
-      FrameworkContractsNames.DAO_FACTORY
-    );
+
+    //const daoFactoryAddress = client.web3.getAddress(FrameworkContractsNames.DAO_FACTORY);
+    const daoFactoryAddress = '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90';
 
     const daoFactoryInstance = DAOFactory__factory.connect(
       daoFactoryAddress,
@@ -51,14 +51,16 @@ class TransactionsService {
     for (const plugin of plugins) {
       const repo = PluginRepo__factory.connect(plugin.id, signer);
 
-      const currentRelease = await repo.latestRelease();
-      const latestVersion =
-        await repo['getLatestVersion(uint8)'](currentRelease);
+      // const currentRelease = await repo.latestRelease();
+      // const latestVersion =
+      //   await repo['getLatestVersion(uint8)'](currentRelease);
+      const latestVersion = {release: 1, build: 5};
 
       pluginInstallationData.push({
         pluginSetupRef: {
           pluginSetupRepo: repo.address,
-          versionTag: latestVersion.tag,
+          versionTag: latestVersion,
+          // versionTag: latestVersion.tag,
         },
         data: plugin.data,
       });

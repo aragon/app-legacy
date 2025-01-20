@@ -1,16 +1,21 @@
 import {
   DaoMetadata,
-  MultisigClient,
-  TokenVotingClient,
   TokenVotingPluginInstall,
   VotingMode,
+  votingSettingsToContract,
 } from '@aragon/sdk-client';
+import {AddressZero, HashZero} from '@ethersproject/constants';
 import {
   DAORegistry__factory,
   PluginSetupProcessor__factory,
 } from '@aragon/osx-ethers';
-import {parseUnits} from 'ethers/lib/utils';
-import {PluginInstallItem} from '@aragon/sdk-client-common';
+import {defaultAbiCoder, parseUnits} from 'ethers/lib/utils';
+import {
+  getNamedTypesFromMetadata,
+  hexToBytes,
+  MetadataAbiInput,
+  PluginInstallItem,
+} from '@aragon/sdk-client-common';
 import {SupportedNetworks as SdkSupportedNetworks} from '@aragon/osx-commons-configs';
 import {
   GaslessPluginVotingSettings,
@@ -21,8 +26,12 @@ import {getSupportedNetworkByChainId} from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
 import {translateToNetworkishName} from 'utils/library';
 import {CreateDaoFormData} from 'utils/types';
-import {TransactionReceipt} from 'viem';
+import {TransactionReceipt, zeroAddress} from 'viem';
 import {id} from '@ethersproject/hash';
+import {multisigInstallationAbi} from './multisigInstallationAbi';
+import {ContractTokenVotingInitParams} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
+import {BigNumber} from 'ethers';
+import {tokenInstallationAbi} from './tokenInstallationAbi';
 
 class CreateDaoUtils {
   defaultTokenDecimals = 18;
@@ -155,10 +164,9 @@ class CreateDaoUtils {
   private getTokenVotingPlugin = (
     formValues: Omit<CreateDaoFormData, 'daoLogo'>
   ) => {
-    const {tokenType, isCustomToken, blockchain} = formValues;
+    const {tokenType, isCustomToken} = formValues;
 
     const votingSettings = this.getVoteSettings(formValues);
-    const network = this.networkToSdkNetwork(blockchain.id);
 
     const useExistingToken =
       (tokenType === 'governance-ERC20' || tokenType === 'ERC-20') &&
@@ -172,25 +180,23 @@ class CreateDaoUtils {
       params.newToken = this.getNewErc20PluginParams(formValues);
     }
 
-    const plugin = TokenVotingClient.encoding.getPluginInstallItem(
-      params,
-      network
+    const args = this.tokenVotingInitParamsToContract(params);
+    const hexBytes = defaultAbiCoder.encode(
+      getNamedTypesFromMetadata(tokenInstallationAbi as MetadataAbiInput[]),
+      [...args, {target: zeroAddress, operation: 0}, HashZero]
     );
 
-    return plugin;
+    return {
+      data: hexToBytes(hexBytes),
+      id: '0x6241ad0D3f162028d2e0000f1A878DBc4F5c4aD0',
+    };
   };
 
   private getMultisigPlugin = (
     formValues: Omit<CreateDaoFormData, 'daoLogo'>
   ) => {
-    const {
-      blockchain,
-      multisigWallets,
-      multisigMinimumApprovals,
-      eligibilityType,
-    } = formValues;
-
-    const network = this.networkToSdkNetwork(blockchain.id);
+    const {multisigWallets, multisigMinimumApprovals, eligibilityType} =
+      formValues;
 
     const params = {
       members: multisigWallets.map(wallet => wallet.address),
@@ -200,12 +206,20 @@ class CreateDaoUtils {
       },
     };
 
-    const multisigPlugin = MultisigClient.encoding.getPluginInstallItem(
-      params,
-      network
+    const hexBytes = defaultAbiCoder.encode(
+      getNamedTypesFromMetadata(multisigInstallationAbi as MetadataAbiInput[]),
+      [
+        params.members,
+        [params.votingSettings.onlyListed, params.votingSettings.minApprovals],
+        {target: zeroAddress, operation: 0},
+        HashZero,
+      ]
     );
 
-    return multisigPlugin;
+    return {
+      data: hexToBytes(hexBytes),
+      id: '0xA0901B5BC6e04F14a9D0d094653E047644586DdE',
+    };
   };
 
   private getGasslessPlugin = (
@@ -307,6 +321,27 @@ class CreateDaoUtils {
       );
     }
   };
+
+  private tokenVotingInitParamsToContract(
+    params: TokenVotingPluginInstall
+  ): ContractTokenVotingInitParams {
+    let token: [string, string, string] = ['', '', ''];
+    let balances: [string[], BigNumber[]] = [[], []];
+    if (params.newToken) {
+      token = [AddressZero, params.newToken.name, params.newToken.symbol];
+      balances = [
+        params.newToken.balances.map(balance => balance.address),
+        params.newToken.balances.map(({balance}) => BigNumber.from(balance)),
+      ];
+    } else if (params.useToken) {
+      token = [
+        params.useToken?.tokenAddress,
+        params.useToken.wrappedToken.name,
+        params.useToken.wrappedToken.symbol,
+      ];
+    }
+    return [votingSettingsToContract(params.votingSettings), token, balances];
+  }
 }
 
 export const createDaoUtils = new CreateDaoUtils();
