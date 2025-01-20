@@ -183,7 +183,7 @@ class CreateDaoUtils {
     const args = this.tokenVotingInitParamsToContract(params);
     const hexBytes = defaultAbiCoder.encode(
       getNamedTypesFromMetadata(tokenInstallationAbi as MetadataAbiInput[]),
-      [...args, {target: zeroAddress, operation: 0}, HashZero]
+      [...args, {target: zeroAddress, operation: 0}, BigInt(0), HashZero]
     );
 
     return {
