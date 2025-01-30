@@ -61,7 +61,11 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
     }
 
     // Set fixed 1.3 version for DaoFactory address as versions
-    // 1.4 and above are not supported by this application
+    // 1.4 and above are not supported by this application. The
+    // TokenVotingRepoProxy and MultisigRepoProxy addresses are
+    // instead already set as fixed on the SDK, see:
+    // TokenVoting: https://github.com/aragon/sdk/blob/develop/modules/client/src/tokenVoting/internal/client/encoding.ts#L61
+    // Multisig: https://github.com/aragon/sdk/blob/develop/modules/client/src/multisig/internal/client/encoding.ts#L65
     const daoFactoryAddress =
       getNetworkDeploymentForVersion(
         translatedNetwork,
