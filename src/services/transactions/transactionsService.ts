@@ -58,7 +58,7 @@ class TransactionsService {
       pluginInstallationData.push({
         pluginSetupRef: {
           pluginSetupRepo: repo.address,
-          versionTag: versionTag,
+          versionTag,
         },
         data: plugin.data,
       });
