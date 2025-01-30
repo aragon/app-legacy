@@ -51,14 +51,14 @@ class TransactionsService {
     for (const plugin of plugins) {
       const repo = PluginRepo__factory.connect(plugin.id, signer);
 
-      const currentRelease = await repo.latestRelease();
-      const latestVersion =
-        await repo['getLatestVersion(uint8)'](currentRelease);
+      // Set fixed 1.2 version for multisig & token-voting plugins as versions
+      // 1.3 and above are not supported by this application
+      const versionTag = {release: 1, build: 2};
 
       pluginInstallationData.push({
         pluginSetupRef: {
           pluginSetupRepo: repo.address,
-          versionTag: latestVersion.tag,
+          versionTag: versionTag,
         },
         data: plugin.data,
       });
