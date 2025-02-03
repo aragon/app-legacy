@@ -17,7 +17,7 @@
     "lint:fix": "eslint src --fix",
     "check-types": "tsc --noemit",
     "e2e": "playwright test --ui",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org aragonorg --project app-react ./dist && sentry-cli sourcemaps upload --org aragonorg --project app-react ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org aragonorg --project legacy-app ./dist && sentry-cli sourcemaps upload --org aragonorg --project legacy-app ./dist"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
