@@ -66,17 +66,13 @@ export const Settings: React.FC = () => {
   return (
     <SettingsWrapper>
       {showUpdatesCard && (
-        <div className={`mt-1 xl:mt-3 ${styles.fullWidth}`}>
+        <div className={`mt-1 xl:mt-3 ${fullWidth}`}>
           <SettingsUpdateCard />
         </div>
       )}
 
       {/* DAO Settings */}
-      <div
-        className={`mt-2 xl:row-start-3 xl:-mt-2 ${
-          daoUpdateEnabled ? styles.leftCol : styles.center
-        }`}
-      >
+      <div className="col-span-full mt-2 xl:col-start-2 xl:col-end-8 xl:row-start-3 xl:-mt-2">
         <div className="flex flex-col gap-y-6">
           {/* DAO SECTION */}
           <SettingsCardDao daoDetails={daoDetails} />
@@ -86,22 +82,15 @@ export const Settings: React.FC = () => {
         </div>
       </div>
 
-      {/* Version Info */}
-      {daoUpdateEnabled && (
-        <VersionInfoCard
-          pluginAddress={daoDetails.plugins[0].instanceAddress}
-          pluginType={daoDetails.plugins[0].id as PluginTypes}
-          pluginVersion={`${daoDetails.plugins[0].release}.${daoDetails.plugins[0].build}`}
-          daoAddress={daoDetails.address}
-        />
-      )}
+      <VersionInfoCard
+        pluginAddress={daoDetails.plugins[0].instanceAddress}
+        pluginType={daoDetails.plugins[0].id as PluginTypes}
+        pluginVersion={`${daoDetails.plugins[0].release}.${daoDetails.plugins[0].build}`}
+        daoAddress={daoDetails.address}
+      />
 
       {/* Edit */}
-      <div
-        className={`xl:row-start-4 ${
-          daoUpdateEnabled ? styles.fullWidth : styles.center
-        }`}
-      >
+      <div className={`xl:row-start-4 ${fullWidth}`}>
         <div className="mt-2 space-y-4 xl:-mt-2">
           <Button
             className="w-full md:w-max"
@@ -121,11 +110,8 @@ export const Settings: React.FC = () => {
     </SettingsWrapper>
   );
 };
-const styles = {
-  fullWidth: 'col-span-full xl:col-start-2 xl:col-end-12 xl:col-span-6',
-  leftCol: 'col-span-full xl:col-start-2 xl:col-end-8',
-  center: 'col-span-full xl:col-start-4 xl:col-end-10 xl:col-span-6',
-};
+
+const fullWidth = 'col-span-full xl:col-start-2 xl:col-end-12 xl:col-span-6';
 
 const DEFAULT_LINES_SHOWN = 3;
 const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
