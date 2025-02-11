@@ -37,7 +37,7 @@
     "logo": "https://pbs.twimg.com/profile_images/1220560374346461185/W1sQNVWo_400x400.jpg",
     "network": "ethereum",
     "daoAddress": "0x0000000000000000000000000000000000000000",
-    "overrideUrl": "https://dao.curve.fi/dao"
+    "overrideUrl": "https://dao.curve.fi/"
   },
   {
     "name": "Mode",
@@ -53,7 +53,7 @@
     "logo": "https://pbs.twimg.com/profile_images/1562326980820967424/f07396YH_400x400.jpg",
     "network": "ethereum",
     "daoAddress": "0xaa0500198B4425DfC4E272FbE42C8E64E21fc03d",
-    "overrideUrl": "https://app.morpho.org/vault?vault=0xBEEF01735c132Ada46AA9aA4c54623cAA92A64CB"
+    "overrideUrl": "https://app.morpho.org/ethereum/vault/0xBEEF01735c132Ada46AA9aA4c54623cAA92A64CB"
   },
   {
     "name": "Aragon Foundation",
