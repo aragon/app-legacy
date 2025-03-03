@@ -428,7 +428,7 @@ export function computeTokenVotingProposalStatus(
   if (proposal.approvalReached && endDate <= now) {
     return ProposalStatus.SUCCEEDED;
   }
-  // In early exeuction mode, we calculate if subsequent voting can change the result of the vote.
+  // In early execution mode, we calculate if subsequent voting can change the result of the vote.
   // If not, the proposal is early executable and is therefore succeeded as well.
   if (proposal.earlyExecutable) {
     return ProposalStatus.SUCCEEDED;

@@ -123,7 +123,7 @@ const useGaslessVoting = () => {
         }
       );
 
-      // 2. Sumbit vote
+      // 2. Submit vote
       await doStep(GaslessVotingStepId.PUBLISH_VOTE, async () => {
         await submitVote(vote, electionId);
       });
