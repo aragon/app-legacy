@@ -12,7 +12,6 @@ const fetchFeaturedDaos = async (): Promise<IDao[]> => {
   }
 
   const data: IDao[] = await response.json();
-  console.log(data);
   return data;
 };
 
