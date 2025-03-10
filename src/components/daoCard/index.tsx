@@ -33,8 +33,6 @@ export const DaoCard = (props: IDaoCardProps) => {
 
   const resolvedDaoUrl = overrideUrl ?? daoUrl;
 
-  console.log('dao network', dao.name, dao.network, resolvedDaoUrl);
-
   return (
     <Container
       href={resolvedDaoUrl}
