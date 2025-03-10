@@ -2,7 +2,7 @@ import {useQuery} from '@tanstack/react-query';
 import {IDao} from 'services/aragon-backend/domain/dao';
 
 const FEATURED_DAOS_URL =
-  'https://raw.githubusercontent.com/aragon/app/refs/heads/develop/src/assets/data/featured-daos.json';
+  'https://raw.githubusercontent.com/aragon/app-featured-daos/main/featured-daos.json';
 
 const fetchFeaturedDaos = async (): Promise<IDao[]> => {
   const response = await fetch(FEATURED_DAOS_URL);
@@ -12,6 +12,7 @@ const fetchFeaturedDaos = async (): Promise<IDao[]> => {
   }
 
   const data: IDao[] = await response.json();
+  console.log(data);
   return data;
 };
 
