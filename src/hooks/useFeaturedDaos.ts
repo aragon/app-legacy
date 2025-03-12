@@ -1,8 +1,19 @@
 import {useQuery} from '@tanstack/react-query';
 import {IDao} from 'services/aragon-backend/domain/dao';
+import {zeroAddress} from 'viem';
+
+interface FeaturedDao {
+  name: string;
+  description: string;
+  logo: string;
+  network: string;
+  address?: string;
+  networkLabel?: string;
+  overrideUrl?: string;
+}
 
 const FEATURED_DAOS_URL =
-  'https://raw.githubusercontent.com/aragon/app-featured-daos/main/featured-daos.json';
+  'https://raw.githubusercontent.com/aragon/app-cms/main/featured-daos.json';
 
 const networkMapping: Record<string, string> = {
   'ethereum-mainnet': 'ethereum',
@@ -22,11 +33,12 @@ const fetchFeaturedDaos = async (): Promise<IDao[]> => {
     throw new Error('Failed to fetch featured DAOs');
   }
 
-  const data: IDao[] = await response.json();
+  const data = await response.json();
 
-  const processedData = data.map(dao => ({
+  const processedData = data.map((dao: FeaturedDao) => ({
     ...dao,
-    network: networkMapping[dao.network],
+    network: dao.networkLabel ?? networkMapping[dao.network],
+    daoAddress: dao.address ?? zeroAddress,
   }));
 
   return processedData as IDao[];
