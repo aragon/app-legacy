@@ -10,13 +10,8 @@ import {
   useSendTransaction as useSendTransactionWagmi,
   useWaitForTransactionReceipt,
 } from 'wagmi';
-import {ILoggerErrorContext, logger} from 'services/logger';
 
 export interface IUseSendTransactionParams {
-  /**
-   * Log context used to log eventual errors.
-   */
-  logContext?: Omit<ILoggerErrorContext, 'step'>;
   /**
    * Transaction to be sent.
    */
@@ -58,7 +53,7 @@ const LONG_WAIT_TIMEOUT = 20_000;
 export const useSendTransaction = (
   params: IUseSendTransactionParams
 ): IUseSendTransactionResult => {
-  const {logContext, transaction, onError, onSuccess} = params;
+  const {transaction, onError, onSuccess} = params;
 
   const [longWaitingTime, setLongWaitingTime] = useState(false);
 
@@ -69,15 +64,10 @@ export const useSendTransaction = (
   } = useEstimateGas(transaction);
 
   const handleSendTransactionError = useCallback(
-    (step: SendTransactionStep) => (error: unknown) => {
-      if (logContext) {
-        const {stack, data} = logContext;
-        logger.error(error, {stack, step, data});
-      }
-
+    () => (error: unknown) => {
       onError?.(error);
     },
-    [logContext, onError]
+    [onError]
   );
 
   const {
@@ -89,7 +79,7 @@ export const useSendTransaction = (
     reset: resetSendTransactionWagmi,
   } = useSendTransactionWagmi({
     mutation: {
-      onError: handleSendTransactionError(SendTransactionStep.SEND_TRANSACTION),
+      onError: handleSendTransactionError(),
     },
   });
 
@@ -117,9 +107,7 @@ export const useSendTransaction = (
   // Handle estimate gas transaction error
   useEffect(() => {
     if (isEstimateGasError) {
-      handleSendTransactionError(SendTransactionStep.ESTIMATE_GAS)(
-        estimateGasError
-      );
+      handleSendTransactionError()(estimateGasError);
     }
     // Do not rerun effect on handleSendTransactionError change to only trigger the handler once
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,9 +116,7 @@ export const useSendTransaction = (
   // Handle wait transaction transaction error
   useEffect(() => {
     if (isWaitTransactionError) {
-      handleSendTransactionError(SendTransactionStep.WAIT_CONFIRMATIONS)(
-        waitTransactionError
-      );
+      handleSendTransactionError()(waitTransactionError);
     }
     // Do not rerun effect on handleSendTransactionError change to only trigger the handler once
     // eslint-disable-next-line react-hooks/exhaustive-deps

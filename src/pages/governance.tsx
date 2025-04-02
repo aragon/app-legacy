@@ -11,7 +11,6 @@ import {PageWrapper} from 'components/wrappers';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {trackEvent} from 'services/analytics';
 import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
@@ -58,9 +57,6 @@ export const Governance: React.FC = () => {
    *             Callbacks & Handlers              *
    *************************************************/
   const handleNewProposalClick = () => {
-    trackEvent('governance_newProposalBtn_clicked', {
-      dao_address: daoDetails?.address as string,
-    });
     navigate(
       generatePath(NewProposal, {
         type: ProposalTypes.Default,

@@ -11,11 +11,9 @@ import React, {
 import {Nullable} from 'utils/types';
 import PrivacyPolicy from 'containers/privacyPolicy';
 import CookiePreferenceMenu from 'containers/privacyPolicy/cookiePreferenceMenu';
-import {disableAnalytics, enableAnalytics} from 'services/analytics';
 import CookieSettingsMenu from 'containers/privacyPolicy/cookieSettingsMenu';
 
 export type PrivacyPreferences = {
-  analytics: boolean;
   functional: boolean;
 };
 
@@ -68,65 +66,47 @@ const PrivacyContextProvider: React.FC<{children: ReactNode}> = ({
     const storedPreferences = JSON.parse(value);
     setShowPolicyMenu(false);
     setPreferences(storedPreferences);
-
-    // enable analytics
-    if (storedPreferences.analytics) enableAnalytics();
   }, []);
 
   /*************************************************
    *              Methods and handlers             *
    *************************************************/
   // Set the privacy preferences in local storage and update context state
-  const setPrivacyPolicy = useCallback(
-    (userPreference: PrivacyPreferences) => {
-      if (userPreference.analytics || userPreference.functional) {
-        localStorage.setItem(
-          PRIVACY_KEY,
-          JSON.stringify({optIn: true, ...userPreference})
-        );
+  const setPrivacyPolicy = useCallback((userPreference: PrivacyPreferences) => {
+    if (userPreference.functional) {
+      localStorage.setItem(
+        PRIVACY_KEY,
+        JSON.stringify({optIn: true, ...userPreference})
+      );
+      setPreferences({...userPreference});
+    } else {
+      localStorage.setItem(PRIVACY_KEY, JSON.stringify({optIn: false}));
+    }
 
-        // enable analytics if was previously off
-        if (!preferences?.analytics && userPreference.analytics)
-          enableAnalytics();
-
-        // turn off analytics if was previously on
-        if (preferences?.analytics && !userPreference.analytics)
-          disableAnalytics();
-
-        setPreferences({...userPreference});
-      } else {
-        localStorage.setItem(PRIVACY_KEY, JSON.stringify({optIn: false}));
-      }
-
-      setShowPolicyMenu(false);
-      setShowCookieSettings(false);
-    },
-    [preferences?.analytics]
-  );
+    setShowPolicyMenu(false);
+    setShowCookieSettings(false);
+  }, []);
 
   // accept all cookies
   const acceptAll = useCallback(() => {
-    setPrivacyPolicy({analytics: true, functional: true});
+    setPrivacyPolicy({functional: true});
   }, [setPrivacyPolicy]);
 
   // reject all cookies
   const rejectAll = useCallback(() => {
-    setPrivacyPolicy({analytics: false, functional: false});
-    disableAnalytics();
+    setPrivacyPolicy({functional: false});
   }, [setPrivacyPolicy]);
 
   // set only functional cookies
   const setFunctionalCookies = useCallback(() => {
     setPrivacyPolicy({
-      analytics: preferences?.analytics || false,
       functional: true,
     });
-  }, [preferences?.analytics, setPrivacyPolicy]);
+  }, [setPrivacyPolicy]);
 
   // set only analytics cookies
   const setAnalyticsCookies = useCallback(() => {
     setPrivacyPolicy({
-      analytics: true,
       functional: preferences?.functional || false,
     });
   }, [preferences?.functional, setPrivacyPolicy]);

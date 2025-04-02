@@ -42,8 +42,6 @@ import {getTokenInfo} from 'utils/tokens';
 import {useProviders} from 'context/providers';
 import {useQueryClient} from '@tanstack/react-query';
 import {htmlIn} from 'utils/htmlIn';
-import {trackEvent} from 'services/analytics';
-import {useParams} from 'react-router-dom';
 import {attachEtherNotice} from 'utils/contract';
 import {useTokenAsync} from 'services/token/queries/use-token';
 
@@ -77,7 +75,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const {network} = useNetwork();
   const {api: provider} = useProviders();
   const queryClient = useQueryClient();
-  const {dao: daoAddressOrEns} = useParams();
 
   const fetchToken = useTokenAsync();
 
@@ -223,7 +220,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
   useEffect(() => {
     async function setData() {
       if (!sourcifyLoading && !etherscanLoading && isTransactionLoading) {
-        // fetch smart contract logo
         const tokenData = await getTokenInfo(
           addressField,
           provider,
@@ -242,74 +238,44 @@ const ContractAddressValidation: React.FC<Props> = props => {
           sourcifyFullData ||
           sourcifyPartialData ||
           etherscanData.result[0].ABI !== 'Contract source code not verified'
-        ) {
-          const source = [];
-          let name;
-          if (sourcifyFullData || sourcifyPartialData) {
-            source.push('sourcify');
-            name =
-              sourcifyFullData?.output?.devdoc?.title ||
-              sourcifyPartialData?.output?.devdoc?.title;
-          }
+        )
           if (
             etherscanData.result[0].ABI !== 'Contract source code not verified'
           ) {
-            source.push('etherscan');
-            name = etherscanData.result[0]?.ContractName;
+            setVerifiedContract(
+              'etherscanMatch',
+              etherscanData.result[0],
+              tokenData?.imgUrl || ''
+            );
+          } else if (sourcifyFullData || sourcifyPartialData) {
+            if (sourcifyFullData) {
+              sourcifyFullData.output.devdoc.title =
+                sourcifyFullData.output.devdoc.title ||
+                etherscanData.result[0].ContractName;
+            }
+
+            if (sourcifyPartialData) {
+              sourcifyPartialData.output.devdoc.title =
+                sourcifyPartialData.output.devdoc.title ||
+                etherscanData.result[0].ContractName;
+            }
+
+            setVerifiedContract(
+              'sourcifyMatch',
+              sourcifyFullData || sourcifyPartialData,
+              tokenData?.imgUrl || ''
+            );
+          } else {
+            setContractName('');
+            setVerificationState(TransactionState.ERROR);
+            setABIFlowState(ManualABIFlowState.WAITING);
           }
-
-          trackEvent('newProposal_smartContractConnection_succeeded', {
-            dao_address: daoAddressOrEns,
-            smart_contract_address: addressField,
-            smart_contract_name: name,
-            source,
-          });
-        } else {
-          trackEvent('newProposal_smartContractConnection_failed', {
-            dao_address: daoAddressOrEns,
-            smart_contract_address: addressField,
-          });
-        }
-
-        //prioritize etherscan over sourcify to support proxy contracts for sourcify verified contracts
-        if (
-          etherscanData.result[0].ABI !== 'Contract source code not verified'
-        ) {
-          setVerifiedContract(
-            'etherscanMatch',
-            etherscanData.result[0],
-            tokenData?.imgUrl || ''
-          );
-        } else if (sourcifyFullData || sourcifyPartialData) {
-          if (sourcifyFullData) {
-            sourcifyFullData.output.devdoc.title =
-              sourcifyFullData.output.devdoc.title ||
-              etherscanData.result[0].ContractName;
-          }
-
-          if (sourcifyPartialData) {
-            sourcifyPartialData.output.devdoc.title =
-              sourcifyPartialData.output.devdoc.title ||
-              etherscanData.result[0].ContractName;
-          }
-
-          setVerifiedContract(
-            'sourcifyMatch',
-            sourcifyFullData || sourcifyPartialData,
-            tokenData?.imgUrl || ''
-          );
-        } else {
-          setContractName('');
-          setVerificationState(TransactionState.ERROR);
-          setABIFlowState(ManualABIFlowState.WAITING);
-        }
       }
     }
 
     setData();
   }, [
     addressField,
-    daoAddressOrEns,
     etherscanData,
     etherscanLoading,
     fetchToken,
@@ -321,7 +287,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
     sourcifyFullData,
     sourcifyLoading,
     sourcifyPartialData,
-    t,
   ]);
 
   const label = {
@@ -641,24 +606,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
               onClick={async () => {
                 if (verificationState === TransactionState.SUCCESS) {
                   props.onVerificationSuccess();
-                  // clear contract address field
                   resetField('contractAddress');
                   setVerificationState(TransactionState.WAITING);
-
-                  trackEvent('newProposal_createAction_clicked', {
-                    dao_address: daoAddressOrEns,
-                    smart_contract_address: addressField,
-                    smart_contract_name: contractName,
-                  });
                 } else if (ABIFlowState === ManualABIFlowState.NOT_STARTED) {
-                  // contract address entered for validation
-                  trackEvent('newProposal_validateSmartContract_clicked', {
-                    dao_address: daoAddressOrEns,
-                    smart_contract_address: addressField,
-                  });
                   setVerificationState(TransactionState.LOADING);
                 } else if (ABIFlowState === ManualABIFlowState.SUCCESS) {
-                  // Add ABI contract to verified contracts
                   setVerifiedContract(
                     'manualABI',
                     {
@@ -672,17 +624,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   resetField('ABIInput');
                   setVerificationState(TransactionState.WAITING);
                   setABIFlowState(ManualABIFlowState.NOT_STARTED);
-
-                  trackEvent('newProposal_createAction_clicked', {
-                    dao_address: daoAddressOrEns,
-                    smart_contract_address: addressField,
-                    smart_contract_name: contractName,
-                  });
                 } else if (verificationState === TransactionState.ERROR) {
-                  // Manual ABI flow starting
-                  // setABIFlowState(ManualABIFlowState.ABI_INPUT);
-
-                  //Retry
                   resetField('contractAddress', {defaultValue: ''});
                   setVerificationState(TransactionState.WAITING);
                   setABIFlowState(ManualABIFlowState.NOT_STARTED);

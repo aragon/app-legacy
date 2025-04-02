@@ -17,8 +17,6 @@ import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
 import {generatePath} from 'react-router-dom';
-import {trackEvent} from 'services/analytics';
-import {getCanonicalUtcOffset} from 'utils/date';
 import {toDisplayEns} from 'utils/library';
 import {Finance} from 'utils/paths';
 import {SupportedVotingSettings} from 'utils/types';
@@ -36,10 +34,9 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {address} = useWallet();
   const {actions, addAction} = useActionsContext();
 
-  const {control, getValues} = useFormContext();
+  const {control} = useFormContext();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {isConnected, isOnWrongNetwork} = useWallet();
@@ -85,14 +82,6 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
             !actions.length || !actionsAreValid(formActions, actions, errors)
           }
           onNextButtonClicked={next => {
-            trackEvent('newWithdraw_continueBtn_clicked', {
-              step: '1_configure_withdraw',
-              settings: actions.map((item, itemIdx) => ({
-                to: getValues(`actions.${itemIdx}.to`),
-                token_address: getValues(`actions.${itemIdx}.tokenAddress`),
-                amount: getValues(`actions.${itemIdx}.amount`),
-              })),
-            });
             next();
           }}
         >
@@ -105,9 +94,6 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
             )}
             onAddExtraActionClick={() => {
               addAction({name: 'withdraw_assets'});
-              trackEvent('newWithdraw_addAnother_clicked', {
-                dao_address: daoDetails.address,
-              });
             }}
             hideAlert
             allowEmpty={false}
@@ -118,24 +104,6 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
           wizardDescription={t('newWithdraw.setupVoting.description')}
           isNextButtonDisabled={!setupVotingIsValid(errors)}
           onNextButtonClicked={next => {
-            const [startDate, startTime, startUtc, endDate, endTime, endUtc] =
-              getValues([
-                'startDate',
-                'startTime',
-                'startUtc',
-                'endDate',
-                'endTime',
-                'endUtc',
-              ]);
-            trackEvent('newWithdraw_continueBtn_clicked', {
-              step: '2_setup_voting',
-              settings: {
-                start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
-                  startUtc
-                )}`,
-                end: `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`,
-              },
-            });
             next();
           }}
         >
@@ -146,16 +114,6 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
           wizardDescription={t('newWithdraw.defineProposal.description')}
           isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
           onNextButtonClicked={next => {
-            trackEvent('newWithdraw_continueBtn_clicked', {
-              step: '3_define_proposal',
-              settings: {
-                author_address: address,
-                title: getValues('proposalTitle'),
-                summary: getValues('proposalSummary'),
-                proposal: getValues('proposal'),
-                resources_list: getValues('links'),
-              },
-            });
             next();
           }}
         >

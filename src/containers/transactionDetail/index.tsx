@@ -9,13 +9,11 @@ import {Button, Icon, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {trackEvent} from 'services/analytics';
 import {useProposal} from 'services/aragon-sdk/queries/use-proposal';
 import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
@@ -127,17 +125,7 @@ const TransactionDetail: React.FC = () => {
             )}
 
         <div>
-          <a
-            href={transactionUrl}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() =>
-              trackEvent('finance_viewInBlockExplorer_clicked', {
-                transaction_hash: transfer.id,
-                dao_address: address,
-              })
-            }
-          >
+          <a href={transactionUrl} target="_blank" rel="noreferrer">
             <ListItemAction
               title={t('transactionDetail.viewTransaction')}
               iconRight={<Icon icon={IconType.LINK_EXTERNAL} />}

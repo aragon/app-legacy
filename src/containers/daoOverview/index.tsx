@@ -6,7 +6,6 @@ import CardWithImage from 'components/cardWithImage';
 import {useFormStep} from 'components/fullScreenStepper';
 import {ActiveIndicator, Indicator, StyledCarousel} from 'containers/carousel';
 import useScreen from 'hooks/useScreen';
-import {trackEvent} from 'services/analytics';
 import {i18n} from '../../../i18n.config';
 import {Button, IconType, IllustrationObject} from '@aragon/ods';
 
@@ -25,7 +24,6 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   const {next} = useFormStep();
 
   const handleSetupClick = () => {
-    trackEvent('daoCreation_setupDAO_clicked');
     next();
   };
 

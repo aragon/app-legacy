@@ -4,7 +4,6 @@ import {useFormContext} from 'react-hook-form';
 import {Breadcrumb} from '@aragon/ods-old';
 import {Button, AlertCard, IconType} from '@aragon/ods';
 import {useNavigate} from 'react-router-dom';
-
 import Blockchain from './blockchain';
 import DaoMetadata from './daoMetadata';
 import Community from './community';
@@ -13,7 +12,6 @@ import goLive from 'assets/images/goLive.svg';
 import {Landing} from 'utils/paths';
 import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from 'context/globalModals';
-import {trackEvent} from 'services/analytics';
 import Committee from './committee';
 import {CreateDaoDialog} from 'containers/createDaoDialog';
 
@@ -67,25 +65,17 @@ const GoLive: React.FC = () => {
 };
 
 export const GoLiveFooter: React.FC = () => {
-  const {watch, setValue, getValues} = useFormContext();
+  const {watch, setValue} = useFormContext();
   const {reviewCheck} = watch();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
-  const {isConnected, provider, isOnWrongNetwork} = useWallet();
+  const {isConnected, isOnWrongNetwork} = useWallet();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const isButtonDisabled = !Object.values(reviewCheck).every(v => v === true);
 
-  const publishDao = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    isConnected &&
-      trackEvent('daoCreation_publishYourDAO_clicked', {
-        network: getValues('blockchain')?.network,
-        wallet_provider: provider?.connection.url,
-        governance_type: getValues('membership'),
-      });
-
+  const publishDao = () => {
     if (isConnected) {
       if (isOnWrongNetwork) {
         open('network');

@@ -41,13 +41,12 @@ export interface IUsePinProposalMetadataResult {
 export const usePinProposalMetadata = (
   params: IUsePinProposalMetadataParams
 ): IUsePinProposalMetadataResult => {
-  const {process, onError, onSuccess} = params;
+  const {onError, onSuccess} = params;
 
   const {getValues} = useFormContext<CreateProposalFormData>();
   const formValues = getValues();
 
   const {uploadIpfsData, isPending, isError, isSuccess} = useUploadIpfsData({
-    logContext: {stack: [process, 'PIN_METADATA'], data: formValues},
     onError,
     onSuccess,
   });

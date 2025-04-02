@@ -1,14 +1,9 @@
 import {useCallback} from 'react';
 import {usePinData} from 'services/ipfs/mutations/usePinData';
 import {useClient} from './useClient';
-import {ILoggerErrorContext, logger} from 'services/logger';
 import {IPinDataProps, IPinDataResult} from 'services/ipfs/ipfsService.api';
 
 interface IUseUploadIpfsDataParams {
-  /**
-   * Data used to log eventual errors.
-   */
-  logContext?: Omit<ILoggerErrorContext, 'step'>;
   /**
    * Callback called on ipfs upload success.
    */
@@ -20,16 +15,11 @@ interface IUseUploadIpfsDataParams {
 }
 
 export const useUploadIpfsData = (params: IUseUploadIpfsDataParams = {}) => {
-  const {onSuccess, onError, logContext} = params;
+  const {onSuccess, onError} = params;
 
   const {client} = useClient();
 
   const handleUploadIpfsError = (error: unknown) => {
-    if (logContext) {
-      const {stack, data} = logContext;
-      logger.error(error, {stack, step: 'PIN_DATA', data});
-    }
-
     onError?.(error);
   };
 

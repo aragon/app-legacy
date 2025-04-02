@@ -59,7 +59,7 @@ export interface IUseSendCreateProposalTransactionParams {
 export const useSendCreateProposalTransaction = (
   params: IUseSendCreateProposalTransactionParams
 ) => {
-  const {process, transaction, votingSettings, createProposalParams} = params;
+  const {transaction, votingSettings, createProposalParams} = params;
 
   const {getValues} = useFormContext<CreateProposalFormData>();
   const formValues = getValues();
@@ -191,7 +191,6 @@ export const useSendCreateProposalTransaction = (
   };
 
   const sendTransactionResults = useSendTransaction({
-    logContext: {stack: [process], data: formValues},
     transaction,
     onSuccess: handleCreateProposalSuccess,
   });

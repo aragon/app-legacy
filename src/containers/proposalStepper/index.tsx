@@ -21,15 +21,13 @@ import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
 import {
   isMultisigVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {getCanonicalUtcOffset} from 'utils/date';
 import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
-import {Action, ProposalTypes} from 'utils/types';
+import {ProposalTypes} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
 import {CreateProposalDialog} from 'containers/createProposalDialog';
 
@@ -42,7 +40,7 @@ const ProposalStepper: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {type} = useParams();
   const {network} = useNetwork();
-  const {address, isConnected, isOnWrongNetwork} = useWallet();
+  const {isConnected, isOnWrongNetwork} = useWallet();
 
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
@@ -51,7 +49,7 @@ const ProposalStepper: React.FC = () => {
   });
 
   const {actions} = useActionsContext();
-  const {trigger, control, getValues, setValue} = useFormContext();
+  const {trigger, control, setValue} = useFormContext();
 
   const {errors, dirtyFields} = useFormState({control});
 
@@ -66,9 +64,6 @@ const ProposalStepper: React.FC = () => {
       if (isOnWrongNetwork) {
         open('network');
       } else {
-        trackEvent('newProposal_publishBtn_clicked', {
-          dao_address: daoDetails?.address,
-        });
         setIsDialogOpen(true);
       }
     } else {
@@ -125,17 +120,6 @@ const ProposalStepper: React.FC = () => {
           )
         }
         onNextButtonClicked={next => {
-          trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: daoDetails.address,
-            step: '1_define_proposal',
-            settings: {
-              author_address: address,
-              title: getValues('proposalTitle'),
-              summary: getValues('proposalSummary'),
-              proposal: getValues('proposal'),
-              resources_list: getValues('links'),
-            },
-          });
           next();
         }}
       >
@@ -146,25 +130,6 @@ const ProposalStepper: React.FC = () => {
         wizardDescription={t('newWithdraw.setupVoting.description')}
         isNextButtonDisabled={!setupVotingIsValid(errors)}
         onNextButtonClicked={next => {
-          const [startDate, startTime, startUtc, endDate, endTime, endUtc] =
-            getValues([
-              'startDate',
-              'startTime',
-              'startUtc',
-              'endDate',
-              'endTime',
-              'endUtc',
-            ]);
-          trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: daoDetails.address,
-            step: '2_setup_voting',
-            settings: {
-              start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
-                startUtc
-              )}`,
-              end: `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`,
-            },
-          });
           next();
         }}
       >
@@ -185,15 +150,6 @@ const ProposalStepper: React.FC = () => {
               removeUnchangedMinimumApprovalAction(formActions, votingSettings)
             );
           }
-
-          trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: daoDetails.address,
-            step: '3_configure_actions',
-            settings: {
-              actions: formActions.map((action: Action) => action.name),
-              actions_count: formActions.length,
-            },
-          });
           next();
         }}
       >

@@ -90,7 +90,6 @@ export const CreateProposalDialog: React.FC<
       | undefined,
     pluginType,
     pluginAddress,
-    logContext: {stack: [createGaslessProposalProcess], data: formValues},
   });
 
   const processedTransaction = isGaslessProposal

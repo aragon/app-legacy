@@ -55,7 +55,6 @@ export const useSendVoteOrApprovalTransaction = (
   params: IUseSendVoteOrApprovalTransaction
 ) => {
   const {
-    process,
     transaction,
     replacingVote,
     vote,
@@ -154,7 +153,6 @@ export const useSendVoteOrApprovalTransaction = (
   };
 
   const sendTransactionResults = useSendTransaction({
-    logContext: {stack: [process]},
     transaction,
     onSuccess: handleVoteOrApprovalSuccess,
   });

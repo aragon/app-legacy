@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from '@aragon/ods-old';
 import {Button, EmptyState, IconType} from '@aragon/ods';
-
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
-
 import BottomSheet from 'components/bottomSheet';
-import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
 import {SmartContract, SmartContractAction} from 'utils/types';
 import {SccFormData} from '..';
@@ -31,7 +27,6 @@ type Props = {
 
 const MobileModal: React.FC<Props> = props => {
   const {t} = useTranslation();
-  const {dao: daoAddressOrEns} = useParams();
 
   const [selectedSC, selectedAction]: [SmartContract, SmartContractAction] =
     useWatch({
@@ -102,9 +97,6 @@ const MobileModal: React.FC<Props> = props => {
                   variant="tertiary"
                   size="lg"
                   onClick={() => {
-                    trackEvent('newProposal_connectSmartContract_clicked', {
-                      dao_address: daoAddressOrEns,
-                    });
                     props.onConnectNew();
                   }}
                   className="w-full"

@@ -4,12 +4,10 @@ import {Button, IconType} from '@aragon/ods';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
 import {CHAIN_METADATA} from 'utils/constants';
 import {handleClipboardActions, shortenAddress} from 'utils/library';
 import {LoginRequired} from './LoginRequired';
@@ -23,9 +21,7 @@ export const WalletMenu = () => {
     methods,
     chainId,
     isConnected,
-    network,
     status,
-    provider,
   } = useWallet();
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
@@ -40,11 +36,6 @@ export const WalletMenu = () => {
     methods
       .disconnect()
       .then(() => {
-        trackEvent('wallet_disconnected', {
-          network,
-          wallet_address: address,
-          wallet_provider: provider?.connection.url,
-        });
         localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER');
         close();
         alert(t('alert.chip.walletDisconnected'));

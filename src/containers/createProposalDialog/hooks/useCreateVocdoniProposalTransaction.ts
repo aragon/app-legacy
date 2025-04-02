@@ -17,7 +17,6 @@ import {
 import {useFormContext} from 'react-hook-form';
 import {createProposalUtils} from '../utils';
 import {ITransaction} from 'services/transactions/domain/transaction';
-import {ILoggerErrorContext, logger} from 'services/logger';
 import {UseMutationResult} from '@tanstack/react-query';
 
 export interface IUseCreateVocdoniProposalTransactionParams {
@@ -37,10 +36,6 @@ export interface IUseCreateVocdoniProposalTransactionParams {
    * Initialize the transaction creation when set to true.
    */
   initializeProcess?: boolean;
-  /**
-   * Log context used to log eventual errors.
-   */
-  logContext?: Omit<ILoggerErrorContext, 'step'>;
 }
 
 export interface IUseCreateVocdoniProposalTransationResult {
@@ -51,22 +46,11 @@ export interface IUseCreateVocdoniProposalTransationResult {
   retry: () => void;
 }
 
-enum CreateVocdoniProposalStep {
-  CREATE_ACCOUNT = 'CREATE_ACCOUNT',
-  CREATE_OFFCHAIN_ELECTION = 'CREATE_OFFCHAIN_ELECTION',
-  CREATE_ONCHAIN_TRANSACTION = 'CREATE_ONCHAIN_TRANSACTION',
-}
-
 export const useCreateVocdoniProposalTransaction = (
   params: IUseCreateVocdoniProposalTransactionParams
 ): IUseCreateVocdoniProposalTransationResult => {
-  const {
-    createProposalParams,
-    initializeProcess,
-    pluginType,
-    pluginAddress,
-    logContext,
-  } = params;
+  const {createProposalParams, initializeProcess, pluginType, pluginAddress} =
+    params;
 
   const {client} = useClient();
   const {network} = useNetwork();
@@ -83,25 +67,11 @@ export const useCreateVocdoniProposalTransaction = (
 
   const isGasless = pluginType === GaslessPluginName;
 
-  const handleCreateProposalError = useCallback(
-    (step: CreateVocdoniProposalStep) => (error: unknown) => {
-      if (logContext) {
-        const {stack, data} = logContext;
-        logger.error(error, {stack, step, data});
-      }
-    },
-    [logContext]
-  );
-
   const {
     data: electionResult,
     mutate: createVocdoniElection,
     status: createElectionStatus,
-  } = useCreateVocdoniElection({
-    onError: handleCreateProposalError(
-      CreateVocdoniProposalStep.CREATE_OFFCHAIN_ELECTION
-    ),
-  });
+  } = useCreateVocdoniElection();
 
   const handleCreateAccountSuccess = useCallback(() => {
     if (
@@ -143,38 +113,24 @@ export const useCreateVocdoniProposalTransaction = (
     status: createAccountStatus,
   } = useCreateAccount({
     onSuccess: () => handleCreateAccountSuccess(),
-    onError: handleCreateProposalError(
-      CreateVocdoniProposalStep.CREATE_ACCOUNT
-    ),
   });
 
-  const {
-    data: transaction,
-    isInitialLoading: isCreateTransactionLoading,
-    error: createTransactionError,
-  } = useCreateGaslessProposalTransaction(
-    {
-      ...createProposalParams,
-      tokenCensus: electionResult?.tokenCensus,
-      electionId: electionResult?.electionId,
-      client,
-    } as IBuildCreateGaslessProposalTransactionParams,
-    {
-      enabled:
-        isGasless &&
-        createProposalParams != null &&
-        client != null &&
-        electionResult != null,
-    }
-  );
-
-  useEffect(() => {
-    if (createTransactionError != null) {
-      handleCreateProposalError(
-        CreateVocdoniProposalStep.CREATE_ONCHAIN_TRANSACTION
-      )(createTransactionError);
-    }
-  }, [createTransactionError, handleCreateProposalError]);
+  const {data: transaction, isInitialLoading: isCreateTransactionLoading} =
+    useCreateGaslessProposalTransaction(
+      {
+        ...createProposalParams,
+        tokenCensus: electionResult?.tokenCensus,
+        electionId: electionResult?.electionId,
+        client,
+      } as IBuildCreateGaslessProposalTransactionParams,
+      {
+        enabled:
+          isGasless &&
+          createProposalParams != null &&
+          client != null &&
+          electionResult != null,
+      }
+    );
 
   useEffect(() => {
     if (initializeProcess && isGasless && createAccountStatus === 'idle') {

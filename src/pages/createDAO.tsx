@@ -8,7 +8,6 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {JsonRpcProvider} from '@ethersproject/providers';
-
 import {TokenVotingWalletField} from 'components/addWallets/row';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {MultisigWalletField} from 'components/multisigWallets/row';
@@ -21,7 +20,6 @@ import SetupCommunity from 'containers/setupCommunity';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {htmlIn} from 'utils/htmlIn';
 import {hasValue} from 'utils/library';
@@ -177,18 +175,6 @@ export const CreateDAO: React.FC = () => {
   /*************************************************
    *                    Callbacks                  *
    *************************************************/
-  const handleNextButtonTracking = (
-    next: () => void,
-    stepName: string,
-    properties: Record<string, unknown>
-  ) => {
-    trackEvent('daoCreation_continueBtn', {
-      step: stepName,
-      settings: properties,
-    });
-    next();
-  };
-
   /**
    * Validates multisig community values.
    * - Ensures multisig includes at least one wallet.
@@ -362,11 +348,7 @@ export const CreateDAO: React.FC = () => {
           wizardTitle={t('createDAO.step1.title')}
           wizardDescription={htmlIn(t)('createDAO.step1.description')}
           wizardDescriptionLink={t('createDAO.step1.descriptionLinkURL')}
-          onNextButtonClicked={next =>
-            handleNextButtonTracking(next, '1_select_blockchain', {
-              network: formMethods.getValues('blockchain')?.network,
-            })
-          }
+          onNextButtonClicked={next => next()}
         >
           <SelectChain />
         </Step>
@@ -375,12 +357,7 @@ export const CreateDAO: React.FC = () => {
           wizardDescription={htmlIn(t)('createDAO.step2.description')}
           wizardDescriptionLink={t('createDAO.step2.descriptionLinkURL')}
           isNextButtonDisabled={!daoMetadataIsValid}
-          onNextButtonClicked={next =>
-            handleNextButtonTracking(next, '2_define_metadata', {
-              dao_name: formMethods.getValues('daoName'),
-              links: formMethods.getValues('links'),
-            })
-          }
+          onNextButtonClicked={next => next()}
         >
           <DefineMetadata />
         </Step>
@@ -389,16 +366,7 @@ export const CreateDAO: React.FC = () => {
           wizardDescription={htmlIn(t)('createDAO.step3.description')}
           wizardDescriptionLink={t('createDAO.step3.descriptionLinkURL')}
           isNextButtonDisabled={!daoCommunitySetupIsValid}
-          onNextButtonClicked={next =>
-            handleNextButtonTracking(next, '3_setup_community', {
-              governance_type: formMethods.getValues('membership'),
-              voting_type: formMethods.getValues('votingType'),
-              token_name: formMethods.getValues('tokenName'),
-              symbol: formMethods.getValues('tokenSymbol'),
-              token_address: formMethods.getValues('tokenAddress.address'),
-              multisigWallets: formMethods.getValues('multisigWallets'),
-            })
-          }
+          onNextButtonClicked={next => next()}
         >
           <SetupCommunity />
         </Step>
@@ -407,16 +375,7 @@ export const CreateDAO: React.FC = () => {
           wizardDescription={htmlIn(t)('createDAO.step4.description')}
           wizardDescriptionLink={t('createDAO.step4.descriptionLinkURL')}
           isNextButtonDisabled={!daoCommunityConfigurationIsValid}
-          onNextButtonClicked={next =>
-            handleNextButtonTracking(next, '4_configure_governance', {
-              minimum_approval: formMethods.getValues('minimumApproval'),
-              support: formMethods.getValues('support'),
-              duration_days: formMethods.getValues('durationDays'),
-              duration_hours: formMethods.getValues('durationHours'),
-              duration_minutes: formMethods.getValues('durationMinutes'),
-              governance_type: formMethods.getValues('membership'),
-            })
-          }
+          onNextButtonClicked={next => next()}
         >
           <ConfigureCommunity />
         </Step>
@@ -425,23 +384,7 @@ export const CreateDAO: React.FC = () => {
           wizardTitle={t('createDao.executionMultisig.title')}
           wizardDescription={htmlIn(t)('createDao.executionMultisig.desc')}
           isNextButtonDisabled={!defineCommitteeIsValid}
-          onNextButtonClicked={next => {
-            handleNextButtonTracking(next, '5_define_execution_multisig', {
-              committee: formMethods.getValues('committee'),
-              committeeMinimumApproval: formMethods.getValues(
-                'committeeMinimumApproval'
-              ),
-              executionExpirationMinutes: formMethods.getValues(
-                'executionExpirationMinutes'
-              ),
-              executionExpirationHours: formMethods.getValues(
-                'executionExpirationHours'
-              ),
-              executionExpirationDays: formMethods.getValues(
-                'executionExpirationDays'
-              ),
-            });
-          }}
+          onNextButtonClicked={next => next()}
         >
           <DefineExecutionMultisig />
         </Step>

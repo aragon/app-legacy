@@ -1,9 +1,6 @@
 import {TransferListItem} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
-
-import {trackEvent} from 'services/analytics';
 import {abbreviateTokenAmount, shortenLongTokenSymbol} from 'utils/tokens';
 import {Transfer} from 'utils/types';
 
@@ -17,7 +14,6 @@ const TransferList: React.FC<TransferListProps> = ({
   onTransferClick,
 }) => {
   const {t} = useTranslation();
-  const {dao} = useParams();
 
   if (transfers.length === 0)
     return <p data-testid="transferList">{t('allTransfer.noTransfers')}</p>;
@@ -33,10 +29,6 @@ const TransferList: React.FC<TransferListProps> = ({
           tokenSymbol={shortenLongTokenSymbol(tokenSymbol)}
           {...rest}
           onClick={() => {
-            trackEvent('finance_transactionDetails_clicked', {
-              transaction_hash: rest.id,
-              dao_address: dao,
-            });
             onTransferClick({tokenAmount, tokenSymbol, ...rest});
           }}
         />
