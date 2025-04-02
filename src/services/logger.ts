@@ -1,5 +1,3 @@
-import {MonitoringLevel, monitoring} from './monitoring';
-
 export enum LogLevel {
   DEBUG = 'DEBUG',
   INFO = 'INFO',
@@ -48,23 +46,6 @@ class Logger {
     if (isDev) {
       console.log({level, message, object});
     }
-
-    const monitoringLevel = this.logLevelToMonitoringLevel[level];
-    const parsedMessage = typeof message === 'string' ? message : undefined;
-
-    monitoring.captureMessage({
-      level: monitoringLevel,
-      message: parsedMessage,
-      error: message,
-      context: object,
-    });
-  };
-
-  private logLevelToMonitoringLevel: Record<LogLevel, MonitoringLevel> = {
-    [LogLevel.DEBUG]: 'debug',
-    [LogLevel.ERROR]: 'error',
-    [LogLevel.INFO]: 'info',
-    [LogLevel.WARN]: 'warning',
   };
 }
 
