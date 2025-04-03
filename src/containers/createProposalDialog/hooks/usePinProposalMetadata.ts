@@ -6,10 +6,6 @@ import {createProposalUtils} from '../utils';
 
 export interface IUsePinProposalMetadataParams {
   /**
-   * Process name for logging.
-   */
-  process: string;
-  /**
    * Callback called on pin proposal metadata success.
    */
   onSuccess?: (cid: string) => void;
