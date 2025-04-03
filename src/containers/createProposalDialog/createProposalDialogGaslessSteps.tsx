@@ -10,10 +10,6 @@ import {IUseSendTransactionResult} from 'hooks/useSendTransaction';
 
 export interface ICreateProposalDialogGaslessStepsProps {
   /**
-   * Name of the process to log eventual errors.
-   */
-  process: string;
-  /**
    * Displays the custom step button as loading when set to true.
    */
   createTransactionResult: IUseCreateVocdoniProposalTransationResult;

@@ -61,7 +61,6 @@
     "react-i18next": "^13.2.2",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.0.2",
-    "rudder-sdk-js": "^2.20.0",
     "sanitize-html": "^2.12.1",
     "source-map-explorer": "^2.5.3",
     "styled-components": "^6.0.8",

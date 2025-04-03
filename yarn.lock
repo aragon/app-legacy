@@ -162,7 +162,6 @@ __metadata:
     react-responsive-carousel: "npm:^3.2.23"
     react-router-dom: "npm:^6.0.2"
     rollup-plugin-visualizer: "npm:^5.12.0"
-    rudder-sdk-js: "npm:^2.20.0"
     sanitize-html: "npm:^2.12.1"
     source-map-explorer: "npm:^2.5.3"
     styled-components: "npm:^6.0.8"
@@ -15238,13 +15237,6 @@ __metadata:
   version: 1.3.2
   resolution: "rope-sequence@npm:1.3.2"
   checksum: 10c0/99cf20895bf7f34e264ad9cb86cf806e893ad12f13dacf57210a22b30fbfb2ca81e56094399a97f06482f726bc9013ba09b925259d654aa3a01380099fe3313e
-  languageName: node
-  linkType: hard
-
-"rudder-sdk-js@npm:^2.20.0":
-  version: 2.20.0
-  resolution: "rudder-sdk-js@npm:2.20.0"
-  checksum: 10c0/b4f86288fb3adbb8716b29238fba6c4c740485b9451fd387a0cf7fdcd6e81e09887050c58ef9d1950d9184f1e20f7ef1a8615896e79de816cd198ca9010f63d2
   languageName: node
   linkType: hard
 
