@@ -5,7 +5,6 @@ import {TFunction} from 'i18next';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
-
 import {Spinner} from '@aragon/ods';
 import Big from 'big.js';
 import {useNetwork} from 'context/network';
@@ -13,7 +12,6 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
 import {
   CHAIN_METADATA,
   PROPOSAL_STATE_LABELS,
@@ -189,10 +187,6 @@ export function proposal2CardProps(
     process: proposal.status.toLowerCase() as CardProposalProps['process'],
     //actions: proposal.actions,
     onClick: () => {
-      trackEvent('governance_viewProposal_clicked', {
-        proposal_id: proposal.id,
-        dao_address: proposal.dao.address,
-      });
       navigate(
         generatePath(Proposal, {
           network,

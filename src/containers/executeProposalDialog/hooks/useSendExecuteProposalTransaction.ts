@@ -30,7 +30,7 @@ export interface IUseSendExecuteProposalTransactionParams {
 export const useSendExecuteProposalTransaction = (
   params: IUseSendExecuteProposalTransactionParams
 ) => {
-  const {process, transaction} = params;
+  const {transaction} = params;
 
   const {network} = useNetwork();
   const {api: provider} = useProviders();
@@ -88,7 +88,6 @@ export const useSendExecuteProposalTransaction = (
   };
 
   const sendTransactionResults = useSendTransaction({
-    logContext: {stack: [process], data: {proposalId}},
     transaction,
     onSuccess: handleExecuteProposalSuccess,
   });

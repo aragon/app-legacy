@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Link, Modal} from '@aragon/ods-old';
 import {Button, EmptyState, IconType} from '@aragon/ods';
-
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
 import Header from 'components/modalHeader/searchHeader';
-import {useParams} from 'react-router-dom';
-import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
 import {SmartContract, SmartContractAction} from 'utils/types';
 import {SccFormData} from '..';
@@ -31,7 +27,6 @@ type DesktopModalProps = {
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
   const {t} = useTranslation();
-  const {dao: daoAddressOrEns} = useParams();
   const [selectedSC, selectedAction]: [SmartContract, SmartContractAction] =
     useWatch({
       name: ['selectedSC', 'selectedAction'],
@@ -100,9 +95,6 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                   variant="tertiary"
                   size="lg"
                   onClick={() => {
-                    trackEvent('newProposal_connectSmartContract_clicked', {
-                      dao_address: daoAddressOrEns,
-                    });
                     props.onConnectNew();
                   }}
                   className="w-full"

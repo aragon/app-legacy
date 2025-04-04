@@ -90,7 +90,6 @@ export const CreateProposalDialog: React.FC<
       | undefined,
     pluginType,
     pluginAddress,
-    logContext: {stack: [createGaslessProposalProcess], data: formValues},
   });
 
   const processedTransaction = isGaslessProposal
@@ -170,14 +169,12 @@ export const CreateProposalDialog: React.FC<
     >
       {!isGaslessProposal ? (
         <CreateProposalDialogSteps
-          process={createProposalProcess}
           isLoading={isTransactionLoading}
           onPinProposalMetadataSuccess={setMetadataCid}
           pinMetadata={isOpen}
         />
       ) : (
         <CreateProposalDialogGaslessSteps
-          process={createProposalProcess}
           createTransactionResult={createGaslessTransactionResult}
           sendTransactionResults={sendTransactionResults}
         />

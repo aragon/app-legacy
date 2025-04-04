@@ -11,7 +11,6 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
 import {i18n} from '../../../i18n.config';
 import {ActionsTypes} from 'utils/types';
-import {trackEvent} from 'services/analytics';
 
 interface ConfigureActionsProps {
   label?: string;
@@ -71,8 +70,6 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
   };
 
   const handleExtraActionClick = () => {
-    trackEvent('newProposal_addAction_clicked', {dao_address: daoAddressOrEns});
-
     if (onAddExtraActionClick) {
       onAddExtraActionClick();
     } else {

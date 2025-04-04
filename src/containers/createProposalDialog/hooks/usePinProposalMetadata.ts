@@ -6,10 +6,6 @@ import {createProposalUtils} from '../utils';
 
 export interface IUsePinProposalMetadataParams {
   /**
-   * Process name for logging.
-   */
-  process: string;
-  /**
    * Callback called on pin proposal metadata success.
    */
   onSuccess?: (cid: string) => void;
@@ -41,13 +37,12 @@ export interface IUsePinProposalMetadataResult {
 export const usePinProposalMetadata = (
   params: IUsePinProposalMetadataParams
 ): IUsePinProposalMetadataResult => {
-  const {process, onError, onSuccess} = params;
+  const {onError, onSuccess} = params;
 
   const {getValues} = useFormContext<CreateProposalFormData>();
   const formValues = getValues();
 
   const {uploadIpfsData, isPending, isError, isSuccess} = useUploadIpfsData({
-    logContext: {stack: [process, 'PIN_METADATA'], data: formValues},
     onError,
     onSuccess,
   });

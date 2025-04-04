@@ -5,10 +5,6 @@ import {useTranslation} from 'react-i18next';
 
 export interface ICreateProposalDialogStepsProps {
   /**
-   * Name of the process to log eventual errors.
-   */
-  process: string;
-  /**
    * Boolean to trigger the Proposal metadata pinning.
    */
   pinMetadata?: boolean;
@@ -25,7 +21,7 @@ export interface ICreateProposalDialogStepsProps {
 export const CreateProposalDialogSteps: React.FC<
   ICreateProposalDialogStepsProps
 > = props => {
-  const {process, pinMetadata, isLoading, onPinProposalMetadataSuccess} = props;
+  const {pinMetadata, isLoading, onPinProposalMetadataSuccess} = props;
 
   const {t} = useTranslation();
 
@@ -35,7 +31,6 @@ export const CreateProposalDialogSteps: React.FC<
     isError: isPinMetadataError,
     isSuccess: isPinMetadataSuccess,
   } = usePinProposalMetadata({
-    process,
     onSuccess: onPinProposalMetadataSuccess,
   });
 

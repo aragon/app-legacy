@@ -41,7 +41,7 @@ export interface IUsePinDaoMetadataResult {
 export const usePinDaoMetadata = (
   params: IUsePinDaoMetadataParams
 ): IUsePinDaoMetadataResult => {
-  const {process, onSuccess, onError} = params;
+  const {onSuccess, onError} = params;
 
   const {getValues} = useFormContext<CreateDaoFormData>();
 
@@ -54,7 +54,6 @@ export const usePinDaoMetadata = (
     isError: isUploadMetadataError,
     isSuccess,
   } = useUploadIpfsData({
-    logContext: {stack: [process, 'PIN_METADATA'], data: formValues},
     onError,
     onSuccess,
   });
@@ -72,7 +71,6 @@ export const usePinDaoMetadata = (
     isPending: isUploadingLogo,
     isError: isUploadLogoError,
   } = useUploadIpfsData({
-    logContext: {stack: [process, 'PIN_LOGO'], data: formValues},
     onSuccess: handleUploadLogoSuccess,
     onError,
   });

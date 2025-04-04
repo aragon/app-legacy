@@ -15,13 +15,11 @@ import {
   useWatch,
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
-import {trackEvent} from 'services/analytics';
 import {
   getDefaultPayableAmountInput,
   getDefaultPayableAmountInputName,
@@ -70,7 +68,6 @@ const InputForm: React.FC<InputFormProps> = ({
   ] = useWatch({
     name: ['selectedAction', 'selectedSC', 'sccActions'],
   });
-  const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
   const {setValue, resetField} = useFormContext();
   const [another, setAnother] = useState(false);
@@ -135,19 +132,11 @@ const InputForm: React.FC<InputFormProps> = ({
     resetField('sccActions');
 
     onComposeButtonClicked(another);
-
-    trackEvent('newProposal_composeAction_clicked', {
-      dao_address: daoAddressOrEns,
-      smart_contract_address: selectedSC.address,
-      smart_contract_name: selectedSC.name,
-      method_name: selectedAction.name,
-    });
   }, [
     actionIndex,
     actionInputs,
     addAction,
     another,
-    daoAddressOrEns,
     onComposeButtonClicked,
     removeAction,
     resetField,

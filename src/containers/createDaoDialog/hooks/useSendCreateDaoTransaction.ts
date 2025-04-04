@@ -34,7 +34,7 @@ export interface IUseSendCreateDaoTransactionParams {
 export const useSendCreateDaoTransaction = (
   params: IUseSendCreateDaoTransactionParams
 ) => {
-  const {process, transaction, metadataCid, createDaoParams} = params;
+  const {transaction, metadataCid, createDaoParams} = params;
 
   const {network} = useNetwork();
 
@@ -105,7 +105,6 @@ export const useSendCreateDaoTransaction = (
   };
 
   const sendTransactionResults = useSendTransaction({
-    logContext: {stack: [process], data: formValues},
     transaction,
     onSuccess: handleCreateDaoSuccess,
   });

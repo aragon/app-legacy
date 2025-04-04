@@ -7,7 +7,6 @@ import {
   useLocation,
   useParams,
 } from 'react-router-dom';
-
 import {GridLayout} from 'components/layout';
 import ProtectedRoute from 'components/protectedRoute';
 import {Loading} from 'components/temporary/loading';
@@ -26,9 +25,7 @@ import {FormProvider, useForm} from 'react-hook-form';
 import DepositModal from 'containers/transactionModals/depositModal';
 import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
-import {useMonitoring} from 'hooks/useMonitoring';
 import {useWallet} from 'hooks/useWallet';
-import {identifyUser, trackPage} from 'services/analytics';
 import {featureFlags} from 'utils/featureFlags';
 import {NotFound} from 'utils/paths';
 import {DelegateVotingMenu} from 'containers/delegateVotingMenu';
@@ -43,18 +40,10 @@ export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
-  const {methods, status, network, address, provider} = useWallet();
-
-  useMonitoring();
+  const {methods} = useWallet();
 
   // Initialize feature flags using the initial URL
   useEffect(() => featureFlags.initializeFeatureFlags(), []);
-
-  useEffect(() => {
-    if (status === 'connected') {
-      identifyUser(address || '', network, provider?.connection.url || '');
-    }
-  }, [address, network, provider, status]);
 
   useEffect(() => {
     // This check would prevent the wallet selection modal from opening up if the user hasn't logged in previously.
@@ -66,7 +55,6 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    trackPage(pathname);
     window.scrollTo(0, 0);
   }, [pathname]);
 

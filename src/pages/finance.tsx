@@ -26,7 +26,6 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
-import {trackEvent} from 'services/analytics';
 import {htmlIn} from 'utils/htmlIn';
 import {sortTokens} from 'utils/tokens';
 
@@ -39,7 +38,7 @@ const colors: Record<Sign, string> = {
 
 export const Finance: React.FC = () => {
   const {t} = useTranslation();
-  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const {isLoading} = useDaoDetailsQuery();
   const {open} = useGlobalModalContext();
   const {isMobile, isDesktop} = useScreen();
 
@@ -188,9 +187,6 @@ export const Finance: React.FC = () => {
                     iconLeft={IconType.PLUS}
                     className="w-full md:w-auto"
                     onClick={() => {
-                      trackEvent('finance_newTransferBtn_clicked', {
-                        dao_address: daoDetails?.address,
-                      });
                       open('transfer');
                     }}
                   >
@@ -318,9 +314,6 @@ export const Finance: React.FC = () => {
                 iconLeft={IconType.PLUS}
                 className="w-full md:w-auto"
                 onClick={() => {
-                  trackEvent('finance_newTransferBtn_clicked', {
-                    dao_address: daoDetails?.address,
-                  });
                   open('transfer');
                 }}
               >
