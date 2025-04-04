@@ -171,7 +171,7 @@ __metadata:
     typescript: "npm:^5.1.3"
     use-react-router-breadcrumbs: "npm:^3.0.1"
     viem: "npm:2.10.11"
-    vite: "npm:^4.5.6"
+    vite: "npm:^4.5.11"
     vite-tsconfig-paths: "npm:^4.2.0"
     wagmi: "npm:^2.5.18"
   languageName: unknown
@@ -16924,9 +16924,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^4.5.6":
-  version: 4.5.6
-  resolution: "vite@npm:4.5.6"
+"vite@npm:^4.5.11":
+  version: 4.5.12
+  resolution: "vite@npm:4.5.12"
   dependencies:
     esbuild: "npm:^0.18.10"
     fsevents: "npm:~2.3.2"
@@ -16960,7 +16960,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/26b3e247219a38c2815302b2e003a64aa2f37d1884693906914b909bb7f0275f234a6b465bc8c587b1d58ed00c8dc52887722e05f0c298bb2e5657e61cda5829
+  checksum: 10c0/179f401f03279af8d5bed3b5afc38acfc951bb80da490e0429577d69f8034de5814c5d9950fec579ff65727082b196d8081a2d30833a818c6ae115d8b22ef52a
   languageName: node
   linkType: hard
 
