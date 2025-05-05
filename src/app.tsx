@@ -35,6 +35,8 @@ import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
 import UpdateBanner from 'containers/navbar/updateBanner';
 import {ActionsProvider} from './context/actions';
+import useScreen from 'hooks/useScreen';
+import {DeprecationBanner} from 'components/deprecationBanner/deprecationBanner';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -185,9 +187,12 @@ const DaoWrapper: React.FC = () => {
   // wants to open the modal
   const {isOpen} = useTransactionDetailContext();
 
+  const {isDesktop} = useScreen();
+
   return (
     <GovTokensWrappingProvider>
       <UpdateBanner />
+      {!isDesktop && <DeprecationBanner />}
       <Navbar />
       <div className="min-h-screen">
         <GridLayout>

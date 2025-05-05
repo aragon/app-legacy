@@ -5,11 +5,12 @@ import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from 'context/globalModals';
-import {Container, GridLayout} from 'components/layout';
+import {GridLayout} from 'components/layout';
 import {FEEDBACK_FORM} from 'utils/constants';
 import classNames from 'classnames';
 import {Logotype} from 'components/logos/logotype';
 import {Logo} from 'components/logos/logo';
+import {DeprecationBanner} from 'components/deprecationBanner/deprecationBanner';
 
 const ExploreNav: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,6 +60,7 @@ const ExploreNav: React.FC = () => {
 
   return (
     <Container data-testid="navbar">
+      <DeprecationBanner />
       <nav className={menuClassNames}>
         <GridLayout className="grid grid-cols-[auto,1fr] items-center">
           <LeftContent>
@@ -100,6 +102,10 @@ const ExploreNav: React.FC = () => {
     </Container>
   );
 };
+
+export const Container = styled.header.attrs({
+  className: 'sticky top-0 w-full z-[var(--app-navbar-z-index)]',
+})``;
 
 const LeftContent = styled.div.attrs({
   className: 'col-span-2 flex items-center',

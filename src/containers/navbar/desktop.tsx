@@ -15,6 +15,7 @@ import {useNetwork} from 'context/network';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {useWallet} from 'hooks/useWallet';
 import {NavlinksDropdown} from './breadcrumbDropdown';
+import {DeprecationBanner} from 'components/deprecationBanner/deprecationBanner';
 
 const MIN_ROUTE_DEPTH_FOR_BREADCRUMBS = 2;
 
@@ -60,6 +61,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
     return (
       <>
         <Container data-testid="navbar">
+          <DeprecationBanner />
           <Menu>
             <Breadcrumb
               crumbs={{label: props.processLabel!, path: props.returnURL!}}
@@ -90,6 +92,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
 
   return (
     <Container data-testid="navbar">
+      <DeprecationBanner />
       <Menu>
         <Content>
           <DaoSelector
