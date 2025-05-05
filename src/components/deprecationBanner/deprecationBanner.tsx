@@ -8,8 +8,8 @@ export const DeprecationBanner: React.FC<DeprecationBannerProps> = () => {
   return (
     <Container>
       <p>
-        We’ve moved to a new UI with a better experience. This version will be
-        phased out in the coming weeks.{' '}
+        We&apos;ve moved to a new UI with a better experience. This version will
+        be phased out in the coming weeks.{' '}
         <a href="/" className="text-neutral-0 underline">
           Learn more
         </a>
