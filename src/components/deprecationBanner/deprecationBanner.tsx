@@ -1,22 +1,24 @@
 import {Button, IconType} from '@aragon/ods';
+import {copyFile} from 'fs';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 export type DeprecationBannerProps = {};
 
 export const DeprecationBanner: React.FC<DeprecationBannerProps> = () => {
+  const {t} = useTranslation();
   return (
     <Container>
       <p>
-        We&apos;ve moved to a new UI with a better experience. This version will
-        be phased out in the coming weeks.{' '}
+        {t('deprecationBanner.message')}{' '}
         <a
           href="https://blog.aragon.org/legacy-app-deprecation/"
           className="text-neutral-0 underline"
           target="_blank"
           rel="noreferrer noopener"
         >
-          Learn more
+          {t('deprecationBanner.learn')}
         </a>
       </p>
       <Button
@@ -26,7 +28,7 @@ export const DeprecationBanner: React.FC<DeprecationBannerProps> = () => {
         target="_blank"
         className="w-full shrink-0 sm:w-auto"
       >
-        New UI
+        {t('deprecationBanner.button')}
       </Button>
     </Container>
   );
