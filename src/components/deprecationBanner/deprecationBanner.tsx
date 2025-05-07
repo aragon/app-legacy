@@ -1,5 +1,4 @@
 import {Button, IconType} from '@aragon/ods';
-import {copyFile} from 'fs';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
