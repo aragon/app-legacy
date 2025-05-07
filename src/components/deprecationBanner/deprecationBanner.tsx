@@ -13,6 +13,8 @@ export const DeprecationBanner: React.FC<DeprecationBannerProps> = () => {
         <a
           href="https://blog.aragon.org/legacy-app-deprecation/"
           className="text-neutral-0 underline"
+          target="_blank"
+          rel="noreferrer noopener"
         >
           Learn more
         </a>
@@ -32,5 +34,5 @@ export const DeprecationBanner: React.FC<DeprecationBannerProps> = () => {
 
 const Container = styled.div.attrs({
   className:
-    'sticky top-0 w-full flex flex-col sm:flex-row items-center gap gap-4 sm:gap-x-6 lg:gap-x-8 justify-center bg-primary-800 ft-text-sm text-neutral-0 p-4 md:px-6',
+    'sticky top-0 z-[var(--app-navbar-z-index)] w-full flex flex-col sm:flex-row items-center gap gap-4 sm:gap-x-6 lg:gap-x-8 justify-center bg-primary-800 text-sm text-neutral-0 p-4 md:px-6',
 })``;

@@ -5,7 +5,7 @@ import {Button, IconType} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from 'context/globalModals';
-import {Container, GridLayout} from 'components/layout';
+import {GridLayout} from 'components/layout';
 import {FEEDBACK_FORM} from 'utils/constants';
 import classNames from 'classnames';
 import {Logotype} from 'components/logos/logotype';
@@ -102,6 +102,10 @@ const ExploreNav: React.FC = () => {
     </Container>
   );
 };
+
+export const Container = styled.header.attrs({
+  className: 'sticky top-0 w-full z-[var(--app-navbar-z-index)]',
+})``;
 
 const LeftContent = styled.div.attrs({
   className: 'col-span-2 flex items-center',
