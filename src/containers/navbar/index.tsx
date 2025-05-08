@@ -26,6 +26,7 @@ import {
 import {i18n} from '../../../i18n.config';
 import DesktopNav from './desktop';
 import MobileNav from './mobile';
+import {DeprecationBanner} from 'components/deprecationBanner/deprecationBanner';
 
 const Navbar: React.FC = () => {
   const {open} = useGlobalModalContext();
@@ -74,23 +75,29 @@ const Navbar: React.FC = () => {
 
   if (isDesktop) {
     return (
-      <DesktopNav
-        isProcess={processInfo?.isProcess}
-        returnURL={processInfo?.returnURL}
-        processLabel={processInfo?.processLabel}
-        processType={processInfo?.processType}
+      <div className="sticky top-0 z-[var(--app-navbar-z-index)]">
+        <DeprecationBanner />
+        <DesktopNav
+          isProcess={processInfo?.isProcess}
+          returnURL={processInfo?.returnURL}
+          processLabel={processInfo?.processLabel}
+          processType={processInfo?.processType}
+          onDaoSelect={handleOnDaoSelect}
+          onWalletClick={handleWalletButtonClick}
+          onFeedbackClick={handleFeedbackButtonClick}
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="sticky top-0 z-[var(--app-navbar-z-index)]">
+      <DeprecationBanner />
+      <MobileNav
         onDaoSelect={handleOnDaoSelect}
         onWalletClick={handleWalletButtonClick}
         onFeedbackClick={handleFeedbackButtonClick}
       />
-    );
-  }
-  return (
-    <MobileNav
-      onDaoSelect={handleOnDaoSelect}
-      onWalletClick={handleWalletButtonClick}
-      onFeedbackClick={handleFeedbackButtonClick}
-    />
+    </div>
   );
 };
 
