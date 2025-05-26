@@ -12,7 +12,7 @@ export const DeprecationBanner: React.FC<DeprecationBannerProps> = () => {
       <p>
         {t('deprecationBanner.message')}{' '}
         <a
-          href="https://blog.aragon.org/legacy-app-deprecation/"
+          href="https://blog.aragon.org/upcoming-changes-in-the-aragon-app/"
           className="text-neutral-0 underline"
           target="_blank"
           rel="noreferrer noopener"
