@@ -117,7 +117,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/v2/api?chainid=1',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     coingecko: {
       networkId: 'ethereum',
@@ -144,7 +144,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'MATIC',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/v2/api?chainid=137',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     coingecko: {
       networkId: 'polygon-pos',
@@ -172,7 +172,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/v2/api?chainid=42161',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     coingecko: {
       networkId: 'arbitrum-one',
@@ -199,7 +199,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/v2/api?chainid=8453',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'base-mainnet',
@@ -223,7 +223,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/v2/api?chainid=11155111',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'eth-sepolia',
@@ -246,7 +246,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/v2/api?chainid=324',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'zksync-mainnet',
@@ -270,7 +270,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/v2/api?chainid=300',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'zksync-sepolia-testnet',

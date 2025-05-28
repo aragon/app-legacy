@@ -16,7 +16,8 @@ const useValidateContractEtherscan = (
   network: SupportedNetworks,
   verificationState: TransactionState
 ) => {
-  const url = `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`;
+  const chainId = CHAIN_METADATA[network]?.id;
+  const url = `${CHAIN_METADATA[network].etherscanApi}?chainid=${chainId}&module=contract&action=getsourcecode&address=${contractAddress}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`;
 
   return useQuery({
     queryKey: ['verifyContractEtherscan', contractAddress, network],
@@ -26,7 +27,7 @@ const useValidateContractEtherscan = (
         return res.json().then(data => {
           if (data.result[0].Proxy === '1') {
             return fetch(
-              `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${data.result[0].Implementation}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`
+              `${CHAIN_METADATA[network].etherscanApi}?chainid=${chainId}&module=contract&action=getsourcecode&address=${data.result[0].Implementation}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`
             ).then(async r => {
               data.result[0].proxyImplementation = await r.json();
               return data;
