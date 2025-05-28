@@ -14,7 +14,8 @@ export const getEtherscanVerifiedContract = (
       fetchVerifiedContract(
         etherscanApi,
         etherscanApiKey ?? '',
-        contractAddress
+        contractAddress,
+        network
       ),
   });
 };
@@ -22,9 +23,10 @@ export const getEtherscanVerifiedContract = (
 const fetchVerifiedContract = async (
   blockApi: string,
   blockApiKey: string,
-  contractAddress: string
+  contractAddress: string,
+  network: SupportedNetworks
 ) => {
-  const url = getSourceCodeURL(blockApi, blockApiKey, contractAddress);
+  const url = getSourceCodeURL(blockApi, blockApiKey, contractAddress, network);
 
   let response = await fetch(url);
   const data = await response.json();
@@ -36,7 +38,8 @@ const fetchVerifiedContract = async (
     const implementationContractURl = getSourceCodeURL(
       blockApi,
       blockApiKey,
-      implementationContractAddress
+      implementationContractAddress,
+      network
     );
 
     response = await fetch(implementationContractURl);
@@ -50,6 +53,12 @@ const fetchVerifiedContract = async (
   }
 };
 
-function getSourceCodeURL(blockApi: string, apiKey: string, contract: string) {
-  return `${blockApi}?module=contract&action=getsourcecode&address=${contract}&apikey=${apiKey}`;
+function getSourceCodeURL(
+  blockApi: string,
+  apiKey: string,
+  contract: string,
+  network: SupportedNetworks
+) {
+  const chainId = CHAIN_METADATA[network]?.id;
+  return `${blockApi}?chainid=${chainId}&module=contract&action=getsourcecode&address=${contract}&apikey=${apiKey}`;
 }

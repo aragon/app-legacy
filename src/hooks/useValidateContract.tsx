@@ -16,7 +16,10 @@ const useValidateContractEtherscan = (
   network: SupportedNetworks,
   verificationState: TransactionState
 ) => {
-  const url = `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`;
+  const api = CHAIN_METADATA[network]?.etherscanApi;
+  const apiKey = CHAIN_METADATA[network]?.etherscanApiKey;
+  const chainId = CHAIN_METADATA[network]?.id;
+  const url = `${api}?chainid=${chainId}&module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
 
   return useQuery({
     queryKey: ['verifyContractEtherscan', contractAddress, network],
@@ -26,7 +29,7 @@ const useValidateContractEtherscan = (
         return res.json().then(data => {
           if (data.result[0].Proxy === '1') {
             return fetch(
-              `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${data.result[0].Implementation}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`
+              `${api}?chainid=${chainId}&module=contract&action=getsourcecode&address=${data.result[0].Implementation}&apikey=${apiKey}`
             ).then(async r => {
               data.result[0].proxyImplementation = await r.json();
               return data;
@@ -55,13 +58,14 @@ const useValidateContractSourcify = (
   network: SupportedNetworks,
   verificationState: TransactionState
 ) => {
+  const chainId = CHAIN_METADATA[network]?.id;
   return useQueries({
     queries: ['full_match', 'partial_match'].map(type => {
       return {
         queryKey: [`verifycontract${type}Sourcify`, contractAddress, network],
         queryFn: () => {
           return fetch(
-            `https://repo.sourcify.dev/contracts/${type}/${CHAIN_METADATA[network].id}/${contractAddress}/metadata.json`
+            `https://repo.sourcify.dev/contracts/${type}/${chainId}/${contractAddress}/metadata.json`
           ).then(res => res.json());
         },
         enabled: verificationState === TransactionState.LOADING && !!network,

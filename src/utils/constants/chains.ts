@@ -100,9 +100,6 @@ export type ChainData = {
 };
 
 const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
-const polygonscanApiKey = import.meta.env.VITE_POLYGONSCAN_API_KEY;
-const arbiscanApiKey = import.meta.env.VITE_ARBISCAN_API_KEY;
-const basecanApiKey = import.meta.env.VITE_BASESCAN_API_KEY;
 
 export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
   ethereum: {
@@ -120,7 +117,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.etherscan.io/api',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     coingecko: {
       networkId: 'ethereum',
@@ -147,8 +144,8 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'MATIC',
       decimals: 18,
     },
-    etherscanApi: 'https://api.polygonscan.com/api',
-    etherscanApiKey: polygonscanApiKey,
+    etherscanApi: 'https://api.etherscan.io/v2/api',
+    etherscanApiKey: etherscanApiKey,
     coingecko: {
       networkId: 'polygon-pos',
       nativeTokenId: 'matic-network',
@@ -175,8 +172,8 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.arbiscan.io/api',
-    etherscanApiKey: arbiscanApiKey,
+    etherscanApi: 'https://api.etherscan.io/v2/api',
+    etherscanApiKey: etherscanApiKey,
     coingecko: {
       networkId: 'arbitrum-one',
       nativeTokenId: 'ethereum',
@@ -202,8 +199,8 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api.basescan.org/api',
-    etherscanApiKey: basecanApiKey,
+    etherscanApi: 'https://api.etherscan.io/v2/api',
+    etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'base-mainnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
@@ -226,7 +223,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://api-sepolia.etherscan.io/api',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
     etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'eth-sepolia',
@@ -249,8 +246,8 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://block-explorer-api.mainnet.zksync.io/api',
-    etherscanApiKey: '',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
+    etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'zksync-mainnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee800A',
@@ -273,8 +270,8 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       symbol: 'ETH',
       decimals: 18,
     },
-    etherscanApi: 'https://block-explorer-api.sepolia.zksync.dev/api',
-    etherscanApiKey: '',
+    etherscanApi: 'https://api.etherscan.io/v2/api',
+    etherscanApiKey: etherscanApiKey,
     covalent: {
       networkId: 'zksync-sepolia-testnet',
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee800A',
