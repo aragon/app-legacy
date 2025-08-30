@@ -130,7 +130,7 @@ export const useDaoQuery = (
   const redirectDaoToAddress = useCallback(
     (address: string | null) => {
       if (!address)
-        // if the the resolver doesn't have an address, redirect to 404
+        // if the resolver doesn't have an address, redirect to 404
         navigate(NotFound, {
           replace: true,
           state: {incorrectDao: daoAddressOrEns},
