@@ -134,7 +134,7 @@ export const useFollowedDaoQuery = (
 };
 
 /**
- * Update a followed DAO in in the cache
+ * Update a followed DAO in the cache
  */
 export const useUpdateFollowedDaoMutation = () => {
   const queryClient = useQueryClient();
