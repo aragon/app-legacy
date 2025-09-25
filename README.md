@@ -1,6 +1,3 @@
-> [!WARNING]
-> This repository has been **archived** and is no longer maintained. The new application can be found at [https://github.com/aragon/app](https://github.com/aragon/app).
-
 ![Aragon](https://res.cloudinary.com/dbktgy3vg/image/upload/v1689668058/aragon-app_hpima1.png)
 
 <p align="center">
@@ -14,6 +11,9 @@
 </p>
 
 <br/>
+
+> [!WARNING]
+> This repository has been **archived** and is no longer maintained. The new application can be found at [https://github.com/aragon/app](https://github.com/aragon/app).
 
 # Aragon App - Legacy
 
