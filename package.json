@@ -1,6 +1,6 @@
 {
-  "name": "@aragon/app",
-  "description": "Web application to interact with Aragon OSx",
+  "name": "@aragon/app-legacy",
+  "description": "Legacy web application to interact with Aragon OSx",
   "version": "0.1.0",
   "private": true,
   "author": "Aragon Association",

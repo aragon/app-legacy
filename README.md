@@ -12,7 +12,10 @@
 
 <br/>
 
-# Aragon App
+# Aragon App - Legacy
+
+> [!WARNING]
+> This repository is no longer maintained. The new application can be found at [https://github.com/aragon/app](https://github.com/aragon/app).
 
 The Aragon App is an easy-to-use platform that empowers users to create and manage their Decentralized Autonomous Organizations (DAOs). The application interacts with the [Aragon OSx](https://github.com/aragon/osx) through the integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the [Aragon ODS](https://github.com/aragon/ods) library.
 
