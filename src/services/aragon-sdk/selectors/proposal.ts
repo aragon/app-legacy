@@ -384,7 +384,7 @@ export function computeMultisigProposalStatus(
   // If it reached the approval threshold and it's a signaling proposal
   // the status becomes SUCCEEDED
   // If it reached the approval threshold and it's not a signaling proposal
-  // the status becomes SUCCEEDED if if it hasn't reached the end date
+  // the status becomes SUCCEEDED if it hasn't reached the end date
   if (proposal.approvalReached) {
     if (proposal.isSignaling) {
       return ProposalStatus.SUCCEEDED;
